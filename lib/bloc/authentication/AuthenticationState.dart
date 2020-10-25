@@ -18,6 +18,13 @@ class SuccessAuthenticationState extends AuthenticationState {
   List<Object> get props => [obj];
 }
 
+class CheckLoggedInState extends AuthenticationState {
+  final obj;
+  CheckLoggedInState({@required this.obj});
+  @override
+  List<bool> get props => [obj];
+}
+
 class FailedAuthenticationState extends AuthenticationState {
   final obj;
   FailedAuthenticationState({@required this.obj});

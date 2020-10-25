@@ -1,16 +1,18 @@
-class LocationSearchResponse {
+import 'package:flutter/material.dart';
+
+class SearchLocationResponse {
   String message;
-  Data data;
+  LocationData data;
   bool status;
 
-  LocationSearchResponse({
-      this.message, 
-      this.data, 
-      this.status});
+//  SearchLocationResponse({
+//      this.message, 
+//      this.data, 
+//      this.status});
 
-  LocationSearchResponse.fromJson(dynamic json) {
+  SearchLocationResponse.fromJson(dynamic json) {
     message = json["message"];
-    data = json["data"] != null ? Data.fromJson(json["data"]) : null;
+    data = json["data"] != null ? LocationData.fromJson(json["data"]) : null;
     status = json["status"];
   }
 
@@ -26,19 +28,19 @@ class LocationSearchResponse {
 
 }
 
-class Data {
-  List<State> state;
+class LocationData {
+  List<StateLoc> state;
   List<Cities> cities;
 
-  Data({
+  LocationData({
       this.state, 
       this.cities});
 
-  Data.fromJson(dynamic json) {
+  LocationData.fromJson(dynamic json) {
     if (json["state"] != null) {
       state = [];
       json["state"].forEach((v) {
-        state.add(State.fromJson(v));
+        state.add(StateLoc.fromJson(v));
       });
     }
     if (json["cities"] != null) {
@@ -100,7 +102,7 @@ class Cities {
 
 }
 
-class State {
+class StateLoc {
   String id;
   String name;
   String countryId;
@@ -108,7 +110,7 @@ class State {
   dynamic lng;
   String createdAt;
 
-  State({
+  StateLoc({
       this.id, 
       this.name, 
       this.countryId, 
@@ -116,7 +118,7 @@ class State {
       this.lng, 
       this.createdAt});
 
-  State.fromJson(dynamic json) {
+  StateLoc.fromJson(dynamic json) {
     id = json["id"];
     name = json["name"];
     countryId = json["countryId"];

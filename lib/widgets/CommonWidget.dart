@@ -1,6 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rentry/bloc/home/HomeState.dart';
 import 'package:flutter_rentry/model/home_response.dart';
+import 'package:flutter_rentry/model/location_search_response.dart';
 import 'package:flutter_rentry/model/search_sub_category_response.dart';
 import 'package:flutter_rentry/model/sub_category_list_response.dart';
 import 'package:flutter_rentry/screens/ChatHomeScreen.dart';
@@ -1498,5 +1500,3 @@ class BottomFloatingChatBtnsWidget extends StatelessWidget {
     );
   }
 }
-
-

@@ -61,8 +61,11 @@ class _HomeScreenState extends State<HomeScreen> {
               if(state is HomeResState){
                 return getHomeUI(state.res);
               }else {
-                return Center(
-                  child: CircularProgressIndicator(backgroundColor: Colors.white,),
+                return Container(
+                  color: Colors.white,
+                  child: Center(
+                    child: CircularProgressIndicator(backgroundColor: Colors.white,),
+                  ),
                 );
               }
             },

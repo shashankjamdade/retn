@@ -1,6 +1,6 @@
 class SearchSubCategoryResponse {
   String message;
-  Data data;
+  CategoryResData data;
   bool status;
 
   SearchSubCategoryResponse({
@@ -10,7 +10,7 @@ class SearchSubCategoryResponse {
 
   SearchSubCategoryResponse.fromJson(dynamic json) {
     message = json["message"];
-    data = json["data"] != null ? Data.fromJson(json["data"]) : null;
+    data = json["data"] != null ? CategoryResData.fromJson(json["data"]) : null;
     status = json["status"];
   }
 
@@ -26,25 +26,25 @@ class SearchSubCategoryResponse {
 
 }
 
-class Data {
-  List<Category> category;
-  List<Subcategory> subcategory;
+class CategoryResData {
+  List<CategoryObj> category;
+  List<CategoryObj> subcategory;
 
-  Data({
+  CategoryResData({
       this.category, 
       this.subcategory});
 
-  Data.fromJson(dynamic json) {
+  CategoryResData.fromJson(dynamic json) {
     if (json["category"] != null) {
       category = [];
       json["category"].forEach((v) {
-        category.add(Category.fromJson(v));
+        category.add(CategoryObj.fromJson(v));
       });
     }
     if (json["subcategory"] != null) {
       subcategory = [];
       json["subcategory"].forEach((v) {
-        subcategory.add(Subcategory.fromJson(v));
+        subcategory.add(CategoryObj.fromJson(v));
       });
     }
   }
@@ -62,37 +62,37 @@ class Data {
 
 }
 
-class Subcategory {
+//class Subcategory {
+//  String id;
+//  String name;
+//
+//  Subcategory({
+//      this.id,
+//      this.name});
+//
+//  Subcategory.fromJson(dynamic json) {
+//    id = json["id"];
+//    name = json["name"];
+//  }
+//
+//  Map<String, dynamic> toJson() {
+//    var map = <String, dynamic>{};
+//    map["id"] = id;
+//    map["name"] = name;
+//    return map;
+//  }
+//
+//}
+
+class CategoryObj {
   String id;
   String name;
 
-  Subcategory({
+  CategoryObj({
       this.id, 
       this.name});
 
-  Subcategory.fromJson(dynamic json) {
-    id = json["id"];
-    name = json["name"];
-  }
-
-  Map<String, dynamic> toJson() {
-    var map = <String, dynamic>{};
-    map["id"] = id;
-    map["name"] = name;
-    return map;
-  }
-
-}
-
-class Category {
-  String id;
-  String name;
-
-  Category({
-      this.id, 
-      this.name});
-
-  Category.fromJson(dynamic json) {
+  CategoryObj.fromJson(dynamic json) {
     id = json["id"];
     name = json["name"];
   }

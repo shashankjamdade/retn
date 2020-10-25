@@ -48,7 +48,7 @@ class LocationSearchResState extends HomeState {
   final res;
   LocationSearchResState({@required this.res});
   @override
-  List<LocationSearchResponse> get props => [res];
+  List<SearchLocationResponse> get props => [res];
 }
 
 class SubCategorySearchResState extends HomeState {

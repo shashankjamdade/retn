@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rentry/bloc/authentication/AuthenticationBloc.dart';
 import 'package:flutter_rentry/bloc/authentication/AuthenticationEvent.dart';
@@ -25,22 +26,23 @@ import 'package:flutter_rentry/screens/SplashScreen.dart';
 import 'package:flutter_rentry/screens/SubCategoryScreen.dart';
 import 'package:flutter_rentry/utils/CommonStyles.dart';
 import 'package:flutter_rentry/utils/size_config.dart';
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main(){
+void main() {
   SharedPreferences.setMockInitialValues({});
   runApp(StateContainer(child: MyApp()));
+//  runApp(SharedPreferencesDemo());
 }
 
 class MyApp extends StatefulWidget {
-
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-
   String mobile;
+  AuthenticationBloc authenticationBloc = new AuthenticationBloc();
 
   @override
   void initState() {
@@ -53,153 +55,130 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<AuthenticationBloc>(
-      create: (_) => AuthenticationBloc()..add(InitialAuthenticationEvent()),
-      child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state){
-          return FutureBuilder<String>(
-              future: checkUserLoggedInOrNot(context),
-              builder: (context, snapshot){
-                if(snapshot.hasData){
-                  if(snapshot.data!=null && snapshot.data.isNotEmpty){
-                    debugPrint("SNAP-------- ${snapshot.data}");
-                    return MaterialApp(
-                      debugShowCheckedModeBanner: false,
-                      title: 'Rentry',
-                      theme: ThemeData(
-                        primarySwatch: Colors.blue,
-                        visualDensity: VisualDensity.adaptivePlatformDensity,
-                      ),
-                      home: HomeScreen(),
-                    );
-                  }else{
-                    debugPrint("SNAP-------- ${snapshot.data}");
-                    return MaterialApp(
-                      debugShowCheckedModeBanner: false,
-                      title: 'Rentry',
-                      theme: ThemeData(
-                        primarySwatch: Colors.blue,
-                        visualDensity: VisualDensity.adaptivePlatformDensity,
-                      ),
-                      home: SplashScreen(),
-                    );
-                  }
-                }else{
-                  return Center(child: CircularProgressIndicator(),);
-                }
-              }
-          );
+      create: (_) => authenticationBloc..add(CheckLoggedInEvent()),
+      child: BlocListener(
+        bloc: authenticationBloc,
+        listener: (context, state) {
+          if (state is CheckLoggedInState) {
+            if (state.obj) {
+            } else {}
+          }
         },
+        child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          builder: (context, state) {
+            if (state is CheckLoggedInState) {
+              debugPrint("SNAP-------- ${state.obj}");
+              if (state.obj) {
+                return MaterialApp(
+                  debugShowCheckedModeBanner: false,
+                  title: 'Rentry',
+                  theme: ThemeData(
+                    primarySwatch: Colors.blue,
+                    visualDensity: VisualDensity.adaptivePlatformDensity,
+                  ),
+                  home: HomeScreen(),
+                );
+              } else {
+                return MaterialApp(
+                  debugShowCheckedModeBanner: false,
+                  title: 'Rentry',
+                  theme: ThemeData(
+                    primarySwatch: Colors.blue,
+                    visualDensity: VisualDensity.adaptivePlatformDensity,
+                  ),
+                  home: HomeScreen(),
+                );
+              }
+            } else {
+              return Container(
+                  color: Colors.white,
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ));
+            }
+          },
+        ),
       ),
     );
   }
 }
 
 Future<String> checkUserLoggedInOrNot(BuildContext context) async {
-  final prefs = await SharedPreferences.getInstance();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String userStatus = prefs.getString('userStatus');
   bool flag = prefs.getBool(IS_LOGGEDIN);
- var mobile = prefs.getString(USER_MOBILE);
- mobile = mobile!=null && mobile.isNotEmpty?mobile:"";
- debugPrint("PREFS_READ -- ${mobile}");
- if(mobile.isNotEmpty){
-   var response = LoginResponse.fromJson(jsonDecode(prefs.getString(USER_LOGIN_RES)));
-   StateContainer.of(context).updateUserInfo(response);
- }
+  var mobile = prefs.getString(USER_NAME);
+  mobile = mobile != null && mobile.isNotEmpty ? mobile : "";
+  debugPrint("PREFS_READ -- ${userStatus}");
+  if (mobile.isNotEmpty) {
+    var response =
+        LoginResponse.fromJson(jsonDecode(prefs.getString(USER_LOGIN_RES)));
+    StateContainer.of(context).updateUserInfo(response);
+  }
   return mobile;
-//  LoginResponse response;
-//  if(flag){
-//    response = LoginResponse.fromJson(jsonDecode(prefs.getString(USER_LOGIN_RES)));
-//  }else{
-//    response = null;
-//  }
-//  debugPrint("ISLOGGEDIN-----> ${flag}");
-//  return response;
 }
 
-class PageSnip extends StatefulWidget {
+class SharedPreferencesDemo extends StatefulWidget {
+  SharedPreferencesDemo({Key key}) : super(key: key);
+
   @override
-  _PageSnipState createState() => _PageSnipState();
+  SharedPreferencesDemoState createState() => SharedPreferencesDemoState();
 }
 
-class _PageSnipState extends State<PageSnip> {
+class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  Future<int> _counter;
 
-  List<int> list = [1, 2, 3, 4, 5];
-  PageController controller = PageController(keepPage: false, viewportFraction: 0.5);
-  var currentPageValue = 0.0;
+  Future<void> _incrementCounter() async {
+    final SharedPreferences prefs = await _prefs;
+    final int counter = (prefs.getInt('counter') ?? 0) + 1;
 
-  @override
-  void initState() {
-    super.initState();
-    controller.addListener(() {
-      setState(() {
-        currentPageValue = controller.page;
+    setState(() {
+      _counter = prefs.setInt("counter", counter).then((bool success) {
+        return counter;
       });
     });
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: PageView.builder(
-          itemCount: 5,
-          controller: controller,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, pos) {
-            return Container(
-              height: 20.0,
-              width: 20.0,
-              color: Colors.black,
-              margin: EdgeInsets.all(5.0),
-            );
-          }),
-    );
-  }
-}
-
-
-
-class YourPage extends StatefulWidget {
-  YourPage({Key key}) : super(key: key);
-
-  @override
-  _YourPageState createState() => _YourPageState();
-}
-
-class _YourPageState extends State<YourPage> {
-  ScrollController _scrollController;
-  double _scrollPosition;
-
-  _scrollListener() {
-    setState(() {
-      _scrollPosition = _scrollController.position.pixels;
+  void initState() {
+    super.initState();
+    _counter = _prefs.then((SharedPreferences prefs) {
+      return (prefs.getInt('counter') ?? 0);
     });
   }
 
   @override
-  void initState() {
-    _scrollController = ScrollController();
-    _scrollController.addListener(_scrollListener);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text('Position $_scrollPosition pixels'),
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text("SharedPreferences Demo"),
+        ),
+        body: Center(
+            child: FutureBuilder<int>(
+                future: _counter,
+                builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return const CircularProgressIndicator();
+                    default:
+                      if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        return Text(
+                          'Button tapped ${snapshot.data} time${snapshot.data == 1 ? '' : 's'}.\n\n'
+                              'This should persist across restarts.',
+                        );
+                      }
+                  }
+                })),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _incrementCounter,
+          tooltip: 'Increment',
+          child: const Icon(Icons.add),
+        ),
       ),
-      body: Container(
-          child: ListView.builder(
-        controller: _scrollController,
-        itemCount: 200,
-        itemBuilder: (context, index) {
-          return ListTile(
-            leading: Icon(Icons.mood),
-            title: Text('Item: $index'),
-          );
-        },
-      )),
     );
   }
 }

@@ -144,6 +144,12 @@ const String TYPE_FREELANCING = "TYPE_FREELANCING";
 const String SIMILAR_PRODUCT = "SIMILAR_PRODUCT";
 const String MORE_PRODUCTS = "MORE_PRODUCTS";
 const String USER_LOGIN_RES = "USER_LOGIN_RES";
+const String USER_LOCATION_ADDRESS = "USER_LOCATION_ADDRESS";
+const String USER_LOCATION_CITY = "USER_LOCATION_CITY";
+const String USER_LOCATION_STATE = "USER_LOCATION_STATE";
+const String USER_LOCATION_PINCODE = "USER_LOCATION_PINCODE";
+const String USER_LOCATION_LAT = "USER_LOCATION_LAT";
+const String USER_LOCATION_LONG = "USER_LOCATION_LONG";
 const String USER_NAME = "USER_NAME";
 const String USER_EMAIL = "USER_EMAIL";
 const String USER_MOBILE = "USER_MOBILE";
@@ -158,6 +164,7 @@ const String ITEMDETAIL_API = "/productdetails";
 const String SUBCATEGORY_LIST_API = "/subcategorylist";
 const String SEARCH_SUBCATEGORY_LIST_API = "/searchcategorysubcategory";
 const String LOCATION_SEARCH_API = "/localtionsearch";
+const String ADS_SEARCH_API = "/searchignads";
 
 
 

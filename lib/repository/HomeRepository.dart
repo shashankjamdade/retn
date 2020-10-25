@@ -69,11 +69,11 @@ class HomeRepository extends BaseRepository {
     return response;
   }
 
-  Future<LocationSearchResponse> callLocaitonSearchApi(String token, String searchKey) async {
+  Future<SearchLocationResponse> callLocaitonSearchApi(String token, String searchKey) async {
     bool status = false;
-    LocationSearchResponse response;
+    SearchLocationResponse response;
     int code = 0;
-    print("UNDER callItemDetailApi ");
+    print("UNDER callLocaitonSearchApi -- ${searchKey}");
     var res = await http
         .post(BASE_URL + LOCATION_SEARCH_API, headers: {"Token":token}, body:{"search": searchKey});
     print("PRINTING ${res.body}");
@@ -83,9 +83,9 @@ class HomeRepository extends BaseRepository {
       status = data["status"];
       print("PRINTING_STATUS ${status}");
       if(status){
-        response = LocationSearchResponse.fromJson(data);
+        response = SearchLocationResponse.fromJson(data);
       }else{
-        response = LocationSearchResponse.fromJson(data);
+        response = SearchLocationResponse.fromJson(data);
         print("-----------${data}");
       }
     }
@@ -96,7 +96,7 @@ class HomeRepository extends BaseRepository {
     bool status = false;
     SearchSubCategoryResponse response;
     int code = 0;
-    print("UNDER SearchSubCategoryResponse ");
+    print("UNDER SearchSubCategoryResponse -- ${searchKey} ${BASE_URL + SEARCH_SUBCATEGORY_LIST_API}");
     var res = await http
         .post(BASE_URL + SEARCH_SUBCATEGORY_LIST_API, headers: {"Token":token}, body:{"search": searchKey});
     print("PRINTING ${res.body}");

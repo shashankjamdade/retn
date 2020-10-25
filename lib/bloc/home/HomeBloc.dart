@@ -31,10 +31,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       yield ProgressState();
       yield* callItemDetailApi(event.token, event.categoryName);
     } else if (event is LocationSeachReqEvent) {
-      yield ProgressState();
+//      yield ProgressState();
       yield* callLocatinoSearchApi(event.token, event.seachKey);
     } else if (event is SubCategorySearchReqEvent) {
-      yield ProgressState();
+//      yield ProgressState();
       yield* callSubCategorySearchApi(event.token, event.seachKey);
     } else if (event is SubCategoryListReqEvent) {
       yield ProgressState();
@@ -96,7 +96,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       debugPrint(
           "SubCategorySeach_CALL ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
       final subCategorySearchResponse =
-          await homeRepository.callLocaitonSearchApi(token, searchKey);
+          await homeRepository.callSubCategorySearchApi(token, searchKey);
       debugPrint("subCategorySearchResponse ${jsonEncode(subCategorySearchResponse)}");
       yield SubCategorySearchResState(res: subCategorySearchResponse);
     } catch (e) {

@@ -30,7 +30,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
   HomeBloc homeBloc = new HomeBloc();
   ItemDetailResponse mItemDetailResponse;
   var loginResponse;
-  var token;
+  String token = "";
 
   @override
   void initState() {
@@ -43,8 +43,10 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     loginResponse = StateContainer.of(context).mLoginResponse;
-    token = loginResponse.data.token;
-    debugPrint("ACCESSING_INHERITED ${token}");
+    if(loginResponse!=null) {
+      token = loginResponse.data.token;
+      debugPrint("ACCESSING_INHERITED ${token}");
+    }
   }
 
   @override
