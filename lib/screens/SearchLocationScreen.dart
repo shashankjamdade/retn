@@ -576,6 +576,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
     });
   }
 
+
   onCategorySelected(String categoryId ,String subCategoryId, String name) {
     debugPrint("SELECTED_________ ${categoryId}, ${subCategoryId}, ${name}");
     mCategorySelected = name;
