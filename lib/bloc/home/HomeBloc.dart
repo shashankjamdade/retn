@@ -39,6 +39,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is SubCategoryListReqEvent) {
       yield ProgressState();
       yield* callSubCategoryListApi(event.token, event.categoryId);
+    } else if (event is NearbySubChildCategoryListReqEvent) {
+      yield ProgressState();
+      yield* callNearbySubChildCategoryListApi(event.token, event.categoryId, event.subcategory_id, event.radius, event.lat, event.lng);
     }
   }
 
@@ -117,6 +120,23 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       yield SubCategoryListResState(res: subCategoryListResponse);
     } catch (e) {
       debugPrint("Exception while subCategoryListResponse ${e.toString()}");
+    }
+  }
+
+
+  Stream<HomeState> callNearbySubChildCategoryListApi(
+      String token, String categoryId, String subCategoryId, String radius, String lat, String lng) async* {
+    try {
+      homeRepository =
+          homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callNearbySubChildCategoryListApi TOKEN ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final nearbySubChildCategoryListResponse =
+          await homeRepository.callNearbySubChildCategoryListApi(token, categoryId, subCategoryId, radius, lat, lng);
+      debugPrint("nearbySubChildCategoryListResponse ${jsonEncode(nearbySubChildCategoryListResponse)}");
+      yield NearbySubChildCategoryListResState(res: nearbySubChildCategoryListResponse);
+    } catch (e) {
+      debugPrint("Exception while nearbySubChildCategoryListResponse ${e.toString()}");
     }
   }
 

@@ -5,37 +5,10 @@ import 'package:flutter_rentry/utils/CommonStyles.dart';
 import 'package:flutter_rentry/utils/size_config.dart';
 
 
-class LocationStateListWidget extends StatelessWidget {
-
-  StateLoc locationData;
-  Function(String, String, String) onLocationSelect;
-
-  LocationStateListWidget(this.locationData, this.onLocationSelect);
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: (){
-        if(locationData!=null){
-          onLocationSelect(locationData.lat, locationData.lng, locationData.name);
-        }
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(
-            vertical: space_10, horizontal: space_15),
-        child: Text(
-          locationData.name,
-          style: CommonStyles.getRalewayStyle(
-              space_14, FontWeight.w500, Colors.black87),
-        ),
-      ),
-    );
-  }
-}
 
 class LocationCityListWidget extends StatelessWidget {
 
-  Cities locationData;
+  SearchLocationData locationData;
   Function(String, String, String) onLocationSelect;
 
   LocationCityListWidget(this.locationData, this.onLocationSelect);
@@ -63,8 +36,8 @@ class LocationCityListWidget extends StatelessWidget {
 
 class CategoryListWidget extends StatelessWidget {
 
-  CategoryObj categoryObj;
-  Function(String, String) onCategorySelect;
+  CategorySearchData categoryObj;
+  Function(String, String, String) onCategorySelect;
 
   CategoryListWidget(this.categoryObj, this.onCategorySelect);
 
@@ -73,7 +46,7 @@ class CategoryListWidget extends StatelessWidget {
     return InkWell(
       onTap: (){
         if(categoryObj!=null){
-          onCategorySelect(categoryObj.id, categoryObj.name);
+          onCategorySelect(categoryObj.category_id, categoryObj.subcategory_id, categoryObj.name);
         }
       },
       child: Container(

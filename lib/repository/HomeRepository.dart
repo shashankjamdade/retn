@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_rentry/model/RegisterReq.dart';
 import 'package:flutter_rentry/model/home_response.dart';
 import 'package:flutter_rentry/model/item_detail_response.dart';
+import 'package:flutter_rentry/model/nearby_item_list_response.dart';
 import 'package:flutter_rentry/model/location_search_response.dart';
 import 'package:flutter_rentry/model/login_response.dart';
 import 'package:flutter_rentry/model/register_response.dart';
@@ -50,7 +51,7 @@ class HomeRepository extends BaseRepository {
     bool status = false;
     ItemDetailResponse response;
     int code = 0;
-    print("UNDER callItemDetailApi ");
+    print("UNDER callItemDetailApi ${categoryName}");
     var res = await http
         .get(BASE_URL + ITEMDETAIL_API+ "?title=${categoryName}", headers: {"Token":token}, );
     print("PRINTING ${res.body}");
@@ -92,9 +93,9 @@ class HomeRepository extends BaseRepository {
     return response;
   }
 
-  Future<SearchSubCategoryResponse> callSubCategorySearchApi(String token, String searchKey) async {
+  Future<SearchCategoryResponse> callSubCategorySearchApi(String token, String searchKey) async {
     bool status = false;
-    SearchSubCategoryResponse response;
+    SearchCategoryResponse response;
     int code = 0;
     print("UNDER SearchSubCategoryResponse -- ${searchKey} ${BASE_URL + SEARCH_SUBCATEGORY_LIST_API}");
     var res = await http
@@ -106,9 +107,9 @@ class HomeRepository extends BaseRepository {
       status = data["status"];
       print("PRINTING_STATUS ${status}");
       if(status){
-        response = SearchSubCategoryResponse.fromJson(data);
+        response = SearchCategoryResponse.fromJson(data);
       }else{
-        response = SearchSubCategoryResponse.fromJson(data);
+        response = SearchCategoryResponse.fromJson(data);
         print("-----------${data}");
       }
     }
@@ -138,9 +139,40 @@ class HomeRepository extends BaseRepository {
     return response;
   }
 
+  Future<NearbySubChildCategoryListResponse> callNearbySubChildCategoryListApi(String token, String categoryId,
+      String subCategoryId, String radius, String lat, String lng) async {
+    bool status = false;
+    NearbySubChildCategoryListResponse response;
+    int code = 0;
+    print("UNDER NearbySubChildCategoryListResponse ${categoryId} ${BASE_URL + ADS_SEARCH_API}");
+    var res = await http
+        .post(BASE_URL + ADS_SEARCH_API, headers: {"Token":token},
+        body:{
+          "category_id": categoryId,
+          "subcategory_id": subCategoryId,
+          "radius": radius,
+          "lat": lat,
+          "lng": lng,
+    }
+    );
+    print("PRINTING ${res.body}");
+    code = res.statusCode;
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      status = data["status"];
+      print("PRINTING_STATUS ${status}");
+      if(status){
+        response = NearbySubChildCategoryListResponse.fromJson(data);
+      }else{
+        response = NearbySubChildCategoryListResponse.fromJson(data);
+        print("-----------${data}");
+      }
+    }
+    return response;
+  }
+
   @override
   void dispose() {
-    // TODO: implement dispose
   }
 
 }

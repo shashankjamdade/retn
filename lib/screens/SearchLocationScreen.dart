@@ -22,6 +22,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
   var token = "";
   var mCategorySelected = "";
   var mCategorySelectedId = "";
+  var mCategorySelectedSubCategoryId = "";
   var mLocationSelected = "";
   var mSelectedLattitude = "0.0";
   var mSelectedLongitude = "0.0";
@@ -277,7 +278,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
 
   setUI(HomeState state, dynamic obj, {bool isProgress = false}) {
     if (obj != null) {
-      if (obj is SearchLocationResponse || obj is SearchSubCategoryResponse) {
+      if (obj is SearchLocationResponse || obj is SearchCategoryResponse) {
         return SafeArea(
           child: Scaffold(
             key: _scaffoldKey,
@@ -457,23 +458,23 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                           padding: EdgeInsets.symmetric(horizontal: space_25),
                           child: ListView.builder(
                               itemCount: state is LocationSearchResState
-                                  ? state.res.data.cities.length
+                                  ? state.res.data.length
                                   : (state is SubCategorySearchResState)
-                                      ? state.res.data.category.length
+                                      ? state.res.data.length
                                       : 0,
                               itemBuilder: (context, pos) {
                                 if (state is LocationSearchResState) {
                                   return LocationCityListWidget(
-                                      state.res.data.cities[pos],
+                                      state.res.data[pos],
                                       (String lat, String lng, String name) {
                                     onLocationSelected(lat, lng, name);
                                   });
                                 } else if (state is SubCategorySearchResState) {
                                   debugPrint("CATEGDSGDFD ${state.res.data}");
                                   return CategoryListWidget(
-                                      state.res.data.category[pos],
-                                      (String id, String name) {
-                                    onCategorySelected(id, name);
+                                      state.res.data[pos],
+                                      (String categoryId,String subCategoroyId, String name) {
+                                    onCategorySelected(categoryId, subCategoroyId, name);
                                   });
                                 }
                               }),
@@ -520,10 +521,11 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
     mSelectedLongitude = lng;
   }
 
-  onCategorySelected(String id, String name) {
-    debugPrint("SELECTED_________ ${id}, ${name}");
+  onCategorySelected(String categoryId ,String subCategoryId, String name) {
+    debugPrint("SELECTED_________ ${categoryId}, ${subCategoryId}, ${name}");
     mCategorySelected = name;
-    mCategorySelectedId = id;
+    mCategorySelectedId = categoryId;
+    mCategorySelectedSubCategoryId = subCategoryId;
   }
 
 }

@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_rentry/model/home_response.dart';
 import 'package:flutter_rentry/model/item_detail_response.dart';
+import 'package:flutter_rentry/model/nearby_item_list_response.dart';
 import 'package:flutter_rentry/model/location_search_response.dart';
 import 'package:flutter_rentry/model/login_response.dart';
 import 'package:flutter_rentry/model/register_response.dart';
@@ -55,7 +56,7 @@ class SubCategorySearchResState extends HomeState {
   final res;
   SubCategorySearchResState({@required this.res});
   @override
-  List<SearchSubCategoryResponse> get props => [res];
+  List<SearchCategoryResponse> get props => [res];
 }
 
 class SubCategoryListResState extends HomeState {
@@ -63,4 +64,11 @@ class SubCategoryListResState extends HomeState {
   SubCategoryListResState({@required this.res});
   @override
   List<SubCategoryListResponse> get props => [res];
+}
+
+class NearbySubChildCategoryListResState extends HomeState {
+  final res;
+  NearbySubChildCategoryListResState({@required this.res});
+  @override
+  List<NearbySubChildCategoryListResponse> get props => [res];
 }

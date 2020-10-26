@@ -6,6 +6,7 @@ import 'package:flutter_rentry/bloc/home/HomeState.dart';
 import 'package:flutter_rentry/inherited/StateContainer.dart';
 import 'package:flutter_rentry/model/sub_category_list_response.dart';
 import 'package:flutter_rentry/screens/ItemDetailScreen.dart';
+import 'package:flutter_rentry/screens/NearByChildSubCategoryScreen.dart';
 import 'package:flutter_rentry/utils/CommonStyles.dart';
 import 'package:flutter_rentry/utils/Constants.dart';
 import 'package:flutter_rentry/utils/my_flutter_app_icons.dart';
@@ -121,7 +122,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ItemDetailScreen()),
+                                builder: (context) => NearByChildSubCategoryScreen()),
                           );
                         },
                         child: SubCategoryItemWidget(subCategoryData: subCategoryListResponse.data[index],)),

@@ -692,13 +692,17 @@ class ItemCardWidget extends StatelessWidget {
 }
 
 class ItemCardNoMarginWidget extends StatelessWidget {
+
+  Category_adslist category_adslist;
+  ItemCardNoMarginWidget({this.category_adslist});
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ItemDetailScreen()),
+          MaterialPageRoute(builder: (context) => ItemDetailScreen(categoryName: category_adslist.slug)),
         );
       },
       child: Container(
@@ -728,9 +732,9 @@ class ItemCardNoMarginWidget extends StatelessWidget {
                               height: space_110,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(space_10)),
-                              child: Image.asset(
-                                "assets/images/dummy_img.jpeg",
-                                fit: BoxFit.fill,
+                              child: FadeInImage.assetNetwork(
+                                placeholder: "assets/images/app_img_white.png",
+                                image: category_adslist.img_1, fit: BoxFit.fill,
                               ),
                             ),
                           ),
@@ -761,7 +765,7 @@ class ItemCardNoMarginWidget extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: space_5),
                         child: Text(
-                          "TITLE",
+                          category_adslist.title,
                           style: CommonStyles.getRalewayStyle(
                               space_14, FontWeight.w800, Colors.black),
                         ),
@@ -775,7 +779,7 @@ class ItemCardNoMarginWidget extends StatelessWidget {
                           child: Container(
                             height: space_30,
                             child: Text(
-                              "sdfjskhdjfsdj nfskj dfsjd nfkjnsdk jfsjd fjsdnf kjsnd  sdhfkj sdhfjshdj kfhsdjk fhsdjk fhsdj sdjnf ksdj fnskdj nfskdjffjknsdfs",
+                              category_adslist.description,
                               style: CommonStyles.getRalewayStyle(
                                   space_12, FontWeight.w500, Colors.black),
                               maxLines: 2,
@@ -797,20 +801,26 @@ class ItemCardNoMarginWidget extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.location_on,
-                              color: CommonStyles.primaryColor,
-                              size: space_15,
+                            Expanded(
+                              flex:2,
+                              child: Icon(
+                                Icons.location_on,
+                                color: CommonStyles.primaryColor,
+                                size: space_15,
+                              ),
                             ),
-                            Padding(
-                              padding:
-                              EdgeInsets.symmetric(horizontal: space_10),
-                              child: Text(
-                                "Location",
-                                style: CommonStyles.getRalewayStyle(space_12,
-                                    FontWeight.w500, CommonStyles.primaryColor),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                            Expanded(
+                              flex:7,
+                              child: Padding(
+                                padding:
+                                EdgeInsets.only(right: space_10),
+                                child: Text(
+                                  category_adslist.location,
+                                  style: CommonStyles.getRalewayStyle(space_12,
+                                      FontWeight.w500, CommonStyles.primaryColor),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             )
                           ],
@@ -830,8 +840,8 @@ class ItemCardNoMarginWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "₹ 999/",
-                              style: CommonStyles.getRalewayStyle(
+                              "${category_adslist.price}/",
+                              style: CommonStyles.getMontserratStyle(
                                   space_15, FontWeight.w800, Colors.white),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,

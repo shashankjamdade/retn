@@ -1,16 +1,21 @@
-class SearchSubCategoryResponse {
+class SearchCategoryResponse {
   String message;
-  CategoryResData data;
+  List<CategorySearchData> data;
   bool status;
 
-  SearchSubCategoryResponse({
-      this.message, 
-      this.data, 
-      this.status});
+  SearchCategoryResponse({
+    this.message,
+    this.data,
+    this.status});
 
-  SearchSubCategoryResponse.fromJson(dynamic json) {
+  SearchCategoryResponse.fromJson(dynamic json) {
     message = json["message"];
-    data = json["data"] != null ? CategoryResData.fromJson(json["data"]) : null;
+    if (json["data"] != null) {
+      data = [];
+      json["data"].forEach((v) {
+        data.add(CategorySearchData.fromJson(v));
+      });
+    }
     status = json["status"];
   }
 
@@ -18,7 +23,7 @@ class SearchSubCategoryResponse {
     var map = <String, dynamic>{};
     map["message"] = message;
     if (data != null) {
-      map["data"] = data.toJson();
+      map["data"] = data.map((v) => v.toJson()).toList();
     }
     map["status"] = status;
     return map;
@@ -26,82 +31,27 @@ class SearchSubCategoryResponse {
 
 }
 
-class CategoryResData {
-  List<CategoryObj> category;
-  List<CategoryObj> subcategory;
-
-  CategoryResData({
-      this.category, 
-      this.subcategory});
-
-  CategoryResData.fromJson(dynamic json) {
-    if (json["category"] != null) {
-      category = [];
-      json["category"].forEach((v) {
-        category.add(CategoryObj.fromJson(v));
-      });
-    }
-    if (json["subcategory"] != null) {
-      subcategory = [];
-      json["subcategory"].forEach((v) {
-        subcategory.add(CategoryObj.fromJson(v));
-      });
-    }
-  }
-
-  Map<String, dynamic> toJson() {
-    var map = <String, dynamic>{};
-    if (category != null) {
-      map["category"] = category.map((v) => v.toJson()).toList();
-    }
-    if (subcategory != null) {
-      map["subcategory"] = subcategory.map((v) => v.toJson()).toList();
-    }
-    return map;
-  }
-
-}
-
-//class Subcategory {
-//  String id;
-//  String name;
-//
-//  Subcategory({
-//      this.id,
-//      this.name});
-//
-//  Subcategory.fromJson(dynamic json) {
-//    id = json["id"];
-//    name = json["name"];
-//  }
-//
-//  Map<String, dynamic> toJson() {
-//    var map = <String, dynamic>{};
-//    map["id"] = id;
-//    map["name"] = name;
-//    return map;
-//  }
-//
-//}
-
-class CategoryObj {
-  String id;
+class CategorySearchData {
+  String category_id;
+  String subcategory_id;
   String name;
 
-  CategoryObj({
-      this.id, 
-      this.name});
+  CategorySearchData({
+    this.category_id,
+    this.subcategory_id,
+    this.name});
 
-  CategoryObj.fromJson(dynamic json) {
-    id = json["id"];
+  CategorySearchData.fromJson(dynamic json) {
+    category_id = json["category_id"];
+    subcategory_id = json["subcategory_id"];
     name = json["name"];
   }
 
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
-    map["id"] = id;
+    map["category_id"] = category_id;
+    map["subcategory_id"] = subcategory_id;
     map["name"] = name;
     return map;
   }
-
 }
