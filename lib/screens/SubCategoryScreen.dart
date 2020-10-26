@@ -74,61 +74,77 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            CommonAppbarWidget(app_name, skip_for_now, () {
-              onSearchLocation(context);
-            }),
-            Container(
-              margin: EdgeInsets.only(
-                  left: space_15,
-                  top: getProportionateScreenHeight(context, space_120)),
-              child: Row(
-                children: [
-                  Text(
-                    "BEDS",
-                    style: CommonStyles.getRalewayStyle(
-                        space_15, FontWeight.w800, CommonStyles.red),
-                  ),
-                  SizedBox(
-                    height: space_15,
-                  ),
-                  Container(
-                      height: space_15,
-                      child: VerticalDivider(
-                        thickness: space_2,
-                        color: CommonStyles.grey,
-                        indent: space_3,
-                      )),
-                  Text(
-                    "FURNITURE",
-                    style: CommonStyles.getRalewayStyle(
-                        space_15, FontWeight.w800, CommonStyles.blue),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(
-                  top: getProportionateScreenHeight(context, space_160)),
-              child: GridView.count(
-                shrinkWrap: true,
-                primary: false,
-                crossAxisCount: 3,
-                children: List.generate(subCategoryListResponse.data.length, (index) {
-                  return Container(
-                    height: space_300,
-                    width: space_230,
-                    child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => NearByChildSubCategoryScreen()),
-                          );
-                        },
-                        child: SubCategoryItemWidget(subCategoryData: subCategoryListResponse.data[index],)),
-                  );
+            Column(
+              children: [
+                CommonAppbarWidget(app_name, skip_for_now, () {
+                  onSearchLocation(context);
                 }),
-              ),
+                Container(
+                  margin: EdgeInsets.only(
+                      left: space_15,
+                      bottom: space_15,
+                      top: getProportionateScreenHeight(context, space_25)),
+                  child: Row(
+                    children: [
+                      Text(
+                        "BEDS",
+                        style: CommonStyles.getRalewayStyle(
+                            space_15, FontWeight.w800, CommonStyles.red),
+                      ),
+                      SizedBox(
+                        height: space_15,
+                      ),
+                      Container(
+                          height: space_15,
+                          child: VerticalDivider(
+                            thickness: space_2,
+                            color: CommonStyles.grey,
+                            indent: space_3,
+                          )),
+                      Text(
+                        "FURNITURE",
+                        style: CommonStyles.getRalewayStyle(
+                            space_15, FontWeight.w800, CommonStyles.blue),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(
+                            top: getProportionateScreenHeight(context, space_25)),
+                        child: GridView.count(
+                          shrinkWrap: true,
+                          crossAxisCount: 2,
+                          primary: false,
+                          scrollDirection: Axis.vertical,
+                          children: List.generate(subCategoryListResponse.data.length, (index) {
+                            return Container(
+                              height: space_300,
+                              width: space_230,
+                              child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => NearByChildSubCategoryScreen()),
+                                    );
+                                  },
+                                  child: Align(
+                                      alignment: Alignment.center,
+                                      child: SubCategoryItemWidget(subCategoryData: subCategoryListResponse.data[index],))),
+                            );
+                          }),
+                        ),
+                      ),
+                      SizedBox(height: space_80,)
+                    ],
+                  ),
+                ),
+              ],
             ),
             CommonBottomNavBarWidget(),
           ],

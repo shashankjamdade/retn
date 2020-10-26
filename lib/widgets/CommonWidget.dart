@@ -912,7 +912,7 @@ class SubCategoryItemWidget extends StatelessWidget {
                   height: space_50,
                   width: space_50,
                   child: FadeInImage.assetNetwork(
-                    placeholder: "assets/images/app_img_white.png",
+                    placeholder: "assets/images/app_img.png",
                     image: subCategoryData.picture,
                   ),
                 ),
@@ -920,6 +920,7 @@ class SubCategoryItemWidget extends StatelessWidget {
                   margin: EdgeInsets.only(top: space_10),
                   child: Text(
                     subCategoryData.name,
+                    textAlign: TextAlign.center,
                     style: CommonStyles.getRalewayStyle(
                         space_15, FontWeight.w500, Colors.black),
                   ),
