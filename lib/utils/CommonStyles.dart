@@ -9,6 +9,7 @@ class CommonStyles{
   //Colors
   static const Color primaryColor = Color(0xFF003863);
   static const Color blue = Color(0xFF0089fa);
+  static const Color green = Color(0xFF72CC45);
   static const Color red = Color(0xFFff2336);
   static const Color lightGrey = Color(0xFFe5eaef);
   static const Color grey = Color(0xFF707070);
@@ -125,6 +126,7 @@ const String app_name = "Rentry";
 const String skip_for_now = "Skip for now>>";
 const String empty_username = "Please enter mobile no or Email";
 const String empty_password = "Please enter password";
+const String empty_new_password = "Please enter new password";
 const String rent_pe_tagline = "Rent pe le, Rent pe de...";
 const String empty_otp = "Please enter OTP";
 const String empty_full_name = "Please enter full name";
@@ -132,6 +134,13 @@ const String empty_mobile = "Please enter mobile no";
 const String empty_email = "Please enter email ID";
 const String empty_conf_password = "Please enter confirm password";
 const String pwd_no_match = "Password didn't match";
+const String empty_type = "Please enter type";
+const String empty_brand = "Please enter brand";
+const String empty_loren = "Please enter loren";
+const String empty_ipsum = "Please enter ipsum";
+const String empty_title = "Please enter title";
+const String empty_desc = "Please enter description";
+
 
 //Constant
 const String TYPE_FURNITURE = "TYPE_FURNITURE";

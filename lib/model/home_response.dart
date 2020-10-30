@@ -5,16 +5,16 @@
 class HomeResponse {
   bool _status;
   String _message;
-  Data _data;
+  HomeScreenData _data;
 
   bool get status => _status;
   String get message => _message;
-  Data get data => _data;
+  HomeScreenData get data => _data;
 
   HomeResponse({
       bool status,
       String message,
-      Data data}){
+    HomeScreenData data}){
     _status = status;
     _message = message;
     _data = data;
@@ -23,7 +23,7 @@ class HomeResponse {
   HomeResponse.fromJson(dynamic json) {
     _status = json["status"];
     _message = json["message"];
-    _data = json["data"] != null ? Data.fromJson(json["data"]) : null;
+    _data = json["data"] != null ? HomeScreenData.fromJson(json["data"]) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -42,7 +42,7 @@ class HomeResponse {
 /// category : [{"id":"82","name":"Fashion","slug":"fashion","description":"makeup , clothes , footwear , jewellery & all other accessories ","picture":"http://rentozo.com/uploads/category/141a23980f62bb88577e507e7d658c08.png","status":"1","top_category":"0","show_on_home":"1","created_at":"2019-10-20 07:26:46"},{"id":"81","name":"Jobs","slug":"jobs","description":"any kind of hiring and jobs","picture":"http://rentozo.com/uploads/category/685bb9cc76764fd6279de166671b847e.png","status":"1","top_category":"0","show_on_home":"1","created_at":"2019-10-20 07:20:38"},{"id":"80","name":"Electronics","slug":"electronics","description":"Things used in houses & other electronic related products.","picture":"http://rentozo.com/uploads/category/18085062e4d68d4d2e2beb23a6bd1596.png","status":"1","top_category":"0","show_on_home":"1","created_at":"2019-10-20 07:17:48"},{"id":"79","name":"Mobiles","slug":"mobiles","description":"All kind of mobiles , mobile accessories & related ads/products","picture":"http://rentozo.com/uploads/category/da1af53c3767ba140620f3f341869b5e.png","status":"1","top_category":"0","show_on_home":"1","created_at":"2019-10-20 07:11:46"},{"id":"83","name":"Bikes","slug":"bikes","description":"Bikes & All Products related to bikes & bicycles ","picture":"http://rentozo.com/uploads/category/2d4c7c260a8c0073757a056b43ed0389.png","status":"1","top_category":"0","show_on_home":"1","created_at":"2019-10-20 07:29:07"},{"id":"84","name":"Sports","slug":"sports","description":"You will find all kind of books , sports & hobbies related produts/ADs","picture":"http://rentozo.com/uploads/category/c01765545644eed94c64261d9a85f387.png","status":"1","top_category":"0","show_on_home":"1","created_at":"2019-10-20 07:31:43"},{"id":"86","name":"Property","slug":"property","description":"Includes all land properties , flats and house to be on sale or on rent","picture":"http://rentozo.com/uploads/category/abec7fff75206f79d4b0cf3428a056fc.png","status":"1","top_category":"0","show_on_home":"1","created_at":"2019-10-20 07:35:58"},{"id":"90","name":"Cars","slug":"cars","description":"Cars","picture":"http://rentozo.com/uploads/category/e3746e77cc306d02838787cff9635d2b.png","status":"1","top_category":"0","show_on_home":"1","created_at":"2019-11-09 02:52:00"},{"id":"91","name":"Services","slug":"services","description":"Services you Give to others","picture":"http://rentozo.com/uploads/category/f8ed35528092f29684a235767f68d817.png","status":"1","top_category":"0","show_on_home":"1","created_at":"2019-11-09 02:52:45"}]
 /// category_ads : [{"category_name":"Fashion","category_adslist":[{"id":"236","title":"Premium Makeup Kit","slug":"premium-makeup-kit-236","category":"82","subcategory":"56","description":"CC Cream*1pcs\r\nMask*1pcs\r\nBB Cream*1pcs                      (Natural,Light Skin,Ivory White For Opption)\r\nBlush*1pcs\r\nConcealer repair bar*1pcs     (Natural,Light Skin,Ivory White For Opption)\r\nEyeShadow Tray #04*1pcs   (If you need other # Please remark the details\r\nmascara*1pcs\r\nEyeliner*1pcs\r\nGrapefruit Fan Flour Matte Moisturizing Lipstick*1pcs\r\nThree-color eyebrow powder*1pcs","price":"100","negotiable":"0","city":"779","country":"101","state":"12","location":"Gujrat,","lang":"74.10050439999999","lat":"32.57307249999999","postalcode":"","tags":"makeup, kit, beauty","img_1":"http://rentozo.com/uploads/media_file_d4d78bccbec9071cec6e7473c0083db4.jpg","img_2":"http://rentozo.com/upload/productimage/media_file_5858ff6842c5f16636b5e36e0b575b7f.jpg","img_3":"http://rentozo.com/upload/productimage/media_file_c468859221c0f77f00f2c761254ae5ca.jpg","seller":"85","package":"7","admin_view":"0","is_featured":"1","is_status":"1","delete_request":null,"updated_date":"0000-00-00 00:00:00","created_date":"2020-05-21 13:55:44","expiry_date":"2020-06-19 23:55:44"},{"id":"235","title":"Apple Tablet On Sale In Karachi","slug":"apple-tablet-on-sale-in-karachi-235","category":"82","subcategory":"56","description":"42424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242","price":"250","negotiable":"0","city":"7","country":"101","state":"7","location":"Ashfield Mall, Liverpool Road, Ashfield NSW, Australia","lang":"151.1241597","lat":"-33.8895633","postalcode":"","tags":"","img_1":"http://rentozo.com/uploads/media_file_5748e3b2d4d3bd0ade5a9b455c09a42b.jpg","img_2":"http://rentozo.com/","img_3":"http://rentozo.com/","seller":"77","package":"6","admin_view":"0","is_featured":"1","is_status":"1","delete_request":null,"updated_date":"0000-00-00 00:00:00","created_date":"2020-04-04 20:17:20","expiry_date":"2020-05-19 06:17:20"},{"id":"232","title":"Graphic Designer","slug":"graphic-designer-232","category":"82","subcategory":"57","description":"sdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lk","price":"850","negotiable":"0","city":"702","country":"101","state":"8","location":"Ashfield Mall, Liverpool Road, Ashfield NSW, Australia","lang":"151.1241597","lat":"-33.8895633","postalcode":"","tags":"","img_1":"http://rentozo.com/uploads/media_file_42f512f5edbd2cf224b852df9a70ef87.jpg","img_2":"http://rentozo.com/","img_3":"http://rentozo.com/","seller":"77","package":"6","admin_view":"0","is_featured":"1","is_status":"1","delete_request":null,"updated_date":"0000-00-00 00:00:00","created_date":"2020-04-04 20:01:52","expiry_date":"2020-05-19 06:01:52"}]},{"category_name":"Mobiles","category_adslist":[{"id":"228","title":"Apple Tablet On Sale In Karachi","slug":"apple-tablet-on-sale-in-karachi-228","category":"79","subcategory":"68","description":"Sale in lahoreSale in lahoreSale in lahoreSale in lahoreSale in lahoreSale in lahoreSale in lahoreSale in lahoreSale in lahoreSale in lahoreSale in lahoreSale in lahoreSale in lahoreSale in lahoreSale in lahoreSale in lahoreSale in lahoreSale in lahoreSale in lahoreSale in lahore","price":"2562","negotiable":"0","city":"6","country":"101","state":"7","location":"Liari, Karachi, Pakistan","lang":"67.01034299999999","lat":"24.8784032","postalcode":"","tags":"","img_1":"http://rentozo.com/uploads/media_file_832d35447a452c1049a5d7e35a2ef59e.jpg","img_2":"http://rentozo.com/","img_3":"http://rentozo.com/","seller":"77","package":"7","admin_view":"0","is_featured":"1","is_status":"1","delete_request":null,"updated_date":"0000-00-00 00:00:00","created_date":"2020-04-04 10:59:15","expiry_date":"2020-05-03 20:59:15"}]},{"category_name":"Cars","category_adslist":[{"id":"231","title":"Audi Car In Gujrat With All Fac","slug":"audi-car-in-gujrat-with-all-fac-231","category":"90","subcategory":"81","description":"sdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lksdfkjasd a;lksdfj ;lk","price":"7800","negotiable":"1","city":"3","country":"101","state":"6","location":"Shaheed Chowk, Pakistan","lang":"72.92686259999999","lat":"29.5947709","postalcode":"","tags":"","img_1":"http://rentozo.com/uploads/media_file_a54a585a87804e3a7d07363d0b9351e0.jpg","img_2":"http://rentozo.com/","img_3":"http://rentozo.com/","seller":"77","package":"24","admin_view":"0","is_featured":"2","is_status":"1","delete_request":null,"updated_date":"0000-00-00 00:00:00","created_date":"2020-04-04 19:58:10","expiry_date":"2020-05-04 05:58:10"}]},{"category_name":"Services","category_adslist":[{"id":"230","title":"PHP Developer In Faisalable","slug":"php-developer-in-faisalable-230","category":"91","subcategory":"78","description":"update_paypal_ad_statusupdate_paypal_ad_statusupdate_paypal_ad_statusupdate_paypal_ad_statusupdate_paypal_ad_statusupdate_paypal_ad_statusupdate_paypal_ad_statusupdate_paypal_ad_statusupdate_paypal_ad_statusupdate_paypal_ad_statusupdate_paypal_ad_statusupdate_paypal_ad_statusupdate_paypal_ad_statusupdate_paypal_ad_status","price":"89500","negotiable":"1","city":"5","country":"101","state":"6","location":"Ghanta Ghar, Clock Tower Roundabout، Faisalabad, Pakistan","lang":"73.07910319999999","lat":"31.4187454","postalcode":"","tags":"","img_1":"http://rentozo.com/uploads/media_file_8ac7d635d6582767792b645fb16c24dd.jpg","img_2":"http://rentozo.com/","img_3":"http://rentozo.com/","seller":"77","package":"7","admin_view":"0","is_featured":"1","is_status":"1","delete_request":null,"updated_date":"0000-00-00 00:00:00","created_date":"2020-04-04 11:21:56","expiry_date":"2020-05-03 21:21:56"}]}]
 
-class Data {
+class HomeScreenData {
   List<Banner> _banner;
   List<Category> _category;
   List<Category_ads> _categoryAds;
@@ -51,7 +51,7 @@ class Data {
   List<Category> get category => _category;
   List<Category_ads> get category_ads => _categoryAds;
 
-  Data({
+  HomeScreenData({
       List<Banner> banner,
       List<Category> category,
       List<Category_ads> category_ads}){
@@ -60,7 +60,7 @@ class Data {
     _categoryAds = category_ads;
 }
 
-  Data.fromJson(dynamic json) {
+  HomeScreenData.fromJson(dynamic json) {
     if (json["banner"] != null) {
       _banner = [];
       json["banner"].forEach((v) {

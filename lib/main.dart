@@ -9,6 +9,14 @@ import 'package:flutter_rentry_new/model/UserLocationSelected.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
 import 'package:flutter_rentry_new/screens/SplashScreen.dart';
+import 'package:flutter_rentry_new/screens/postad/ChangePasswordScreen.dart';
+import 'package:flutter_rentry_new/screens/postad/ChooseCategoryScreen.dart';
+import 'package:flutter_rentry_new/screens/postad/ExplainRentalScreen.dart';
+import 'package:flutter_rentry_new/screens/postad/LocationForAdScreen.dart';
+import 'package:flutter_rentry_new/screens/postad/RentalPriceScreen.dart';
+import 'package:flutter_rentry_new/screens/postad/SelectLocationPostAdScreen.dart';
+import 'package:flutter_rentry_new/screens/postad/SubCategoryScreen.dart';
+import 'package:flutter_rentry_new/screens/postad/UploadProductImgScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,6 +40,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       home: ScreenOne(),
     );
   }
@@ -48,7 +57,6 @@ class _ScreenOneState extends State<ScreenOne> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     checkUserLoggedInOrNot(context);
     getMyCurrentLocation();
@@ -93,7 +101,7 @@ class _ScreenOneState extends State<ScreenOne> {
             builder: (context, state) {
           return SafeArea(
             child: Scaffold(
-              body: isLogin ? HomeScreen() : SplashScreen(),
+              body: isLogin ? LocationForAdScreen() : SplashScreen(),
             ),
           );
         }),

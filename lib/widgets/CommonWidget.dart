@@ -164,6 +164,42 @@ class CommonAppbarWidget extends StatelessWidget {
 }
 
 //TextField
+class NormalTextInputWidget extends StatelessWidget {
+  TextEditingController textEditingController;
+  String hintText;
+  bool isPassword;
+  Function validatorFun;
+  TextInputType textInputType;
+
+  NormalTextInputWidget(this.textEditingController, this.hintText, this.isPassword,
+      this.validatorFun, this.textInputType);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: getProportionateScreenHeight(context, space_40),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Flexible(
+            child: TextFormField(
+              validator: validatorFun,
+              obscureText: isPassword,
+              controller: textEditingController,
+              keyboardType: textInputType,
+              decoration: InputDecoration(
+                hintText: hintText,
+                filled: true,
+                fillColor: Colors.transparent,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class TextInputWidget extends StatelessWidget {
   TextEditingController textEditingController;
   String labelText;
