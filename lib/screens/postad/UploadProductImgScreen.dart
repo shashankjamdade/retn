@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rentry_new/screens/postad/RentalPriceScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
@@ -162,7 +163,13 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
                 ),
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => RentalPriceScreen()),
+                  );
+                },
                 child: Container(
                   margin: EdgeInsets.only(
                       left: space_15,

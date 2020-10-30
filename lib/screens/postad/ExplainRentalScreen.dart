@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rentry_new/screens/postad/UploadProductImgScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
@@ -150,6 +151,11 @@ class _ExplainRentalScreenState extends State<ExplainRentalScreen> {
     } else if (descriptionController.text.trim().isEmpty) {
       showSnakbar(_scaffoldKey, empty_desc);
     }  else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => UploadProductImgScreen()),
+      );
       //API hit
 //      authenticationBloc.dispatch(LoginEvent(loginInfoModel: testLogin));
 //      BlocProvider.of<AuthenticationBloc>(_context)

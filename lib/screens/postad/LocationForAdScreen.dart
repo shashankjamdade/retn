@@ -130,12 +130,6 @@ class _LocationForAdScreenState extends State<LocationForAdScreen> {
   }
 
   void onSubmit() {
-    if (priceController.text.trim().isEmpty) {
-      showSnakbar(_scaffoldKey, empty_type);
-    }  else {
-      //API hit
-//      authenticationBloc.dispatch(LoginEvent(loginInfoModel: testLogin));
-//      BlocProvider.of<AuthenticationBloc>(_context)
-    }
+
   }
 }

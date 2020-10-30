@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rentry_new/screens/postad/LocationForAdScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
@@ -131,7 +132,11 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      onSubmit();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LocationForAdScreen()),
+                      );
                     },
                     child: Container(
                       margin: EdgeInsets.only(

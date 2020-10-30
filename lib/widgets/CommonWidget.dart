@@ -14,6 +14,7 @@ import 'package:flutter_rentry_new/screens/NearByChildSubCategoryScreen.dart';
 import 'package:flutter_rentry_new/screens/ProfileScreen.dart';
 import 'package:flutter_rentry_new/screens/SearchLocationScreen.dart';
 import 'package:flutter_rentry_new/screens/SubCategoryScreen.dart';
+import 'package:flutter_rentry_new/screens/postad/ChooseCategoryScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 
@@ -1337,31 +1338,39 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                 ),
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child: Container(
-                    child: Column(
-                      children: [
-                        Container(
-                          height: space_70,
-                          width: space_70,
-                          margin: EdgeInsets.only(top: space_40),
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: CommonStyles.lightGrey
-                          ),
-                          child: Center(
-                            child:  ImageIcon(
-                              AssetImage(
-                                "assets/images/bottom_nav_post_rent.png",
+                  child: GestureDetector(
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ChooseCategoryScreen()),
+                      );
+                    },
+                    child: Container(
+                      child: Column(
+                        children: [
+                          Container(
+                            height: space_70,
+                            width: space_70,
+                            margin: EdgeInsets.only(top: space_40),
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: CommonStyles.lightGrey
+                            ),
+                            child: Center(
+                              child:  ImageIcon(
+                                AssetImage(
+                                  "assets/images/bottom_nav_post_rent.png",
+                                ),
+                                color: CommonStyles.primaryColor,
                               ),
-                              color: CommonStyles.primaryColor,
                             ),
                           ),
-                        ),
-                        Padding(padding: EdgeInsets.only(top: space_10, bottom: space_5),
-                          child: Text("POST RENT",  style: CommonStyles.getRalewayStyle(
-                              space_10, FontWeight.w400, Colors.white),),
-                        )
-                      ],
+                          Padding(padding: EdgeInsets.only(top: space_10, bottom: space_5),
+                            child: Text("POST RENT",  style: CommonStyles.getRalewayStyle(
+                                space_10, FontWeight.w400, Colors.white),),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),

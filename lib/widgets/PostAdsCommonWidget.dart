@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/screens/SubCategoryScreen.dart';
+import 'package:flutter_rentry_new/screens/postad/PostAdsSubCategoryScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 
@@ -69,11 +70,11 @@ class PostAdCategoryGridWidget extends StatelessWidget {
             return Container(
               child: InkWell(
                 onTap: () {
-//                  Navigator.push(
-//                    context,
-//                    MaterialPageRoute(
-//                        builder: (context) => SubCategoryScreen(categoryId:  homeResponse.data.category[index].id,)),
-//                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PostAdsSubCategoryScreen(categoryId:  "82",)),
+                  );
                 },
                 child: Container(
                   decoration: BoxDecoration(

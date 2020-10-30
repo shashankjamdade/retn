@@ -15,7 +15,7 @@ import 'package:flutter_rentry_new/screens/postad/ExplainRentalScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/LocationForAdScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/RentalPriceScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/SelectLocationPostAdScreen.dart';
-import 'package:flutter_rentry_new/screens/postad/SubCategoryScreen.dart';
+import 'package:flutter_rentry_new/screens/postad/PostAdsSubCategoryScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/UploadProductImgScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:geolocator/geolocator.dart';
@@ -101,7 +101,7 @@ class _ScreenOneState extends State<ScreenOne> {
             builder: (context, state) {
           return SafeArea(
             child: Scaffold(
-              body: isLogin ? LocationForAdScreen() : SplashScreen(),
+              body: isLogin ? HomeScreen() : SplashScreen(),
             ),
           );
         }),
