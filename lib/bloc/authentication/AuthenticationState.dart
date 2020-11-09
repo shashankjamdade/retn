@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_rentry_new/model/GoogleFbLoginResponse.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/model/register_response.dart';
 
@@ -37,6 +38,13 @@ class LoginResAuthenticationState extends AuthenticationState {
   LoginResAuthenticationState({@required this.res});
   @override
   List<LoginResponse> get props => [res];
+}
+
+class GoogleFbLoginResAuthenticationState extends AuthenticationState {
+  final res;
+  GoogleFbLoginResAuthenticationState({@required this.res});
+  @override
+  List<GoogleFbLoginResponse> get props => [res];
 }
 
 class RegisterResAuthenticationState extends AuthenticationState {

@@ -10,6 +10,7 @@ const double space_5 = 5.0;
 const double space_8 = 8.0;
 const double space_10 = 10.0;
 const double space_12 = 12.0;
+const double space_13 = 13.0;
 const double space_14 = 14.0;
 const double space_15 = 15.0;
 const double space_16 = 16.0;

@@ -146,6 +146,7 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
                           top: space_15),
                       height: space_50,
                       decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(space_5),
                         color: CommonStyles.blue,
                       ),
                       child: Center(

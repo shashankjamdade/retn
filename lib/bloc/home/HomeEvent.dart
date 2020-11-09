@@ -72,3 +72,56 @@ class NearbySubChildCategoryListReqEvent extends HomeEvent{
   @override
   List<Object> get props => [token, categoryId, subcategory_id, radius, lat, lng];
 }
+
+
+class GetCategoryListEvent extends HomeEvent{
+  final String token;
+  GetCategoryListEvent(
+      {@required this.token});
+
+  @override
+  List<Object> get props => [token];
+}
+
+
+class GetAllPackageListEvent extends HomeEvent{
+  final String token;
+  GetAllPackageListEvent(
+      {@required this.token});
+
+  @override
+  List<Object> get props => [token];
+}
+
+
+class GetNotificationListEvent extends HomeEvent{
+  final String token;
+  GetNotificationListEvent(
+      {@required this.token});
+
+  @override
+  List<Object> get props => [token];
+}
+
+
+class GetUserProfileDataEvent extends HomeEvent{
+  final String token;
+  GetUserProfileDataEvent(
+      {@required this.token});
+
+  @override
+  List<Object> get props => [token];
+}
+
+
+class ChangePwdEvent extends HomeEvent{
+  final String token;
+  final String pwd;
+  final String newpwd;
+  ChangePwdEvent(
+      {@required this.token, @required this.pwd, @required this.newpwd});
+
+  @override
+  List<Object> get props => [token];
+}
+

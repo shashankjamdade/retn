@@ -118,6 +118,7 @@ class _ExplainRentalScreenState extends State<ExplainRentalScreen> {
                       margin: EdgeInsets.only(left: space_15, right: space_15, bottom: space_35, top: space_15),
                       height: space_50,
                       decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(space_5),
                         color: CommonStyles.blue,
                       ),
                       child: Center(

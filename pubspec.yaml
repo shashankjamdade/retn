@@ -32,6 +32,9 @@ dependencies:
   http: ^0.12.2
   carousel_slider: ^2.3.1
   image: ^2.1.18
+  flutter_facebook_login: ^3.0.0
+  google_sign_in: ^4.5.5
+  dio: ^3.0.10
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

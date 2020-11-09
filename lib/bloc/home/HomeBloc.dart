@@ -42,6 +42,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is NearbySubChildCategoryListReqEvent) {
       yield ProgressState();
       yield* callNearbySubChildCategoryListApi(event.token, event.categoryId, event.subcategory_id, event.radius, event.lat, event.lng);
+    } else if (event is GetCategoryListEvent) {
+      yield ProgressState();
+      yield* callGetCategoryApi(event.token);
+    } else if (event is GetAllPackageListEvent) {
+      yield ProgressState();
+      yield* callGetAllPackageListApi(event.token);
+    } else if (event is GetNotificationListEvent) {
+      yield ProgressState();
+      yield* callGetNotificationListApi(event.token);
+    }else if (event is GetUserProfileDataEvent) {
+      yield ProgressState();
+      yield* callGetUserProfileApi(event.token);
+    }else if (event is ChangePwdEvent) {
+      yield ProgressState();
+      yield* callChangePwdApi(event.token, event.pwd, event.newpwd);
     }
   }
 
@@ -137,6 +152,88 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       yield NearbySubChildCategoryListResState(res: nearbySubChildCategoryListResponse);
     } catch (e) {
       debugPrint("Exception while nearbySubChildCategoryListResponse ${e.toString()}");
+    }
+  }
+
+
+  Stream<HomeState> callGetCategoryApi(
+      String token) async* {
+    try {
+      homeRepository =
+      homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "GetCategoryResponse ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final getCategoryResponse =
+      await homeRepository.callGetCategoryListApi(token);
+      debugPrint("GetCategoryResponse ${jsonEncode(getCategoryResponse)}");
+      yield GetAllCategoryListResState(res: getCategoryResponse);
+    } catch (e) {
+      debugPrint("Exception while GetCategoryResponse ${e.toString()}");
+    }
+  }
+
+
+  Stream<HomeState> callGetAllPackageListApi(
+      String token) async* {
+    try {
+      homeRepository =
+      homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "GetAllPackageListResponse ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final getAllPackageListResponse =
+      await homeRepository.callGetAllPackageListApi(token);
+      debugPrint("GetAllPackageListResponse ${jsonEncode(getAllPackageListResponse)}");
+      yield GetAllPackageListResState(res: getAllPackageListResponse);
+    } catch (e) {
+      debugPrint("Exception while GetAllPackageListResponse ${e.toString()}");
+    }
+  }
+
+
+  Stream<HomeState> callGetNotificationListApi(
+      String token) async* {
+    try {
+      homeRepository =
+      homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callGetNotificationListApi ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final getNotificationListRes =
+      await homeRepository.callGetNotificationListApi(token);
+      debugPrint("callGetNotificationListApi ${jsonEncode(getNotificationListRes)}");
+      yield GetNotificationListResState(res: getNotificationListRes);
+    } catch (e) {
+      debugPrint("Exception while callGetNotificationListApi ${e.toString()}");
+    }
+  }
+
+  Stream<HomeState> callGetUserProfileApi(
+      String token) async* {
+    try {
+      homeRepository =
+      homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callGetUserProfileApi ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final getUserProfileRes =
+      await homeRepository.callUserProfileApi(token);
+      debugPrint("callGetUserProfileApi ${jsonEncode(getUserProfileRes)}");
+      yield GetUserProfileResState(res: getUserProfileRes);
+    } catch (e) {
+      debugPrint("Exception while callGetUserProfileApi ${e.toString()}");
+    }
+  }
+  Stream<HomeState> callChangePwdApi(
+      String token, String pwd, String newPwd) async* {
+    try {
+      homeRepository =
+      homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callChangePwdApi ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final changePwdRes =
+      await homeRepository.callChangePwd(token, pwd, newPwd);
+      debugPrint("callChangePwdApi ${jsonEncode(changePwdRes)}");
+      yield ChangePwdResState(res: changePwdRes);
+    } catch (e) {
+      debugPrint("Exception while callChangePwdApi ${e.toString()}");
     }
   }
 

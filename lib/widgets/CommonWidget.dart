@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/model/get_all_package_list_response.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/model/location_search_response.dart';
 import 'package:flutter_rentry_new/model/search_sub_category_response.dart';
@@ -88,10 +89,11 @@ class CommonAppbarWidget extends StatelessWidget {
           Expanded(
             flex: 4,
             child: GestureDetector(
-              onTap: (){
+              onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SearchLocationScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => SearchLocationScreen()),
                 );
               },
               child: Container(
@@ -122,7 +124,11 @@ class CommonAppbarWidget extends StatelessWidget {
                         child: Container(
                             margin: EdgeInsets.symmetric(horizontal: space_5),
                             child: Text(
-                                StateContainer.of(context).mUserLocationSelected!=null?"${StateContainer.of(context).mUserLocationSelected.city}, ${StateContainer.of(context).mUserLocationSelected.state}":"",
+                              StateContainer.of(context)
+                                          .mUserLocationSelected !=
+                                      null
+                                  ? "${StateContainer.of(context).mUserLocationSelected.city}, ${StateContainer.of(context).mUserLocationSelected.state}"
+                                  : "",
                               style: CommonStyles.getRalewayStyle(
                                   space_12, FontWeight.w500, Colors.white),
                               maxLines: 1,
@@ -133,10 +139,11 @@ class CommonAppbarWidget extends StatelessWidget {
                     Expanded(
                       flex: 2,
                       child: GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => SearchLocationScreen()),
+                            MaterialPageRoute(
+                                builder: (context) => SearchLocationScreen()),
                           );
                         },
                         child: Container(
@@ -172,8 +179,8 @@ class NormalTextInputWidget extends StatelessWidget {
   Function validatorFun;
   TextInputType textInputType;
 
-  NormalTextInputWidget(this.textEditingController, this.hintText, this.isPassword,
-      this.validatorFun, this.textInputType);
+  NormalTextInputWidget(this.textEditingController, this.hintText,
+      this.isPassword, this.validatorFun, this.textInputType);
 
   @override
   Widget build(BuildContext context) {
@@ -432,14 +439,13 @@ class RichTextTitleBtnWidget extends StatelessWidget {
 
 //Category grid
 class CategoryGridWidget extends StatelessWidget {
-
   HomeResponse homeResponse;
 
   CategoryGridWidget(this.homeResponse);
 
   @override
   Widget build(BuildContext context) {
-    final double iconSize  = IconTheme.of(context).size;
+    final double iconSize = IconTheme.of(context).size;
     return Card(
       margin: EdgeInsets.symmetric(horizontal: space_15),
       elevation: space_3,
@@ -462,7 +468,9 @@ class CategoryGridWidget extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => SubCategoryScreen(categoryId:  homeResponse.data.category[index].id,)),
+                        builder: (context) => SubCategoryScreen(
+                              categoryId: homeResponse.data.category[index].id,
+                            )),
                   );
                 },
                 child: Container(
@@ -492,29 +500,39 @@ class CategoryGridWidget extends StatelessWidget {
                       children: [
                         FadeInImage.assetNetwork(
                           placeholder: "assets/images/app_img_white.png",
-                          image: homeResponse.data.category[index].picture, fit: BoxFit.fill,
-                          height: iconSize, width: iconSize,
+                          image: homeResponse.data.category[index].picture,
+                          fit: BoxFit.fill,
+                          height: iconSize,
+                          width: iconSize,
                         ),
 //                        Image.asset("assets/images/ic_category_vehicle.png", height: iconSize, width: iconSize,),
-                        Padding(padding: EdgeInsets.symmetric(vertical: space_5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(homeResponse.data.category[index].name.trim(), style: CommonStyles.getRalewayStyle(space_12, FontWeight.w500, CommonStyles.primaryColor),),
-                            Container(
-                                height: space_15,
-                                width: space_15,
-                                margin: EdgeInsets.only(left: space_3),
-                                decoration: BoxDecoration(
-                                  color: CommonStyles.primaryColor,
-                                  shape: BoxShape.circle
-                                ),
-                                child: Center(
-                                  child: Icon(Icons.arrow_right,color: Colors.white, size: space_12,),
-                                ))
-                          ],
-                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: space_5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                homeResponse.data.category[index].name.trim(),
+                                style: CommonStyles.getRalewayStyle(space_12,
+                                    FontWeight.w500, CommonStyles.primaryColor),
+                              ),
+                              Container(
+                                  height: space_15,
+                                  width: space_15,
+                                  margin: EdgeInsets.only(left: space_3),
+                                  decoration: BoxDecoration(
+                                      color: CommonStyles.primaryColor,
+                                      shape: BoxShape.circle),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.arrow_right,
+                                      color: Colors.white,
+                                      size: space_12,
+                                    ),
+                                  ))
+                            ],
+                          ),
                         )
                       ],
                     ),
@@ -530,8 +548,8 @@ class CategoryGridWidget extends StatelessWidget {
 }
 
 class ItemCardWidget extends StatelessWidget {
-
   Category_adslist category_adslist;
+
   ItemCardWidget({this.category_adslist});
 
   @override
@@ -540,7 +558,10 @@ class ItemCardWidget extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ItemDetailScreen(categoryName: category_adslist.slug,)),
+          MaterialPageRoute(
+              builder: (context) => ItemDetailScreen(
+                    categoryName: category_adslist.slug,
+                  )),
         );
       },
       child: Container(
@@ -564,17 +585,18 @@ class ItemCardWidget extends StatelessWidget {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(space_10),
-                              topLeft: Radius.circular(space_10)
-                            ),
+                                topRight: Radius.circular(space_10),
+                                topLeft: Radius.circular(space_10)),
                             child: Container(
                               width: space_180,
                               height: space_110,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(space_10)),
+                                  borderRadius:
+                                      BorderRadius.circular(space_10)),
                               child: FadeInImage.assetNetwork(
                                 placeholder: "assets/images/app_img_white.png",
-                                image: category_adslist.img_1, fit: BoxFit.fill,
+                                image: category_adslist.img_1,
+                                fit: BoxFit.fill,
                               ),
                             ),
                           ),
@@ -644,7 +666,7 @@ class ItemCardWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Expanded(
-                              flex:2,
+                              flex: 2,
                               child: Icon(
                                 Icons.location_on,
                                 color: CommonStyles.primaryColor,
@@ -652,14 +674,15 @@ class ItemCardWidget extends StatelessWidget {
                               ),
                             ),
                             Expanded(
-                              flex:7,
+                              flex: 7,
                               child: Padding(
-                                padding:
-                                    EdgeInsets.only(right: space_10),
+                                padding: EdgeInsets.only(right: space_10),
                                 child: Text(
                                   category_adslist.location,
-                                  style: CommonStyles.getRalewayStyle(space_12,
-                                      FontWeight.w500, CommonStyles.primaryColor),
+                                  style: CommonStyles.getRalewayStyle(
+                                      space_12,
+                                      FontWeight.w500,
+                                      CommonStyles.primaryColor),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -673,7 +696,8 @@ class ItemCardWidget extends StatelessWidget {
                       ),
                       Container(
                         width: double.infinity,
-                        margin: EdgeInsets.only(left: space_5, right: space_5, bottom: space_5),
+                        margin: EdgeInsets.only(
+                            left: space_5, right: space_5, bottom: space_5),
                         padding: EdgeInsets.symmetric(vertical: space_8),
                         decoration: BoxDecoration(
                             color: CommonStyles.blue,
@@ -730,8 +754,8 @@ class ItemCardWidget extends StatelessWidget {
 }
 
 class ItemCardNoMarginWidget extends StatelessWidget {
-
   Category_adslist category_adslist;
+
   ItemCardNoMarginWidget({this.category_adslist});
 
   @override
@@ -740,7 +764,9 @@ class ItemCardNoMarginWidget extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ItemDetailScreen(categoryName: category_adslist.slug)),
+          MaterialPageRoute(
+              builder: (context) =>
+                  ItemDetailScreen(categoryName: category_adslist.slug)),
         );
       },
       child: Container(
@@ -763,16 +789,17 @@ class ItemCardNoMarginWidget extends StatelessWidget {
                           ClipRRect(
                             borderRadius: BorderRadius.only(
                                 topRight: Radius.circular(space_10),
-                                topLeft: Radius.circular(space_10)
-                            ),
+                                topLeft: Radius.circular(space_10)),
                             child: Container(
                               width: space_200,
                               height: space_110,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(space_10)),
+                                  borderRadius:
+                                      BorderRadius.circular(space_10)),
                               child: FadeInImage.assetNetwork(
                                 placeholder: "assets/images/app_img_white.png",
-                                image: category_adslist.img_1, fit: BoxFit.fill,
+                                image: category_adslist.img_1,
+                                fit: BoxFit.fill,
                               ),
                             ),
                           ),
@@ -840,7 +867,7 @@ class ItemCardNoMarginWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Expanded(
-                              flex:2,
+                              flex: 2,
                               child: Icon(
                                 Icons.location_on,
                                 color: CommonStyles.primaryColor,
@@ -848,14 +875,15 @@ class ItemCardNoMarginWidget extends StatelessWidget {
                               ),
                             ),
                             Expanded(
-                              flex:7,
+                              flex: 7,
                               child: Padding(
-                                padding:
-                                EdgeInsets.only(right: space_10),
+                                padding: EdgeInsets.only(right: space_10),
                                 child: Text(
                                   category_adslist.location,
-                                  style: CommonStyles.getRalewayStyle(space_12,
-                                      FontWeight.w500, CommonStyles.primaryColor),
+                                  style: CommonStyles.getRalewayStyle(
+                                      space_12,
+                                      FontWeight.w500,
+                                      CommonStyles.primaryColor),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -869,7 +897,8 @@ class ItemCardNoMarginWidget extends StatelessWidget {
                       ),
                       Container(
                         width: double.infinity,
-                        margin: EdgeInsets.only(left: space_5, right: space_5, bottom: space_5),
+                        margin: EdgeInsets.only(
+                            left: space_5, right: space_5, bottom: space_5),
                         padding: EdgeInsets.symmetric(vertical: space_8),
                         decoration: BoxDecoration(
                             color: CommonStyles.blue,
@@ -926,8 +955,8 @@ class ItemCardNoMarginWidget extends StatelessWidget {
 }
 
 class SubCategoryItemWidget extends StatelessWidget {
-
   SubCategoryData subCategoryData;
+
   SubCategoryItemWidget({this.subCategoryData});
 
   @override
@@ -1104,41 +1133,40 @@ class RatingIndicatorWidget extends StatelessWidget {
           Expanded(
               flex: 6,
               child: Container(
-                padding: EdgeInsets.only(right: space_3),
-                child: Stack(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 10,
-                          child: Container(
-                            height: space_5,
-                            color: CommonStyles.grey.withOpacity(0.3),
+                  padding: EdgeInsets.only(right: space_3),
+                  child: Stack(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 10,
+                            child: Container(
+                              height: space_5,
+                              color: CommonStyles.grey.withOpacity(0.3),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 6,
-                          child: Container(
-                            height: space_5,
-                            color: CommonStyles.darkAmber,
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 6,
+                            child: Container(
+                              height: space_5,
+                              color: CommonStyles.darkAmber,
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          flex: 4,
-                          child: Container(
-                            height: space_5,
-                            color: Colors.transparent,
+                          Expanded(
+                            flex: 4,
+                            child: Container(
+                              height: space_5,
+                              color: Colors.transparent,
+                            ),
                           ),
-                        ),
-                      ],
-                    )
-                  ],
-                )
-              )),
+                        ],
+                      )
+                    ],
+                  ))),
           Expanded(
             flex: 3,
             child: Align(
@@ -1158,82 +1186,88 @@ class RatingIndicatorWidget extends StatelessWidget {
 
 //Filter
 class FilterSortByWidget extends StatelessWidget {
-
   String title;
   String type;
   String selectedValue = "Low to High";
   List<String> sortingList = List();
   Function(String, String) onDropDownValueChanged;
 
-  FilterSortByWidget(this.title, this.type, this.selectedValue, this.sortingList, this.onDropDownValueChanged);
+  FilterSortByWidget(this.title, this.type, this.selectedValue,
+      this.sortingList, this.onDropDownValueChanged);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: Row(
-          children: [
-            Expanded(
-              flex: 6,
-              child: Container(
-                child: Text(
-                  "By Price",
-                  style: CommonStyles.getRalewayStyle(
-                      space_14, FontWeight.w800, Colors.black),
-                ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 6,
+            child: Container(
+              child: Text(
+                "By Price",
+                style: CommonStyles.getRalewayStyle(
+                    space_14, FontWeight.w800, Colors.black),
               ),
             ),
-            Expanded(
-              flex: 4,
-              child: Container(
-                margin: EdgeInsets.only(right: space_15),
-                child: DropdownButtonFormField(
-                  decoration: InputDecoration(
-                      enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white))),
-                  value: selectedValue,
+          ),
+          Expanded(
+            flex: 4,
+            child: Container(
+              margin: EdgeInsets.only(right: space_15),
+              child: DropdownButtonFormField(
+                decoration: InputDecoration(
+                    enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white))),
+                value: selectedValue,
 //                            hint: Text(
 //                              "Select Highest Education",
 //                              style: TextStyle(color: Colors.black),
 //                            ),
-                  iconSize: 20.0,
-                  icon: Icon(Icons.keyboard_arrow_down, color: Colors.black,),
-//                  decoration: InputDecoration.collapsed(hintText: ''),
-                  items: (sortingList != null && sortingList.length > 0)
-                      ? sortingList.map(
-                        (val) {
-                      return DropdownMenuItem<String>(
-                        value: val,
-                        child: Container(
-                            padding: EdgeInsets.only(left: space_10),
-                            child: Text(val, style: CommonStyles.getRalewayStyle(space_12, FontWeight.w600, Colors.black),)),
-                      );
-                    },
-                  ).toList()
-                      : ['No List'].map(
-                        (val) {
-                      return DropdownMenuItem<String>(
-                        value: val,
-                        child: Text(val),
-                      );
-                    },
-                  ).toList(),
-                  onChanged: (value) {
-                    onDropDownValueChanged(type, value);
-                  },
+                iconSize: 20.0,
+                icon: Icon(
+                  Icons.keyboard_arrow_down,
+                  color: Colors.black,
                 ),
+//                  decoration: InputDecoration.collapsed(hintText: ''),
+                items: (sortingList != null && sortingList.length > 0)
+                    ? sortingList.map(
+                        (val) {
+                          return DropdownMenuItem<String>(
+                            value: val,
+                            child: Container(
+                                padding: EdgeInsets.only(left: space_10),
+                                child: Text(
+                                  val,
+                                  style: CommonStyles.getRalewayStyle(
+                                      space_12, FontWeight.w600, Colors.black),
+                                )),
+                          );
+                        },
+                      ).toList()
+                    : ['No List'].map(
+                        (val) {
+                          return DropdownMenuItem<String>(
+                            value: val,
+                            child: Text(val),
+                          );
+                        },
+                      ).toList(),
+                onChanged: (value) {
+                  onDropDownValueChanged(type, value);
+                },
               ),
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 }
 
-
 class BottomBarItemWidget extends StatelessWidget {
-
   String title, assetImg;
   bool isVisible = true;
+
   BottomBarItemWidget(this.title, this.assetImg, {this.isVisible});
 
   @override
@@ -1247,14 +1281,14 @@ class BottomBarItemWidget extends StatelessWidget {
               AssetImage(
                 assetImg,
               ),
-              color: isVisible?Colors.white:CommonStyles.primaryColor,
+              color: isVisible ? Colors.white : CommonStyles.primaryColor,
             ),
             Padding(
               padding: EdgeInsets.only(top: space_3),
               child: Text(
                 title,
-                style: CommonStyles.getRalewayStyle(
-                    space_8, FontWeight.w400, isVisible?Colors.white:CommonStyles.primaryColor),
+                style: CommonStyles.getRalewayStyle(space_8, FontWeight.w400,
+                    isVisible ? Colors.white : CommonStyles.primaryColor),
               ),
             )
           ],
@@ -1268,7 +1302,7 @@ class CommonBottomNavBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child:  Container(
+      child: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -1285,7 +1319,9 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                             color: Colors.transparent,
                             image: DecorationImage(
-                                image: AssetImage("assets/images/bottom_back.png"), fit: BoxFit.fitWidth)),
+                                image:
+                                    AssetImage("assets/images/bottom_back.png"),
+                                fit: BoxFit.fitWidth)),
                         child: Container(
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -1293,42 +1329,64 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                             children: [
                               Expanded(
                                   child: GestureDetector(
-                                      onTap: (){
+                                      onTap: () {
                                         Navigator.push(
                                           context,
-                                          MaterialPageRoute(builder: (context) => HomeScreen()),
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  HomeScreen()),
                                         );
                                       },
-                                      child: BottomBarItemWidget("HOME", "assets/images/nav_home_icon.png", isVisible: true,))),
+                                      child: BottomBarItemWidget(
+                                        "HOME",
+                                        "assets/images/nav_home_icon.png",
+                                        isVisible: true,
+                                      ))),
                               Expanded(
                                   child: GestureDetector(
-                                      onTap: (){
+                                      onTap: () {
                                         Navigator.push(
                                           context,
-                                          MaterialPageRoute(builder: (context) => ChatHomeScreen()),
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ChatHomeScreen()),
                                         );
                                       },
-                                      child: BottomBarItemWidget("CHAT", "assets/images/bottom_nav_chat.png", isVisible: true))),
+                                      child: BottomBarItemWidget("CHAT",
+                                          "assets/images/bottom_nav_chat.png",
+                                          isVisible: true))),
                               Expanded(
-                                  child: BottomBarItemWidget("", "assets/images/bottom_nav_nearby.png", isVisible: false,)),
+                                  child: BottomBarItemWidget(
+                                "",
+                                "assets/images/bottom_nav_nearby.png",
+                                isVisible: false,
+                              )),
                               Expanded(
                                   child: GestureDetector(
-                                      onTap: (){
+                                      onTap: () {
                                         Navigator.push(
                                           context,
-                                          MaterialPageRoute(builder: (context) => NearByChildSubCategoryScreen()),
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  NearByChildSubCategoryScreen()),
                                         );
                                       },
-                                      child: BottomBarItemWidget("NEARBY", "assets/images/bottom_nav_nearby.png", isVisible: true))),
+                                      child: BottomBarItemWidget("NEARBY",
+                                          "assets/images/bottom_nav_nearby.png",
+                                          isVisible: true))),
                               Expanded(
                                   child: GestureDetector(
-                                      onTap: (){
+                                      onTap: () {
                                         Navigator.push(
                                           context,
-                                          MaterialPageRoute(builder: (context) => ProfileScreen()),
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ProfileScreen()),
                                         );
                                       },
-                                      child: BottomBarItemWidget("LOGIN",  "assets/images/bottom_nav_login.png", isVisible: true))),
+                                      child: BottomBarItemWidget("LOGIN",
+                                          "assets/images/bottom_nav_login.png",
+                                          isVisible: true))),
                             ],
                           ),
                         ),
@@ -1339,10 +1397,11 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ChooseCategoryScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => ChooseCategoryScreen()),
                       );
                     },
                     child: Container(
@@ -1354,10 +1413,9 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                             margin: EdgeInsets.only(top: space_40),
                             decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: CommonStyles.lightGrey
-                            ),
+                                color: CommonStyles.lightGrey),
                             child: Center(
-                              child:  ImageIcon(
+                              child: ImageIcon(
                                 AssetImage(
                                   "assets/images/bottom_nav_post_rent.png",
                                 ),
@@ -1365,9 +1423,14 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Padding(padding: EdgeInsets.only(top: space_10, bottom: space_5),
-                            child: Text("POST RENT",  style: CommonStyles.getRalewayStyle(
-                                space_10, FontWeight.w400, Colors.white),),
+                          Padding(
+                            padding:
+                                EdgeInsets.only(top: space_10, bottom: space_5),
+                            child: Text(
+                              "POST RENT",
+                              style: CommonStyles.getRalewayStyle(
+                                  space_10, FontWeight.w400, Colors.white),
+                            ),
                           )
                         ],
                       ),
@@ -1383,93 +1446,87 @@ class CommonBottomNavBarWidget extends StatelessWidget {
   }
 }
 
-
 class BottomFloatingFilterBtnsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: space_100, right: space_10),
-        child: Card(
-          elevation: space_8,
-          borderOnForeground: false,
-          shape: RoundedRectangleBorder(
-              side: BorderSide(color: Colors.white),
+      child: Card(
+        elevation: space_8,
+        borderOnForeground: false,
+        shape: RoundedRectangleBorder(
+            side: BorderSide(color: Colors.white),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(space_30),
+              topRight: Radius.circular(space_30),
+              bottomRight: Radius.circular(space_30),
+              bottomLeft: Radius.circular(space_30),
+            )),
+        child: Container(
+          height: space_120,
+          width: space_60,
+          padding: EdgeInsets.all(space_10),
+          decoration: BoxDecoration(
+              color: Colors.white,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(space_30) ,
+                topLeft: Radius.circular(space_30),
                 topRight: Radius.circular(space_30),
                 bottomRight: Radius.circular(space_30),
                 bottomLeft: Radius.circular(space_30),
               )),
-          child: Container(
-            height: space_120,
-            width: space_60,
-            padding: EdgeInsets.all(space_10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(space_30) ,
-                topRight: Radius.circular(space_30),
-                bottomRight: Radius.circular(space_30),
-                bottomLeft: Radius.circular(space_30),
-              )
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                  onTap: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => FilterScreen()),
-                    );
-                  },
-                  child: Container(
-                    height: space_40,
-                    width: space_40,
-                    padding: EdgeInsets.all(space_10),
-                    decoration: BoxDecoration(
-                        color: CommonStyles.primaryColor,
-                        shape: BoxShape.circle
-                    ),
-                    child: Center(
-                      child: ImageIcon(
-                        AssetImage(
-                          "assets/images/sortby_icon_amber.png",
-                        ),
-                        color: Colors.white,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FilterScreen()),
+                  );
+                },
+                child: Container(
+                  height: space_40,
+                  width: space_40,
+                  padding: EdgeInsets.all(space_10),
+                  decoration: BoxDecoration(
+                      color: CommonStyles.primaryColor, shape: BoxShape.circle),
+                  child: Center(
+                    child: ImageIcon(
+                      AssetImage(
+                        "assets/images/sortby_icon_amber.png",
                       ),
+                      color: Colors.white,
                     ),
                   ),
                 ),
-                GestureDetector(
-                  onTap: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => FilterScreen()),
-                    );
-                  },
-                  child: Container(
-                    height: space_40,
-                    width: space_40,
-                    padding: EdgeInsets.all(space_10),
-                    decoration: BoxDecoration(
-                      color: CommonStyles.primaryColor,
-                      shape: BoxShape.circle
-                    ),
-                    child: Center(
-                      child: ImageIcon(
-                        AssetImage(
-                          "assets/images/filter_icon_amber.png",
-                        ),
-                        color: Colors.white,
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FilterScreen()),
+                  );
+                },
+                child: Container(
+                  height: space_40,
+                  width: space_40,
+                  padding: EdgeInsets.all(space_10),
+                  decoration: BoxDecoration(
+                      color: CommonStyles.primaryColor, shape: BoxShape.circle),
+                  child: Center(
+                    child: ImageIcon(
+                      AssetImage(
+                        "assets/images/filter_icon_amber.png",
                       ),
+                      color: Colors.white,
                     ),
                   ),
-                )
-              ],
-            ),
+                ),
+              )
+            ],
           ),
         ),
+      ),
     );
   }
 }
@@ -1479,81 +1536,167 @@ class BottomFloatingChatBtnsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: space_100, right: space_10),
-        child: Card(
-          elevation: space_8,
-          borderOnForeground: false,
-          shape: RoundedRectangleBorder(
-              side: BorderSide(color: Colors.white),
+      child: Card(
+        elevation: space_8,
+        borderOnForeground: false,
+        shape: RoundedRectangleBorder(
+            side: BorderSide(color: Colors.white),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(space_30),
+              topRight: Radius.circular(space_30),
+              bottomRight: Radius.circular(space_30),
+              bottomLeft: Radius.circular(space_30),
+            )),
+        child: Container(
+          height: space_120,
+          width: space_60,
+          padding: EdgeInsets.all(space_10),
+          decoration: BoxDecoration(
+              color: Colors.white,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(space_30) ,
+                topLeft: Radius.circular(space_30),
                 topRight: Radius.circular(space_30),
                 bottomRight: Radius.circular(space_30),
                 bottomLeft: Radius.circular(space_30),
               )),
-          child: Container(
-            height: space_120,
-            width: space_60,
-            padding: EdgeInsets.all(space_10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(space_30) ,
-                topRight: Radius.circular(space_30),
-                bottomRight: Radius.circular(space_30),
-                bottomLeft: Radius.circular(space_30),
-              )
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                  onTap: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ChatHomeScreen()),
-                    );
-                  },
-                  child: Container(
-                    height: space_40,
-                    width: space_40,
-                    decoration: BoxDecoration(
-                        color: CommonStyles.primaryColor,
-                        shape: BoxShape.circle
-                    ),
-                    child: Center(
-                      child: Icon(Icons.call, color: Colors.white,),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ChatHomeScreen()),
+                  );
+                },
+                child: Container(
+                  height: space_40,
+                  width: space_40,
+                  decoration: BoxDecoration(
+                      color: CommonStyles.primaryColor, shape: BoxShape.circle),
+                  child: Center(
+                    child: Icon(
+                      Icons.call,
+                      color: Colors.white,
                     ),
                   ),
                 ),
-                GestureDetector(
-                  onTap: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ChatHomeScreen()),
-                    );
-                  },
-                  child: Container(
-                    height: space_40,
-                    width: space_40,
-                    padding: EdgeInsets.all(space_10),
-                    decoration: BoxDecoration(
-                      color: CommonStyles.primaryColor,
-                      shape: BoxShape.circle
-                    ),
-                    child: Center(
-                      child: ImageIcon(
-                        AssetImage(
-                          "assets/images/bottom_nav_chat.png",
-                        ),
-                        color: Colors.white,
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ChatHomeScreen()),
+                  );
+                },
+                child: Container(
+                  height: space_40,
+                  width: space_40,
+                  padding: EdgeInsets.all(space_10),
+                  decoration: BoxDecoration(
+                      color: CommonStyles.primaryColor, shape: BoxShape.circle),
+                  child: Center(
+                    child: ImageIcon(
+                      AssetImage(
+                        "assets/images/bottom_nav_chat.png",
                       ),
+                      color: Colors.white,
                     ),
                   ),
-                )
-              ],
-            ),
+                ),
+              )
+            ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class PackageCardWidget extends StatelessWidget {
+  GetAllPackageData getAllPackageData;
+  PackageCardWidget(this.getAllPackageData);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: space_200,
+      width: space_160,
+      margin: EdgeInsets.only(left: space_10, right: space_5),
+      padding: EdgeInsets.all(space_15),
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage("assets/images/package_back.png"),
+              fit: BoxFit.fill)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "STATER",
+            style: CommonStyles.getRalewayStyle(
+                space_13, FontWeight.w600, Colors.white),
+          ),
+          Text(
+            "${getAllPackageData.title}",
+            style: CommonStyles.getMontserratStyle(
+                space_30, FontWeight.w900, Colors.white),
+          ),
+          Text(
+            "PACK",
+            style: CommonStyles.getRalewayStyle(
+                space_13, FontWeight.w500, Colors.white),
+          ),
+          SizedBox(
+            height: space_10,
+          ),
+          Expanded(
+            child: Center(
+              child: Container(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "\u20B9",
+                            style: CommonStyles.getRalewayStyle(
+                                space_15, FontWeight.w600, CommonStyles.softYellow.withOpacity(0.7)),
+                          ),
+                          Text(
+                            "${getAllPackageData.price}",
+                            style: CommonStyles.getMontserratStyle(
+                                space_35, FontWeight.w900, Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "month",
+                          style: CommonStyles.getRalewayStyle(
+                              space_15, FontWeight.w500, CommonStyles.softYellow.withOpacity(0.7)),
+                        )),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: (){},
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: space_15, vertical: space_8),
+              decoration: BoxDecoration(
+                color: CommonStyles.blue,
+                borderRadius: BorderRadius.circular(space_10)
+              ),
+              child: Center(
+                child: Text("CLAIM NOW", style: CommonStyles.getRalewayStyle(space_13, FontWeight.w500, Colors.white),),
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }

@@ -7,7 +7,11 @@ import 'package:flutter_rentry_new/bloc/authentication/AuthenticationState.dart'
 import 'package:flutter_rentry_new/bloc/authentication/AuthenticationEvent.dart';
 import 'package:flutter_rentry_new/model/UserLocationSelected.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
+import 'package:flutter_rentry_new/screens/EditProfileScreen.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
+import 'package:flutter_rentry_new/screens/NotificationListScreen.dart';
+import 'package:flutter_rentry_new/screens/PackageScreen.dart';
+import 'package:flutter_rentry_new/screens/ProfileScreen.dart';
 import 'package:flutter_rentry_new/screens/SplashScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/ChangePasswordScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/ChooseCategoryScreen.dart';

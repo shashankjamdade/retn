@@ -39,3 +39,6 @@ class SocialLoginReqAuthenticationEvent extends AuthenticationEvent{}
 
 class SuccessAuthenticationEvent extends AuthenticationEvent{}
 class FailureAuthenticationEvent extends AuthenticationEvent{}
+
+class LoginInViaFacebookEvent extends AuthenticationEvent {}
+class LoginInViaGoogleEvent extends AuthenticationEvent {}

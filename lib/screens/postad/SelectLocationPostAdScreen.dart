@@ -395,6 +395,7 @@ class _SelectLocationPostAdScreenState
                           top: space_15),
                       height: space_50,
                       decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(space_5),
                         color: CommonStyles.green,
                       ),
                       child: Center(

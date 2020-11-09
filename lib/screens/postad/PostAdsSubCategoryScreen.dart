@@ -64,6 +64,13 @@ class _PostAdsSubCategoryScreenState extends State<PostAdsSubCategoryScreen> {
               return Center(
                 child: CircularProgressIndicator(),
               );
+            }else {
+              return Container(
+                color: Colors.white,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
             }
           },
         ),

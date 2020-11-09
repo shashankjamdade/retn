@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rentry_new/model/get_category_response.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/screens/SubCategoryScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/PostAdsSubCategoryScreen.dart';
@@ -44,9 +45,9 @@ class PostAdsCommonAppbar extends StatelessWidget {
 
 class PostAdCategoryGridWidget extends StatelessWidget {
 
-//  HomeScreenData _homeScreenData;
+  GetCategoryResponse mGetCategoryResponse;
 
-//  CategoryGridWidget(this._homeScreenData);
+  PostAdCategoryGridWidget(this.mGetCategoryResponse);
 
   @override
   Widget build(BuildContext context) {
@@ -66,14 +67,14 @@ class PostAdCategoryGridWidget extends StatelessWidget {
           shrinkWrap: true,
           crossAxisCount: 3,
           primary: false,
-          children: List.generate(9, (index) {
+          children: List.generate(mGetCategoryResponse?.data?.length, (index) {
             return Container(
               child: InkWell(
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => PostAdsSubCategoryScreen(categoryId:  "82",)),
+                        builder: (context) => PostAdsSubCategoryScreen(categoryId:  mGetCategoryResponse.data[index].id,)),
                   );
                 },
                 child: Container(
@@ -81,13 +82,13 @@ class PostAdCategoryGridWidget extends StatelessWidget {
                       shape: BoxShape.rectangle,
                       border: Border(
                         top: BorderSide(
-                            width: index >= 3 && index < 6 ? space_1 : space_0,
-                            color: index >= 3 && index < 6
+                            width: index >= 3 && index < mGetCategoryResponse.data.length-3 ? space_1 : space_0,
+                            color: index >= 3 && index < mGetCategoryResponse.data.length-3
                                 ? CommonStyles.grey.withOpacity(0.5)
                                 : Colors.transparent),
                         bottom: BorderSide(
-                            width: index >= 3 && index < 6 ? space_1 : space_0,
-                            color: index >= 3 && index < 6
+                            width: index >= 3 && index < mGetCategoryResponse.data.length-3 ? space_1 : space_0,
+                            color: index >= 3 && index < mGetCategoryResponse.data.length-3
                                 ? CommonStyles.grey.withOpacity(0.5)
                                 : Colors.transparent),
                         right: BorderSide(
@@ -103,7 +104,7 @@ class PostAdCategoryGridWidget extends StatelessWidget {
                       children: [
                         FadeInImage.assetNetwork(
                           placeholder: "assets/images/app_img_white.png",
-                          image: "https://picsum.photos/250?image=9", fit: BoxFit.fill,
+                          image: mGetCategoryResponse.data[index].picture, fit: BoxFit.fill,
                           height: iconSize, width: iconSize,
                         ),
                         Padding(padding: EdgeInsets.symmetric(vertical: space_5),
@@ -111,7 +112,7 @@ class PostAdCategoryGridWidget extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text("Vehicle", style: CommonStyles.getRalewayStyle(space_12, FontWeight.w500, CommonStyles.primaryColor),),
+                              Text("${mGetCategoryResponse.data[index].name}", style: CommonStyles.getRalewayStyle(space_12, FontWeight.w500, CommonStyles.primaryColor),),
                               Container(
                                   height: space_15,
                                   width: space_15,

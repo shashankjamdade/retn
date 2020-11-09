@@ -1,5 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_rentry_new/model/common_response.dart';
+import 'package:flutter_rentry_new/model/get_all_package_list_response.dart';
+import 'package:flutter_rentry_new/model/get_category_response.dart';
+import 'package:flutter_rentry_new/model/get_notification_response.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/model/item_detail_response.dart';
 import 'package:flutter_rentry_new/model/nearby_item_list_response.dart';
@@ -8,6 +12,7 @@ import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/model/register_response.dart';
 import 'package:flutter_rentry_new/model/search_sub_category_response.dart';
 import 'package:flutter_rentry_new/model/sub_category_list_response.dart';
+import 'package:flutter_rentry_new/model/user_profile_response.dart';
 
 abstract class HomeState extends Equatable{
   @override
@@ -71,4 +76,39 @@ class NearbySubChildCategoryListResState extends HomeState {
   NearbySubChildCategoryListResState({@required this.res});
   @override
   List<NearbySubChildCategoryListResponse> get props => [res];
+}
+
+class GetAllCategoryListResState extends HomeState {
+  final res;
+  GetAllCategoryListResState({@required this.res});
+  @override
+  List<GetCategoryResponse> get props => [res];
+}
+
+class GetAllPackageListResState extends HomeState {
+  final res;
+  GetAllPackageListResState({@required this.res});
+  @override
+  List<GetAllPackageListResponse> get props => [res];
+}
+
+class GetNotificationListResState extends HomeState {
+  final res;
+  GetNotificationListResState({@required this.res});
+  @override
+  List<GetNotificationResponse> get props => [res];
+}
+
+class GetUserProfileResState extends HomeState {
+  final res;
+  GetUserProfileResState({@required this.res});
+  @override
+  List<UserProfileResponse> get props => [res];
+}
+
+class ChangePwdResState extends HomeState {
+  final res;
+  ChangePwdResState({@required this.res});
+  @override
+  List<CommonResponse> get props => [res];
 }

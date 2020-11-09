@@ -18,6 +18,7 @@ class CommonStyles{
   static const Color darkAmber = Color(0xFFFF8800);
   static const Color lightAmber = Color(0xFFFFC400);
   static const Color softGray = Color(0xFFE6E6E6);
+  static const Color softYellow = Color(0xFFFFDF31);
   static const Color secondarygrey = Colors.grey;
   static const Color yellow = Colors.yellow;
   static const Color amber = Colors.amber;
@@ -175,8 +176,24 @@ const String SUBCATEGORY_LIST_API = "/subcategorylist";
 const String SEARCH_SUBCATEGORY_LIST_API = "/searchcategorysubcategory";
 const String LOCATION_SEARCH_API = "/localtionsearch";
 const String ADS_SEARCH_API = "/searchignads";
+const String GET_ALL_RENT_TYPE = "/getallrenttype";
+const String UPDATE_PASSWORD = "/updatepassword";
 
+const String CATEGORY_API = "/category";
+const String GET_ALL_PACKAGELIST_API = "/getallpackagelist";
+const String GET_NOTIFICATION_LIST_API = "/my_notification";
+const String GET_USER_DATA = "/userdata";
+const String GENERAL_SETTINGS = "/generalsettings";
+const String GET_SELLER_INFO = "/sellerinfo";
+const String SAVE_FAVOURITE = "/savefavorite";
+const String GET_CHAT_LIST = "/chatuserlist_get";
+const String GET_CHAT_USER_LIST = "/chatuserlist_get";
+const String SEND_MESSAGE = "/sendmessage";
 
+const String LOGGEDIN_SUCCESS = "LOGGEDIN_SUCCESS";
+const String LOGGEDIN_ERROR = "LOGGEDIN_ERROR";
+const String LOGGEDIN_CANCELLED = "LOGGEDIN_CANCELLED";
+const String API_ERROR_MSG = "Something went wrong, Please try again later!";
 
 
 

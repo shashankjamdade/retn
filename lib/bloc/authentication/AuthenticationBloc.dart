@@ -32,6 +32,9 @@ class AuthenticationBloc
     }else if(event is RegisterReqAuthenticationEvent){
       yield ProgressAuthenticationState();
       yield* makeRegister(RegisterReq(event.name, event.mobile, event.email, event.password));
+    }else if(event is LoginInViaFacebookEvent){
+      yield ProgressAuthenticationState();
+      yield* makeFbLogin();
     }
   }
 
@@ -63,6 +66,17 @@ class AuthenticationBloc
       debugPrint("Exception while nativeLogin ${e.toString()}");
     }
   }
+
+  Stream<AuthenticationState> makeFbLogin() async* {
+    try {
+      final loginResponse = await _authenticationService.loginViaFacebook();
+      debugPrint("FB_LOGIN_RESStatus "+loginResponse.loginStatus.toString());
+      yield GoogleFbLoginResAuthenticationState(res: loginResponse);
+    } catch (e) {
+      debugPrint("Exception while fblogin ${e.toString()}");
+    }
+  }
+
 
 
 }

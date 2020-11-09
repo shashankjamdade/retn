@@ -18,6 +18,9 @@ import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['profile', 'email']);
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -31,6 +34,23 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController mobileEmailController;
   TextEditingController passwordController;
   AuthenticationBloc authenticationBloc = new AuthenticationBloc();
+  GoogleSignInAccount googleSignInAccount;
+
+  Future<void> signInGoogle() async {
+    try {
+      await googleSignIn.signIn();
+    } catch (error) {
+      debugPrint("GOOGLE_SIGN_IN_ERROR ${error}");
+    }
+  }
+
+  Future<void> signOutGoogle() async {
+    try {
+      await googleSignIn.signIn();
+    } catch (error) {
+      debugPrint("GOOGLE_SIGN_IN_ERROR ${error}");
+    }
+  }
 
   @override
   void initState() {
@@ -39,6 +59,12 @@ class _LoginScreenState extends State<LoginScreen> {
     _focusNode.addListener(_onLoginUserNameFocusChange);
     mobileEmailController = TextEditingController();
     passwordController = TextEditingController();
+    googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
+      setState(() {
+        googleSignInAccount = account;
+      });
+    });
+    googleSignIn.signInSilently();
   }
 
   @override
@@ -62,15 +88,16 @@ class _LoginScreenState extends State<LoginScreen> {
         bloc: authenticationBloc,
         listener: (context, state) {
           if (state is LoginResAuthenticationState) {
-//            if (_currentPosition != null && _currentAddress != null) {
-          if(state.res.status) {
-            storeResInPrefs(context, state.res);
-          }
-//            } else {
-////              _getCurrentLocation2();
-//            }
+            if (state.res.status) {
+              storeResInPrefs(context, state.res);
+            }
+            showSnakbar(_scaffoldKey, state.res.message);
           } else if (state is InitialAuthenticationState) {
-//            _getCurrentLocation2();
+            //try to fetch location
+          } else if (state is GoogleFbLoginResAuthenticationState) {
+            if (state.res.loginStatus == LOGGEDIN_SUCCESS) {
+              //Hit social Login API
+            }
           }
         },
         child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
@@ -83,19 +110,23 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void storeResInPrefs(BuildContext context, LoginResponse res) async {
-    try{
+    try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       Position position =
-      await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+          await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       LocationPermission permission = await checkPermission();
-      if(permission == LocationPermission.always || permission == LocationPermission.whileInUse){
+      if (permission == LocationPermission.always ||
+          permission == LocationPermission.whileInUse) {
         prefs.setString(USER_LOGIN_RES, jsonEncode(res));
         prefs.setString(USER_LOCATION_LAT, "${position.latitude}");
         prefs.setString(USER_LOCATION_LONG, "${position.longitude}");
-        debugPrint("LOCATION_FOUND ${position.latitude}, ${position.longitude}");
+        debugPrint(
+            "LOCATION_FOUND ${position.latitude}, ${position.longitude}");
         //access address from lat lng
-        final coordinates = new Coordinates(position.latitude, position.longitude);
-        var addresses = await Geocoder.local.findAddressesFromCoordinates(coordinates);
+        final coordinates =
+            new Coordinates(position.latitude, position.longitude);
+        var addresses =
+            await Geocoder.local.findAddressesFromCoordinates(coordinates);
         var first = addresses.first;
         UserLocationSelected userLocationSelected = new UserLocationSelected(
             address: first.addressLine,
@@ -103,8 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
             state: first.adminArea,
             coutry: first.countryName,
             mlat: position.latitude.toString(),
-            mlng: position.longitude.toString()
-        );
+            mlng: position.longitude.toString());
         StateContainer.of(context).updateUserLocation(userLocationSelected);
         prefs.setString(USER_LOCATION_ADDRESS, "${first.addressLine}");
         prefs.setString(USER_LOCATION_CITY, "${first.locality}");
@@ -116,16 +146,17 @@ class _LoginScreenState extends State<LoginScreen> {
         prefs.setString(USER_MOBILE, res.data.contact);
         prefs.setString(USER_EMAIL, res.data.email);
         prefs.setBool(IS_LOGGEDIN, true);
-        debugPrint("PREFS_STORED_LOGIN-----> ${prefs.getString(USER_LOCATION_ADDRESS)}");
+        debugPrint(
+            "PREFS_STORED_LOGIN-----> ${prefs.getString(USER_LOCATION_ADDRESS)}");
         StateContainer.of(context).updateUserInfo(res);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => HomeScreen()),
         );
-      }else{
+      } else {
         //Show dialog for location permission
       }
-    }catch(e){
+    } catch (e) {
       debugPrint("EXCEPTION in Loginscreen in storeResInPrefs ${e.toString()}");
     }
   }
@@ -140,6 +171,15 @@ class _LoginScreenState extends State<LoginScreen> {
     } else if (state is LoginResAuthenticationState) {
       //store val in prefs & inherited widget & proceed
       return getLoginForm(context, showProgress: false);
+    } else if (state is GoogleFbLoginResAuthenticationState) {
+      if (state.res.loginStatus == LOGGEDIN_SUCCESS) {
+        //Hit social Login API
+        return getLoginForm(context, showProgress: true);
+      } else {
+        showSnakbar(
+            _scaffoldKey, "Something went wrong, please try again later");
+        return getLoginForm(context, showProgress: false);
+      }
     }
   }
 
@@ -220,14 +260,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: IconButtonWidget(
                                 "Login with facebook",
                                 "assets/images/facebook.png",
-                                CommonStyles.blue,
-                                onSocialLogin)),
+                                CommonStyles.blue, () {
+                          onSocialLogin("fb");
+                        })),
                         Expanded(
                             child: IconButtonWidget(
                                 "Login with Google",
                                 "assets/images/google.png",
-                                CommonStyles.darkAmber,
-                                onSocialLogin)),
+                                CommonStyles.darkAmber, () {
+                          onSocialLogin("google");
+                        })),
                       ],
                     ),
                     SizedBox(
@@ -293,6 +335,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
   String makeFieldValidation(String type, String value) {
     switch (type) {
       case "username":
@@ -331,7 +374,11 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void onSocialLogin() {}
+  void onSocialLogin(String type) {
+    if (type == "fb") {
+      authenticationBloc..add(LoginInViaFacebookEvent());
+    }
+  }
 
   void skipFun() {
     //redirect to dashboard

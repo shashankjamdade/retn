@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "994818634451",
+    "firebase_url": "https://rentrozo-d6419.firebaseio.com",
+    "project_id": "rentrozo-d6419",
+    "storage_bucket": "rentrozo-d6419.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:994818634451:android:8a83bb564dc26f0f86da26",
+        "android_client_info": {
+          "package_name": "com.app.flutter_rentry_new"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "994818634451-2lerer6bns2vlqglco86eu2cbeq1kqd3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.flutter_rentry_new",
+            "certificate_hash": "0336f8e1aad8deab2695712132cb3535aea51394"
+          }
+        },
+        {
+          "client_id": "994818634451-2qn3i0bllpea02uvujada0s523vg2hg9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhA0hXlpU1ZqWq2NjmNPR3AbCZKjUDGq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "994818634451-2qn3i0bllpea02uvujada0s523vg2hg9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
