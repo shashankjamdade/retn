@@ -51,7 +51,6 @@ class _BannerImgCorousalWidgetState extends State<BannerImgCarousalWidget> {
                             Container(
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                color: Colors.orangeAccent,
                               ),
                               height: getProportionateScreenHeight(
                                   context, space_150),

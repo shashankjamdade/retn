@@ -6,6 +6,7 @@ import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/model/get_my_favourite_res.dart';
 import 'package:flutter_rentry_new/model/nearby_item_list_response.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
@@ -15,20 +16,18 @@ import 'package:flutter_rentry_new/widgets/CarousalCommonWidgets.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:flutter_rentry_new/widgets/ListItemCardWidget.dart';
 
-class NearByChildSubCategoryScreen extends StatefulWidget {
+class MyFavScreen extends StatefulWidget {
 
-  String categoryId , subCategoryId, radius , lat ,lng, categoryName, subCategoryName ;
-  bool isFromNearBy;
 
-  NearByChildSubCategoryScreen({this.categoryId= "", this.subCategoryId = "", this.radius= "", this.lat= "", this.lng= "", this.isFromNearBy = true, this.categoryName= "", this.subCategoryName= ""});
+  MyFavScreen();
 
   @override
-  _NearByChildSubCategoryScreenState createState() =>
-      _NearByChildSubCategoryScreenState();
+  _MyFavScreenState createState() =>
+      _MyFavScreenState();
 }
 
-class _NearByChildSubCategoryScreenState
-    extends State<NearByChildSubCategoryScreen> {
+class _MyFavScreenState
+    extends State<MyFavScreen> {
   TrackingScrollController controller = TrackingScrollController();
   HomeBloc homeBloc = new HomeBloc();
   var loginResponse;
@@ -39,7 +38,6 @@ class _NearByChildSubCategoryScreenState
   @override
   void initState() {
     super.initState();
-    debugPrint("ENTRY_ITEM_LIST_SCREEN-----${widget.categoryName}---");
   }
 
   @override
@@ -50,12 +48,6 @@ class _NearByChildSubCategoryScreenState
       token = loginResponse.data.token;
       debugPrint("ACCESSING_INHERITED ${token}");
     }
-   var selectedLoc = StateContainer.of(context).mUserLocationSelected;
-    if (selectedLoc != null && widget.isFromNearBy) {
-      mLat = selectedLoc.mlat;
-      mLng = selectedLoc.mlng;
-      debugPrint("ACCESSING_INHERITED ${mLat}, ${mLng} ------");
-    }
   }
 
   @override
@@ -63,13 +55,13 @@ class _NearByChildSubCategoryScreenState
 
     return BlocProvider(
       create: (context) =>
-          homeBloc..add(NearbySubChildCategoryListReqEvent(token: token, categoryId: widget.categoryId, subcategory_id: widget.subCategoryId, radius: widget.radius, lat: widget.lat, lng: widget.lng)),
+          homeBloc..add(GetMyFavListEvent(token: token)),
       child: BlocListener(
         bloc: homeBloc,
         listener: (context, state) {},
         child: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {
-            if(state is NearbySubChildCategoryListResState){
+            if(state is MyFavListResState){
               return setDataToUI(state.res);
             }else{
               return Container(
@@ -85,7 +77,7 @@ class _NearByChildSubCategoryScreenState
     );
   }
 
-  Widget setDataToUI(NearbySubChildCategoryListResponse res) {
+  Widget setDataToUI(GetMyFavouriteRes res) {
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -96,38 +88,6 @@ class _NearByChildSubCategoryScreenState
                 CommonAppbarWidget(app_name, skip_for_now, () {
                   onSearchLocation(context);
                 }),
-                Container(
-                  margin: EdgeInsets.only(
-                      left: space_15,
-                      top: getProportionateScreenHeight(context, space_15)),
-                  child: Row(
-                    children: [
-                      widget.isFromNearBy?
-                      Text(
-                       "BROWSE BY NEARME",
-                        style: CommonStyles.getRalewayStyle(
-                            space_15, FontWeight.w800, Colors.black),
-                      ):
-                      Container(
-                        margin: EdgeInsets.only(
-                            left: space_15,
-                            top: getProportionateScreenHeight(context, space_15)),
-                        child: widget.subCategoryName!=null && widget.subCategoryName.isNotEmpty?
-                        Row(
-                          children: [
-                            Text(widget.categoryName, style: CommonStyles.getRalewayStyle(space_15, FontWeight.w800, CommonStyles.red),),
-                            SizedBox(height: space_15,),
-                            Container(height: space_15, child: VerticalDivider(thickness: space_2, color: CommonStyles.grey, indent: space_3,)),
-                            Text(widget.subCategoryName, style: CommonStyles.getRalewayStyle(space_15, FontWeight.w800, CommonStyles.blue),),
-                            Container(height: space_15, child: VerticalDivider(thickness: space_2, color: CommonStyles.grey, indent: space_3,)),
-                            RichTextTitleWidget("SUB", "CATEGORIES"),
-                          ],
-                        ):
-                        Text(widget.categoryName, style: CommonStyles.getRalewayStyle(space_15, FontWeight.w800, CommonStyles.red),),
-                      ),
-                    ],
-                  ),
-                ),
                 SizedBox(
                   height: space_15,
                 ),

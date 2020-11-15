@@ -122,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           children: [
                                             RichTextTitleBtnWidget("TOP",
                                                 homeResponse.data.category_ads[parentPos].category_name, () {
-                                                  onViewAllClick(context, TYPE_FURNITURE);
+                                                  onViewAllClick(context, TYPE_FURNITURE,homeResponse.data.category_ads[parentPos].category_adslist[0].id, homeResponse.data.category_ads[parentPos].category_name);
                                                 }),
                                             Container(
                                               height: space_280,

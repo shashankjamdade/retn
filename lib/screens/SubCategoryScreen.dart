@@ -59,8 +59,11 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
             if(state is SubCategoryListResState){
               return setDataToUI(state.res);
             }else if(state is ProgressState){
-              return Center(
-                child: CircularProgressIndicator(),
+              return Container(
+                color: Colors.white,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
               );
             }
           },
@@ -130,7 +133,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => NearByChildSubCategoryScreen()),
+                                          builder: (context) => NearByChildSubCategoryScreen(categoryId: subCategoryListResponse.data[index].id, categoryName: subCategoryListResponse.data[index].name,)),
                                     );
                                   },
                                   child: Align(

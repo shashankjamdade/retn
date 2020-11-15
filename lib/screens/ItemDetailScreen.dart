@@ -79,6 +79,10 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
     );
   }
 
+  doNothing(){
+
+  }
+
   Widget setDataToUI(ItemDetailResponse itemDetailResponse){
     var mapUrl = getMapUrl(double.parse(itemDetailResponse.ad.lat)
         , double.parse(itemDetailResponse.ad.lang), MediaQuery.of(context).size.width.toInt() - 30
@@ -322,7 +326,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           SizedBox(
                             height: space_15,
                           ),
-                          OwnerInfo(),
+                          OwnerInfo(sellerId: itemDetailResponse.ad.seller!=null?itemDetailResponse.ad.seller:"96",),
                           SizedBox(
                             height: space_30,
                           ),
@@ -334,7 +338,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                 RichTextTitleBtnWidget(
                                     "SIMILAR", getRichText2ByType(SIMILAR_PRODUCT),
                                         () {
-                                      onViewAllClick(context, SIMILAR_PRODUCT);
+                                      itemDetailResponse.similar_ads.length>0? onViewAllClick(context, SIMILAR_PRODUCT, itemDetailResponse.similar_ads[0].id, itemDetailResponse.similar_ads[0].category):doNothing();
                                     }),
                                 Container(
                                   height: space_280,
@@ -360,7 +364,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                               children: [
                                 RichTextTitleBtnWidget(
                                     "MORE", getRichText2ByType(MORE_PRODUCTS), () {
-                                  onViewAllClick(context, MORE_PRODUCTS);
+                                  itemDetailResponse.similar_ads.length>0? onViewAllClick(context, SIMILAR_PRODUCT, itemDetailResponse.similar_ads[0].id, itemDetailResponse.similar_ads[0].category):doNothing();
                                 }),
                                 Container(
                                   height: space_280,
@@ -386,7 +390,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
             Align(
               alignment: Alignment.bottomRight,
               child: Container(
-                  child: BottomFloatingChatBtnsWidget()),
+                  child: BottomFloatingChatBtnsWidget(itemDetailResponse!=null?itemDetailResponse.ad.slug:"")),
             )
           ],
         ),

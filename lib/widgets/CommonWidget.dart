@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
@@ -5,8 +7,12 @@ import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/model/get_all_package_list_response.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/model/location_search_response.dart';
+import 'package:flutter_rentry_new/model/save_favourite_res.dart';
 import 'package:flutter_rentry_new/model/search_sub_category_response.dart';
+import 'package:flutter_rentry_new/model/seller_info_res.dart';
 import 'package:flutter_rentry_new/model/sub_category_list_response.dart';
+import 'package:flutter_rentry_new/repository/HomeRepository.dart';
+import 'package:flutter_rentry_new/screens/ChatDetailScreen.dart';
 import 'package:flutter_rentry_new/screens/ChatHomeScreen.dart';
 import 'package:flutter_rentry_new/screens/FilterScreen.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
@@ -14,10 +20,16 @@ import 'package:flutter_rentry_new/screens/ItemDetailScreen.dart';
 import 'package:flutter_rentry_new/screens/NearByChildSubCategoryScreen.dart';
 import 'package:flutter_rentry_new/screens/ProfileScreen.dart';
 import 'package:flutter_rentry_new/screens/SearchLocationScreen.dart';
+import 'package:flutter_rentry_new/screens/SellerInfoScreen.dart';
 import 'package:flutter_rentry_new/screens/SubCategoryScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/ChooseCategoryScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
+import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';  //for date format
+
+
 
 class AuthPageHeaderWidget extends StatelessWidget {
   String text1;
@@ -547,10 +559,23 @@ class CategoryGridWidget extends StatelessWidget {
   }
 }
 
-class ItemCardWidget extends StatelessWidget {
+class ItemCardWidget extends StatefulWidget {
   Category_adslist category_adslist;
 
   ItemCardWidget({this.category_adslist});
+
+  @override
+  _ItemCardWidgetState createState() => _ItemCardWidgetState();
+}
+
+class _ItemCardWidgetState extends State<ItemCardWidget> {
+
+  bool isLiked  = false;
+  @override
+  void initState() {
+    super.initState();
+//    isLiked = widget.
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -560,7 +585,7 @@ class ItemCardWidget extends StatelessWidget {
           context,
           MaterialPageRoute(
               builder: (context) => ItemDetailScreen(
-                    categoryName: category_adslist.slug,
+                    categoryName: widget.category_adslist.slug,
                   )),
         );
       },
@@ -595,7 +620,7 @@ class ItemCardWidget extends StatelessWidget {
                                       BorderRadius.circular(space_10)),
                               child: FadeInImage.assetNetwork(
                                 placeholder: "assets/images/app_img_white.png",
-                                image: category_adslist.img_1,
+                                image: widget.category_adslist.img_1,
                                 fit: BoxFit.fill,
                               ),
                             ),
@@ -603,18 +628,26 @@ class ItemCardWidget extends StatelessWidget {
                           Positioned(
                             top: 0.0,
                             right: 0.0,
-                            child: Container(
-                              height: space_50,
-                              width: space_50,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.transparent,
-                              ),
-                              child: Center(
-                                child: Image.asset(
-                                  "assets/images/heart.png",
-                                  width: space_22,
-                                  height: space_22,
+                            child: GestureDetector(
+                              onTap: (){
+                                new HomeRepository().callSavefavouriteApi(StateContainer.of(context).mLoginResponse.data.token, widget.category_adslist.id);
+                                setState(() {
+                                  isLiked = !isLiked;
+                                });
+                              },
+                              child: Container(
+                                height: space_50,
+                                width: space_50,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.transparent,
+                                ),
+                                child: Center(
+                                  child: Image.asset(
+                                    isLiked?"assets/images/heart.png":"assets/images/heart_grey.png",
+                                    width: space_22,
+                                    height: space_22,
+                                  ),
                                 ),
                               ),
                             ),
@@ -627,7 +660,7 @@ class ItemCardWidget extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: space_5),
                         child: Text(
-                          category_adslist.title,
+                          widget.category_adslist.title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: CommonStyles.getRalewayStyle(
@@ -643,7 +676,7 @@ class ItemCardWidget extends StatelessWidget {
                           child: Container(
                             height: space_30,
                             child: Text(
-                              category_adslist.description,
+                              widget.category_adslist.description,
                               style: CommonStyles.getRalewayStyle(
                                   space_12, FontWeight.w500, Colors.black),
                               maxLines: 2,
@@ -678,7 +711,7 @@ class ItemCardWidget extends StatelessWidget {
                               child: Padding(
                                 padding: EdgeInsets.only(right: space_10),
                                 child: Text(
-                                  category_adslist.location,
+                                  widget.category_adslist.location,
                                   style: CommonStyles.getRalewayStyle(
                                       space_12,
                                       FontWeight.w500,
@@ -706,7 +739,7 @@ class ItemCardWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "${category_adslist.price}/",
+                              "${widget.category_adslist.price}/",
                               style: CommonStyles.getMontserratStyle(
                                   space_15, FontWeight.w800, Colors.white),
                               maxLines: 1,
@@ -753,20 +786,32 @@ class ItemCardWidget extends StatelessWidget {
   }
 }
 
-class ItemCardNoMarginWidget extends StatelessWidget {
+class ItemCardNoMarginWidget extends StatefulWidget {
   Category_adslist category_adslist;
 
   ItemCardNoMarginWidget({this.category_adslist});
 
   @override
+  _ItemCardNoMarginWidgetState createState() => _ItemCardNoMarginWidgetState();
+}
+
+class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
+  bool isLiked  = false;
+  @override
   Widget build(BuildContext context) {
+    @override
+    void initState() {
+      super.initState();
+//    isLiked = widget.
+    }
+
     return InkWell(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  ItemDetailScreen(categoryName: category_adslist.slug)),
+                  ItemDetailScreen(categoryName: widget.category_adslist.slug)),
         );
       },
       child: Container(
@@ -798,7 +843,7 @@ class ItemCardNoMarginWidget extends StatelessWidget {
                                       BorderRadius.circular(space_10)),
                               child: FadeInImage.assetNetwork(
                                 placeholder: "assets/images/app_img_white.png",
-                                image: category_adslist.img_1,
+                                image: widget.category_adslist.img_1,
                                 fit: BoxFit.fill,
                               ),
                             ),
@@ -806,18 +851,26 @@ class ItemCardNoMarginWidget extends StatelessWidget {
                           Positioned(
                             top: 0.0,
                             right: 0.0,
-                            child: Container(
-                              height: space_50,
-                              width: space_50,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.transparent,
-                              ),
-                              child: Center(
-                                child: Image.asset(
-                                  "assets/images/heart.png",
-                                  width: space_22,
-                                  height: space_22,
+                            child: GestureDetector(
+                              onTap: (){
+                                new HomeRepository().callSavefavouriteApi(StateContainer.of(context).mLoginResponse.data.token, widget.category_adslist.id);
+                                setState(() {
+                                  isLiked = !isLiked;
+                                });
+                              },
+                              child: Container(
+                                height: space_50,
+                                width: space_50,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.transparent,
+                                ),
+                                child: Center(
+                                  child: Image.asset(
+                                    isLiked?"assets/images/heart.png":"assets/images/heart_grey.png",
+                                    width: space_22,
+                                    height: space_22,
+                                  ),
                                 ),
                               ),
                             ),
@@ -830,7 +883,9 @@ class ItemCardNoMarginWidget extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: space_5),
                         child: Text(
-                          category_adslist.title,
+                          widget.category_adslist.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: CommonStyles.getRalewayStyle(
                               space_14, FontWeight.w800, Colors.black),
                         ),
@@ -844,7 +899,7 @@ class ItemCardNoMarginWidget extends StatelessWidget {
                           child: Container(
                             height: space_30,
                             child: Text(
-                              category_adslist.description,
+                              widget.category_adslist.description!=null? widget.category_adslist.description : "",
                               style: CommonStyles.getRalewayStyle(
                                   space_12, FontWeight.w500, Colors.black),
                               maxLines: 2,
@@ -859,7 +914,7 @@ class ItemCardNoMarginWidget extends StatelessWidget {
                       Container(
                         width: double.infinity,
                         margin: EdgeInsets.symmetric(horizontal: space_5),
-                        padding: EdgeInsets.symmetric(vertical: space_3),
+                        padding: EdgeInsets.symmetric(vertical: space_1),
                         decoration: BoxDecoration(
                             color: CommonStyles.primaryColor.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(space_5)),
@@ -879,7 +934,7 @@ class ItemCardNoMarginWidget extends StatelessWidget {
                               child: Padding(
                                 padding: EdgeInsets.only(right: space_10),
                                 child: Text(
-                                  category_adslist.location,
+                                  widget.category_adslist.location!=null? widget.category_adslist.location : "",
                                   style: CommonStyles.getRalewayStyle(
                                       space_12,
                                       FontWeight.w500,
@@ -907,7 +962,7 @@ class ItemCardNoMarginWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "${category_adslist.price}/",
+                              "${widget.category_adslist.price}/",
                               style: CommonStyles.getMontserratStyle(
                                   space_15, FontWeight.w800, Colors.white),
                               maxLines: 1,
@@ -928,25 +983,6 @@ class ItemCardNoMarginWidget extends StatelessWidget {
                 ),
               ),
             ),
-//          Positioned(
-//            top: 0.0,
-//            left: 0.0,
-//            child: Container(
-//              height: space_50,
-//              width: space_50,
-//              decoration: BoxDecoration(
-//                  shape: BoxShape.circle,
-//                  color: Colors.white,
-//                  boxShadow: [BoxShadow(color: CommonStyles.grey)]),
-//              child: Center(
-//                child: Image.asset(
-//                  "assets/images/heart.png",
-//                  width: space_30,
-//                  height: space_30,
-//                ),
-//              ),
-//            ),
-//          )
           ],
         ),
       ),
@@ -1001,8 +1037,20 @@ class SubCategoryItemWidget extends StatelessWidget {
 }
 
 class OwnerInfo extends StatelessWidget {
+  String sellerId;
+  String profilePath;
+  String username;
+  String createdDate;
+  String rating;
+  String sinceDate;
+  OwnerInfo({this.sellerId,this.profilePath ="",this.username="",this.createdDate="",this.rating="",});
+
   @override
   Widget build(BuildContext context) {
+    if(createdDate!=null && createdDate.isNotEmpty) {
+      DateFormat dateFormatter = new DateFormat('dd MMM yyyy');
+      sinceDate = dateFormatter.format(DateTime.parse(createdDate));
+    }
     return Container(
       child: ListTile(
         leading: Container(
@@ -1012,7 +1060,7 @@ class OwnerInfo extends StatelessWidget {
             borderRadius: BorderRadius.circular(space_10),
             child: FadeInImage.assetNetwork(
               placeholder: "assets/images/app_img.png",
-              image: 'https://picsum.photos/250?image=9',
+              image: profilePath!=null? profilePath:'https://picsum.photos/250?image=9',
               fit: BoxFit.cover,
               width: space_80,
               height: space_60,
@@ -1020,7 +1068,7 @@ class OwnerInfo extends StatelessWidget {
           ),
         ),
         title: Text(
-          "LOREM BED USERNAME",
+          username!=null?username:"LOREM BED USERNAME",
           style: CommonStyles.getRalewayStyle(
               space_14, FontWeight.w600, Colors.black),
         ),
@@ -1028,7 +1076,7 @@ class OwnerInfo extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Member since 24 Aug 2020",
+              "Member since ${sinceDate!=null?sinceDate:"24 Aug 2020"}",
               style: CommonStyles.getRalewayStyle(
                   space_12, FontWeight.w500, Colors.black.withOpacity(0.5)),
             ),
@@ -1090,7 +1138,7 @@ class OwnerInfo extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ProfileScreen()),
+                  MaterialPageRoute(builder: (context) => SellerInfoScreen(sellerId)),
                 );
               },
               child: Container(
@@ -1368,7 +1416,9 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  NearByChildSubCategoryScreen()),
+                                                  NearByChildSubCategoryScreen(isFromNearBy: true, lat: StateContainer.of(context).mUserLocationSelected!=null?StateContainer.of(context).mUserLocationSelected.mlat:"",
+                                                      lng: StateContainer.of(context).mUserLocationSelected!=null?StateContainer.of(context).mUserLocationSelected.mlng:"", radius: LOCATION_RADIUS
+                                                      ,)),
                                         );
                                       },
                                       child: BottomBarItemWidget("NEARBY",
@@ -1532,6 +1582,8 @@ class BottomFloatingFilterBtnsWidget extends StatelessWidget {
 }
 
 class BottomFloatingChatBtnsWidget extends StatelessWidget {
+  String slug;
+  BottomFloatingChatBtnsWidget(this.slug);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -1566,7 +1618,7 @@ class BottomFloatingChatBtnsWidget extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ChatHomeScreen()),
+                    MaterialPageRoute(builder: (context) => ChatDetailScreen(slug: slug,)),
                   );
                 },
                 child: Container(
@@ -1700,3 +1752,42 @@ class PackageCardWidget extends StatelessWidget {
     );
   }
 }
+
+class ProgressWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+}
+
+class ProgressNormalAppBarWidget extends StatelessWidget {
+  String title;
+  ProgressNormalAppBarWidget(this.title);
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+        child: Scaffold(
+          body: Container(
+            child: Form(
+              child: Stack(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      PostAdsCommonAppbar(title: title),
+                     ProgressWidget()
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ));
+  }
+}
+

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -125,3 +127,108 @@ class ChangePwdEvent extends HomeEvent{
   List<Object> get props => [token];
 }
 
+class UserUpdateEvent extends HomeEvent{
+  final String token;
+  final String username;
+  final String aboutus;
+  final String contact;
+  final String email;
+  final String address;
+  final File image;
+  UserUpdateEvent(
+      {@required this.token, @required this.username, @required this.aboutus, @required this.contact, @required this.email, @required this.address, @required this.image});
+
+  @override
+  List<Object> get props => [token];
+}
+
+class GetRentTypeEvent extends HomeEvent{
+  final String token;
+
+  GetRentTypeEvent(
+      {@required this.token});
+
+  @override
+  List<Object> get props => [token];
+}
+
+
+class SaveFavEvent extends HomeEvent{
+  final String token;
+  final String addId;
+
+  SaveFavEvent(
+      {@required this.token, @required this.addId});
+
+  @override
+  List<Object> get props => [token, addId];
+}
+
+
+class GetMyFavListEvent extends HomeEvent{
+  final String token;
+
+  GetMyFavListEvent(
+      {@required this.token});
+
+  @override
+  List<Object> get props => [token];
+}
+
+class SellerInfoEvent extends HomeEvent{
+  final String token;
+  final String sellerId;
+
+  SellerInfoEvent(
+      {@required this.token, @required this.sellerId});
+
+  @override
+  List<Object> get props => [token, sellerId];
+}
+
+class GetAllChatUserEvent extends HomeEvent{
+  final String token;
+
+  GetAllChatUserEvent(
+      {@required this.token});
+
+  @override
+  List<Object> get props => [token];
+}
+
+class GetAllChatMsgEvent extends HomeEvent{
+  final String token;
+  final String indexId;
+  final String slug;
+
+  GetAllChatMsgEvent(
+      {@required this.token, @required this.indexId, @required this.slug});
+
+  @override
+  List<Object> get props => [token, indexId, slug];
+}
+
+class GetSlugChatMsgEvent extends HomeEvent{
+  final String token;
+  final String slug;
+
+  GetSlugChatMsgEvent(
+      {@required this.token, @required this.slug});
+
+  @override
+  List<Object> get props => [token, slug];
+}
+
+class SendMsgReqEvent extends HomeEvent{
+  final String token;
+  final String adId;
+  final String msg;
+  final String recieverId;
+  final String inboxId;
+
+  SendMsgReqEvent(
+      {@required this.token, @required this.adId, @required this.msg, @required this.recieverId, @required this.inboxId});
+
+  @override
+  List<Object> get props => [token, adId, msg, recieverId, inboxId];
+}

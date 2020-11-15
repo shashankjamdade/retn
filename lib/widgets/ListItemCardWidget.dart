@@ -32,7 +32,7 @@ class _ListItemCardWidgetState extends State<ListItemCardWidget> {
       child: Column(
         children: [
           RichTextTitleBtnWidget("TOP", getRichText2ByType(widget.type), () {
-            onViewAllClick(context, widget.type);
+            doNothing();//onViewAllClick(context, widget.type);
           }),
           Container(
             height: space_300,
@@ -47,6 +47,10 @@ class _ListItemCardWidgetState extends State<ListItemCardWidget> {
         ],
       ),
     );
+  }
+
+  doNothing(){
+
   }
 
 

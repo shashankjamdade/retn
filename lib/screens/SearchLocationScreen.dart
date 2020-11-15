@@ -70,15 +70,15 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
     super.didChangeDependencies();
     var userLocationSelected = StateContainer.of(context).mUserLocationSelected;
     var loginResponse = StateContainer.of(context).mLoginResponse;
-    if(loginResponse!=null) {
+    if (loginResponse != null) {
       token = loginResponse.data.token;
       debugPrint("ACCESSING_INHERITED ${token}");
     }
-   if(userLocationSelected!=null) {
-     mLocationSelected = userLocationSelected.city;
-     mSelectedLattitude = userLocationSelected.mlat;
-     mSelectedLongitude = userLocationSelected.mlng;
-     locationController.text = mLocationSelected;
+    if (userLocationSelected != null) {
+      mLocationSelected = userLocationSelected.city;
+      mSelectedLattitude = userLocationSelected.mlat;
+      mSelectedLongitude = userLocationSelected.mlng;
+      locationController.text = mLocationSelected;
       debugPrint("ACCESSING_INHERITED ${mLocationSelected}");
     }
   }
@@ -272,7 +272,8 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
-                      padding: EdgeInsets.only(left: space_35, right: space_35, bottom: space_15),
+                      padding: EdgeInsets.only(
+                          left: space_35, right: space_35, bottom: space_15),
                       child: Text(
                         mCurrentSearching == "location"
                             ? "LOCATION"
@@ -368,24 +369,30 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                               ),
                               Expanded(
                                 flex: 2,
-                                child: (categoryController.text!=null && categoryController.text.isNotEmpty)?
-                                InkWell(
-                                  onTap: (){
-                                    categoryController.text = "";
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                            topRight: Radius.circular(space_15),
-                                            bottomRight:
-                                            Radius.circular(space_15))),
-                                    child: Center(
-                                        child: Icon(
-                                          Icons.close,
-                                          color: Colors.white,
-                                        )),
-                                  ),
-                                ):Container(height: space_0, width: space_0,),
+                                child: (categoryController.text != null &&
+                                        categoryController.text.isNotEmpty)
+                                    ? InkWell(
+                                        onTap: () {
+                                          categoryController.text = "";
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                  topRight:
+                                                      Radius.circular(space_15),
+                                                  bottomRight: Radius.circular(
+                                                      space_15))),
+                                          child: Center(
+                                              child: Icon(
+                                            Icons.close,
+                                            color: Colors.white,
+                                          )),
+                                        ),
+                                      )
+                                    : Container(
+                                        height: space_0,
+                                        width: space_0,
+                                      ),
                               ),
                             ],
                           ),
@@ -446,24 +453,30 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                               ),
                               Expanded(
                                 flex: 2,
-                                child: (locationController.text!=null && locationController.text.isNotEmpty)?
-                                InkWell(
-                                  onTap: (){
-                                    locationController.text = "";
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                            topRight: Radius.circular(space_15),
-                                            bottomRight:
-                                                Radius.circular(space_15))),
-                                    child: Center(
-                                        child: Icon(
-                                      Icons.close,
-                                      color: Colors.white,
-                                    )),
-                                  ),
-                                ):Container(height: space_0, width: space_0,),
+                                child: (locationController.text != null &&
+                                        locationController.text.isNotEmpty)
+                                    ? InkWell(
+                                        onTap: () {
+                                          locationController.text = "";
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                  topRight:
+                                                      Radius.circular(space_15),
+                                                  bottomRight: Radius.circular(
+                                                      space_15))),
+                                          child: Center(
+                                              child: Icon(
+                                            Icons.close,
+                                            color: Colors.white,
+                                          )),
+                                        ),
+                                      )
+                                    : Container(
+                                        height: space_0,
+                                        width: space_0,
+                                      ),
                               ),
                             ],
                           ),
@@ -520,10 +533,13 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                                   });
                                 } else if (state is SubCategorySearchResState) {
                                   debugPrint("CATEGDSGDFD ${state.res.data}");
-                                  return CategoryListWidget(
-                                      state.res.data[pos],
-                                      (String categoryId,String subCategoroyId, String name) {
-                                    onCategorySelected(categoryId, subCategoroyId, name);
+                                  return CategoryListWidget(state.res.data[pos],
+                                      (String categoryId,
+                                          String subCategoroyId,
+                                          String categoryName,
+                                          String subCategoryName) {
+                                    onCategorySelected(
+                                        categoryId, subCategoroyId, categoryName, subCategoryName);
                                   });
                                 }
                               }),
@@ -576,22 +592,35 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
     });
   }
 
-  onCategorySelected(String categoryId ,String subCategoryId, String name) {
-    debugPrint("SELECTED_________ ${categoryId}, ${subCategoryId}, ${name}");
-    mCategorySelected = name;
+  onCategorySelected(String categoryId, String subCategoryId,
+      String categoryName, String subCategoryName) {
+    debugPrint("SELECTED_________ ${categoryId}, ${subCategoryId}, ${categoryName}");
+    mCategorySelected = categoryName;
     mCategorySelectedId = categoryId;
     mCategorySelectedSubCategoryId = subCategoryId;
-    categoryController.text = name;
+    categoryController.text = categoryName;
     setState(() {
-      mCategorySelected = name;
+      mCategorySelected =
+          subCategoryName != null ? subCategoryName : categoryName;
     });
-    if(mSelectedLattitude.isNotEmpty && mSelectedLongitude.isNotEmpty && (categoryId!=null || subCategoryId!=null)){
+    if (mSelectedLattitude.isNotEmpty &&
+        mSelectedLongitude.isNotEmpty &&
+        (categoryId != null || subCategoryId != null)) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => NearByChildSubCategoryScreen(categoryId: categoryId/*, subCategoryId: subCategoryId*/, radius: LOCATION_RADIUS,
-          /*lat: mSelectedLattitude, lng: mSelectedLongitude,*/categoryName: name, subCategoryName: name,isFromNearBy: false,)),
+        MaterialPageRoute(
+            builder: (context) => NearByChildSubCategoryScreen(
+                  categoryId: categoryId,
+                  subCategoryId: subCategoryId != null ? subCategoryId : "",
+                  radius: LOCATION_RADIUS,
+                  lat: mSelectedLattitude != null ? mSelectedLattitude : "",
+                  lng: mSelectedLongitude != null ? mSelectedLongitude : "",
+                  categoryName: categoryName != null ? categoryName : "",
+                  subCategoryName:
+                      subCategoryName != null ? subCategoryName : "",
+                  isFromNearBy: false,
+                )),
       );
     }
   }
-
 }

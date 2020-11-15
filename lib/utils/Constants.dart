@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/screens/ChildSubCategoryScreen.dart';
+import 'package:flutter_rentry_new/screens/NearByChildSubCategoryScreen.dart';
 import 'CommonStyles.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
@@ -62,15 +64,22 @@ String getRichText2ByType(String type) {
 }
 
 
-void onViewAllClick(BuildContext context, String type) {
+void onViewAllClick(BuildContext context, String type, String categoryId, String categoryName) {
 //  switch (type) {
 //    case TYPE_FURNITURE:
 //      break;
 //  }
   Navigator.push(
     context,
-    MaterialPageRoute(builder: (context) => ChildSubCategoryScreen()),
+    MaterialPageRoute(
+        builder: (context) =>
+            NearByChildSubCategoryScreen(isFromNearBy: false, lat: "",
+              lng: "", categoryId: categoryId, categoryName: categoryName,)),
   );
+//  Navigator.push(
+//    context,
+//    MaterialPageRoute(builder: (context) => ChildSubCategoryScreen()),
+//  );
 }
 
 
@@ -83,5 +92,30 @@ Future<ui.Image> getUiImage(String imageAssetPath, int height, int width) async 
   return frameInfo.image;
 }
 
+//Future<bool> isInternet() async {
+//  var connectivityResult = await (Connectivity().checkConnectivity());
+//  if (connectivityResult == ConnectivityResult.mobile) {
+//    // I am connected to a mobile network, make sure there is actually a net connection.
+//    if (await DataConnectionChecker().hasConnection) {
+//      // Mobile data detected & internet connection confirmed.
+//      return true;
+//    } else {
+//      // Mobile data detected but no internet connection found.
+//      return false;
+//    }
+//  } else if (connectivityResult == ConnectivityResult.wifi) {
+//    // I am connected to a WIFI network, make sure there is actually a net connection.
+//    if (await DataConnectionChecker().hasConnection) {
+//      // Wifi detected & internet connection confirmed.
+//      return true;
+//    } else {
+//      // Wifi detected but no internet connection found.
+//      return false;
+//    }
+//  } else {
+//    // Neither mobile data or WIFI detected, not internet connection found.
+//    return false;
+//  }
+//}
 
 

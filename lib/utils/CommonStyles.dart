@@ -127,6 +127,7 @@ const String app_name = "Rentry";
 const String skip_for_now = "Skip for now>>";
 const String empty_username = "Please enter mobile no or Email";
 const String empty_password = "Please enter password";
+const String empty_address = "Please enter address";
 const String empty_new_password = "Please enter new password";
 const String rent_pe_tagline = "Rent pe le, Rent pe de...";
 const String empty_otp = "Please enter OTP";
@@ -136,6 +137,8 @@ const String empty_email = "Please enter email ID";
 const String empty_conf_password = "Please enter confirm password";
 const String pwd_no_match = "Password didn't match";
 const String empty_type = "Please enter type";
+const String empty_price = "Please enter price";
+const String empty_rental_type = "Please enter rental type";
 const String empty_brand = "Please enter brand";
 const String empty_loren = "Please enter loren";
 const String empty_ipsum = "Please enter ipsum";
@@ -164,7 +167,7 @@ const String USER_NAME = "USER_NAME";
 const String USER_EMAIL = "USER_EMAIL";
 const String USER_MOBILE = "USER_MOBILE";
 const String IS_LOGGEDIN = "IS_LOGGEDIN";
-const String LOCATION_RADIUS = "50";
+const String LOCATION_RADIUS = "500";
 
 //API
 const String BASE_URL = "http://rentozo.com/api";
@@ -178,16 +181,16 @@ const String LOCATION_SEARCH_API = "/localtionsearch";
 const String ADS_SEARCH_API = "/searchignads";
 const String GET_ALL_RENT_TYPE = "/getallrenttype";
 const String UPDATE_PASSWORD = "/updatepassword";
-
 const String CATEGORY_API = "/category";
 const String GET_ALL_PACKAGELIST_API = "/getallpackagelist";
 const String GET_NOTIFICATION_LIST_API = "/my_notification";
 const String GET_USER_DATA = "/userdata";
-const String GENERAL_SETTINGS = "/generalsettings";
+const String GET_CHAT_LIST = "/chatuserlist";
 const String GET_SELLER_INFO = "/sellerinfo";
 const String SAVE_FAVOURITE = "/savefavorite";
-const String GET_CHAT_LIST = "/chatuserlist_get";
-const String GET_CHAT_USER_LIST = "/chatuserlist_get";
+const String MY_FAVOURITE = "/my_favourites";
+
+const String GENERAL_SETTINGS = "/generalsettings";
 const String SEND_MESSAGE = "/sendmessage";
 
 const String LOGGEDIN_SUCCESS = "LOGGEDIN_SUCCESS";

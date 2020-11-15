@@ -11,18 +11,18 @@ import 'package:flutter_rentry_new/utils/size_config.dart';
 
 import 'LoginScreen.dart';
 
-class ChatDetailScreen extends StatefulWidget {
+class ChatDetailScreen2 extends StatefulWidget {
 
   String username;
   String indexId;
   String slug;
-  ChatDetailScreen({this.username, this.indexId, this.slug});
+  ChatDetailScreen2(this.username, this.indexId, this.slug);
 
   @override
-  _ChatDetailScreenState createState() => _ChatDetailScreenState();
+  _ChatDetailScreen2State createState() => _ChatDetailScreen2State();
 }
 
-class _ChatDetailScreenState extends State<ChatDetailScreen> {
+class _ChatDetailScreen2State extends State<ChatDetailScreen2> {
   TextEditingController chatTextController;
   FocusNode _focusNode = new FocusNode();
   List<Messages> msgList = List();
@@ -71,7 +71,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return  BlocProvider(
-        create: (context) => homeBloc..add(widget.indexId!=null?GetAllChatMsgEvent(token: token, indexId: widget.indexId, slug: widget.slug): GetSlugChatMsgEvent(token: token, slug: widget.slug)),
+        create: (context) => homeBloc..add(GetAllChatMsgEvent(token: token, indexId: widget.indexId, slug: widget.slug)),
         child: BlocListener(
           bloc: homeBloc,
           listener: (context, state) {
@@ -121,7 +121,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                       color: CommonStyles.red, shape: BoxShape.circle),
                   child: Center(
                     child: Text(
-                      (widget.username!=null && widget.username.isNotEmpty)?widget.username[0].toUpperCase():(mGetAllChatMsgRes!=null && mGetAllChatMsgRes.data!=null)?mGetAllChatMsgRes.data.ad.chat_with[0].toUpperCase():"",
+                      widget.username[0].toUpperCase(),
                       style: CommonStyles.getRalewayStyle(
                           space_15, FontWeight.w500, Colors.white),
                     ),
@@ -139,7 +139,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               ],
             ),
             label: Text(
-              "${(widget.username!=null && widget.username.isNotEmpty)?widget.username:(mGetAllChatMsgRes!=null && mGetAllChatMsgRes.data!=null)?mGetAllChatMsgRes.data.ad.chat_with:""}",
+              "${widget.username}",
               style: CommonStyles.getRalewayStyle(
                   space_15, FontWeight.w500, Colors.white),
             )),
@@ -313,7 +313,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                       color: CommonStyles.red, shape: BoxShape.circle),
                   child: Center(
                     child: Text(
-                      widget.username!=null?widget.username[0].toUpperCase():"",
+                      widget.username[0].toUpperCase(),
                       style: CommonStyles.getRalewayStyle(
                           space_15, FontWeight.w500, Colors.white),
                     ),
@@ -331,7 +331,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               ],
             ),
             label: Text(
-              "${widget.username!=null?widget.username:""}",
+              "${widget.username}",
               style: CommonStyles.getRalewayStyle(
                   space_15, FontWeight.w500, Colors.white),
             )),
