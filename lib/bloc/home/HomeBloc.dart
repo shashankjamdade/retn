@@ -85,9 +85,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is GetSlugChatMsgEvent) {
       yield ProgressState();
       yield* callGetSlugChatMsgApi(event.token, event.slug);
-    }else if (event is SendMsgReqEvent) {
+    } else if (event is SendMsgReqEvent) {
 //      yield ProgressState();
-      yield* callSendMsgApi(event.token, event.adId, event.msg, event.recieverId, event.inboxId);
+      yield* callSendMsgApi(
+          event.token, event.adId, event.msg, event.recieverId, event.inboxId);
+    } else if (event is SendMsgReqEvent) {
+//      yield ProgressState();
+      yield* callSendMsgApi(
+          event.token, event.adId, event.msg, event.recieverId, event.inboxId);
+    } else if (event is GetMyPackageEvent) {
+      yield ProgressState();
+      yield* callGetMyPackageListApi(event.token);
+    } else if (event is AdUnderPackageEvent) {
+      yield ProgressState();
+      yield* callAdUnderPackageApi(event.token);
     }
   }
 
@@ -296,15 +307,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Stream<HomeState> callGetRentTypeApi(
-      String token) async* {
+  Stream<HomeState> callGetRentTypeApi(String token) async* {
     try {
       homeRepository =
-      homeRepository != null ? homeRepository : HomeRepository();
+          homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callGetRentTypeApi ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
-      final getRentTypeRes =
-      await homeRepository.callRentTypeApi(token);
+      final getRentTypeRes = await homeRepository.callRentTypeApi(token);
       debugPrint("callGetRentTypeApi ${jsonEncode(getRentTypeRes)}");
       yield GetRentTypeResState(res: getRentTypeRes);
     } catch (e) {
@@ -312,15 +321,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Stream<HomeState> callSaveFavApi(
-      String token, String addId) async* {
+  Stream<HomeState> callSaveFavApi(String token, String addId) async* {
     try {
       homeRepository =
-      homeRepository != null ? homeRepository : HomeRepository();
+          homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callSaveFavApi ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
       final saveFavRes =
-      await homeRepository.callSavefavouriteApi(token, addId);
+          await homeRepository.callSavefavouriteApi(token, addId);
       debugPrint("callSaveFavApi ${jsonEncode(saveFavRes)}");
       yield SaveFavResState(res: saveFavRes);
     } catch (e) {
@@ -328,15 +336,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Stream<HomeState> callGetMyFavApi(
-      String token) async* {
+  Stream<HomeState> callGetMyFavApi(String token) async* {
     try {
       homeRepository =
-      homeRepository != null ? homeRepository : HomeRepository();
+          homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callGetMyFavApi ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
-      final getMyFavRes =
-      await homeRepository.callMyFavouriteListApi(token);
+      final getMyFavRes = await homeRepository.callMyFavouriteListApi(token);
       debugPrint("callGetMyFavApi ${jsonEncode(getMyFavRes)}");
       yield MyFavListResState(res: getMyFavRes);
     } catch (e) {
@@ -344,15 +350,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Stream<HomeState> callSellerInfoApi(
-      String token, String sellerId) async* {
+  Stream<HomeState> callSellerInfoApi(String token, String sellerId) async* {
     try {
       homeRepository =
-      homeRepository != null ? homeRepository : HomeRepository();
+          homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callSellerInfoApi ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
       final getMyFavRes =
-      await homeRepository.callSellerInfoApi(token, sellerId);
+          await homeRepository.callSellerInfoApi(token, sellerId);
       debugPrint("callSellerInfoApi ${jsonEncode(getMyFavRes)}");
       yield SellerInfoResState(res: getMyFavRes);
     } catch (e) {
@@ -360,15 +365,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Stream<HomeState> callGetAllChatUserListApi(
-      String token) async* {
+  Stream<HomeState> callGetAllChatUserListApi(String token) async* {
     try {
       homeRepository =
-      homeRepository != null ? homeRepository : HomeRepository();
+          homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callGetAllChatUserListApi ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
       final getAllChatUserList =
-      await homeRepository.callGetAllChatUserApi(token);
+          await homeRepository.callGetAllChatUserApi(token);
       debugPrint("callGetAllChatUserListApi ${jsonEncode(getAllChatUserList)}");
       yield GetAllChatUserListResState(res: getAllChatUserList);
     } catch (e) {
@@ -376,16 +380,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-
   Stream<HomeState> callGetAllChatMsgApi(
       String token, String indexId, String slug) async* {
     try {
       homeRepository =
-      homeRepository != null ? homeRepository : HomeRepository();
+          homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callGetAllChatMsgApi ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
       final getMyFavRes =
-      await homeRepository.callGetAllChatMsgApi(token, indexId, slug);
+          await homeRepository.callGetAllChatMsgApi(token, indexId, slug);
       debugPrint("callGetAllChatMsgApi ${jsonEncode(getMyFavRes)}");
       yield GetAllChatMsgResState(res: getMyFavRes);
     } catch (e) {
@@ -393,15 +396,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Stream<HomeState> callGetSlugChatMsgApi(
-      String token, String slug) async* {
+  Stream<HomeState> callGetSlugChatMsgApi(String token, String slug) async* {
     try {
       homeRepository =
-      homeRepository != null ? homeRepository : HomeRepository();
+          homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callGetSlugChatMsgApi ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
       final getMyFavRes =
-      await homeRepository.callGetSlugChatMsgApi(token, slug);
+          await homeRepository.callGetSlugChatMsgApi(token, slug);
       debugPrint("callGetSlugChatMsgApi ${jsonEncode(getMyFavRes)}");
       yield GetAllChatMsgResState(res: getMyFavRes);
     } catch (e) {
@@ -409,15 +411,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Stream<HomeState> callSendMsgApi(
-      String token, String adId, String msg, String recieverId, String inboxId) async* {
+  Stream<HomeState> callSendMsgApi(String token, String adId, String msg,
+      String recieverId, String inboxId) async* {
     try {
       homeRepository =
-      homeRepository != null ? homeRepository : HomeRepository();
+          homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callSendMsgApi ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
-      final sendMsgRes =
-      await homeRepository.callSendMsgApi(token, adId, msg, recieverId, inboxId);
+      final sendMsgRes = await homeRepository.callSendMsgApi(
+          token, adId, msg, recieverId, inboxId);
       debugPrint("callSendMsgApi ${jsonEncode(sendMsgRes)}");
       yield SendMsgResState(res: sendMsgRes);
     } catch (e) {
@@ -425,4 +427,31 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
+  Stream<HomeState> callGetMyPackageListApi(String token) async* {
+    try {
+      homeRepository =
+          homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callGetMyPackageListApi ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final getMyPackageRes = await homeRepository.callGetMyPackageList(token);
+      debugPrint("callGetMyPackageListApi ${jsonEncode(getMyPackageRes)}");
+      yield GetMyPackageListState(res: getMyPackageRes);
+    } catch (e) {
+      debugPrint("Exception while callGetMyPackageListApi ${e.toString()}");
+    }
+  }
+
+  Stream<HomeState> callAdUnderPackageApi(String token) async* {
+    try {
+      homeRepository =
+          homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callAdUnderPackageApi ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final adUnderPackageRes = await homeRepository.callAdUnderPackage(token);
+      debugPrint("callAdUnderPackageApi ${jsonEncode(adUnderPackageRes)}");
+      yield AdUnderPackageState(res: adUnderPackageRes);
+    } catch (e) {
+      debugPrint("Exception while callAdUnderPackageApi ${e.toString()}");
+    }
+  }
 }

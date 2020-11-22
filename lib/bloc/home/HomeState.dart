@@ -1,11 +1,13 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_rentry_new/model/ad_under_package_res.dart';
 import 'package:flutter_rentry_new/model/common_response.dart';
 import 'package:flutter_rentry_new/model/get_all_chat_msg_res.dart';
 import 'package:flutter_rentry_new/model/get_all_chat_user_list_response.dart';
 import 'package:flutter_rentry_new/model/get_all_package_list_response.dart';
 import 'package:flutter_rentry_new/model/get_category_response.dart';
 import 'package:flutter_rentry_new/model/get_my_favourite_res.dart';
+import 'package:flutter_rentry_new/model/get_my_package_list_res.dart';
 import 'package:flutter_rentry_new/model/get_notification_response.dart';
 import 'package:flutter_rentry_new/model/get_rent_type_response.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
@@ -218,4 +220,22 @@ class SendMsgResState extends HomeState {
 
   @override
   List<CommonResponse> get props => [res];
+}
+
+class GetMyPackageListState extends HomeState {
+  final res;
+
+  GetMyPackageListState({@required this.res});
+
+  @override
+  List<GetMyPackageListRes> get props => [res];
+}
+
+class AdUnderPackageState extends HomeState {
+  final res;
+
+  AdUnderPackageState({@required this.res});
+
+  @override
+  List<AdUnderPackageRes> get props => [res];
 }

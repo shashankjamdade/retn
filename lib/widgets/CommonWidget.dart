@@ -22,6 +22,7 @@ import 'package:flutter_rentry_new/screens/ProfileScreen.dart';
 import 'package:flutter_rentry_new/screens/SearchLocationScreen.dart';
 import 'package:flutter_rentry_new/screens/SellerInfoScreen.dart';
 import 'package:flutter_rentry_new/screens/SubCategoryScreen.dart';
+import 'package:flutter_rentry_new/screens/UserProfile.dart';
 import 'package:flutter_rentry_new/screens/postad/ChooseCategoryScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
@@ -1431,7 +1432,7 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  ProfileScreen()),
+                                                  UserProfile()),
                                         );
                                       },
                                       child: BottomBarItemWidget("LOGIN",
@@ -1788,6 +1789,41 @@ class ProgressNormalAppBarWidget extends StatelessWidget {
             ),
           ),
         ));
+  }
+}
+
+class ProfileRowWidget extends StatelessWidget {
+
+  String title;
+  ProfileRowWidget(this.title);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: space_60,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                margin: EdgeInsets.all(space_15),
+                child: Icon(Icons.supervised_user_circle, color: CommonStyles.primaryColor,),
+              ),
+              Expanded(child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),)
+                  ],
+                ),
+              ))
+            ],
+          ),
+          Divider(height: space_1, thickness: space_1, color: Colors.black,)
+        ],
+      ),
+    );
   }
 }
 

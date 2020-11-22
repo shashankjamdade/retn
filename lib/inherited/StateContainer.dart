@@ -1,14 +1,21 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_rentry_new/model/UserLocationSelected.dart';
+import 'package:flutter_rentry_new/model/general_setting_res.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
 
 class StateContainer extends StatefulWidget {
   final Widget child;
   final LoginResponse loginResponse;
   final UserLocationSelected userLocationSelected;
+  final GeneralSettingRes generalSettingRes;
 
   StateContainer(
-      {@required this.child, this.loginResponse, this.userLocationSelected});
+      {@required this.child,
+      this.loginResponse,
+      this.userLocationSelected,
+      this.generalSettingRes});
 
   static StateContainerState of(BuildContext context) {
     return (context.inheritFromWidgetOfExactType(_InheritedStateContainer)
@@ -23,6 +30,7 @@ class StateContainer extends StatefulWidget {
 class StateContainerState extends State<StateContainer> {
   LoginResponse mLoginResponse;
   UserLocationSelected mUserLocationSelected;
+  GeneralSettingRes mGeneralSettingRes;
 
   void updateUserInfo(LoginResponse loginResponse) {
     if (loginResponse == null) {
@@ -46,6 +54,20 @@ class StateContainerState extends State<StateContainer> {
     } else {
       setState(() {
         mUserLocationSelected = userLocationSelected;
+      });
+    }
+  }
+
+  void updateGeneralSetting(GeneralSettingRes generalSettingRes) {
+    debugPrint("GENERAL_SETTINGUPDATED - ${jsonEncode(generalSettingRes)}");
+    if (generalSettingRes == null) {
+      mGeneralSettingRes = generalSettingRes;
+      setState(() {
+        mGeneralSettingRes = generalSettingRes;
+      });
+    } else {
+      setState(() {
+        mGeneralSettingRes = generalSettingRes;
       });
     }
   }

@@ -1,12 +1,15 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_rentry_new/model/RegisterReq.dart';
+import 'package:flutter_rentry_new/model/ad_under_package_res.dart';
 import 'package:flutter_rentry_new/model/common_response.dart';
+import 'package:flutter_rentry_new/model/general_setting_res.dart';
 import 'package:flutter_rentry_new/model/get_all_chat_msg_res.dart';
 import 'package:flutter_rentry_new/model/get_all_chat_user_list_response.dart';
 import 'package:flutter_rentry_new/model/get_all_package_list_response.dart';
 import 'package:flutter_rentry_new/model/get_category_response.dart';
 import 'package:flutter_rentry_new/model/get_my_favourite_res.dart';
+import 'package:flutter_rentry_new/model/get_my_package_list_res.dart';
 import 'package:flutter_rentry_new/model/get_notification_response.dart';
 import 'package:flutter_rentry_new/model/get_rent_type_response.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
@@ -35,6 +38,28 @@ class HomeRepository extends BaseRepository {
 
   HomeRepository({http.Client httpClient})
       : _httpClient = httpClient ?? http.Client();
+
+
+  Future<GeneralSettingRes> callGeneralSetting() async {
+    bool status = false;
+    GeneralSettingRes response;
+    int code = 0;
+    print("UNDER callGeneralSetting ");
+    var res =
+        await http.get(BASE_URL + GENERAL_SETTINGS);
+    print("PRINTING ${res.body}");
+    code = res.statusCode;
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      status = data["status"];
+      print("PRINTING_STATUS ${status}");
+      response = GeneralSettingRes.fromJson(data);
+      print("-----------${data}");
+    } else {
+      response = new GeneralSettingRes(status: false, message: API_ERROR_MSG);
+    }
+    return response;
+  }
 
   Future<HomeResponse> callHomeApi(String token) async {
     bool status = false;
@@ -550,6 +575,48 @@ class HomeRepository extends BaseRepository {
     } else {
       response = new CommonResponse(
           msg: API_ERROR_MSG, status: "false");
+    }
+    return response;
+  }
+
+  Future<GetMyPackageListRes> callGetMyPackageList(String token) async {
+    GetMyPackageListRes response;
+    print("UNDER callGetMyPackageList ${token} , ${BASE_URL + MY_PACKAGE_LIST}");
+    Map<String, String> mainheader = {"token": token};
+    var res = await http.get(
+      BASE_URL + MY_PACKAGE_LIST,
+      headers: mainheader,
+    );
+    print("PRINTING ${res.body}");
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      var status = data["status"];
+      print("PRINTING_STATUS ${status}");
+      response = GetMyPackageListRes.fromJson(data);
+      print("-----------${data}");
+    } else {
+      response = new GetMyPackageListRes();
+    }
+    return response;
+  }
+
+  Future<AdUnderPackageRes> callAdUnderPackage(String token) async {
+    AdUnderPackageRes response;
+    print("UNDER callAdUnderPackage ${token} , ${BASE_URL + AD_UNDER_PACKAGE}");
+    Map<String, String> mainheader = {"token": token};
+    var res = await http.get(
+      BASE_URL + AD_UNDER_PACKAGE,
+      headers: mainheader,
+    );
+    print("PRINTING ${res.body}");
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      var status = data["status"];
+      print("PRINTING_STATUS ${status}");
+      response = AdUnderPackageRes.fromJson(data);
+      print("-----------${data}");
+    } else {
+      response = new AdUnderPackageRes();
     }
     return response;
   }

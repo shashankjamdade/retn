@@ -232,3 +232,24 @@ class SendMsgReqEvent extends HomeEvent{
   @override
   List<Object> get props => [token, adId, msg, recieverId, inboxId];
 }
+
+class GetMyPackageEvent extends HomeEvent{
+  final String token;
+
+
+  GetMyPackageEvent(
+      {@required this.token});
+
+  @override
+  List<Object> get props => [token];
+}
+
+class AdUnderPackageEvent extends HomeEvent{
+  final String token;
+
+  AdUnderPackageEvent(
+      {@required this.token});
+
+  @override
+  List<Object> get props => [token];
+}

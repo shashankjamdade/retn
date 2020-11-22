@@ -39,7 +39,15 @@ class CommonStyles{
       fontSize: fontSize,
       fontFamily: FONT_MONTSERRAT,
       fontWeight:fontWeight,
+      color: color);
+  }
+ static TextStyle getMontserratDecorationStyle(double fontSize, FontWeight fontWeight, Color color, TextDecoration textDecoration){
+    return TextStyle(
+      fontSize: fontSize,
+      fontFamily: FONT_MONTSERRAT,
+      fontWeight:fontWeight,
       color: color,
+      decoration: textDecoration
     );
   }
 
@@ -174,6 +182,7 @@ const String BASE_URL = "http://rentozo.com/api";
 const String LOGIN_API = "/login";
 const String REGISTRATION_API = "/registration";
 const String HOMEPAGE_API = "/homepage";
+const String GENERAL_SETTINGS = "/generalsettings";
 const String ITEMDETAIL_API = "/productdetails";
 const String SUBCATEGORY_LIST_API = "/subcategorylist";
 const String SEARCH_SUBCATEGORY_LIST_API = "/searchcategorysubcategory";
@@ -189,9 +198,9 @@ const String GET_CHAT_LIST = "/chatuserlist";
 const String GET_SELLER_INFO = "/sellerinfo";
 const String SAVE_FAVOURITE = "/savefavorite";
 const String MY_FAVOURITE = "/my_favourites";
-
-const String GENERAL_SETTINGS = "/generalsettings";
 const String SEND_MESSAGE = "/sendmessage";
+const String MY_PACKAGE_LIST = "/my_package_list";
+const String AD_UNDER_PACKAGE = "/adunderpakcage";
 
 const String LOGGEDIN_SUCCESS = "LOGGEDIN_SUCCESS";
 const String LOGGEDIN_ERROR = "LOGGEDIN_ERROR";

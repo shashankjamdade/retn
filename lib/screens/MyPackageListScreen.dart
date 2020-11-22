@@ -7,6 +7,7 @@ import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/model/get_my_package_list_res.dart';
 import 'package:flutter_rentry_new/model/get_notification_response.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
@@ -17,16 +18,18 @@ import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CarousalCommonWidgets.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:flutter_rentry_new/widgets/ListItemCardWidget.dart';
+import 'package:intl/intl.dart';  //for date format
 
-class NotificationListScreen extends StatefulWidget {
+
+class MyPackageListScreen extends StatefulWidget {
   @override
-  _NotificationListScreenState createState() => _NotificationListScreenState();
+  _MyPackageListScreenState createState() => _MyPackageListScreenState();
 }
 
-class _NotificationListScreenState extends State<NotificationListScreen> {
+class _MyPackageListScreenState extends State<MyPackageListScreen> {
   TrackingScrollController controller = TrackingScrollController();
   HomeBloc homeBloc = new HomeBloc();
-  GetNotificationResponse mGetNotificationResponse;
+  GetMyPackageListRes mGetNotificationResponse;
   var loginResponse;
   var token = "";
 
@@ -49,17 +52,17 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => homeBloc..add(GetNotificationListEvent(token: token)),
+      create: (context) => homeBloc..add(GetMyPackageEvent(token: token)),
       child: BlocListener(
           bloc: homeBloc,
           listener: (context, state) {
-            if(state is GetNotificationListResState){
+            if(state is GetMyPackageListState){
               mGetNotificationResponse = state.res;
             }
           },
           child: BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state){
-              if(state is GetNotificationListResState){
+              if(state is GetMyPackageListState){
                 return getScreenUI(state.res);
               }else {
                 return Container(
@@ -74,9 +77,9 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
     );
   }
 
-  Widget getScreenUI(GetNotificationResponse getNotificationResponse){
-    if(getNotificationResponse.status){
-      if(getNotificationResponse.data.length > 0){
+  Widget getScreenUI(GetMyPackageListRes getMyPackageListRes){
+    if(getMyPackageListRes.status){
+      if(getMyPackageListRes.data.length > 0){
         return  SafeArea(
           child: Scaffold(
             body: Stack(
@@ -91,13 +94,27 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                           child: Container(
                             margin: EdgeInsets.only(bottom: space_60),
                             child: ListView.builder(
-                                itemCount: getNotificationResponse.data.length,
+                                itemCount: getMyPackageListRes.data.length,
                                 scrollDirection: Axis.vertical,
                                 itemBuilder: (context, index){
-                                  return ListTile(
-                                    key: Key("${index}"),
-                                    leading: Icon(Icons.notification_important),
-                                    title: Text(getNotificationResponse.data[index].content, style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.black),),
+                                  DateFormat dateFormatter = new DateFormat('dd MMM yyyy');
+                                  var startDate = dateFormatter.format(DateTime.parse(getMyPackageListRes.data[index].package_start_date));
+                                  var expiryDate = dateFormatter.format(DateTime.parse(getMyPackageListRes.data[index].package_expiry_date));
+                                  return Container(
+                                    padding: EdgeInsets.all(space_15),
+                                    margin: EdgeInsets.only(top: space_10, bottom: space_5, left: space_15, right: space_15),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(space_15),
+                                      boxShadow: [
+                                        BoxShadow(color: Colors.grey,)
+                                      ]
+                                    ),
+                                    child: Text("${startDate} to ${expiryDate}\n"
+                                        "No of Post: ${getMyPackageListRes.data[index].no_of_posts}\n"
+                                        "Used: ${getMyPackageListRes.data[index].used}\n"
+                                        "Due: ${getMyPackageListRes.data[index].due}\n"
+                                        "Amount: ${getMyPackageListRes.data[index].amount}", style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.black),),
                                   );
                                 }),
                           ),
@@ -113,14 +130,14 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
         return Container(
           margin: EdgeInsets.symmetric(horizontal: space_15),
           child: Center(
-          child: Text("No Notificaitons Found",style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),),
+          child: Text("No Package Found",style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),),
         ),);
       }
     }else{
       return Container(
         margin: EdgeInsets.symmetric(horizontal: space_15),
         child: Center(
-        child: Text(getNotificationResponse.message, style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),),
+        child: Text(getMyPackageListRes.message, style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),),
       ),);
     }
   }

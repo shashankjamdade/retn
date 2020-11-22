@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
@@ -9,6 +11,9 @@ import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:intl/intl.dart';  //for date format
+
 
 class PackageScreen extends StatefulWidget {
   @override
@@ -20,6 +25,17 @@ class _PackageScreenState extends State<PackageScreen> {
   GetAllPackageListResponse mGetAllPackageListResponse;
   var loginResponse;
   var token = "";
+  var _razorpay = Razorpay();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
 
   @override
   void didChangeDependencies() {
@@ -28,6 +44,44 @@ class _PackageScreenState extends State<PackageScreen> {
     if (loginResponse != null) {
       token = loginResponse.data.token;
       debugPrint("ACCESSING_INHERITED ${token}");
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear();
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    debugPrint("PAYMENT_SUCCESS ------- > ${jsonEncode(response.paymentId)}");
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    debugPrint("PAYMENT_ERROR ------- > ${response.message}");
+    showSnakbar(_scaffoldKey, response.message);
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    debugPrint("PAYMENT_EXT_WALLET ------- > ${jsonEncode(response.walletName)}");
+  }
+
+  void openCheckout(String amt) async {
+    var options = {
+      'key': 'rzp_test_5JE0nfz3a956ce',
+      'amount': amt,
+      'name': 'Rentozo',
+      'description': 'Buy new package',
+      'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
+      'external': {
+        'wallets' : ['paytm'],
+      }
+    };
+    try{
+      _razorpay.open(options);
+    }
+    catch(e) {
+      debugPrint(e);
     }
   }
 
@@ -70,17 +124,24 @@ class _PackageScreenState extends State<PackageScreen> {
     });
     var currentPackFromDate;
     var currentPackToDate;
+    var currentPackFromDateStr;
+    var currentPackToDateStr;
     if(currentPackage!=null && currentPackage.updated_date!=null && currentPackage.no_of_days!=null) {
        currentPackFromDate = DateTime.parse(
           "${currentPackage.updated_date}");
        currentPackToDate = currentPackFromDate.add(
           Duration(days: int.parse(currentPackage.no_of_days)));
-       currentPackFromDate = currentPackFromDate.toString().split(" ")[0];
-       currentPackToDate = currentPackToDate.toString().split(" ")[0];
+       DateFormat dateFormatter = new DateFormat('dd MMM yyyy');
+        currentPackFromDateStr = dateFormatter.format(currentPackFromDate);
+        currentPackToDateStr = dateFormatter.format(currentPackToDate);
+
+//       currentPackFromDate = currentPackFromDate.toString().split(" ")[0];
+//       currentPackToDate = currentPackToDate.toString().split(" ")[0];
     }
 
     return SafeArea(
         child: Scaffold(
+          key: _scaffoldKey,
       body: Container(
         child: Stack(
           children: [
@@ -148,7 +209,7 @@ class _PackageScreenState extends State<PackageScreen> {
                                             "${currentPackage.title}",
                                             style:
                                                 CommonStyles.getMontserratStyle(
-                                                    space_45,
+                                                    space_25,
                                                     FontWeight.w900,
                                                     Colors.white),
                                           ),
@@ -187,7 +248,7 @@ class _PackageScreenState extends State<PackageScreen> {
                                                 "${currentPackage.price}",
                                                 style: CommonStyles
                                                     .getMontserratStyle(
-                                                        space_45,
+                                                        space_25,
                                                         FontWeight.w900,
                                                         CommonStyles
                                                             .primaryColor),
@@ -222,7 +283,7 @@ class _PackageScreenState extends State<PackageScreen> {
                                                 CommonStyles.primaryColor),
                                             children: <TextSpan>[
                                               new TextSpan(
-                                                  text: '\n${currentPackFromDate}',
+                                                  text: '\n${currentPackFromDateStr}',
                                                   style: CommonStyles
                                                       .getMontserratStyle(
                                                           space_13,
@@ -243,7 +304,7 @@ class _PackageScreenState extends State<PackageScreen> {
                                                 CommonStyles.primaryColor),
                                             children: <TextSpan>[
                                               new TextSpan(
-                                                  text: '\n${currentPackToDate}',
+                                                  text: '\n${currentPackToDateStr}',
                                                   style: CommonStyles
                                                       .getMontserratStyle(
                                                           space_13,
@@ -265,27 +326,32 @@ class _PackageScreenState extends State<PackageScreen> {
                                 context, space_250),
                             child: Align(
                               alignment: Alignment.bottomCenter,
-                              child: Container(
-                                height: space_50,
-                                width: space_120,
-                                child: Card(
-                                  elevation: space_3,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(space_5)),
-                                  child: ClipRRect(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(space_5)),
-                                      child: Center(
-                                        child: Text(
-                                          "Upgrade",
-                                          style: CommonStyles.getRalewayStyle(
-                                              space_14,
-                                              FontWeight.w400,
-                                              CommonStyles.blue),
+                              child: InkWell(
+                                onTap: (){
+                                  openCheckout(currentPackage.price);
+                                },
+                                child: Container(
+                                  height: space_50,
+                                  width: space_120,
+                                  child: Card(
+                                    elevation: space_3,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(space_5)),
+                                    child: ClipRRect(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(space_5)),
+                                        child: Center(
+                                          child: Text(
+                                            "Upgrade",
+                                            style: CommonStyles.getRalewayStyle(
+                                                space_14,
+                                                FontWeight.w400,
+                                                CommonStyles.blue),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -332,7 +398,11 @@ class _PackageScreenState extends State<PackageScreen> {
                               scrollDirection: Axis.horizontal,
                               itemCount: packageList.length,
                               itemBuilder: (context, index) {
-                                return PackageCardWidget(packageList[index]);
+                                return InkWell(
+                                    onTap: (){
+                                      openCheckout(packageList[index].price);
+                                    },
+                                    child: PackageCardWidget(packageList[index]));
                               })),
                       SizedBox(
                         height: space_15,
@@ -370,7 +440,11 @@ class _PackageScreenState extends State<PackageScreen> {
                               scrollDirection: Axis.horizontal,
                               itemCount: packageList.length,
                               itemBuilder: (context, index) {
-                                return PackageCardWidget(packageList[index]);
+                                return InkWell(
+                                    onTap: (){
+                                      openCheckout(packageList[index].price);
+                                    },
+                                    child: PackageCardWidget(packageList[index]));
                               })),
                       SizedBox(
                         height: space_95,

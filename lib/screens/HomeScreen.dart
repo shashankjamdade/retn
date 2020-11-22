@@ -9,6 +9,7 @@ import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
+import 'package:flutter_rentry_new/repository/HomeRepository.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/my_flutter_app_icons.dart';
@@ -43,6 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
       token = loginResponse.data.token;
       debugPrint("ACCESSING_INHERITED ${token}");
     }
+//    new HomeRepository().callGeneralSetting().then((value) =>
+//        StateContainer.of(context).updateGeneralSetting(value)
+//    );
   }
 
   @override
