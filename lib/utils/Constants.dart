@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/screens/ChildSubCategoryScreen.dart';
 import 'package:flutter_rentry_new/screens/NearByChildSubCategoryScreen.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'CommonStyles.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
@@ -92,6 +93,16 @@ Future<ui.Image> getUiImage(String imageAssetPath, int height, int width) async 
   return frameInfo.image;
 }
 
+lauchDialer(String mobile) async {
+  if(mobile.isNotEmpty) {
+    var url = "tel:" + mobile;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+}
 //Future<bool> isInternet() async {
 //  var connectivityResult = await (Connectivity().checkConnectivity());
 //  if (connectivityResult == ConnectivityResult.mobile) {

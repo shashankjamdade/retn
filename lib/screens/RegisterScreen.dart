@@ -12,6 +12,7 @@ import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'DashboardScreen.dart';
 import 'LoginScreen.dart';
@@ -32,6 +33,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController confPasswordController;
   AuthenticationBloc authenticationBloc = new AuthenticationBloc();
   BuildContext _context;
+
+  bool _obscureText = true;
+  bool _obscureText2 = true;
+  // Toggles the password show status
+  void _togglePasswordStatus() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
 
   @override
   void initState() {
@@ -66,13 +76,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
       bloc: authenticationBloc,
         listener: (context, state){
           if(state is RegisterResAuthenticationState){
+            showSnakbar(_scaffoldKey, state.res.message);
+            debugPrint("MSG_GOT_REGISTER ${state.res.message}");
+            Fluttertoast.showToast(
+                msg: state.res.message,
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.black,
+                textColor: Colors.white,
+                fontSize: space_14
+            );
             if(state.res.status){
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => LoginScreen()),
               );
             }
-            showSnakbar(_scaffoldKey, state.res.message);
           }
         },
         child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
@@ -137,11 +157,48 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             }
                           }, TextInputType.emailAddress),
                           SizedBox(height: getProportionateScreenHeight(context, space_20),),
-                          TextInputWidget(passwordController, "Password", false, (String value) {
-                            if (value.isEmpty) {
-                              return "Please enter valid password";
-                            }
-                          }, TextInputType.text),
+                          Container(
+                            height: getProportionateScreenHeight(context, space_40),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Flexible(
+                                  child:  TextFormField(
+                                    validator: (String value) {
+                                      if (value.isEmpty) {
+                                        return "Please enter valid password";
+                                      }
+                                    },
+                                    obscureText: _obscureText,
+                                    controller: passwordController,
+                                    keyboardType: TextInputType.text,
+                                    decoration: InputDecoration(
+                                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                                      labelText: "Password",
+                                      suffixIcon:  IconButton(
+                                        icon:Icon(_obscureText ? Icons.visibility:Icons.visibility_off,),
+                                        onPressed: _togglePasswordStatus,
+                                        color: CommonStyles.primaryColor,
+                                      ),
+                                      contentPadding: EdgeInsets.all(space_8),
+                                      border: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Colors.grey,
+                                          ),
+                                          borderRadius: BorderRadius.circular(0.0)),
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+//                          TextInputWidget(passwordController, "Password", false, (String value) {
+//                            if (value.isEmpty) {
+//                              return "Please enter valid password";
+//                            }
+//                          }, TextInputType.text),
                           SizedBox(height: getProportionateScreenHeight(context, space_20),),
                           BtnTextInputWidget(confPasswordController, "Confirm Password", "Sign Up", true, onSignup,
                                   (String value) {

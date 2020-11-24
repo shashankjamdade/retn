@@ -390,7 +390,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
             Align(
               alignment: Alignment.bottomRight,
               child: Container(
-                  child: BottomFloatingChatBtnsWidget(itemDetailResponse!=null?itemDetailResponse.ad.slug:"")),
+                  child: BottomFloatingChatBtnsWidget(itemDetailResponse!=null?itemDetailResponse.ad.slug:"", itemDetailResponse.ad.contact!=null && itemDetailResponse.ad.contact.isNotEmpty? itemDetailResponse.ad.contact :"")),
             )
           ],
         ),

@@ -381,9 +381,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void skipFun() {
-    //redirect to dashboard
-//        MaterialPageRoute(
-//        builder: (_) => SecondScreen(),
-//        )
+    debugPrint("SKIPPPPPED");
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => HomeScreen()),
+    );
   }
 }

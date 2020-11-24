@@ -142,19 +142,24 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                   Positioned(
                     bottom: space_25,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      margin: EdgeInsets.only(bottom: space_90),
-                      child: Center(
-                        child: Text(
-                          "Skip for now>>",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: space_15,
-                              fontFamily: CommonStyles.FONT_RALEWAY,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.white,
-                              decoration: TextDecoration.none),
+                    child: GestureDetector(
+                      onTap: (){
+                        redirectTo("dashboard", context);
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin: EdgeInsets.only(bottom: space_90),
+                        child: Center(
+                          child: Text(
+                            "Skip for now>>",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: space_15,
+                                fontFamily: CommonStyles.FONT_RALEWAY,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.white,
+                                decoration: TextDecoration.none),
+                          ),
                         ),
                       ),
                     ),

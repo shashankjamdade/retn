@@ -17,6 +17,7 @@ import 'package:flutter_rentry_new/screens/ChatHomeScreen.dart';
 import 'package:flutter_rentry_new/screens/FilterScreen.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
 import 'package:flutter_rentry_new/screens/ItemDetailScreen.dart';
+import 'package:flutter_rentry_new/screens/LoginScreen.dart';
 import 'package:flutter_rentry_new/screens/NearByChildSubCategoryScreen.dart';
 import 'package:flutter_rentry_new/screens/ProfileScreen.dart';
 import 'package:flutter_rentry_new/screens/SearchLocationScreen.dart';
@@ -25,12 +26,11 @@ import 'package:flutter_rentry_new/screens/SubCategoryScreen.dart';
 import 'package:flutter_rentry_new/screens/UserProfile.dart';
 import 'package:flutter_rentry_new/screens/postad/ChooseCategoryScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
+import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';  //for date format
-
-
+import 'package:intl/intl.dart'; //for date format
 
 class AuthPageHeaderWidget extends StatelessWidget {
   String text1;
@@ -570,8 +570,8 @@ class ItemCardWidget extends StatefulWidget {
 }
 
 class _ItemCardWidgetState extends State<ItemCardWidget> {
+  bool isLiked = false;
 
-  bool isLiked  = false;
   @override
   void initState() {
     super.initState();
@@ -630,8 +630,13 @@ class _ItemCardWidgetState extends State<ItemCardWidget> {
                             top: 0.0,
                             right: 0.0,
                             child: GestureDetector(
-                              onTap: (){
-                                new HomeRepository().callSavefavouriteApi(StateContainer.of(context).mLoginResponse.data.token, widget.category_adslist.id);
+                              onTap: () {
+                                new HomeRepository().callSavefavouriteApi(
+                                    StateContainer.of(context)
+                                        .mLoginResponse
+                                        .data
+                                        .token,
+                                    widget.category_adslist.id);
                                 setState(() {
                                   isLiked = !isLiked;
                                 });
@@ -645,7 +650,9 @@ class _ItemCardWidgetState extends State<ItemCardWidget> {
                                 ),
                                 child: Center(
                                   child: Image.asset(
-                                    isLiked?"assets/images/heart.png":"assets/images/heart_grey.png",
+                                    isLiked
+                                        ? "assets/images/heart.png"
+                                        : "assets/images/heart_grey.png",
                                     width: space_22,
                                     height: space_22,
                                   ),
@@ -797,7 +804,8 @@ class ItemCardNoMarginWidget extends StatefulWidget {
 }
 
 class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
-  bool isLiked  = false;
+  bool isLiked = false;
+
   @override
   Widget build(BuildContext context) {
     @override
@@ -853,8 +861,13 @@ class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
                             top: 0.0,
                             right: 0.0,
                             child: GestureDetector(
-                              onTap: (){
-                                new HomeRepository().callSavefavouriteApi(StateContainer.of(context).mLoginResponse.data.token, widget.category_adslist.id);
+                              onTap: () {
+                                new HomeRepository().callSavefavouriteApi(
+                                    StateContainer.of(context)
+                                        .mLoginResponse
+                                        .data
+                                        .token,
+                                    widget.category_adslist.id);
                                 setState(() {
                                   isLiked = !isLiked;
                                 });
@@ -868,7 +881,9 @@ class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
                                 ),
                                 child: Center(
                                   child: Image.asset(
-                                    isLiked?"assets/images/heart.png":"assets/images/heart_grey.png",
+                                    isLiked
+                                        ? "assets/images/heart.png"
+                                        : "assets/images/heart_grey.png",
                                     width: space_22,
                                     height: space_22,
                                   ),
@@ -900,7 +915,9 @@ class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
                           child: Container(
                             height: space_30,
                             child: Text(
-                              widget.category_adslist.description!=null? widget.category_adslist.description : "",
+                              widget.category_adslist.description != null
+                                  ? widget.category_adslist.description
+                                  : "",
                               style: CommonStyles.getRalewayStyle(
                                   space_12, FontWeight.w500, Colors.black),
                               maxLines: 2,
@@ -935,7 +952,9 @@ class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
                               child: Padding(
                                 padding: EdgeInsets.only(right: space_10),
                                 child: Text(
-                                  widget.category_adslist.location!=null? widget.category_adslist.location : "",
+                                  widget.category_adslist.location != null
+                                      ? widget.category_adslist.location
+                                      : "",
                                   style: CommonStyles.getRalewayStyle(
                                       space_12,
                                       FontWeight.w500,
@@ -1044,11 +1063,18 @@ class OwnerInfo extends StatelessWidget {
   String createdDate;
   String rating;
   String sinceDate;
-  OwnerInfo({this.sellerId,this.profilePath ="",this.username="",this.createdDate="",this.rating="",});
+
+  OwnerInfo({
+    this.sellerId,
+    this.profilePath = "",
+    this.username = "",
+    this.createdDate = "",
+    this.rating = "",
+  });
 
   @override
   Widget build(BuildContext context) {
-    if(createdDate!=null && createdDate.isNotEmpty) {
+    if (createdDate != null && createdDate.isNotEmpty) {
       DateFormat dateFormatter = new DateFormat('dd MMM yyyy');
       sinceDate = dateFormatter.format(DateTime.parse(createdDate));
     }
@@ -1061,7 +1087,9 @@ class OwnerInfo extends StatelessWidget {
             borderRadius: BorderRadius.circular(space_10),
             child: FadeInImage.assetNetwork(
               placeholder: "assets/images/app_img.png",
-              image: profilePath!=null? profilePath:'https://picsum.photos/250?image=9',
+              image: profilePath != null
+                  ? profilePath
+                  : 'https://picsum.photos/250?image=9',
               fit: BoxFit.cover,
               width: space_80,
               height: space_60,
@@ -1069,7 +1097,7 @@ class OwnerInfo extends StatelessWidget {
           ),
         ),
         title: Text(
-          username!=null?username:"LOREM BED USERNAME",
+          username != null ? username : "LOREM BED USERNAME",
           style: CommonStyles.getRalewayStyle(
               space_14, FontWeight.w600, Colors.black),
         ),
@@ -1077,7 +1105,7 @@ class OwnerInfo extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Member since ${sinceDate!=null?sinceDate:"24 Aug 2020"}",
+              "Member since ${sinceDate != null ? sinceDate : "24 Aug 2020"}",
               style: CommonStyles.getRalewayStyle(
                   space_12, FontWeight.w500, Colors.black.withOpacity(0.5)),
             ),
@@ -1139,7 +1167,8 @@ class OwnerInfo extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SellerInfoScreen(sellerId)),
+                  MaterialPageRoute(
+                      builder: (context) => SellerInfoScreen(sellerId)),
                 );
               },
               child: Container(
@@ -1397,8 +1426,16 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ChatHomeScreen()),
+                                              builder: (context) => StateContainer
+                                                  .of(context)
+                                                  .mLoginResponse !=
+                                                  null &&
+                                                  StateContainer.of(context)
+                                                      .mLoginResponse
+                                                      .data.token !=
+                                                      null
+                                                  ? ChatHomeScreen()
+                                                  : LoginScreen()),
                                         );
                                       },
                                       child: BottomBarItemWidget("CHAT",
@@ -1417,9 +1454,28 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  NearByChildSubCategoryScreen(isFromNearBy: true, lat: StateContainer.of(context).mUserLocationSelected!=null?StateContainer.of(context).mUserLocationSelected.mlat:"",
-                                                      lng: StateContainer.of(context).mUserLocationSelected!=null?StateContainer.of(context).mUserLocationSelected.mlng:"", radius: LOCATION_RADIUS
-                                                      ,)),
+                                                  NearByChildSubCategoryScreen(
+                                                    isFromNearBy: true,
+                                                    lat: StateContainer.of(
+                                                                    context)
+                                                                .mUserLocationSelected !=
+                                                            null
+                                                        ? StateContainer.of(
+                                                                context)
+                                                            .mUserLocationSelected
+                                                            .mlat
+                                                        : "",
+                                                    lng: StateContainer.of(
+                                                                    context)
+                                                                .mUserLocationSelected !=
+                                                            null
+                                                        ? StateContainer.of(
+                                                                context)
+                                                            .mUserLocationSelected
+                                                            .mlng
+                                                        : "",
+                                                    radius: LOCATION_RADIUS,
+                                                  )),
                                         );
                                       },
                                       child: BottomBarItemWidget("NEARBY",
@@ -1431,8 +1487,16 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) =>
-                                                  UserProfile()),
+                                              builder: (context) => StateContainer
+                                                                  .of(context)
+                                                              .mLoginResponse !=
+                                                          null &&
+                                                      StateContainer.of(context)
+                                                              .mLoginResponse
+                                                              .data.token !=
+                                                          null
+                                                  ? UserProfile()
+                                                  : LoginScreen()),
                                         );
                                       },
                                       child: BottomBarItemWidget("LOGIN",
@@ -1584,7 +1648,10 @@ class BottomFloatingFilterBtnsWidget extends StatelessWidget {
 
 class BottomFloatingChatBtnsWidget extends StatelessWidget {
   String slug;
-  BottomFloatingChatBtnsWidget(this.slug);
+  String mobile;
+
+  BottomFloatingChatBtnsWidget(this.slug, this.mobile);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -1617,10 +1684,7 @@ class BottomFloatingChatBtnsWidget extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ChatDetailScreen(slug: slug,)),
-                  );
+                  lauchDialer(mobile);
                 },
                 child: Container(
                   height: space_40,
@@ -1639,7 +1703,10 @@ class BottomFloatingChatBtnsWidget extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ChatHomeScreen()),
+                    MaterialPageRoute(
+                        builder: (context) => ChatDetailScreen(
+                              slug: slug,
+                            )),
                   );
                 },
                 child: Container(
@@ -1668,7 +1735,9 @@ class BottomFloatingChatBtnsWidget extends StatelessWidget {
 
 class PackageCardWidget extends StatelessWidget {
   GetAllPackageData getAllPackageData;
+
   PackageCardWidget(this.getAllPackageData);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -1713,7 +1782,9 @@ class PackageCardWidget extends StatelessWidget {
                           Text(
                             "\u20B9",
                             style: CommonStyles.getRalewayStyle(
-                                space_15, FontWeight.w600, CommonStyles.softYellow.withOpacity(0.7)),
+                                space_15,
+                                FontWeight.w600,
+                                CommonStyles.softYellow.withOpacity(0.7)),
                           ),
                           Text(
                             "${getAllPackageData.price}",
@@ -1728,7 +1799,9 @@ class PackageCardWidget extends StatelessWidget {
                         child: Text(
                           "month",
                           style: CommonStyles.getRalewayStyle(
-                              space_15, FontWeight.w500, CommonStyles.softYellow.withOpacity(0.7)),
+                              space_15,
+                              FontWeight.w500,
+                              CommonStyles.softYellow.withOpacity(0.7)),
                         )),
                   ],
                 ),
@@ -1736,15 +1809,19 @@ class PackageCardWidget extends StatelessWidget {
             ),
           ),
           GestureDetector(
-            onTap: (){},
+            onTap: () {},
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: space_15, vertical: space_8),
+              padding:
+                  EdgeInsets.symmetric(horizontal: space_15, vertical: space_8),
               decoration: BoxDecoration(
-                color: CommonStyles.blue,
-                borderRadius: BorderRadius.circular(space_10)
-              ),
+                  color: CommonStyles.blue,
+                  borderRadius: BorderRadius.circular(space_10)),
               child: Center(
-                child: Text("CLAIM NOW", style: CommonStyles.getRalewayStyle(space_13, FontWeight.w500, Colors.white),),
+                child: Text(
+                  "CLAIM NOW",
+                  style: CommonStyles.getRalewayStyle(
+                      space_13, FontWeight.w500, Colors.white),
+                ),
               ),
             ),
           )
@@ -1768,33 +1845,32 @@ class ProgressWidget extends StatelessWidget {
 
 class ProgressNormalAppBarWidget extends StatelessWidget {
   String title;
+
   ProgressNormalAppBarWidget(this.title);
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-          body: Container(
-            child: Form(
-              child: Stack(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      PostAdsCommonAppbar(title: title),
-                     ProgressWidget()
-                    ],
-                  ),
-                ],
+      body: Container(
+        child: Form(
+          child: Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [PostAdsCommonAppbar(title: title), ProgressWidget()],
               ),
-            ),
+            ],
           ),
-        ));
+        ),
+      ),
+    ));
   }
 }
 
 class ProfileRowWidget extends StatelessWidget {
-
   String title;
+
   ProfileRowWidget(this.title);
 
   @override
@@ -1808,22 +1884,33 @@ class ProfileRowWidget extends StatelessWidget {
             children: [
               Container(
                 margin: EdgeInsets.all(space_15),
-                child: Icon(Icons.supervised_user_circle, color: CommonStyles.primaryColor,),
+                child: Icon(
+                  Icons.supervised_user_circle,
+                  color: CommonStyles.primaryColor,
+                ),
               ),
-              Expanded(child: Container(
+              Expanded(
+                  child: Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),)
+                    Text(
+                      title,
+                      style: CommonStyles.getMontserratStyle(
+                          space_15, FontWeight.w600, Colors.black),
+                    )
                   ],
                 ),
               ))
             ],
           ),
-          Divider(height: space_1, thickness: space_1, color: Colors.black,)
+          Divider(
+            height: space_1,
+            thickness: space_1,
+            color: Colors.black,
+          )
         ],
       ),
     );
   }
 }
-
