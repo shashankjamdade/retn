@@ -33,7 +33,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
   @override
   void initState() {
     super.initState();
-    debugPrint("ENTRY_HOME_SCREEN---------");
+    debugPrint("ENTRY_NOTIFICATION_SCREEN---------");
   }
 
   @override

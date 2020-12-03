@@ -201,8 +201,16 @@ const String MY_FAVOURITE = "/my_favourites";
 const String SEND_MESSAGE = "/sendmessage";
 const String MY_PACKAGE_LIST = "/my_package_list";
 const String AD_UNDER_PACKAGE = "/adunderpakcage";
-
+const String SUBCATEGORY_CUSTOM_FIELDS = "/subcategory_custom_fields";
 const String LOGGEDIN_SUCCESS = "LOGGEDIN_SUCCESS";
+
+const String CUSTOMFIELD_TEXT = "text";
+const String CUSTOMFIELD_TEXTAREA = "textarea";
+const String CUSTOMFIELD_CHECKBOX = "checkbox";
+const String CUSTOMFIELD_DROPDOWN = "dropdown";
+const String CUSTOMFIELD_RADIO = "radio";
+const String CUSTOMFIELD_MULTI_CHECKBOX = "multiple_checkbox";
+const String CUSTOMFIELD_MULTI_RADIO = "multiple_radio";
 const String LOGGEDIN_ERROR = "LOGGEDIN_ERROR";
 const String LOGGEDIN_CANCELLED = "LOGGEDIN_CANCELLED";
 const String API_ERROR_MSG = "Something went wrong, Please try again later!";

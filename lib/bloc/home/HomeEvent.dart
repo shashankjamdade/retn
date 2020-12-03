@@ -253,3 +253,14 @@ class AdUnderPackageEvent extends HomeEvent{
   @override
   List<Object> get props => [token];
 }
+
+class CustomFieldsEvent extends HomeEvent{
+  final String token;
+  final String subCategoryId;
+
+  CustomFieldsEvent(
+      {@required this.token, @required this.subCategoryId});
+
+  @override
+  List<Object> get props => [token, subCategoryId];
+}

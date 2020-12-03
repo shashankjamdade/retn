@@ -7,7 +7,7 @@ import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/model/sub_category_list_response.dart';
 import 'package:flutter_rentry_new/screens/ItemDetailScreen.dart';
 import 'package:flutter_rentry_new/screens/NearByChildSubCategoryScreen.dart';
-import 'package:flutter_rentry_new/screens/postad/ExplainRentalScreen.dart';
+import 'package:flutter_rentry_new/screens/postad/CustomFieldsScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/my_flutter_app_icons.dart';
@@ -61,8 +61,11 @@ class _PostAdsSubCategoryScreenState extends State<PostAdsSubCategoryScreen> {
             if(state is SubCategoryListResState){
               return setDataToUI(state.res);
             }else if(state is ProgressState){
-              return Center(
-                child: CircularProgressIndicator(),
+              return Container(
+                color: Colors.white,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
               );
             }else {
               return Container(
@@ -137,7 +140,7 @@ class _PostAdsSubCategoryScreenState extends State<PostAdsSubCategoryScreen> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => ExplainRentalScreen()),
+                                          builder: (context) => CustomeFieldsScreen(subCategoryListResponse.data[index].id)),
                                     );
                                   },
                                   child: Align(

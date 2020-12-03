@@ -99,6 +99,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is AdUnderPackageEvent) {
       yield ProgressState();
       yield* callAdUnderPackageApi(event.token);
+    } else if (event is CustomFieldsEvent) {
+      yield ProgressState();
+      yield* callCustomFields(event.token, event.subCategoryId);
     }
   }
 
@@ -454,4 +457,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       debugPrint("Exception while callAdUnderPackageApi ${e.toString()}");
     }
   }
+
+  Stream<HomeState> callCustomFields(String token, String subCategoryId) async* {
+    try {
+      homeRepository =
+          homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callCustomFields ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final getCustomFieldsRes = await homeRepository.callCustomFields(token, subCategoryId);
+      debugPrint("callCustomFields ${jsonEncode(getCustomFieldsRes)}");
+      yield CustomFieldsState(res: getCustomFieldsRes);
+    } catch (e) {
+      debugPrint("Exception while callCustomFields ${e.toString()}");
+    }
+  }
+
+
 }

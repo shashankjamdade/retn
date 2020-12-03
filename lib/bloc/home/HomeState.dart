@@ -6,6 +6,7 @@ import 'package:flutter_rentry_new/model/get_all_chat_msg_res.dart';
 import 'package:flutter_rentry_new/model/get_all_chat_user_list_response.dart';
 import 'package:flutter_rentry_new/model/get_all_package_list_response.dart';
 import 'package:flutter_rentry_new/model/get_category_response.dart';
+import 'package:flutter_rentry_new/model/get_custom_fields_response.dart';
 import 'package:flutter_rentry_new/model/get_my_favourite_res.dart';
 import 'package:flutter_rentry_new/model/get_my_package_list_res.dart';
 import 'package:flutter_rentry_new/model/get_notification_response.dart';
@@ -238,4 +239,13 @@ class AdUnderPackageState extends HomeState {
 
   @override
   List<AdUnderPackageRes> get props => [res];
+}
+
+class CustomFieldsState extends HomeState {
+  final res;
+
+  CustomFieldsState({@required this.res});
+
+  @override
+  List<GetCustomFieldsResponse> get props => [res];
 }

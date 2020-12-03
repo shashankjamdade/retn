@@ -18,7 +18,7 @@ import 'package:flutter_rentry_new/screens/ProfileScreen.dart';
 import 'package:flutter_rentry_new/screens/SplashScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/ChangePasswordScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/ChooseCategoryScreen.dart';
-import 'package:flutter_rentry_new/screens/postad/ExplainRentalScreen.dart';
+import 'package:flutter_rentry_new/screens/postad/CustomFieldsScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/LocationForAdScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/RentalPriceScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/SelectLocationPostAdScreen.dart';

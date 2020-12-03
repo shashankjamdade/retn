@@ -8,6 +8,7 @@ import 'package:flutter_rentry_new/model/get_all_chat_msg_res.dart';
 import 'package:flutter_rentry_new/model/get_all_chat_user_list_response.dart';
 import 'package:flutter_rentry_new/model/get_all_package_list_response.dart';
 import 'package:flutter_rentry_new/model/get_category_response.dart';
+import 'package:flutter_rentry_new/model/get_custom_fields_response.dart';
 import 'package:flutter_rentry_new/model/get_my_favourite_res.dart';
 import 'package:flutter_rentry_new/model/get_my_package_list_res.dart';
 import 'package:flutter_rentry_new/model/get_notification_response.dart';
@@ -617,6 +618,28 @@ class HomeRepository extends BaseRepository {
       print("-----------${data}");
     } else {
       response = new AdUnderPackageRes();
+    }
+    return response;
+  }
+
+  Future<GetCustomFieldsResponse> callCustomFields(String token, String subcategory_id) async {
+    GetCustomFieldsResponse response;
+    print("UNDER callCustomFields ${token} , ${BASE_URL + SUBCATEGORY_CUSTOM_FIELDS}");
+    Map<String, String> mainheader = {"token": token};
+    var res = await http.post(
+      BASE_URL + SUBCATEGORY_CUSTOM_FIELDS,
+      headers: mainheader,
+      body: {"subcategory_id":subcategory_id}
+    );
+    print("PRINTING ${res.body}");
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      var status = data["status"];
+      print("PRINTING_STATUS ${status}");
+      response = GetCustomFieldsResponse.fromJson(data);
+      print("-----------${data}");
+    } else {
+      response = new GetCustomFieldsResponse();
     }
     return response;
   }
