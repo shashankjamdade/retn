@@ -187,7 +187,7 @@ class HomeRepository extends BaseRepository {
     print(
         "UNDER NearbySubChildCategoryListResponse ${categoryId} ${BASE_URL + ADS_SEARCH_API}");
     print(
-        "PRINTING_REQ NearbySubChild --> ${"category_id " + categoryId + ",subcategory_id" + subCategoryId + ",radius" + radius + ",lat" + lat + ",lng" + lng}");
+        "PRINTING_REQ NearbySubChild --> ${"category_id " + categoryId + ",subcategory_id " + subCategoryId + ",radius" + radius + ",lat" + lat + ",lng" + lng}");
     var res = await http.post(BASE_URL + ADS_SEARCH_API, headers: {
       "Token": token
     }, body: {

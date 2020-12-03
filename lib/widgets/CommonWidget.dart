@@ -483,6 +483,7 @@ class CategoryGridWidget extends StatelessWidget {
                     MaterialPageRoute(
                         builder: (context) => SubCategoryScreen(
                               categoryId: homeResponse.data.category[index].id,
+                            categoryName: homeResponse.data.category[index].name
                             )),
                   );
                 },

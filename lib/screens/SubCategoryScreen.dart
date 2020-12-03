@@ -8,6 +8,7 @@ import 'package:flutter_rentry_new/model/sub_category_list_response.dart';
 import 'package:flutter_rentry_new/screens/ItemDetailScreen.dart';
 import 'package:flutter_rentry_new/screens/NearByChildSubCategoryScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
+import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/my_flutter_app_icons.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
@@ -17,8 +18,9 @@ import 'package:flutter_rentry_new/widgets/ListItemCardWidget.dart';
 
 class SubCategoryScreen extends StatefulWidget {
   String categoryId;
+  String categoryName;
 
-  SubCategoryScreen({this.categoryId});
+  SubCategoryScreen({this.categoryId, this.categoryName});
 
   @override
   _SubCategoryScreenState createState() => _SubCategoryScreenState();
@@ -90,25 +92,25 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                   child: Row(
                     children: [
                       Text(
-                        "BEDS",
+                        widget.categoryName,
                         style: CommonStyles.getRalewayStyle(
                             space_15, FontWeight.w800, CommonStyles.red),
                       ),
                       SizedBox(
                         height: space_15,
                       ),
-                      Container(
-                          height: space_15,
-                          child: VerticalDivider(
-                            thickness: space_2,
-                            color: CommonStyles.grey,
-                            indent: space_3,
-                          )),
-                      Text(
-                        "FURNITURE",
-                        style: CommonStyles.getRalewayStyle(
-                            space_15, FontWeight.w800, CommonStyles.blue),
-                      ),
+//                      Container(
+//                          height: space_15,
+//                          child: VerticalDivider(
+//                            thickness: space_2,
+//                            color: CommonStyles.grey,
+//                            indent: space_3,
+//                          )),
+//                      Text(
+//                        "FURNITURE",
+//                        style: CommonStyles.getRalewayStyle(
+//                            space_15, FontWeight.w800, CommonStyles.blue),
+//                      ),
                     ],
                   ),
                 ),
@@ -133,7 +135,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => NearByChildSubCategoryScreen(categoryId: subCategoryListResponse.data[index].id, categoryName: subCategoryListResponse.data[index].name,)),
+                                          builder: (context) => NearByChildSubCategoryScreen(categoryId: widget.categoryId, categoryName: widget.categoryName, subCategoryName: subCategoryListResponse.data[index].name, subCategoryId: subCategoryListResponse.data[index].id, radius: LOCATION_RADIUS, isFromNearBy: false,)),
                                     );
                                   },
                                   child: Align(

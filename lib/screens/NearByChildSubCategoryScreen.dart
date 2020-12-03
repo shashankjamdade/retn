@@ -20,7 +20,7 @@ class NearByChildSubCategoryScreen extends StatefulWidget {
   String categoryId , subCategoryId, radius , lat ,lng, categoryName, subCategoryName ;
   bool isFromNearBy;
 
-  NearByChildSubCategoryScreen({this.categoryId= "", this.subCategoryId = "", this.radius= "", this.lat= "", this.lng= "", this.isFromNearBy = true, this.categoryName= "", this.subCategoryName= ""});
+  NearByChildSubCategoryScreen({this.categoryId= "", this.subCategoryId = "", this.radius= LOCATION_RADIUS, this.lat= "", this.lng= "", this.isFromNearBy = true, this.categoryName= "", this.subCategoryName= ""});
 
   @override
   _NearByChildSubCategoryScreenState createState() =>
