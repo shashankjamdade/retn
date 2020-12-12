@@ -39,7 +39,8 @@ dependencies:
   razorpay_flutter: ^1.1.1
   fluttertoast: ^7.1.4
   url_launcher: ^5.7.1
-
+  gson: ^0.1.4
+  place_picker: ^0.9.15
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.3

@@ -9,6 +9,7 @@ import 'package:flutter_rentry_new/screens/LoginScreen.dart';
 import 'package:flutter_rentry_new/screens/RegisterScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
+import 'package:place_picker/place_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -169,6 +170,15 @@ class _SplashScreenState extends State<SplashScreen> {
             ));
       },
     );
+  }
+
+  void showPlacePicker() async {
+    LocationResult result = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) =>
+            PlacePicker(GOOGLE_API_KEY
+            )));
+    // Handle the result in your way
+    print("LOCATION_SEELCTED ${result.latLng.latitude}");
   }
 
   void redirectTo(String type, BuildContext context) {

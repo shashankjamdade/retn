@@ -35,7 +35,8 @@ class CustomFieldsData {
   String slug;
   String type;
   String length;
-  String default_value;
+  String default_value = "";
+  String default_id = "";
   String required;
   String status;
   List<String> mSelectedValue;
@@ -53,7 +54,7 @@ class CustomFieldsData {
       this.required,
       this.status,
       this.type_value,
-        this.mSelectedValue});
+      this.mSelectedValue});
 
   CustomFieldsData.fromJson(dynamic json) {
     cat_id = json["cat_id"];
@@ -96,18 +97,36 @@ class CustomFieldsData {
 class Type_value {
   String dropdown_id;
   String dropdown_value;
+  String name;
+  String value;
+  String placeholder;
+  bool checked = false;
 
-  Type_value({this.dropdown_id, this.dropdown_value});
+  Type_value(
+      {this.dropdown_id,
+      this.dropdown_value,
+      this.name,
+      this.value,
+      this.placeholder,
+      this.checked});
 
   Type_value.fromJson(dynamic json) {
     dropdown_id = json["dropdown_id"];
     dropdown_value = json["dropdown_value"];
+    name = json["name"];
+    value = json["value"];
+    placeholder = json["placeholder"];
+    checked = json["checked"];
   }
 
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
     map["dropdown_id"] = dropdown_id;
     map["dropdown_value"] = dropdown_value;
+    map["name"] = name;
+    map["value"] = value;
+    map["placeholder"] = placeholder;
+    map["checked"] = checked;
     return map;
   }
 }

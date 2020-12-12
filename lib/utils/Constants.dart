@@ -26,7 +26,7 @@ void onSearchLocation(BuildContext context){
 
 String getMapUrl(double lat, double longi, int w, int h){
   var mapUrl =
-      "https://maps.googleapis.com/maps/api/staticmap?center=${lat},${longi}&zoom=10&size=${w}x${h}&markers=color:red%7Clabel:%7C${lat},${longi}&maptype=roadmap&key=AIzaSyA-7MnlahCeTpKE5mOD5XQf-8ixgbdtDSs";
+      "https://maps.googleapis.com/maps/api/staticmap?center=${lat},${longi}&zoom=10&size=${w}x${h}&markers=color:red%7Clabel:%7C${lat},${longi}&maptype=roadmap&key="+GOOGLE_API_KEY;
   return mapUrl;
 }
 

@@ -16,6 +16,7 @@ import 'package:flutter_rentry_new/model/item_detail_response.dart';
 import 'package:flutter_rentry_new/model/nearby_item_list_response.dart';
 import 'package:flutter_rentry_new/model/location_search_response.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
+import 'package:flutter_rentry_new/model/payment_response.dart';
 import 'package:flutter_rentry_new/model/register_response.dart';
 import 'package:flutter_rentry_new/model/save_favourite_res.dart';
 import 'package:flutter_rentry_new/model/search_sub_category_response.dart';
@@ -248,4 +249,22 @@ class CustomFieldsState extends HomeState {
 
   @override
   List<GetCustomFieldsResponse> get props => [res];
+}
+
+class PostAdsState extends HomeState {
+  final res;
+
+  PostAdsState({@required this.res});
+
+  @override
+  List<CommonResponse> get props => [res];
+}
+
+class PackagePaymentState extends HomeState {
+  final res;
+
+  PackagePaymentState({@required this.res});
+
+  @override
+  List<PaymentRes> get props => [res];
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rentry_new/model/AdPostReqModel.dart';
 import 'package:flutter_rentry_new/model/UserLocationSelected.dart';
 import 'package:flutter_rentry_new/screens/postad/SelectLocationPostAdScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
@@ -8,6 +9,8 @@ import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
 
 class LocationForAdScreen extends StatefulWidget {
+  AdPostReqModel adPostReqModel;
+  LocationForAdScreen(this.adPostReqModel);
   @override
   _LocationForAdScreenState createState() => _LocationForAdScreenState();
 }

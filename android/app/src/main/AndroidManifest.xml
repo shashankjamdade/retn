@@ -14,6 +14,11 @@
         android:label="flutter_rentry_new"
         android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
+
+        <!-- Add your api key here -->
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyA-7MnlahCeTpKE5mOD5XQf-8ixgbdtDSs"/>
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

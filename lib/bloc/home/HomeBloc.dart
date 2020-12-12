@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_rentry_new/model/AdPostReqModel.dart';
 import 'package:flutter_rentry_new/model/RegisterReq.dart';
 import 'package:flutter_rentry_new/model/get_my_favourite_res.dart';
 import 'package:flutter_rentry_new/repository/AuthenticationRepository.dart';
@@ -102,6 +103,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is CustomFieldsEvent) {
       yield ProgressState();
       yield* callCustomFields(event.token, event.subCategoryId);
+    }else if (event is PostAdsEvent) {
+      yield ProgressState();
+      yield* callPostAds(event.token, event.adPostReqModel);
+    }else if (event is PackagePaymentEvent) {
+      yield ProgressState();
+      yield* callPackagePayment(event.token, event.packageId, event.amt, event.pgRes);
     }
   }
 
@@ -469,6 +476,34 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       yield CustomFieldsState(res: getCustomFieldsRes);
     } catch (e) {
       debugPrint("Exception while callCustomFields ${e.toString()}");
+    }
+  }
+
+  Stream<HomeState> callPostAds(String token, AdPostReqModel adPostReqModel) async* {
+    try {
+      homeRepository =
+          homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callPostAds ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final commonResponse = await homeRepository.callPostAds(token, adPostReqModel);
+      debugPrint("callPostAds ${jsonEncode(commonResponse)}");
+      yield PostAdsState(res: commonResponse);
+    } catch (e) {
+      debugPrint("Exception while callPostAds ${e.toString()}");
+    }
+  }
+
+  Stream<HomeState> callPackagePayment(String token, String packageId, String amt, String pgRes) async* {
+    try {
+      homeRepository =
+          homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callPackagePayment ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final commonResponse = await homeRepository.callPackagePayment(token, packageId, amt, pgRes);
+      debugPrint("callPackagePayment ${jsonEncode(commonResponse)}");
+      yield PostAdsState(res: commonResponse);
+    } catch (e) {
+      debugPrint("Exception while callPackagePayment ${e.toString()}");
     }
   }
 

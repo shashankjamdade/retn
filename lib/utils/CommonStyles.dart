@@ -135,6 +135,7 @@ const String app_name = "Rentry";
 const String skip_for_now = "Skip for now>>";
 const String empty_username = "Please enter mobile no or Email";
 const String empty_password = "Please enter password";
+const String empty_package = "Please select package";
 const String empty_address = "Please enter address";
 const String empty_new_password = "Please enter new password";
 const String rent_pe_tagline = "Rent pe le, Rent pe de...";
@@ -146,12 +147,15 @@ const String empty_conf_password = "Please enter confirm password";
 const String pwd_no_match = "Password didn't match";
 const String empty_type = "Please enter type";
 const String empty_price = "Please enter price";
+const String empty_img = "Please upload atleast one image";
 const String empty_rental_type = "Please enter rental type";
+const String empty_location = "Please select location";
 const String empty_brand = "Please enter brand";
 const String empty_loren = "Please enter loren";
 const String empty_ipsum = "Please enter ipsum";
 const String empty_title = "Please enter title";
 const String empty_desc = "Please enter description";
+const String short_desc = "Please enter description atleast 20 characters";
 
 
 //Constant
@@ -202,6 +206,9 @@ const String SEND_MESSAGE = "/sendmessage";
 const String MY_PACKAGE_LIST = "/my_package_list";
 const String AD_UNDER_PACKAGE = "/adunderpakcage";
 const String SUBCATEGORY_CUSTOM_FIELDS = "/subcategory_custom_fields";
+const String POST_ADS = "/addads";
+const String PACKAGE_PAYMENT = "/package_payment";
+
 const String LOGGEDIN_SUCCESS = "LOGGEDIN_SUCCESS";
 
 const String CUSTOMFIELD_TEXT = "text";
@@ -214,6 +221,7 @@ const String CUSTOMFIELD_MULTI_RADIO = "multiple_radio";
 const String LOGGEDIN_ERROR = "LOGGEDIN_ERROR";
 const String LOGGEDIN_CANCELLED = "LOGGEDIN_CANCELLED";
 const String API_ERROR_MSG = "Something went wrong, Please try again later!";
+const String GOOGLE_API_KEY = "AIzaSyA-7MnlahCeTpKE5mOD5XQf-8ixgbdtDSs";
 
 
 

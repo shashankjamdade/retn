@@ -37,7 +37,7 @@ class AdUnderPackageData {
   String package_details;
   String package_id;
   String no_of_posts;
-  String no_of_days;
+  dynamic no_of_days;
   String user_package_id;
   String package_expiry_date;
   String used;
@@ -50,7 +50,7 @@ class AdUnderPackageData {
       this.package_details, 
       this.package_id, 
       this.no_of_posts, 
-      this.no_of_days, 
+      this.no_of_days,
       this.user_package_id, 
       this.package_expiry_date, 
       this.used, 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rentry_new/model/AdPostReqModel.dart';
 import 'package:flutter_rentry_new/model/get_category_response.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/screens/SubCategoryScreen.dart';
@@ -74,7 +75,7 @@ class PostAdCategoryGridWidget extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => PostAdsSubCategoryScreen(categoryId:  mGetCategoryResponse.data[index].id,)),
+                        builder: (context) => PostAdsSubCategoryScreen(adPostReqModel:  new AdPostReqModel(categoryId: mGetCategoryResponse.data[index].id,))),
                   );
                 },
                 child: Container(
@@ -112,7 +113,9 @@ class PostAdCategoryGridWidget extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text("${mGetCategoryResponse.data[index].name}", style: CommonStyles.getRalewayStyle(space_12, FontWeight.w500, CommonStyles.primaryColor),),
+                              Expanded(child: Container(
+                                  margin: EdgeInsets.only(left: space_10),
+                                  child: Text("${mGetCategoryResponse.data[index].name}",textAlign: TextAlign.center, style: CommonStyles.getRalewayStyle(space_12, FontWeight.w500, CommonStyles.primaryColor),))),
                               Container(
                                   height: space_15,
                                   width: space_15,

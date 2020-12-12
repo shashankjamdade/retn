@@ -4,6 +4,7 @@ import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/model/AdPostReqModel.dart';
 import 'package:flutter_rentry_new/model/sub_category_list_response.dart';
 import 'package:flutter_rentry_new/screens/ItemDetailScreen.dart';
 import 'package:flutter_rentry_new/screens/NearByChildSubCategoryScreen.dart';
@@ -18,9 +19,8 @@ import 'package:flutter_rentry_new/widgets/ListItemCardWidget.dart';
 import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
 
 class PostAdsSubCategoryScreen extends StatefulWidget {
-  String categoryId;
-
-  PostAdsSubCategoryScreen({this.categoryId = "82"});
+  AdPostReqModel adPostReqModel;
+  PostAdsSubCategoryScreen({this.adPostReqModel});
 
   @override
   _PostAdsSubCategoryScreenState createState() => _PostAdsSubCategoryScreenState();
@@ -48,7 +48,7 @@ class _PostAdsSubCategoryScreenState extends State<PostAdsSubCategoryScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          homeBloc..add(SubCategoryListReqEvent(categoryId: widget.categoryId, token: token)),
+          homeBloc..add(SubCategoryListReqEvent(categoryId: widget.adPostReqModel.categoryId, token: token)),
       child: BlocListener(
         bloc: homeBloc,
         listener: (context, state) {
@@ -137,10 +137,11 @@ class _PostAdsSubCategoryScreenState extends State<PostAdsSubCategoryScreen> {
                               width: space_230,
                               child: InkWell(
                                   onTap: () {
+                                    widget.adPostReqModel.subCategoryId = subCategoryListResponse.data[index].id;
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => CustomeFieldsScreen(subCategoryListResponse.data[index].id)),
+                                          builder: (context) => CustomeFieldsScreen(widget.adPostReqModel)),
                                     );
                                   },
                                   child: Align(

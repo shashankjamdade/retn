@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_rentry_new/model/AdPostReqModel.dart';
 
 abstract class HomeEvent extends Equatable{
   @override
@@ -263,4 +264,28 @@ class CustomFieldsEvent extends HomeEvent{
 
   @override
   List<Object> get props => [token, subCategoryId];
+}
+
+class PostAdsEvent extends HomeEvent{
+  final String token;
+  final AdPostReqModel adPostReqModel;
+
+  PostAdsEvent(
+      {@required this.token, @required this.adPostReqModel});
+
+  @override
+  List<Object> get props => [token, adPostReqModel];
+}
+
+class PackagePaymentEvent extends HomeEvent{
+  final String token;
+  final String packageId;
+  final String amt;
+  final String pgRes;
+
+  PackagePaymentEvent(
+      {@required this.token, @required this.packageId, this.amt, this.pgRes});
+
+  @override
+  List<Object> get props => [token, packageId, amt, pgRes];
 }

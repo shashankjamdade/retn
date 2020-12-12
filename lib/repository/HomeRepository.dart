@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_rentry_new/model/AdPostReqModel.dart';
 import 'package:flutter_rentry_new/model/RegisterReq.dart';
 import 'package:flutter_rentry_new/model/ad_under_package_res.dart';
 import 'package:flutter_rentry_new/model/common_response.dart';
@@ -18,6 +19,7 @@ import 'package:flutter_rentry_new/model/item_detail_response.dart';
 import 'package:flutter_rentry_new/model/nearby_item_list_response.dart';
 import 'package:flutter_rentry_new/model/location_search_response.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
+import 'package:flutter_rentry_new/model/payment_response.dart';
 import 'package:flutter_rentry_new/model/register_response.dart';
 import 'package:flutter_rentry_new/model/save_favourite_res.dart';
 import 'package:flutter_rentry_new/model/search_sub_category_response.dart';
@@ -25,6 +27,7 @@ import 'package:flutter_rentry_new/model/seller_info_res.dart';
 import 'package:flutter_rentry_new/model/sub_category_list_response.dart';
 import 'package:flutter_rentry_new/model/user_profile_response.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
+import 'package:gson/gson.dart';
 
 import 'base_repository.dart';
 import 'package:http/http.dart' as http;
@@ -40,14 +43,12 @@ class HomeRepository extends BaseRepository {
   HomeRepository({http.Client httpClient})
       : _httpClient = httpClient ?? http.Client();
 
-
   Future<GeneralSettingRes> callGeneralSetting() async {
     bool status = false;
     GeneralSettingRes response;
     int code = 0;
     print("UNDER callGeneralSetting ");
-    var res =
-        await http.get(BASE_URL + GENERAL_SETTINGS);
+    var res = await http.get(BASE_URL + GENERAL_SETTINGS);
     print("PRINTING ${res.body}");
     code = res.statusCode;
     if (res.statusCode == 200) {
@@ -339,21 +340,26 @@ class HomeRepository extends BaseRepository {
     return response;
   }
 
-  Future<CommonResponse> callUpdateUser(String token, String username, String aboutus,
-      String contact, String email, String address, File imageFile) async {
+  Future<CommonResponse> callUpdateUser(
+      String token,
+      String username,
+      String aboutus,
+      String contact,
+      String email,
+      String address,
+      File imageFile) async {
     bool status = false;
     CommonResponse response;
 
-    if(imageFile !=null){
+    if (imageFile != null) {
       var stream =
-      new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
+          new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
       var length = await imageFile.length(); //imageFile is your image file
-      Map<String, String> mainheader = {
-        "token": token
-      };
+      Map<String, String> mainheader = {"token": token};
       var uri = Uri.parse(BASE_URL + GET_USER_DATA);
       var request = new http.MultipartRequest("POST", uri);
-      var multipartFileSign = new http.MultipartFile('profile_picture', stream, length,
+      var multipartFileSign = new http.MultipartFile(
+          'profile_picture', stream, length,
           filename: basename(imageFile.path));
       request.files.add(multipartFileSign);
       request.headers.addAll(mainheader);
@@ -367,10 +373,8 @@ class HomeRepository extends BaseRepository {
         print(value);
         response = CommonResponse.fromJson(value);
       });
-    }else{
-      Map<String, String> mainheader = {
-        "token": token
-      };
+    } else {
+      Map<String, String> mainheader = {"token": token};
       var res = await http.post(BASE_URL + GET_USER_DATA,
           headers: mainheader,
           body: {
@@ -416,16 +420,14 @@ class HomeRepository extends BaseRepository {
     return response;
   }
 
-  Future<SaveFavouriteRes> callSavefavouriteApi(String token, String ad_id) async {
+  Future<SaveFavouriteRes> callSavefavouriteApi(
+      String token, String ad_id) async {
     bool status = false;
     SaveFavouriteRes response;
     print("UNDER callSavefavouriteApi ${token}, ${ad_id}");
     Map<String, String> mainheader = {"token": token};
-    var res = await http.post(
-      BASE_URL + SAVE_FAVOURITE,
-      headers: mainheader,
-      body: {"ad_id": ad_id}
-    );
+    var res = await http.post(BASE_URL + SAVE_FAVOURITE,
+        headers: mainheader, body: {"ad_id": ad_id});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -445,10 +447,7 @@ class HomeRepository extends BaseRepository {
     GetMyFavouriteRes response;
     print("UNDER callMyFavouriteListApi ${token}");
     Map<String, String> mainheader = {"token": token};
-    var res = await http.get(
-      BASE_URL + MY_FAVOURITE,
-      headers: mainheader
-    );
+    var res = await http.get(BASE_URL + MY_FAVOURITE, headers: mainheader);
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -468,11 +467,8 @@ class HomeRepository extends BaseRepository {
     SellerInfoRes response;
     print("UNDER callSellerInfoApi ${token}, ${sellerId}");
     Map<String, String> mainheader = {"token": token};
-    var res = await http.post(
-      BASE_URL + GET_SELLER_INFO,
-      headers: mainheader,
-      body: {"seller_id": sellerId}
-    );
+    var res = await http.post(BASE_URL + GET_SELLER_INFO,
+        headers: mainheader, body: {"seller_id": sellerId});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -481,12 +477,11 @@ class HomeRepository extends BaseRepository {
       response = SellerInfoRes.fromJson(data);
       print("-----------${data}");
     } else {
-      response = new SellerInfoRes(
-          message: API_ERROR_MSG, status: false, data: null);
+      response =
+          new SellerInfoRes(message: API_ERROR_MSG, status: false, data: null);
     }
     return response;
   }
-
 
   Future<GetAllChatUserListResponse> callGetAllChatUserApi(String token) async {
     bool status = false;
@@ -511,13 +506,15 @@ class HomeRepository extends BaseRepository {
     return response;
   }
 
-  Future<GetAllChatMsgRes> callGetAllChatMsgApi(String token, String indexId, String slug) async {
+  Future<GetAllChatMsgRes> callGetAllChatMsgApi(
+      String token, String indexId, String slug) async {
     bool status = false;
     GetAllChatMsgRes response;
-    print("UNDER callGetAllChatMsgApi ${token} , ${BASE_URL + GET_CHAT_LIST+"/${indexId}/${slug}"}");
+    print(
+        "UNDER callGetAllChatMsgApi ${token} , ${BASE_URL + GET_CHAT_LIST + "/${indexId}/${slug}"}");
     Map<String, String> mainheader = {"token": token};
     var res = await http.get(
-      BASE_URL + GET_CHAT_LIST+"/${indexId}/${slug}",
+      BASE_URL + GET_CHAT_LIST + "/${indexId}/${slug}",
       headers: mainheader,
     );
     print("PRINTING ${res.body}");
@@ -534,13 +531,15 @@ class HomeRepository extends BaseRepository {
     return response;
   }
 
-  Future<GetAllChatMsgRes> callGetSlugChatMsgApi(String token, String slug) async {
+  Future<GetAllChatMsgRes> callGetSlugChatMsgApi(
+      String token, String slug) async {
     bool status = false;
     GetAllChatMsgRes response;
-    print("UNDER callGetAllChatMsgApi ${token} , ${BASE_URL + GET_CHAT_LIST+"/${slug}"}");
+    print(
+        "UNDER callGetAllChatMsgApi ${token} , ${BASE_URL + GET_CHAT_LIST + "/${slug}"}");
     Map<String, String> mainheader = {"token": token};
     var res = await http.get(
-      BASE_URL + GET_CHAT_LIST+"/${slug}",
+      BASE_URL + GET_CHAT_LIST + "/${slug}",
       headers: mainheader,
     );
     print("PRINTING ${res.body}");
@@ -557,15 +556,19 @@ class HomeRepository extends BaseRepository {
     return response;
   }
 
-  Future<CommonResponse> callSendMsgApi(String token, String adId, String msg,String recieverId,String inboxId) async {
+  Future<CommonResponse> callSendMsgApi(String token, String adId, String msg,
+      String recieverId, String inboxId) async {
     CommonResponse response;
     print("UNDER callSendMsgApi ${token} , ${BASE_URL + SEND_MESSAGE}");
     Map<String, String> mainheader = {"token": token};
-    var res = await http.post(
-      BASE_URL + SEND_MESSAGE,
-      headers: mainheader,
-      body: {"ad_id":adId, "receiver_id":recieverId, "message":msg, "inbox_id":inboxId}
-    );
+    var res = await http.post(BASE_URL + SEND_MESSAGE,
+        headers: mainheader,
+        body: {
+          "ad_id": adId,
+          "receiver_id": recieverId,
+          "message": msg,
+          "inbox_id": inboxId
+        });
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -574,15 +577,15 @@ class HomeRepository extends BaseRepository {
       response = CommonResponse.fromJson(data);
       print("-----------${data}");
     } else {
-      response = new CommonResponse(
-          msg: API_ERROR_MSG, status: "false");
+      response = new CommonResponse(msg: API_ERROR_MSG, status: "false");
     }
     return response;
   }
 
   Future<GetMyPackageListRes> callGetMyPackageList(String token) async {
     GetMyPackageListRes response;
-    print("UNDER callGetMyPackageList ${token} , ${BASE_URL + MY_PACKAGE_LIST}");
+    print(
+        "UNDER callGetMyPackageList ${token} , ${BASE_URL + MY_PACKAGE_LIST}");
     Map<String, String> mainheader = {"token": token};
     var res = await http.get(
       BASE_URL + MY_PACKAGE_LIST,
@@ -622,15 +625,14 @@ class HomeRepository extends BaseRepository {
     return response;
   }
 
-  Future<GetCustomFieldsResponse> callCustomFields(String token, String subcategory_id) async {
+  Future<GetCustomFieldsResponse> callCustomFields(
+      String token, String subcategory_id) async {
     GetCustomFieldsResponse response;
-    print("UNDER callCustomFields ${token} , ${BASE_URL + SUBCATEGORY_CUSTOM_FIELDS}");
+    print(
+        "UNDER callCustomFields ${token} , ${BASE_URL + SUBCATEGORY_CUSTOM_FIELDS}");
     Map<String, String> mainheader = {"token": token};
-    var res = await http.post(
-      BASE_URL + SUBCATEGORY_CUSTOM_FIELDS,
-      headers: mainheader,
-      body: {"subcategory_id":subcategory_id}
-    );
+    var res = await http.post(BASE_URL + SUBCATEGORY_CUSTOM_FIELDS,
+        headers: mainheader, body: {"subcategory_id": subcategory_id});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -640,6 +642,108 @@ class HomeRepository extends BaseRepository {
       print("-----------${data}");
     } else {
       response = new GetCustomFieldsResponse();
+    }
+    return response;
+  }
+
+  Future<CommonResponse> callPostAds(
+      String token, AdPostReqModel adPostReqModel) async {
+    CommonResponse response;
+
+    debugPrint("ADPOST_REQ entry");
+    Map<String, String> mainheader = {"token": token};
+    var uri = Uri.parse(BASE_URL + POST_ADS);
+    var request = new http.MultipartRequest("POST", uri);
+
+    if (adPostReqModel.imgPath1.isNotEmpty && adPostReqModel.img1 != null) {
+      debugPrint("ADPOST_REQ entry img1");
+      var stream = new http.ByteStream(
+          DelegatingStream.typed(adPostReqModel.img1.openRead()));
+      var length = await adPostReqModel.img1.length(); //imageFile is your image
+      var multipartFileSign = new http.MultipartFile('img_1', stream, length,
+          filename: basename(adPostReqModel.img1.path));
+      request.files.add(multipartFileSign);
+      debugPrint("ADPOST_REQ end img1 ");
+    }
+    if (adPostReqModel.imgPath2.isNotEmpty && adPostReqModel.img2 != null) {
+      var stream = new http.ByteStream(
+          DelegatingStream.typed(adPostReqModel.img2.openRead()));
+      var length = await adPostReqModel.img2.length(); //imageFile is your image
+      var multipartFileSign = new http.MultipartFile('img_2', stream, length,
+          filename: basename(adPostReqModel.img2.path));
+      request.files.add(multipartFileSign);
+    }
+    if (adPostReqModel.imgPath3.isNotEmpty && adPostReqModel.img3 != null) {
+      var stream = new http.ByteStream(
+          DelegatingStream.typed(adPostReqModel.img3.openRead()));
+      var length = await adPostReqModel.img3.length(); //imageFile is your image
+      var multipartFileSign = new http.MultipartFile('img_3', stream, length,
+          filename: basename(adPostReqModel.img3.path));
+      request.files.add(multipartFileSign);
+    }
+    request.headers.addAll(mainheader);
+    request.fields['category'] = adPostReqModel.categoryId;
+    request.fields['subcategory'] = adPostReqModel.subCategoryId;
+    request.fields['title'] = adPostReqModel.title;
+    request.fields['price'] = adPostReqModel.price;
+    request.fields['tags'] = adPostReqModel.tags;
+    request.fields['description'] = adPostReqModel.desc;
+    request.fields['package_id'] = adPostReqModel.packageId;
+    request.fields['address'] = adPostReqModel.address;
+    request.fields['address-lat'] = adPostReqModel.addresslat;
+    request.fields['address-lang'] = adPostReqModel.addresslng;
+    request.fields['rent_type_id'] = adPostReqModel.rentTypeId;
+    request.fields['custome_field'] = adPostReqModel.customFields;
+    var res = await request.send();
+    print(res.statusCode);
+    if (res.statusCode == 200) {
+      return CommonResponse(
+          status: "success",
+          msg:
+              "Your ad has been created successfully, Your ad has been created successfully");
+    } else {
+      var resStr = await res.stream.transform(utf8.decoder);
+      resStr.listen((value) {
+        print(value);
+        response = CommonResponse.fromJson(jsonDecode(value));
+        return response;
+      });
+      debugPrint("END_POSTAD");
+    }
+//    var resStr = await res.stream.transform(utf8.decoder);
+//    resStr.listen((value) {
+//      print(value);
+//      response = CommonResponse.fromJson(jsonDecode(value));
+////      response = CommonResponse.fromJson(value);
+//      return response;
+//    });
+//    debugPrint("END_POSTAD");
+//    return response;
+  }
+
+  Future<PaymentRes> callPackagePayment(
+      String token, String packageId, String amt, String pgRes) async {
+    PaymentRes response;
+    print("UNDER callPackagePayment ${token} , ${BASE_URL + PACKAGE_PAYMENT}");
+    Map<String, String> mainheader = {"token": token};
+    var res =
+        await http.post(BASE_URL + PACKAGE_PAYMENT, headers: mainheader, body: {
+      "package_id": packageId,
+      "amount": amt,
+      "payment_status": "1",
+      "gateway_response": pgRes
+    });
+    print(
+        "PRINTING_REQ {package_id: $packageId, amount $amt , payment_status 1 , gateway_response $pgRes}");
+    print("PRINTING ${res.body}");
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      var status = data["status"];
+      print("PRINTING_STATUS ${status}");
+      response = PaymentRes.fromJson(data);
+      print("-----------${data}");
+    } else {
+      response = new PaymentRes();
     }
     return response;
   }

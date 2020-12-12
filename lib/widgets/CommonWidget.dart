@@ -1859,7 +1859,7 @@ class ProgressNormalAppBarWidget extends StatelessWidget {
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [PostAdsCommonAppbar(title: title), ProgressWidget()],
+                children: [PostAdsCommonAppbar(title: title), Expanded(child: ProgressWidget())],
               ),
             ],
           ),

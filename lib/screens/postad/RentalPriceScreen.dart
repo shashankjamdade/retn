@@ -4,32 +4,43 @@ import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/model/AdPostReqModel.dart';
+import 'package:flutter_rentry_new/model/custom_field_model2.dart';
 import 'package:flutter_rentry_new/model/get_rent_type_response.dart';
+import 'package:flutter_rentry_new/screens/postad/AdUnderPackegeListScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/LocationForAdScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
+import 'package:place_picker/place_picker.dart';
+
 
 class RentalPriceScreen extends StatefulWidget {
+  AdPostReqModel adPostReqModel;
+
+  RentalPriceScreen(this.adPostReqModel);
+
   @override
   _RentalPriceScreenState createState() => _RentalPriceScreenState();
 }
 
 class _RentalPriceScreenState extends State<RentalPriceScreen> {
   TextEditingController priceController = new TextEditingController();
+  TextEditingController titleController = new TextEditingController();
+  TextEditingController descController = new TextEditingController();
+  TextEditingController tagController = new TextEditingController();
   final formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  List<String> daysList = List();
-  String days = "10";
-  String month = "";
-  String year = "";
   HomeBloc homeBloc = new HomeBloc();
   GetRentTypeResponse mGetRentTypeResponse;
   var loginResponse;
   var token = "";
-  var textEditingControllerList = new List<TextEditingController>();
+  var mSelectedDurationType = "";
+  var mSelectedDurationTypeId = "";
+  var rentDurationTypeStrList;
+  var mSelctedLocation = "";
 
   @override
   void didChangeDependencies() {
@@ -44,7 +55,6 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
   @override
   void initState() {
     super.initState();
-    daysList.add("10");
 //    daysList.add("20");
 //    daysList.add("30");
 //    daysListst.add("40");
@@ -59,12 +69,16 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
           listener: (context, state) {
             if (state is GetRentTypeResState) {
               mGetRentTypeResponse = state.res;
+              rentDurationTypeStrList = List<String>();
+              mGetRentTypeResponse.data.forEach((element) {
+                rentDurationTypeStrList.add(element.rent_type);
+              });
             }
           },
           child: BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
-            if(state is GetRentTypeResState){
+            if (state is GetRentTypeResState) {
               return getScreenUI(state);
-            }else{
+            } else {
               return ProgressNormalAppBarWidget("Rental");
             }
           }),
@@ -72,9 +86,8 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
   }
 
   Widget getScreenUI(HomeState state) {
-    if(state is GetRentTypeResState){
+    if (state is GetRentTypeResState) {
       mGetRentTypeResponse = state.res;
-      textEditingControllerList.clear();
     }
     return SafeArea(
         child: Scaffold(
@@ -88,138 +101,217 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   PostAdsCommonAppbar(title: "Rental"),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        left: space_15, top: space_20, bottom: space_20),
-                    child: Text(
-                      "PRICE",
-                      style: CommonStyles.getMontserratStyle(
-                          space_14, FontWeight.w700, Colors.black),
-                    ),
-                  ),
-                  SizedBox(
-                    height: space_20,
-                  ),
                   Expanded(
                     child: Container(
                       margin: EdgeInsets.symmetric(horizontal: space_15),
                       child: ListView(
                         shrinkWrap: true,
                         children: [
-                          NormalTextInputWidget(priceController, "₹", false,
-                              (String value) {
-                            if (value.isEmpty) {
-                              return "";
-                            }
-                          }, TextInputType.number),
+                          Padding(
+                            padding: EdgeInsets.only( top: space_20),
+                            child: Text(
+                              "PRODUCT INFO",
+                              style: CommonStyles.getMontserratStyle(
+                                  space_14, FontWeight.w700, Colors.black),
+                            ),
+                          ),
+                          SizedBox(
+                            height: space_10,
+                          ),
+                          TextFormField(
+                            validator: (String value) {
+                              if (value.isEmpty) {
+                                return "";
+                              }
+                            },
+                            obscureText: false,
+                            controller: titleController,
+                            keyboardType: TextInputType.text,
+                            decoration: InputDecoration(
+                              hintText: "Enter title",
+                              labelText: "Enter title",
+                              fillColor: Colors.transparent,
+                            ),
+                          ),
+                          SizedBox(
+                            height: space_15,
+                          ),
+                          TextFormField(
+                            validator: (String value) {
+                              if (value.isEmpty) {
+                                return "";
+                              }
+                            },
+                            minLines: 3,
+                            maxLines: 4,
+                            keyboardType: TextInputType.multiline,
+                            obscureText: false,
+                            controller: descController,
+                            decoration: InputDecoration(
+                              hintText: "Enter description",
+                              labelText: "Enter description",
+                              fillColor: Colors.transparent,
+                            ),
+                          ),
+                          SizedBox(
+                            height: space_15,
+                          ),
+                          TextFormField(
+                            validator: (String value) {
+                              if (value.isEmpty) {
+                                return "";
+                              }
+                            },
+                            obscureText: false,
+                            controller: tagController,
+                            keyboardType: TextInputType.text,
+                            decoration: InputDecoration(
+                              hintText: "eg. best car, grocery item in LA",
+                              labelText: "Enter tags (optional)",
+                              fillColor: Colors.transparent,
+                            ),
+                          ),
+                          SizedBox(
+                            height: space_15,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only( top: space_20),
+                            child: Text(
+                              "PRICE",
+                              style: CommonStyles.getMontserratStyle(
+                                  space_14, FontWeight.w700, Colors.black),
+                            ),
+                          ),
+                          SizedBox(
+                            height: space_10,
+                          ),
+                          Container(
+                            height: getProportionateScreenHeight(context, space_40),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Flexible(
+                                  child: TextFormField(
+                                    validator: (String value) {
+                                      if (value.isEmpty) {
+                                        return "";
+                                      }
+                                    },
+                                    obscureText: false,
+                                    controller: priceController,
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      hintText: "₹ Enter price",
+                                      fillColor: Colors.transparent,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                           SizedBox(
                             height: space_20,
                           ),
-//                          Row(
-//                            children: [
-//                              Expanded(
-//                                flex: 3,
-//                                child: Text("Rental Duration", style: CommonStyles.getRalewayStyle(space_14, FontWeight.w500, CommonStyles.grey),),
-//                              ),
-//                           Expanded(
-//                                flex: 2,
-//                                child: Text("Day", style: CommonStyles.getRalewayStyle(space_14, FontWeight.w600, CommonStyles.blue),),
-//                              ),
-//                           Expanded(
-//                                flex: 3,
-//                                child: Container(
-//                                  child: DropdownButtonFormField(
-//                                    key: Key("value"),
-//                                    decoration: InputDecoration(
-//                                        enabledBorder: UnderlineInputBorder(
-//                                            borderSide: BorderSide(color: Colors.white))),
-//                                    value: days,
-//                                    iconSize: 20.0,
-//                                    icon: Icon(Icons.keyboard_arrow_down, color: Colors.black,),
-//                                    items: (daysList != null && daysList.length > 0)
-//                                        ? daysList.map(
-//                                          (val) {
-//                                        return DropdownMenuItem<String>(
-//                                          value: val,
-//                                          child: Align(
-//                                            alignment: Alignment.center,
-//                                            child: Container(
-//                                                padding: EdgeInsets.only(left: space_10),
-//                                                child: Text(val, style: CommonStyles.getMontserratStyle(space_12, FontWeight.w600, Colors.black), textAlign: TextAlign.right,)),
-//                                          ),
-//                                        );
-//                                      },
-//                                    ).toList()
-//                                        : ['No List'].map(
-//                                          (val) {
-//                                        return DropdownMenuItem<String>(
-//                                          value: val,
-//                                          child: Text(val),
-//                                        );
-//                                      },
-//                                    ).toList(),
-//                                    onChanged: (value) {
-//                                      //Method
-//                                    },
-//                                  ),
-//                                ),
-//                              )
-//                            ],
-//                          ),
-                         ListView.builder(
-                           shrinkWrap: true,
-                             primary: false,
-                             itemCount: mGetRentTypeResponse.data.length,
-                             itemBuilder: (context, index){
-                             var textEditingControllerObj = new TextEditingController();
-                             textEditingControllerList.add(textEditingControllerObj);
-                               return Container(
-                                 height: space_60,
-                                 child: Column(
-                                   children: [
-                                     Row(
-                                       children: [
-                                         Expanded(
-                                           flex: 3,
-                                           child: Text(
-                                             "Rental Duration",
-                                             style: CommonStyles.getRalewayStyle(space_14,
-                                                 FontWeight.w500, CommonStyles.grey),
-                                           ),
-                                         ),
-                                         Expanded(
-                                           flex: 2,
-                                           child: Text(
-                                             "${mGetRentTypeResponse.data[index].rent_type}",
-                                             style: CommonStyles.getRalewayStyle(space_14,
-                                                 FontWeight.w600, CommonStyles.blue),
-                                           ),
-                                         ),
-                                         Expanded(
-                                           flex: 3,
-                                           child: Container(
-                                             child: NormalTextInputWidget(textEditingControllerList[index], "Enter ${mGetRentTypeResponse.data[index].rent_type}", false,
-                                                     (String value) {
-                                                   if (value.isEmpty) {
-                                                     return "";
-                                                   }
-                                                 }, TextInputType.number),
-                                           ),
-                                         )
-                                       ],
-                                     ),
-                                     Divider(
-                                       height: space_1,
-                                       thickness: space_1,
-                                       color: Colors.black,
-                                     ),
-                                     SizedBox(
-                                       height: space_15,
-                                     ),
-                                   ],
-                                 ),
-                               );
-                         }),
+                          Container(
+                            height: space_100,
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        "Rental Duration",
+                                        style: CommonStyles.getRalewayStyle(
+                                            space_14,
+                                            FontWeight.w500,
+                                            CommonStyles.grey),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Container(
+                                          child: DropdownButton(
+                                        hint: mSelectedDurationType == null ||
+                                                mSelectedDurationType.isEmpty
+                                            ? Text(
+                                                'Select type',
+                                                style: CommonStyles
+                                                    .getRalewayStyle(
+                                                        space_12,
+                                                        FontWeight.w500,
+                                                        Colors.black),
+                                              )
+                                            : Text(
+                                                mSelectedDurationType,
+                                                style: CommonStyles
+                                                    .getRalewayStyle(
+                                                        space_12,
+                                                        FontWeight.w500,
+                                                        Colors.black),
+                                              ),
+                                        isExpanded: true,
+                                        iconSize: 30.0,
+                                        style: TextStyle(color: Colors.blue),
+                                        items: mGetRentTypeResponse.data.map(
+                                          (val) {
+                                            return DropdownMenuItem<
+                                                RentTypeData>(
+                                              value: val,
+                                              child: Text(val.rent_type),
+                                            );
+                                          },
+                                        ).toList(),
+                                        onChanged: (value) {
+                                          setState(
+                                            () {
+                                              if (value is RentTypeData) {
+                                                mSelectedDurationType =
+                                                    value.rent_type;
+                                                mSelectedDurationTypeId =
+                                                    value.ads_rent_type_id;
+                                                debugPrint(
+                                                    "SELECTED_VALUE ${value}-->> ${mSelectedDurationType}");
+                                              }
+                                            },
+                                          );
+                                        },
+                                      )),
+                                    ),
+                                  ],
+                                ),
+                                Divider(
+                                  height: space_1,
+                                  thickness: space_1,
+                                  color: Colors.black,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only( top: space_0),
+                            child: Text(
+                              "SELECT LOCATION",
+                              style: CommonStyles.getMontserratStyle(
+                                  space_14, FontWeight.w700, Colors.black),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: (){
+                              showPlacePicker();
+                            },
+                            child: Container(
+                              height: space_50,
+                              width: double.infinity,
+                              margin: EdgeInsets.symmetric(vertical: space_15),
+                              decoration: BoxDecoration(color: CommonStyles.primaryColor.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(space_15)
+                              ),
+                              child: Center(
+                                child: Text(mSelctedLocation.isNotEmpty?mSelctedLocation:"Select Location", style: CommonStyles.getRalewayStyle(space_15,FontWeight.w500, Colors.black),),
+                              ),
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -260,30 +352,47 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
   }
 
   void onSubmit() {
-    if (priceController.text.trim().isEmpty) {
+    if (titleController.text.trim().isEmpty) {
+      showSnakbar(_scaffoldKey, empty_title);
+    } else if (descController.text.trim().isEmpty) {
+      showSnakbar(_scaffoldKey, empty_desc);
+    } else if (descController.text.trim().length <20) {
+      showSnakbar(_scaffoldKey, short_desc);
+    } else if (priceController.text.trim().isEmpty) {
       showSnakbar(_scaffoldKey, empty_price);
+    } else if (mSelectedDurationTypeId.isEmpty) {
+      showSnakbar(_scaffoldKey, empty_rental_type);
+    } else if (mSelctedLocation.isEmpty) {
+      showSnakbar(_scaffoldKey, empty_location);
     } else {
-      bool isempty = true;
-      textEditingControllerList.forEach((element) {
-        if(element.text.isNotEmpty){
-          isempty = false;
-          debugPrint("RENTAL_TYPE -- ${element.text}");
-        }else{
-          debugPrint("RENTAL_TYPE -- ${element.text}");
-        }
-      });
-      if(isempty){
-        showSnakbar(_scaffoldKey, empty_rental_type);
-      }else{
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => LocationForAdScreen()),
-        );
-        //API hit
+      widget.adPostReqModel.title = titleController.text.trim();
+      widget.adPostReqModel.desc = descController.text.trim();
+      widget.adPostReqModel.tags = tagController.text.trim();
+      widget.adPostReqModel.rentTypeId = mSelectedDurationTypeId;
+      widget.adPostReqModel.price = priceController.text.trim();
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => AdUnderPackageListScreen(widget.adPostReqModel)),
+      );
+      //API hit
 //      authenticationBloc.dispatch(LoginEvent(loginInfoModel: testLogin));
 //      BlocProvider.of<AuthenticationBloc>(_context)
-      }
     }
   }
+
+  void showPlacePicker() async {
+    LocationResult result = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) =>
+            PlacePicker(GOOGLE_API_KEY
+            )));
+    // Handle the result in your way
+    print("LOCATION_SEELCTED ${result.latLng.latitude}");
+    widget.adPostReqModel.address = result.name;
+    widget.adPostReqModel.addresslat = result.latLng.latitude.toString();
+    widget.adPostReqModel.addresslng = result.latLng.longitude.toString();
+    setState(() {
+      mSelctedLocation = result.name;
+    });
+  }
+
 }

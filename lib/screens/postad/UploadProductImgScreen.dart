@@ -1,10 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_rentry_new/model/AdPostReqModel.dart';
+import 'package:flutter_rentry_new/model/custom_field_model2.dart';
 import 'package:flutter_rentry_new/screens/postad/RentalPriceScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
+import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UploadProductImgScreen extends StatefulWidget {
+  AdPostReqModel adPostReqModel;
+
+  UploadProductImgScreen(this.adPostReqModel);
   @override
   _UploadProductImgScreenState createState() => _UploadProductImgScreenState();
 }
@@ -13,11 +22,18 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
   String img1 = "";
   String img2 = "";
   String img3 = "";
+  String mSelectedImg = "";
+  File _image1;
+  File _image2;
+  File _image3;
+  final picker = ImagePicker();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        key: _scaffoldKey,
         body: Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,99 +57,197 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
                     children: [
                       Stack(
                         children: [
-                          Container(
-                            height: space_150,
-                            width: space_200,
-                            margin: EdgeInsets.only(
-                                left: space_15, right: space_5, top: space_5),
-                            decoration: BoxDecoration(
-                                color: CommonStyles.lightGrey,
-                                borderRadius: BorderRadius.circular(space_10)),
+                          GestureDetector(
+                            onTap: (){
+                              setState(() {
+                                mSelectedImg = "img1";
+                              });
+                            },
+                            child: Container(
+                              height: space_150,
+                              width: space_200,
+                              margin: EdgeInsets.only(
+                                  left: space_15, right: space_5, top: space_5),
+                              decoration: BoxDecoration(
+                                  color: CommonStyles.lightGrey,
+                                  borderRadius: BorderRadius.circular(space_10)),
+                              child: _image1 != null
+                                  ? ClipRRect(
+                                borderRadius: BorderRadius.circular(space_10),
+                                    child: Image.file(
+                                _image1,
+                                fit: BoxFit.fill,
+                                width: space_200,
+                                height: space_150,
+                              ),
+                                  ):Container(
+                                height: space_150,
+                                width: space_200,
+                                margin: EdgeInsets.only(
+                                    left: space_15, right: space_5, top: space_5),
+                                decoration: BoxDecoration(
+                                    color: CommonStyles.lightGrey,
+                                    borderRadius: BorderRadius.circular(space_10)),
+                              ),
+                            ),
                           ),
-                          Positioned(
+                          _image1!=null?Positioned(
                             right: 0.0,
                             top: 0.0,
-                            child: Container(
-                                height: space_30,
-                                width: space_30,
-                                decoration: BoxDecoration(
-                                    color: CommonStyles.red,
-                                    shape: BoxShape.circle),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.close,
-                                  color: Colors.white,
-                                ))),
-                          )
+                            child: GestureDetector(
+                              onTap: (){
+                                setState(() {
+                                  _image1 = null;
+                                });
+                              },
+                              child: Container(
+                                  height: space_30,
+                                  width: space_30,
+                                  decoration: BoxDecoration(
+                                      color: CommonStyles.red,
+                                      shape: BoxShape.circle),
+                                  child: Center(
+                                      child: Icon(
+                                    Icons.close,
+                                    color: Colors.white,
+                                  ))),
+                            ),
+                          ):Container(height: space_0, width: space_0,)
                         ],
                       ),
                       Stack(
                         children: [
-                          Container(
-                            height: space_150,
-                            width: space_200,
-                            margin: EdgeInsets.only(
-                                left: space_15, right: space_5, top: space_5),
-                            decoration: BoxDecoration(
-                                color: CommonStyles.lightGrey,
-                                borderRadius: BorderRadius.circular(space_10)),
+                          GestureDetector(
+                            onTap: (){
+                              setState(() {
+                                mSelectedImg = "img2";
+                              });
+                            },
+                            child: Container(
+                              height: space_150,
+                              width: space_200,
+                              margin: EdgeInsets.only(
+                                  left: space_15, right: space_5, top: space_5),
+                              decoration: BoxDecoration(
+                                  color: CommonStyles.lightGrey,
+                                  borderRadius: BorderRadius.circular(space_10)),
+                              child: _image2 != null
+                                  ? ClipRRect(
+                                borderRadius: BorderRadius.circular(space_10),
+                                child: Image.file(
+                                  _image2,
+                                  fit: BoxFit.fill,
+                                  width: space_200,
+                                  height: space_150,
+                                ),
+                              ):Container(
+                                height: space_150,
+                                width: space_200,
+                                margin: EdgeInsets.only(
+                                    left: space_15, right: space_5, top: space_5),
+                                decoration: BoxDecoration(
+                                    color: CommonStyles.lightGrey,
+                                    borderRadius: BorderRadius.circular(space_10)),
+                              ),
+                            ),
                           ),
-                          Positioned(
+                          _image2!=null?Positioned(
                             right: 0.0,
                             top: 0.0,
-                            child: Container(
-                                height: space_30,
-                                width: space_30,
-                                decoration: BoxDecoration(
-                                    color: CommonStyles.red,
-                                    shape: BoxShape.circle),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.close,
-                                  color: Colors.white,
-                                ))),
-                          )
+                            child: GestureDetector(
+                              onTap: (){
+                                setState(() {
+                                  _image2 = null;
+                                });
+                              },
+                              child: Container(
+                                  height: space_30,
+                                  width: space_30,
+                                  decoration: BoxDecoration(
+                                      color: CommonStyles.red,
+                                      shape: BoxShape.circle),
+                                  child: Center(
+                                      child: Icon(
+                                    Icons.close,
+                                    color: Colors.white,
+                                  ))),
+                            ),
+                          ):Container(width: space_0, height: space_0,)
                         ],
                       ),
                       Stack(
                         children: [
-                          Container(
-                            height: space_150,
-                            width: space_200,
-                            margin: EdgeInsets.only(
-                                left: space_15, right: space_5, top: space_5),
-                            decoration: BoxDecoration(
-                                color: CommonStyles.lightGrey,
-                                borderRadius: BorderRadius.circular(space_10)),
+                          GestureDetector(
+                            onTap: (){
+                              setState(() {
+                                mSelectedImg = "img3";
+                              });
+                            },
+                            child: Container(
+                              height: space_150,
+                              width: space_200,
+                              margin: EdgeInsets.only(
+                                  left: space_15, right: space_5, top: space_5),
+                              decoration: BoxDecoration(
+                                  color: CommonStyles.lightGrey,
+                                  borderRadius: BorderRadius.circular(space_10)),
+                              child: _image3 != null
+                                  ? ClipRRect(
+                                borderRadius: BorderRadius.circular(space_10),
+                                child: Image.file(
+                                  _image3,
+                                  fit: BoxFit.fill,
+                                  width: space_200,
+                                  height: space_150,
+                                ),
+                              ):Container(
+                                height: space_150,
+                                width: space_200,
+                                margin: EdgeInsets.only(
+                                    left: space_15, right: space_5, top: space_5),
+                                decoration: BoxDecoration(
+                                    color: CommonStyles.lightGrey,
+                                    borderRadius: BorderRadius.circular(space_10)),
+                              ),
+                            ),
                           ),
-                          Positioned(
+                          _image3!=null?Positioned(
                             right: 0.0,
                             top: 0.0,
-                            child: Container(
-                                height: space_30,
-                                width: space_30,
-                                decoration: BoxDecoration(
-                                    color: CommonStyles.red,
-                                    shape: BoxShape.circle),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.close,
-                                  color: Colors.white,
-                                ))),
-                          )
+                            child: GestureDetector(
+                              onTap: (){
+                                setState(() {
+                                  _image3 = null;
+                                });
+                              },
+                              child: Container(
+                                  height: space_30,
+                                  width: space_30,
+                                  decoration: BoxDecoration(
+                                      color: CommonStyles.red,
+                                      shape: BoxShape.circle),
+                                  child: Center(
+                                      child: Icon(
+                                    Icons.close,
+                                    color: Colors.white,
+                                  ))),
+                            ),
+                          ):Container(height: space_0, width: space_0,)
                         ],
                       ),
                     ],
                   ),
                 ),
               ),
-              Container(
+              mSelectedImg!=null && mSelectedImg.isNotEmpty? Container(
                 margin: EdgeInsets.only(left: space_15, right: space_15),
                 child: Row(
                   children: [
                     Expanded(
                         child: GestureDetector(
-                          onTap: (){},
+                          onTap: (){
+                            getImageCamera(mSelectedImg);
+                          },
                           child: Container(
                       height: space_70,
                       margin: EdgeInsets.only(right: space_5),
@@ -147,7 +261,9 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
                         )),
                     Expanded(
                         child: GestureDetector(
-                          onTap: (){},
+                          onTap: (){
+                            getImage(mSelectedImg);
+                          },
                           child: Container(
                       margin: EdgeInsets.only(left: space_5),
                       height: space_70,
@@ -161,14 +277,24 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
                         )),
                   ],
                 ),
-              ),
+              ):Container(height: space_0, width: space_0,),
               GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => RentalPriceScreen()),
-                  );
+                  if(_image1!=null){
+                    widget.adPostReqModel.imgPath1 = _image1!=null? _image1.path :"";
+                    widget.adPostReqModel.imgPath2 = _image2!=null?_image2.path:"";
+                    widget.adPostReqModel.imgPath3 = _image3!=null?_image3.path:"";
+                    widget.adPostReqModel.img1 = _image1!=null? _image1 :"";
+                    widget.adPostReqModel.img2 = _image2!=null?_image2:null;
+                    widget.adPostReqModel.img3 = _image3!=null?_image3:null;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RentalPriceScreen(widget.adPostReqModel)),
+                    );
+                  }else{
+                    showSnakbar(_scaffoldKey, empty_img);
+                  }
                 },
                 child: Container(
                   margin: EdgeInsets.only(
@@ -198,4 +324,50 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
       ),
     );
   }
+
+  Future getImage(String imgType) async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    setState(() {
+      if (pickedFile != null) {
+        if(imgType == "img1"){
+          _image1 = File(pickedFile.path);
+          debugPrint("FILE_SELECTED ${_image1.path}");
+        }else if(imgType == "img2"){
+          _image2 = File(pickedFile.path);
+          debugPrint("FILE_SELECTED ${_image2.path}");
+        }else if(imgType == "img3"){
+          _image3 = File(pickedFile.path);
+          debugPrint("FILE_SELECTED ${_image3.path}");
+        }
+        mSelectedImg = "";
+      } else {
+        mSelectedImg = "";
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future getImageCamera(String imgType) async {
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    setState(() {
+      if (pickedFile != null) {
+        if(imgType == "img1"){
+          _image1 = File(pickedFile.path);
+          debugPrint("FILE_SELECTED ${_image1.path}");
+        }else if(imgType == "img2"){
+          _image2 = File(pickedFile.path);
+          debugPrint("FILE_SELECTED ${_image2.path}");
+        }else if(imgType == "img3"){
+          _image3 = File(pickedFile.path);
+          debugPrint("FILE_SELECTED ${_image3.path}");
+        }
+        mSelectedImg = "";
+      } else {
+        mSelectedImg = "";
+        print('No image selected.');
+      }
+    });
+  }
+
+
 }

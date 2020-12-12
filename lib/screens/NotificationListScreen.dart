@@ -111,16 +111,18 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
         );
       }else{
         return Container(
+          color: Colors.white,
           margin: EdgeInsets.symmetric(horizontal: space_15),
           child: Center(
-          child: Text("No Notificaitons Found",style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),),
+          child: Text("No Notificaitons Found",style: CommonStyles.getRalewayStyle(space_15, FontWeight.w600, Colors.black),),
         ),);
       }
     }else{
       return Container(
+        color: Colors.white,
         margin: EdgeInsets.symmetric(horizontal: space_15),
         child: Center(
-        child: Text(getNotificationResponse.message, style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),),
+        child: Text(getNotificationResponse.message, style: CommonStyles.getRalewayStyle(space_15, FontWeight.w600, Colors.black),),
       ),);
     }
   }
