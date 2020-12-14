@@ -536,7 +536,7 @@ class HomeRepository extends BaseRepository {
     bool status = false;
     GetAllChatMsgRes response;
     print(
-        "UNDER callGetAllChatMsgApi ${token} , ${BASE_URL + GET_CHAT_LIST + "/${slug}"}");
+        "UNDER callGetSlugChatMsgApi ${token} , ${BASE_URL + GET_CHAT_LIST + "/${slug}"}");
     Map<String, String> mainheader = {"token": token};
     var res = await http.get(
       BASE_URL + GET_CHAT_LIST + "/${slug}",

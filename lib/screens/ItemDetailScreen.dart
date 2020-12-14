@@ -7,6 +7,7 @@ import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/model/item_detail_response.dart';
+import 'package:flutter_rentry_new/repository/HomeRepository.dart';
 import 'package:flutter_rentry_new/screens/ProfileScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
@@ -31,6 +32,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
   ItemDetailResponse mItemDetailResponse;
   var loginResponse;
   String token = "";
+  bool isLiked = false;
 
   @override
   void initState() {
@@ -102,11 +104,13 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
               headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                 return <Widget>[
                   SliverAppBar(
+                    automaticallyImplyLeading: false,
                     expandedHeight:
                     getProportionateScreenHeight(context, space_250),
                     floating: false,
                     pinned: true,
-                    leading: IconButton(icon: Icon(Icons.arrow_back, color: Colors.white,), onPressed: (){}),
+//                    leading: Container(height: space_1, width: space_0),),
+                    leading: IconButton(icon: Icon(Icons.arrow_back, color: Colors.white,), onPressed: (){ Navigator.pop(context);}),
                     flexibleSpace: InkWell(
                       onTap: () {},
                       child: FlexibleSpaceBar(
@@ -121,27 +125,47 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Container(
-                                        height: space_30,
-                                        width: space_30,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.white,
+                                      GestureDetector(
+                                        onTap:(){
+                                          Navigator.pop(context);
+                                        },
+                                        child: Container(
+                                          height: space_30,
+                                          width: space_30,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.white,
+                                          ),
+                                          child: Center(child: Icon(Icons.arrow_back)),
                                         ),
-                                        child: Center(child: Icon(Icons.arrow_back)),
                                       ),
-                                      Container(
-                                        height: space_30,
-                                        width: space_30,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.white,
-                                        ),
-                                        child: Center(
-                                          child: Image.asset(
-                                            "assets/images/heart.png",
-                                            width: space_15,
-                                            height: space_15,
+                                      GestureDetector(
+                                        onTap:(){
+                                          new HomeRepository().callSavefavouriteApi(
+                                              StateContainer.of(context)
+                                                  .mLoginResponse
+                                                  .data
+                                                  .token,
+                                              itemDetailResponse.ad.id);
+                                          setState(() {
+                                            isLiked = !isLiked;
+                                          });
+                                        },
+                                        child: Container(
+                                          height: space_30,
+                                          width: space_30,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.white,
+                                          ),
+                                          child: Center(
+                                            child: Image.asset(
+                                              isLiked
+                                                  ? "assets/images/heart.png"
+                                                  : "assets/images/heart_grey.png",
+                                              width: space_15,
+                                              height: space_15,
+                                            ),
                                           ),
                                         ),
                                       ),

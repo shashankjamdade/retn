@@ -501,7 +501,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           "callPackagePayment ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
       final commonResponse = await homeRepository.callPackagePayment(token, packageId, amt, pgRes);
       debugPrint("callPackagePayment ${jsonEncode(commonResponse)}");
-      yield PostAdsState(res: commonResponse);
+      yield PackagePaymentState(res: commonResponse);
     } catch (e) {
       debugPrint("Exception while callPackagePayment ${e.toString()}");
     }

@@ -52,12 +52,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      home: ScreenOne(),
+      home: ScreenOne(false),
     );
   }
 }
 
 class ScreenOne extends StatefulWidget {
+  bool isClrData = false;
+  ScreenOne(this.isClrData);
   @override
   _ScreenOneState createState() => _ScreenOneState();
 }
@@ -123,6 +125,9 @@ class _ScreenOneState extends State<ScreenOne> {
   checkUserLoggedInOrNot(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var mobile = prefs.getString(USER_NAME);
+    if(widget.isClrData) {
+      prefs.clear();
+    }
     debugPrint("VALlllllllll ${mobile}");
     if (mobile != null && mobile.isNotEmpty) {
       var response =

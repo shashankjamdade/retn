@@ -5,11 +5,13 @@ import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/main.dart';
 import 'package:flutter_rentry_new/model/user_profile_response.dart';
 import 'package:flutter_rentry_new/screens/EditProfileScreen.dart';
 import 'package:flutter_rentry_new/screens/MyFavScreen.dart';
 import 'package:flutter_rentry_new/screens/NotificationListScreen.dart';
 import 'package:flutter_rentry_new/screens/PackageScreen.dart';
+import 'package:flutter_rentry_new/screens/SplashScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
@@ -181,6 +183,14 @@ class _UserProfileState extends State<UserProfile> {
                                       MaterialPageRoute(builder: (context) => NotificationListScreen()),
                                     );
                                   }, child: ProfileRowWidget("Notification")),
+                           InkWell(
+                                  onTap: () {
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => ScreenOne(true)),
+                                        ModalRoute.withName("/Home")
+                                    );
+                                  }, child: ProfileRowWidget("Logout")),
                             ],
                           ),
                         )
