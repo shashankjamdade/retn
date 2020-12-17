@@ -289,3 +289,13 @@ class PackagePaymentEvent extends HomeEvent{
   @override
   List<Object> get props => [token, packageId, amt, pgRes];
 }
+
+class MyAdsEvent extends HomeEvent{
+  final String token;
+
+  MyAdsEvent(
+      {@required this.token});
+
+  @override
+  List<Object> get props => [token];
+}

@@ -12,6 +12,7 @@ import 'package:flutter_rentry_new/screens/MyFavScreen.dart';
 import 'package:flutter_rentry_new/screens/NotificationListScreen.dart';
 import 'package:flutter_rentry_new/screens/PackageScreen.dart';
 import 'package:flutter_rentry_new/screens/SplashScreen.dart';
+import 'package:flutter_rentry_new/screens/postad/MyAdsListScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
@@ -169,6 +170,14 @@ class _UserProfileState extends State<UserProfile> {
                                     );
                                   },
                                   child: ProfileRowWidget("Upgrade Package")),
+                             InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => MyAdsListScreen()),
+                                    );
+                                  },
+                                  child: ProfileRowWidget("My Ads")),
                               InkWell(
                                   onTap: () {
                                     Navigator.push(

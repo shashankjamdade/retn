@@ -208,6 +208,7 @@ const String AD_UNDER_PACKAGE = "/adunderpakcage";
 const String SUBCATEGORY_CUSTOM_FIELDS = "/subcategory_custom_fields";
 const String POST_ADS = "/addads";
 const String PACKAGE_PAYMENT = "/package_payment";
+const String GET_MY_ADS = "/myads";
 
 const String LOGGEDIN_SUCCESS = "LOGGEDIN_SUCCESS";
 

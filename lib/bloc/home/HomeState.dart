@@ -13,6 +13,7 @@ import 'package:flutter_rentry_new/model/get_notification_response.dart';
 import 'package:flutter_rentry_new/model/get_rent_type_response.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/model/item_detail_response.dart';
+import 'package:flutter_rentry_new/model/my_ads_list_res.dart';
 import 'package:flutter_rentry_new/model/nearby_item_list_response.dart';
 import 'package:flutter_rentry_new/model/location_search_response.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
@@ -267,4 +268,13 @@ class PackagePaymentState extends HomeState {
 
   @override
   List<PaymentRes> get props => [res];
+}
+
+class GetMyAdsListState extends HomeState {
+  final res;
+
+  GetMyAdsListState({@required this.res});
+
+  @override
+  List<MyAdsListRes> get props => [res];
 }

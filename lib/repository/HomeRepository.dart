@@ -16,6 +16,7 @@ import 'package:flutter_rentry_new/model/get_notification_response.dart';
 import 'package:flutter_rentry_new/model/get_rent_type_response.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/model/item_detail_response.dart';
+import 'package:flutter_rentry_new/model/my_ads_list_res.dart';
 import 'package:flutter_rentry_new/model/nearby_item_list_response.dart';
 import 'package:flutter_rentry_new/model/location_search_response.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
@@ -744,6 +745,26 @@ class HomeRepository extends BaseRepository {
       print("-----------${data}");
     } else {
       response = new PaymentRes();
+    }
+    return response;
+  }
+
+  Future<MyAdsListRes> callGetMyAdsList(
+      String token) async {
+    MyAdsListRes response;
+    print("UNDER callGetMyAdsList ${token} , ${BASE_URL + GET_MY_ADS}");
+    Map<String, String> mainheader = {"token": token};
+    var res =
+        await http.get(BASE_URL + GET_MY_ADS, headers: mainheader);
+    print("PRINTING ${res.body}");
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      var status = data["status"];
+      print("PRINTING_STATUS ${status}");
+      response = MyAdsListRes.fromJson(data);
+      print("-----------${data}");
+    } else {
+      response = new MyAdsListRes();
     }
     return response;
   }

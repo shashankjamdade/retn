@@ -109,6 +109,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }else if (event is PackagePaymentEvent) {
       yield ProgressState();
       yield* callPackagePayment(event.token, event.packageId, event.amt, event.pgRes);
+    }else if (event is MyAdsEvent) {
+      yield ProgressState();
+      yield* callGetMyAds(event.token);
     }
   }
 
@@ -504,6 +507,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       yield PackagePaymentState(res: commonResponse);
     } catch (e) {
       debugPrint("Exception while callPackagePayment ${e.toString()}");
+    }
+  }
+
+  Stream<HomeState> callGetMyAds(String token) async* {
+    try {
+      homeRepository =
+          homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callGetMyAds ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final getMyAdsRes = await homeRepository.callGetMyAdsList(token);
+      debugPrint("callGetMyAds ${jsonEncode(getMyAdsRes)}");
+      yield GetMyAdsListState(res: getMyAdsRes);
+    } catch (e) {
+      debugPrint("Exception while callGetMyAds ${e.toString()}");
     }
   }
 
