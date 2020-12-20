@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_rentry_new/model/ad_delete_res.dart';
 import 'package:flutter_rentry_new/model/ad_under_package_res.dart';
 import 'package:flutter_rentry_new/model/common_response.dart';
 import 'package:flutter_rentry_new/model/get_all_chat_msg_res.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_rentry_new/model/get_notification_response.dart';
 import 'package:flutter_rentry_new/model/get_rent_type_response.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/model/item_detail_response.dart';
+import 'package:flutter_rentry_new/model/my_ads_edit_res.dart';
 import 'package:flutter_rentry_new/model/my_ads_list_res.dart';
 import 'package:flutter_rentry_new/model/nearby_item_list_response.dart';
 import 'package:flutter_rentry_new/model/location_search_response.dart';
@@ -277,4 +279,31 @@ class GetMyAdsListState extends HomeState {
 
   @override
   List<MyAdsListRes> get props => [res];
+}
+
+class GetMyAdsEditState extends HomeState {
+  final res;
+
+  GetMyAdsEditState({@required this.res});
+
+  @override
+  List<MyAdsEditRes> get props => [res];
+}
+
+class DeleteAdState extends HomeState {
+  final res;
+
+  DeleteAdState({@required this.res});
+
+  @override
+  List<AdDeleteRes> get props => [res];
+}
+
+class PostEditAdsState extends HomeState {
+  final res;
+
+  PostEditAdsState({@required this.res});
+
+  @override
+  List<CommonResponse> get props => [res];
 }

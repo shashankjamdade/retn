@@ -1,9 +1,11 @@
-
 import 'dart:io';
 
 class AdPostReqModel {
+  String adId;
   String categoryId;
+  String categoryName;
   String subCategoryId;
+  String subCategoryName;
   String title;
   String price;
   String tags;
@@ -22,8 +24,11 @@ class AdPostReqModel {
   File img3;
 
   AdPostReqModel(
-      {this.categoryId,
+      {this.adId,
+      this.categoryId,
       this.subCategoryId,
+      this.categoryName,
+      this.subCategoryName,
       this.title,
       this.price,
       this.tags,

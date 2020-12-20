@@ -5,9 +5,11 @@ import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/model/AdPostReqModel.dart';
+import 'package:flutter_rentry_new/model/my_ads_edit_res.dart';
 import 'package:flutter_rentry_new/model/sub_category_list_response.dart';
 import 'package:flutter_rentry_new/screens/ItemDetailScreen.dart';
 import 'package:flutter_rentry_new/screens/NearByChildSubCategoryScreen.dart';
+import 'package:flutter_rentry_new/screens/editAds/EditCustomFieldsScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/CustomFieldsScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
@@ -18,15 +20,16 @@ import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:flutter_rentry_new/widgets/ListItemCardWidget.dart';
 import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
 
-class PostAdsSubCategoryScreen extends StatefulWidget {
+class EditAdsSubCategoryScreen extends StatefulWidget {
   AdPostReqModel adPostReqModel;
-  PostAdsSubCategoryScreen({this.adPostReqModel});
+  MyAdsEditRes mMyAdsEditRes;
+  EditAdsSubCategoryScreen({this.adPostReqModel, this.mMyAdsEditRes});
 
   @override
-  _PostAdsSubCategoryScreenState createState() => _PostAdsSubCategoryScreenState();
+  _EditAdsSubCategoryScreenState createState() => _EditAdsSubCategoryScreenState();
 }
 
-class _PostAdsSubCategoryScreenState extends State<PostAdsSubCategoryScreen> {
+class _EditAdsSubCategoryScreenState extends State<EditAdsSubCategoryScreen> {
   TrackingScrollController controller = TrackingScrollController();
   HomeBloc homeBloc = new HomeBloc();
   SubCategoryListResponse mSubCategoryListResponse;
@@ -48,11 +51,13 @@ class _PostAdsSubCategoryScreenState extends State<PostAdsSubCategoryScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          homeBloc..add(SubCategoryListReqEvent(categoryId: widget.adPostReqModel.categoryId, token: token)),
+          homeBloc..add((widget.adPostReqModel.categoryId == widget.mMyAdsEditRes.data.post.category)?InitialEvent():SubCategoryListReqEvent(categoryId: widget.adPostReqModel.categoryId, token: token)),
       child: BlocListener(
         bloc: homeBloc,
         listener: (context, state) {
-          if (state is SubCategoryListResState) {
+          if (state is InitialHomeState) {
+            mSubCategoryListResponse = new SubCategoryListResponse(status: true, message: "",data: widget.mMyAdsEditRes.data.subcategory);
+          }else if (state is SubCategoryListResState) {
             mSubCategoryListResponse = state.res;
           }
         },
@@ -60,6 +65,8 @@ class _PostAdsSubCategoryScreenState extends State<PostAdsSubCategoryScreen> {
           builder: (context, state) {
             if(state is SubCategoryListResState){
               return setDataToUI(state.res);
+            }else if(state is InitialHomeState){
+              return setDataToUI(new SubCategoryListResponse(status: true, message: "",data: widget.mMyAdsEditRes.data.subcategory));
             }else if(state is ProgressState){
               return Container(
                 color: Colors.white,
@@ -123,10 +130,11 @@ class _PostAdsSubCategoryScreenState extends State<PostAdsSubCategoryScreen> {
                               child: InkWell(
                                   onTap: () {
                                     widget.adPostReqModel.subCategoryId = subCategoryListResponse.data[index].id;
+                                    widget.adPostReqModel.subCategoryName = subCategoryListResponse.data[index].name;
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => CustomeFieldsScreen(widget.adPostReqModel)),
+                                          builder: (context) => EditCustomeFieldsScreen(widget.adPostReqModel, widget.mMyAdsEditRes)),
                                     );
                                   },
                                   child: Align(

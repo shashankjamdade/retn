@@ -9,6 +9,7 @@ import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/model/item_detail_response.dart';
 import 'package:flutter_rentry_new/repository/HomeRepository.dart';
 import 'package:flutter_rentry_new/screens/ProfileScreen.dart';
+import 'package:flutter_rentry_new/screens/editAds/ChooseCategoryEditAdScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/my_flutter_app_icons.dart';
@@ -18,10 +19,10 @@ import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:flutter_rentry_new/widgets/ListItemCardWidget.dart';
 
 class ItemDetailScreen extends StatefulWidget {
-
   String categoryName;
 
   ItemDetailScreen({this.categoryName});
+
   @override
   _ItemDetailScreenState createState() => _ItemDetailScreenState();
 }
@@ -32,42 +33,45 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
   ItemDetailResponse mItemDetailResponse;
   var loginResponse;
   String token = "";
+  String userId = "";
   bool isLiked = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     loginResponse = StateContainer.of(context).mLoginResponse;
-    if(loginResponse!=null) {
+    if (loginResponse != null) {
       token = loginResponse.data.token;
-      debugPrint("ACCESSING_INHERITED ${token}");
+      userId = loginResponse.data.id;
+      debugPrint("ACCESSING_INHERITED ${token}, USERID - ${userId}");
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => homeBloc..add(ItemDetailReqEvent(token: token, categoryName: widget.categoryName)),
+      create: (context) => homeBloc
+        ..add(ItemDetailReqEvent(
+            token: token, categoryName: widget.categoryName)),
       child: BlocListener(
         bloc: homeBloc,
-        listener: (context, state){
-          if(state is ItemDetailResState){
+        listener: (context, state) {
+          if (state is ItemDetailResState) {
             mItemDetailResponse = state.res;
           }
         },
         child: BlocBuilder<HomeBloc, HomeState>(
-          builder: (context, state){
-            if(state is ItemDetailResState){
+          builder: (context, state) {
+            if (state is ItemDetailResState) {
               // ignore: missing_return
               return setDataToUI(state.res);
-            }else {
+            } else {
               return Container(
                 color: Colors.white,
                 child: Center(
@@ -81,99 +85,175 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
     );
   }
 
-  doNothing(){
+  doNothing() {}
 
-  }
-
-  Widget setDataToUI(ItemDetailResponse itemDetailResponse){
-    var mapUrl = getMapUrl(double.parse(itemDetailResponse.ad.lat)
-        , double.parse(itemDetailResponse.ad.lang), MediaQuery.of(context).size.width.toInt() - 30
-        , getProportionateScreenHeight(context, space_180).toInt());
+  Widget setDataToUI(ItemDetailResponse itemDetailResponse) {
+    var mapUrl = getMapUrl(
+        double.parse(itemDetailResponse.ad.lat),
+        double.parse(itemDetailResponse.ad.lang),
+        MediaQuery.of(context).size.width.toInt() - 30,
+        getProportionateScreenHeight(context, space_180).toInt());
     var bannerlist = new List<String>();
-    if(itemDetailResponse.ad.img_1!=null)
+    if (itemDetailResponse.ad.img_1 != null)
       bannerlist.add(itemDetailResponse.ad.img_1);
-    if(itemDetailResponse.ad.img_2!=null)
+    if (itemDetailResponse.ad.img_2 != null)
       bannerlist.add(itemDetailResponse.ad.img_2);
-    if(itemDetailResponse.ad.img_3!=null)
+    if (itemDetailResponse.ad.img_3 != null)
       bannerlist.add(itemDetailResponse.ad.img_3);
     return SafeArea(
       child: Scaffold(
         body: Stack(
           children: [
             NestedScrollView(
-              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+              headerSliverBuilder:
+                  (BuildContext context, bool innerBoxIsScrolled) {
                 return <Widget>[
                   SliverAppBar(
                     automaticallyImplyLeading: false,
                     expandedHeight:
-                    getProportionateScreenHeight(context, space_250),
+                        getProportionateScreenHeight(context, space_250),
                     floating: false,
                     pinned: true,
 //                    leading: Container(height: space_1, width: space_0),),
-                    leading: IconButton(icon: Icon(Icons.arrow_back, color: Colors.white,), onPressed: (){ Navigator.pop(context);}),
+                    leading: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        }),
                     flexibleSpace: InkWell(
                       onTap: () {},
                       child: FlexibleSpaceBar(
                         centerTitle: true,
                         background: Container(
                             child: Stack(
-                              children: [
-                                ItemDetailBannerImgCarousalWidget(bannerList: [itemDetailResponse.ad.img_1, itemDetailResponse.ad.img_2, itemDetailResponse.ad.img_3]),
-                                Container(
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal: space_15, vertical: space_10),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      GestureDetector(
-                                        onTap:(){
-                                          Navigator.pop(context);
-                                        },
-                                        child: Container(
-                                          height: space_30,
-                                          width: space_30,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Colors.white,
-                                          ),
-                                          child: Center(child: Icon(Icons.arrow_back)),
-                                        ),
+                          children: [
+                            ItemDetailBannerImgCarousalWidget(bannerList: [
+                              itemDetailResponse.ad.img_1,
+                              itemDetailResponse.ad.img_2,
+                              itemDetailResponse.ad.img_3
+                            ]),
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: space_15, vertical: space_10),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Container(
+                                      height: space_30,
+                                      width: space_30,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.white,
                                       ),
-                                      GestureDetector(
-                                        onTap:(){
-                                          new HomeRepository().callSavefavouriteApi(
-                                              StateContainer.of(context)
-                                                  .mLoginResponse
-                                                  .data
-                                                  .token,
-                                              itemDetailResponse.ad.id);
-                                          setState(() {
-                                            isLiked = !isLiked;
-                                          });
-                                        },
-                                        child: Container(
-                                          height: space_30,
-                                          width: space_30,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Colors.white,
+                                      child:
+                                          Center(child: Icon(Icons.arrow_back)),
+                                    ),
+                                  ),
+                                  (userId != null &&
+                                          userId.isNotEmpty &&
+                                          (userId ==
+                                              itemDetailResponse.ad.seller_id))
+                                      ? Container(
+                                          child: Row(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+
+                                                },
+                                                child: Container(
+                                                  height: space_40,
+                                                  width: space_40,
+                                                  padding:
+                                                      EdgeInsets.all(space_5),
+                                                  margin: EdgeInsets.only(
+                                                      right: space_15),
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Colors.redAccent,
+                                                  ),
+                                                  child: Center(
+                                                    child: Icon(
+                                                      Icons.delete,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ChooseCategoryEditAdScreen(itemDetailResponse.ad.id)),
+                                                  );
+                                                },
+                                                child: Container(
+                                                  height: space_40,
+                                                  width: space_40,
+                                                  padding:
+                                                      EdgeInsets.all(space_5),
+                                                  margin: EdgeInsets.only(
+                                                      right: space_15),
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: CommonStyles.green,
+                                                  ),
+                                                  child: Center(
+                                                    child: Icon(
+                                                      Icons.edit,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          child: Center(
-                                            child: Image.asset(
-                                              isLiked
-                                                  ? "assets/images/heart.png"
-                                                  : "assets/images/heart_grey.png",
-                                              width: space_15,
-                                              height: space_15,
+                                        )
+                                      : GestureDetector(
+                                          onTap: () {
+                                            new HomeRepository()
+                                                .callSavefavouriteApi(
+                                                    StateContainer.of(context)
+                                                        .mLoginResponse
+                                                        .data
+                                                        .token,
+                                                    itemDetailResponse.ad.id);
+                                            setState(() {
+                                              isLiked = !isLiked;
+                                            });
+                                          },
+                                          child: Container(
+                                            height: space_30,
+                                            width: space_30,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.white,
+                                            ),
+                                            child: Center(
+                                              child: Image.asset(
+                                                isLiked
+                                                    ? "assets/images/heart.png"
+                                                    : "assets/images/heart_grey.png",
+                                                width: space_15,
+                                                height: space_15,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            )),
+                                ],
+                              ),
+                            )
+                          ],
+                        )),
                       ),
                     ),
                   ),
@@ -202,13 +282,17 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                 children: [
                                   Text(
                                     "₹ ${itemDetailResponse.ad.price}",
-                                    style: CommonStyles.getMontserratStyle(space_25,
-                                        FontWeight.w600, CommonStyles.blue),
+                                    style: CommonStyles.getMontserratStyle(
+                                        space_25,
+                                        FontWeight.w600,
+                                        CommonStyles.blue),
                                   ),
                                   Text(
                                     "month",
                                     style: CommonStyles.getRalewayStyle(
-                                        space_14, FontWeight.w500, Colors.black),
+                                        space_14,
+                                        FontWeight.w500,
+                                        Colors.black),
                                   ),
                                 ],
                               ),
@@ -225,15 +309,17 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                   borderRadius: BorderRadius.circular(space_5)),
                               child: Container(
                                 width: double.infinity,
-                                padding: EdgeInsets.symmetric(vertical: space_15),
+                                padding:
+                                    EdgeInsets.symmetric(vertical: space_15),
                                 decoration: BoxDecoration(
                                     color: CommonStyles.lightGrey,
-                                    borderRadius: BorderRadius.circular(space_5)),
+                                    borderRadius:
+                                        BorderRadius.circular(space_5)),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Expanded(
-                                      flex:3,
+                                      flex: 3,
                                       child: Align(
                                         alignment: Alignment.centerRight,
                                         child: Icon(
@@ -284,8 +370,10 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                             margin: EdgeInsets.symmetric(horizontal: space_15),
                             child: Text(
                               itemDetailResponse.ad.description,
-                              style: CommonStyles.getRalewayStyle(space_14,
-                                  FontWeight.w500, Colors.black.withOpacity(0.6)),
+                              style: CommonStyles.getRalewayStyle(
+                                  space_14,
+                                  FontWeight.w500,
+                                  Colors.black.withOpacity(0.6)),
                             ),
                           ),
                           SizedBox(
@@ -305,8 +393,8 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                 ),
                                 Text(
                                   "${itemDetailResponse.ad.city}, ${itemDetailResponse.ad.state}",
-                                  style: CommonStyles.getRalewayStyle(
-                                      space_16, FontWeight.w600, CommonStyles.blue),
+                                  style: CommonStyles.getRalewayStyle(space_16,
+                                      FontWeight.w600, CommonStyles.blue),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -318,17 +406,19 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           ),
                           Container(
                             margin: EdgeInsets.symmetric(horizontal: space_15),
-                            height:
-                            getProportionateScreenHeight(context, space_180),
+                            height: getProportionateScreenHeight(
+                                context, space_180),
                             child: Card(
                               elevation: space_3,
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(space_15)),
+                                  borderRadius:
+                                      BorderRadius.circular(space_15)),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(space_10),
                                 child: FadeInImage.assetNetwork(
                                   placeholder: "assets/images/app_img.png",
-                                  image: mapUrl,//"https://picsum.photos/250?image=9",
+                                  image: mapUrl,
+                                  //"https://picsum.photos/250?image=9",
                                   fit: BoxFit.fill,
                                 ),
                               ),
@@ -350,7 +440,11 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           SizedBox(
                             height: space_15,
                           ),
-                          OwnerInfo(sellerId: itemDetailResponse.ad.seller!=null?itemDetailResponse.ad.seller:"96",),
+                          OwnerInfo(
+                            sellerId: itemDetailResponse.ad.seller != null
+                                ? itemDetailResponse.ad.seller
+                                : "96",
+                          ),
                           SizedBox(
                             height: space_30,
                           ),
@@ -359,20 +453,30 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                             color: CommonStyles.blue.withOpacity(0.1),
                             child: Column(
                               children: [
-                                RichTextTitleBtnWidget(
-                                    "SIMILAR", getRichText2ByType(SIMILAR_PRODUCT),
-                                        () {
-                                      itemDetailResponse.similar_ads.length>0? onViewAllClick(context, SIMILAR_PRODUCT, itemDetailResponse.similar_ads[0].id, itemDetailResponse.similar_ads[0].category):doNothing();
-                                    }),
+                                RichTextTitleBtnWidget("SIMILAR",
+                                    getRichText2ByType(SIMILAR_PRODUCT), () {
+                                  itemDetailResponse.similar_ads.length > 0
+                                      ? onViewAllClick(
+                                          context,
+                                          SIMILAR_PRODUCT,
+                                          itemDetailResponse.similar_ads[0].id,
+                                          itemDetailResponse
+                                              .similar_ads[0].category)
+                                      : doNothing();
+                                }),
                                 Container(
                                   height: space_280,
                                   child: ListView.builder(
                                       scrollDirection: Axis.horizontal,
-                                      itemCount: itemDetailResponse.similar_ads.length,
+                                      itemCount:
+                                          itemDetailResponse.similar_ads.length,
                                       itemBuilder: (context, index) {
                                         return Container(
                                             height: space_300,
-                                            child: ItemCardWidget(category_adslist: itemDetailResponse.similar_ads[index]));
+                                            child: ItemCardWidget(
+                                                category_adslist:
+                                                    itemDetailResponse
+                                                        .similar_ads[index]));
                                       }),
                                 ),
                               ],
@@ -387,18 +491,30 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                             child: Column(
                               children: [
                                 RichTextTitleBtnWidget(
-                                    "MORE", getRichText2ByType(MORE_PRODUCTS), () {
-                                  itemDetailResponse.similar_ads.length>0? onViewAllClick(context, SIMILAR_PRODUCT, itemDetailResponse.similar_ads[0].id, itemDetailResponse.similar_ads[0].category):doNothing();
+                                    "MORE", getRichText2ByType(MORE_PRODUCTS),
+                                    () {
+                                  itemDetailResponse.similar_ads.length > 0
+                                      ? onViewAllClick(
+                                          context,
+                                          SIMILAR_PRODUCT,
+                                          itemDetailResponse.similar_ads[0].id,
+                                          itemDetailResponse
+                                              .similar_ads[0].category)
+                                      : doNothing();
                                 }),
                                 Container(
                                   height: space_280,
                                   child: ListView.builder(
                                       scrollDirection: Axis.horizontal,
-                                      itemCount: itemDetailResponse.similar_ads.length,
+                                      itemCount:
+                                          itemDetailResponse.similar_ads.length,
                                       itemBuilder: (context, index) {
                                         return Container(
                                             height: space_300,
-                                            child: ItemCardWidget(category_adslist: itemDetailResponse.similar_ads[index]));
+                                            child: ItemCardWidget(
+                                                category_adslist:
+                                                    itemDetailResponse
+                                                        .similar_ads[index]));
                                       }),
                                 ),
                               ],
@@ -414,7 +530,14 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
             Align(
               alignment: Alignment.bottomRight,
               child: Container(
-                  child: BottomFloatingChatBtnsWidget(itemDetailResponse!=null?itemDetailResponse.ad.slug:"", itemDetailResponse.ad.contact!=null && itemDetailResponse.ad.contact.isNotEmpty? itemDetailResponse.ad.contact :"")),
+                  child: BottomFloatingChatBtnsWidget(
+                      itemDetailResponse != null
+                          ? itemDetailResponse.ad.slug
+                          : "",
+                      itemDetailResponse.ad.contact != null &&
+                              itemDetailResponse.ad.contact.isNotEmpty
+                          ? itemDetailResponse.ad.contact
+                          : "")),
             )
           ],
         ),

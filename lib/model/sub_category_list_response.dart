@@ -35,15 +35,17 @@ class SubCategoryData {
   String id;
   String name;
   String picture;
+  dynamic is_selected;
 
   SubCategoryData({
       this.id, 
-      this.name, this.picture});
+      this.name, this.picture, this.is_selected});
 
   SubCategoryData.fromJson(dynamic json) {
     id = json["id"];
     name = json["name"];
     picture = json["picture"];
+    is_selected = json["isSelected"];
   }
 
   Map<String, dynamic> toJson() {
@@ -51,6 +53,7 @@ class SubCategoryData {
     map["id"] = id;
     map["name"] = name;
     map["picture"] = picture;
+    map["is_selected"] = is_selected;
     return map;
   }
 

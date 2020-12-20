@@ -101,6 +101,7 @@ class Type_value {
   String value;
   String placeholder;
   bool checked = false;
+  int is_selected = 0;
 
   Type_value(
       {this.dropdown_id,
@@ -108,7 +109,7 @@ class Type_value {
       this.name,
       this.value,
       this.placeholder,
-      this.checked});
+      this.checked, this.is_selected});
 
   Type_value.fromJson(dynamic json) {
     dropdown_id = json["dropdown_id"];
@@ -117,6 +118,7 @@ class Type_value {
     value = json["value"];
     placeholder = json["placeholder"];
     checked = json["checked"];
+    is_selected = json["is_selected"];
   }
 
   Map<String, dynamic> toJson() {
@@ -127,6 +129,7 @@ class Type_value {
     map["value"] = value;
     map["placeholder"] = placeholder;
     map["checked"] = checked;
+    map["is_selected"] = is_selected;
     return map;
   }
 }

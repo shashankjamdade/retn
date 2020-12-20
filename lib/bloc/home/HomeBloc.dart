@@ -103,15 +103,25 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is CustomFieldsEvent) {
       yield ProgressState();
       yield* callCustomFields(event.token, event.subCategoryId);
-    }else if (event is PostAdsEvent) {
+    } else if (event is PostAdsEvent) {
       yield ProgressState();
       yield* callPostAds(event.token, event.adPostReqModel);
-    }else if (event is PackagePaymentEvent) {
+    }  else if (event is PostEditAdsEvent) {
       yield ProgressState();
-      yield* callPackagePayment(event.token, event.packageId, event.amt, event.pgRes);
-    }else if (event is MyAdsEvent) {
+      yield* callPostMyAdEditUpdate(event.token, event.adPostReqModel);
+    } else if (event is PackagePaymentEvent) {
+      yield ProgressState();
+      yield* callPackagePayment(
+          event.token, event.packageId, event.amt, event.pgRes);
+    } else if (event is MyAdsEvent) {
       yield ProgressState();
       yield* callGetMyAds(event.token);
+    } else if (event is DeleteAdEvent) {
+      yield ProgressState();
+      yield* callDeleteAd(event.token, event.adId);
+    } else if (event is GetMyAdsEditEvent) {
+      yield ProgressState();
+      yield* callGetMyAdEdit(event.token, event.adId);
     }
   }
 
@@ -468,13 +478,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Stream<HomeState> callCustomFields(String token, String subCategoryId) async* {
+  Stream<HomeState> callCustomFields(
+      String token, String subCategoryId) async* {
     try {
       homeRepository =
           homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callCustomFields ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
-      final getCustomFieldsRes = await homeRepository.callCustomFields(token, subCategoryId);
+      final getCustomFieldsRes =
+          await homeRepository.callCustomFields(token, subCategoryId);
       debugPrint("callCustomFields ${jsonEncode(getCustomFieldsRes)}");
       yield CustomFieldsState(res: getCustomFieldsRes);
     } catch (e) {
@@ -482,13 +494,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Stream<HomeState> callPostAds(String token, AdPostReqModel adPostReqModel) async* {
+  Stream<HomeState> callPostAds(
+      String token, AdPostReqModel adPostReqModel) async* {
     try {
       homeRepository =
           homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callPostAds ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
-      final commonResponse = await homeRepository.callPostAds(token, adPostReqModel);
+      final commonResponse =
+          await homeRepository.callPostAds(token, adPostReqModel);
       debugPrint("callPostAds ${jsonEncode(commonResponse)}");
       yield PostAdsState(res: commonResponse);
     } catch (e) {
@@ -496,13 +510,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Stream<HomeState> callPackagePayment(String token, String packageId, String amt, String pgRes) async* {
+  Stream<HomeState> callPackagePayment(
+      String token, String packageId, String amt, String pgRes) async* {
     try {
       homeRepository =
           homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callPackagePayment ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
-      final commonResponse = await homeRepository.callPackagePayment(token, packageId, amt, pgRes);
+      final commonResponse =
+          await homeRepository.callPackagePayment(token, packageId, amt, pgRes);
       debugPrint("callPackagePayment ${jsonEncode(commonResponse)}");
       yield PackagePaymentState(res: commonResponse);
     } catch (e) {
@@ -521,6 +537,50 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       yield GetMyAdsListState(res: getMyAdsRes);
     } catch (e) {
       debugPrint("Exception while callGetMyAds ${e.toString()}");
+    }
+  }
+
+  Stream<HomeState> callGetMyAdEdit(String token, String adId) async* {
+    try {
+      homeRepository =
+          homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callGetMyAdEdit ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final getMyEditAds = await homeRepository.callGetMyAdEdit(token, adId);
+      debugPrint("callGetMyAdEdit ${jsonEncode(getMyEditAds)}");
+      yield GetMyAdsEditState(res: getMyEditAds);
+    } catch (e) {
+      debugPrint("Exception while callGetMyAdEdit ${e.toString()}");
+    }
+  }
+
+  Stream<HomeState> callDeleteAd(String token, String adId) async* {
+    try {
+      homeRepository =
+          homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callDeleteAd ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final commonRes = await homeRepository.callDeleteAd(token, adId);
+      debugPrint("callDeleteAd ${jsonEncode(commonRes)}");
+      yield DeleteAdState(res: commonRes);
+    } catch (e) {
+      debugPrint("Exception while callDeleteAd ${e.toString()}");
+    }
+  }
+
+  Stream<HomeState> callPostMyAdEditUpdate(
+      String token, AdPostReqModel adPostReqModel) async* {
+    try {
+      homeRepository =
+      homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callPostMyAdEditUpdate ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final commonResponse =
+      await homeRepository.callEditAds(token, adPostReqModel);
+      debugPrint("callPostMyAdEditUpdate ${jsonEncode(commonResponse)}");
+      yield PostEditAdsState(res: commonResponse);
+    } catch (e) {
+      debugPrint("Exception while callPostMyAdEditUpdate ${e.toString()}");
     }
   }
 

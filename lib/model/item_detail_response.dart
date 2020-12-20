@@ -79,7 +79,7 @@ class ItemDetailResponse {
 //  String categoryName;
 //  String subcatId;
 //  String subcategoryName;
-//  String sellerId;
+//  String seller_id;
 //  String firstname;
 //  String lastname;
 //  String contact;
@@ -119,7 +119,7 @@ class ItemDetailResponse {
 //      this.categoryName,
 //      this.subcatId,
 //      this.subcategoryName,
-//      this.sellerId,
+//      this.seller_id,
 //      this.firstname,
 //      this.lastname,
 //      this.contact,
@@ -159,7 +159,7 @@ class ItemDetailResponse {
 //    categoryName = json["categoryName"];
 //    subcatId = json["subcatId"];
 //    subcategoryName = json["subcategoryName"];
-//    sellerId = json["sellerId"];
+//    seller_id = json["seller_id"];
 //    firstname = json["firstname"];
 //    lastname = json["lastname"];
 //    contact = json["contact"];
@@ -201,7 +201,7 @@ class ItemDetailResponse {
 //    map["categoryName"] = categoryName;
 //    map["subcatId"] = subcatId;
 //    map["subcategoryName"] = subcategoryName;
-//    map["sellerId"] = sellerId;
+//    map["seller_id"] = seller_id;
 //    map["firstname"] = firstname;
 //    map["lastname"] = lastname;
 //    map["contact"] = contact;
@@ -287,7 +287,7 @@ class Ad {
   String categoryName;
   String subcatId;
   String subcategoryName;
-  String sellerId;
+  String seller_id;
   String firstname;
   String lastname;
   String contact;
@@ -327,7 +327,7 @@ class Ad {
       this.categoryName, 
       this.subcatId, 
       this.subcategoryName, 
-      this.sellerId, 
+      this.seller_id, 
       this.firstname, 
       this.lastname, 
       this.contact, 
@@ -367,7 +367,7 @@ class Ad {
     categoryName = json["categoryName"];
     subcatId = json["subcatId"];
     subcategoryName = json["subcategoryName"];
-    sellerId = json["sellerId"];
+    seller_id = json["seller_id"];
     firstname = json["firstname"];
     lastname = json["lastname"];
     contact = json["contact"];
@@ -409,7 +409,7 @@ class Ad {
     map["categoryName"] = categoryName;
     map["subcatId"] = subcatId;
     map["subcategoryName"] = subcategoryName;
-    map["sellerId"] = sellerId;
+    map["seller_id"] = seller_id;
     map["firstname"] = firstname;
     map["lastname"] = lastname;
     map["contact"] = contact;

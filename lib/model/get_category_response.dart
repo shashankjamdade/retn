@@ -3,10 +3,7 @@ class GetCategoryResponse {
   String message;
   List<CategoryData> data;
 
-  GetCategoryResponse({
-      this.status, 
-      this.message, 
-      this.data});
+  GetCategoryResponse({this.status, this.message, this.data});
 
   GetCategoryResponse.fromJson(dynamic json) {
     status = json["status"];
@@ -28,7 +25,6 @@ class GetCategoryResponse {
     }
     return map;
   }
-
 }
 
 class CategoryData {
@@ -41,9 +37,10 @@ class CategoryData {
   String topCategory;
   String showOnHome;
   String createdAt;
+  dynamic is_selected;
 
-  CategoryData({
-      this.id,
+  CategoryData(
+      {this.id,
       this.name,
       this.slug,
       this.description,
@@ -51,7 +48,8 @@ class CategoryData {
       this.status,
       this.topCategory,
       this.showOnHome,
-      this.createdAt});
+      this.createdAt,
+      this.is_selected});
 
   CategoryData.fromJson(dynamic json) {
     id = json["id"];
@@ -63,6 +61,7 @@ class CategoryData {
     topCategory = json["topCategory"];
     showOnHome = json["showOnHome"];
     createdAt = json["createdAt"];
+    is_selected = json["is_selected"];
   }
 
   Map<String, dynamic> toJson() {
@@ -76,7 +75,7 @@ class CategoryData {
     map["topCategory"] = topCategory;
     map["showOnHome"] = showOnHome;
     map["createdAt"] = createdAt;
+    map["is_selected"] = is_selected;
     return map;
   }
-
 }

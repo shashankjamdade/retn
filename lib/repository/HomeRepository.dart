@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_rentry_new/model/AdPostReqModel.dart';
 import 'package:flutter_rentry_new/model/RegisterReq.dart';
+import 'package:flutter_rentry_new/model/ad_delete_res.dart';
 import 'package:flutter_rentry_new/model/ad_under_package_res.dart';
 import 'package:flutter_rentry_new/model/common_response.dart';
 import 'package:flutter_rentry_new/model/general_setting_res.dart';
@@ -16,6 +17,7 @@ import 'package:flutter_rentry_new/model/get_notification_response.dart';
 import 'package:flutter_rentry_new/model/get_rent_type_response.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/model/item_detail_response.dart';
+import 'package:flutter_rentry_new/model/my_ads_edit_res.dart';
 import 'package:flutter_rentry_new/model/my_ads_list_res.dart';
 import 'package:flutter_rentry_new/model/nearby_item_list_response.dart';
 import 'package:flutter_rentry_new/model/location_search_response.dart';
@@ -701,7 +703,7 @@ class HomeRepository extends BaseRepository {
       return CommonResponse(
           status: "success",
           msg:
-              "Your ad has been created successfully, Your ad has been created successfully");
+              "Your ad has been created successfully");
     } else {
       var resStr = await res.stream.transform(utf8.decoder);
       resStr.listen((value) {
@@ -768,6 +770,122 @@ class HomeRepository extends BaseRepository {
     }
     return response;
   }
+
+  Future<MyAdsEditRes> callGetMyAdEdit(
+      String token, String adId) async {
+    MyAdsEditRes response;
+    print("UNDER callGetMyAdEdit ${token} , ${BASE_URL + GET_AD_EDIT}, ${adId} ");
+    Map<String, String> mainheader = {"token": token};
+    var res =
+        await http.post(BASE_URL + GET_AD_EDIT, headers: mainheader, body: {"ad_id":adId});
+    print("PRINTING ${res.body}");
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      var status = data["status"];
+      print("PRINTING_STATUS ${status}");
+      response = MyAdsEditRes.fromJson(data);
+      print("-----------${data}");
+    } else {
+      response = new MyAdsEditRes();
+    }
+    return response;
+  }
+
+  Future<AdDeleteRes> callDeleteAd(
+      String token, String adId) async {
+    AdDeleteRes response;
+    print("UNDER callDeleteAd ${token} , ${BASE_URL + AD_DELETE}, ${adId} ");
+    Map<String, String> mainheader = {"token": token};
+    var res =
+        await http.post(BASE_URL + AD_DELETE, headers: mainheader, body: {"ad_id":adId});
+    print("PRINTING ${res.body}");
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      var status = data["status"];
+      print("PRINTING_STATUS ${status}");
+      response = AdDeleteRes.fromJson(data);
+      print("-----------${data}");
+    } else {
+      response = new AdDeleteRes();
+    }
+    return response;
+  }
+
+  Future<CommonResponse> callEditAds(
+      String token, AdPostReqModel adPostReqModel) async {
+    CommonResponse response;
+
+    debugPrint("EDITPOST_REQ entry");
+    Map<String, String> mainheader = {"token": token};
+    var uri = Uri.parse(BASE_URL + POST_AD_EDIT_UPDATE);
+    var request = new http.MultipartRequest("POST", uri);
+
+    if (adPostReqModel.imgPath1.isNotEmpty && adPostReqModel.img1 != null) {
+      debugPrint("ADEDIT_REQ entry img1");
+      var stream = new http.ByteStream(
+          DelegatingStream.typed(adPostReqModel.img1.openRead()));
+      var length = await adPostReqModel.img1.length(); //imageFile is your image
+      var multipartFileSign = new http.MultipartFile('img_1', stream, length,
+          filename: basename(adPostReqModel.img1.path));
+      request.files.add(multipartFileSign);
+      debugPrint("ADEDIT_REQ end img1 ");
+    }
+    if (adPostReqModel.imgPath2.isNotEmpty && adPostReqModel.img2 != null) {
+      var stream = new http.ByteStream(
+          DelegatingStream.typed(adPostReqModel.img2.openRead()));
+      var length = await adPostReqModel.img2.length(); //imageFile is your image
+      var multipartFileSign = new http.MultipartFile('img_2', stream, length,
+          filename: basename(adPostReqModel.img2.path));
+      request.files.add(multipartFileSign);
+    }
+    if (adPostReqModel.imgPath3.isNotEmpty && adPostReqModel.img3 != null) {
+      var stream = new http.ByteStream(
+          DelegatingStream.typed(adPostReqModel.img3.openRead()));
+      var length = await adPostReqModel.img3.length(); //imageFile is your image
+      var multipartFileSign = new http.MultipartFile('img_3', stream, length,
+          filename: basename(adPostReqModel.img3.path));
+      request.files.add(multipartFileSign);
+    }
+    request.headers.addAll(mainheader);
+    request.fields['ad_id'] = adPostReqModel.adId;
+    request.fields['category'] = adPostReqModel.categoryId;
+    request.fields['subcategory'] = adPostReqModel.subCategoryId;
+    request.fields['title'] = adPostReqModel.title;
+    request.fields['price'] = adPostReqModel.price;
+    request.fields['tags'] = adPostReqModel.tags;
+    request.fields['description'] = adPostReqModel.desc;
+    request.fields['address'] = adPostReqModel.address;
+    request.fields['address-lat'] = adPostReqModel.addresslat;
+    request.fields['address-lang'] = adPostReqModel.addresslng;
+    request.fields['rent_type_id'] = adPostReqModel.rentTypeId;
+    request.fields['custome_field'] = adPostReqModel.customFields;
+    var res = await request.send();
+    print(res.statusCode);
+    if (res.statusCode == 200) {
+      return CommonResponse(
+          status: "success",
+          msg:
+          "Your ad has been updated successfully");
+    } else {
+      var resStr = await res.stream.transform(utf8.decoder);
+      resStr.listen((value) {
+        print(value);
+        response = CommonResponse.fromJson(jsonDecode(value));
+        return response;
+      });
+      debugPrint("END_EDITAD");
+    }
+//    var resStr = await res.stream.transform(utf8.decoder);
+//    resStr.listen((value) {
+//      print(value);
+//      response = CommonResponse.fromJson(jsonDecode(value));
+////      response = CommonResponse.fromJson(value);
+//      return response;
+//    });
+//    debugPrint("END_POSTAD");
+//    return response;
+  }
+
 
   @override
   void dispose() {}

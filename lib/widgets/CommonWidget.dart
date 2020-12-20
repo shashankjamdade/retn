@@ -24,6 +24,7 @@ import 'package:flutter_rentry_new/screens/SearchLocationScreen.dart';
 import 'package:flutter_rentry_new/screens/SellerInfoScreen.dart';
 import 'package:flutter_rentry_new/screens/SubCategoryScreen.dart';
 import 'package:flutter_rentry_new/screens/UserProfile.dart';
+import 'package:flutter_rentry_new/screens/editAds/ChooseCategoryEditAdScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/ChooseCategoryScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
@@ -888,6 +889,269 @@ class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
                                     width: space_22,
                                     height: space_22,
                                   ),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: space_10,
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: space_5),
+                        child: Text(
+                          widget.category_adslist.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: CommonStyles.getRalewayStyle(
+                              space_14, FontWeight.w800, Colors.black),
+                        ),
+                      ),
+                      SizedBox(
+                        height: space_5,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            height: space_30,
+                            child: Text(
+                              widget.category_adslist.description != null
+                                  ? widget.category_adslist.description
+                                  : "",
+                              style: CommonStyles.getRalewayStyle(
+                                  space_12, FontWeight.w500, Colors.black),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: space_10,
+                      ),
+                      Container(
+                        width: double.infinity,
+                        margin: EdgeInsets.symmetric(horizontal: space_5),
+                        padding: EdgeInsets.symmetric(vertical: space_1),
+                        decoration: BoxDecoration(
+                            color: CommonStyles.primaryColor.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(space_5)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Icon(
+                                Icons.location_on,
+                                color: CommonStyles.primaryColor,
+                                size: space_15,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 7,
+                              child: Padding(
+                                padding: EdgeInsets.only(right: space_10),
+                                child: Text(
+                                  widget.category_adslist.location != null
+                                      ? widget.category_adslist.location
+                                      : "",
+                                  style: CommonStyles.getRalewayStyle(
+                                      space_12,
+                                      FontWeight.w500,
+                                      CommonStyles.primaryColor),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: space_5,
+                      ),
+                      Container(
+                        width: double.infinity,
+                        margin: EdgeInsets.only(
+                            left: space_5, right: space_5, bottom: space_5),
+                        padding: EdgeInsets.symmetric(vertical: space_8),
+                        decoration: BoxDecoration(
+                            color: CommonStyles.blue,
+                            borderRadius: BorderRadius.circular(space_5)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "${widget.category_adslist.price}/",
+                              style: CommonStyles.getMontserratStyle(
+                                  space_15, FontWeight.w800, Colors.white),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              "month",
+                              style: CommonStyles.getRalewayStyle(
+                                  space_12, FontWeight.w400, Colors.white),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class MyItemCardNoMarginWidget extends StatefulWidget {
+  Category_adslist category_adslist;
+
+  MyItemCardNoMarginWidget({this.category_adslist});
+
+  @override
+  _MyItemCardNoMarginWidgetState createState() => _MyItemCardNoMarginWidgetState();
+}
+
+class _MyItemCardNoMarginWidgetState extends State<MyItemCardNoMarginWidget> {
+  bool isLiked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    @override
+    void initState() {
+      super.initState();
+//    isLiked = widget.
+    }
+
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  ChooseCategoryEditAdScreen(widget.category_adslist.id)),
+        );
+//        Navigator.push(
+//          context,
+//          MaterialPageRoute(
+//              builder: (context) =>
+//                  ItemDetailScreen(categoryName: widget.category_adslist.slug)),
+//        );
+      },
+      child: Container(
+        height: space_250,
+        width: space_180,
+        child: Stack(
+          children: [
+            Container(
+              child: Card(
+                elevation: space_3,
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.white),
+                    borderRadius: BorderRadius.circular(space_10)),
+                child: Container(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(space_10),
+                                topLeft: Radius.circular(space_10)),
+                            child: Container(
+                              width: space_200,
+                              height: space_110,
+                              decoration: BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.circular(space_10)),
+                              child: FadeInImage.assetNetwork(
+                                placeholder: "assets/images/app_img_white.png",
+                                image: widget.category_adslist.img_1,
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 0.0,
+                            right: 0.0,
+                            child: GestureDetector(
+                              onTap: () {
+                                new HomeRepository().callSavefavouriteApi(
+                                    StateContainer.of(context)
+                                        .mLoginResponse
+                                        .data
+                                        .token,
+                                    widget.category_adslist.id);
+                                setState(() {
+                                  isLiked = !isLiked;
+                                });
+                              },
+                              child: Container(
+                                child: Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+
+                                      },
+                                      child: Container(
+                                        height: space_30,
+                                        width: space_30,
+                                        padding:
+                                        EdgeInsets.all(space_5),
+                                        margin: EdgeInsets.only(
+                                            right: space_15),
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.redAccent,
+                                        ),
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.delete,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ChooseCategoryEditAdScreen(widget.category_adslist.id)),
+                                        );
+                                      },
+                                      child: Container(
+                                        height: space_30,
+                                        width: space_30,
+                                        padding:
+                                        EdgeInsets.all(space_5),
+                                        margin: EdgeInsets.only(
+                                            right: space_15),
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: CommonStyles.green,
+                                        ),
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.edit,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),

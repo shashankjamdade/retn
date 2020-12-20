@@ -299,3 +299,36 @@ class MyAdsEvent extends HomeEvent{
   @override
   List<Object> get props => [token];
 }
+
+class GetMyAdsEditEvent extends HomeEvent{
+  final String token;
+  final String adId;
+
+  GetMyAdsEditEvent(
+      {@required this.token, @required this.adId});
+
+  @override
+  List<Object> get props => [token, adId];
+}
+
+class DeleteAdEvent extends HomeEvent{
+  final String token;
+  final String adId;
+
+  DeleteAdEvent(
+      {@required this.token, @required this.adId});
+
+  @override
+  List<Object> get props => [token, adId];
+}
+
+class PostEditAdsEvent extends HomeEvent{
+  final String token;
+  final AdPostReqModel adPostReqModel;
+
+  PostEditAdsEvent(
+      {@required this.token, @required this.adPostReqModel});
+
+  @override
+  List<Object> get props => [token, adPostReqModel];
+}
