@@ -6,6 +6,7 @@ import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/model/filter_res.dart';
 import 'package:flutter_rentry_new/model/nearby_item_list_response.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
@@ -13,14 +14,30 @@ import 'package:flutter_rentry_new/utils/my_flutter_app_icons.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CarousalCommonWidgets.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
+import 'package:flutter_rentry_new/widgets/CustomWidget.dart';
 import 'package:flutter_rentry_new/widgets/ListItemCardWidget.dart';
+import 'dart:ui' as ui;
 
 class NearByChildSubCategoryScreen extends StatefulWidget {
+  String categoryId,
+      subCategoryId,
+      radius,
+      lat,
+      lng,
+      categoryName,
+      subCategoryName;
 
-  String categoryId , subCategoryId, radius , lat ,lng, categoryName, subCategoryName ;
   bool isFromNearBy;
 
-  NearByChildSubCategoryScreen({this.categoryId= "", this.subCategoryId = "", this.radius= LOCATION_RADIUS, this.lat= "", this.lng= "", this.isFromNearBy = true, this.categoryName= "", this.subCategoryName= ""});
+  NearByChildSubCategoryScreen(
+      {this.categoryId = "",
+      this.subCategoryId = "",
+      this.radius = LOCATION_RADIUS,
+      this.lat = "",
+      this.lng = "",
+      this.isFromNearBy = true,
+      this.categoryName = "",
+      this.subCategoryName = ""});
 
   @override
   _NearByChildSubCategoryScreenState createState() =>
@@ -35,11 +52,25 @@ class _NearByChildSubCategoryScreenState
   var token = "";
   var mLat = "";
   var mLng = "";
+  bool isFilter = true;
+  bool checkedValue = false;
+  double _currentSliderValue = 0;
+  ui.Image sampleIcon;
+  String highestEducation = "Low to High";
+  List<String> sortingList = List();
+  String mType, mSelectedValue;
+  NearbySubChildCategoryListResponse mNearbySubChildCategoryListResponse;
 
   @override
   void initState() {
     super.initState();
-    debugPrint("ENTRY_ITEM_LIST_SCREEN-----${widget.categoryName}---");
+    debugPrint("ENTRY_ITEM_LIST_SCREEN_MAIN-----${widget.categoryName}---");
+    getUiImage("assets/images/slider_thumb.png", 30, 30)
+        .then((value) => sampleIcon = value);
+    //Edu
+    sortingList.add("Low to High");
+    sortingList.add("High to Low");
+    sortingList.add("Most Relevant");
   }
 
   @override
@@ -50,28 +81,40 @@ class _NearByChildSubCategoryScreenState
       token = loginResponse.data.token;
       debugPrint("ACCESSING_INHERITED ${token}");
     }
-   var selectedLoc = StateContainer.of(context).mUserLocationSelected;
-    if (selectedLoc != null && widget.isFromNearBy) {
+    var selectedLoc = StateContainer.of(context).mUserLocationSelected;
+    if (widget.lat != null &&
+        widget.lng != null &&
+        widget.lat.isNotEmpty &&
+        widget.lng.isNotEmpty) {
+      mLat = widget.lat;
+      mLng = widget.lng;
+      debugPrint("ACCESSING_SELECTED_LOCATION ${mLat}, ${mLng} ------");
+    } else if (selectedLoc != null || widget.isFromNearBy) {
       mLat = selectedLoc.mlat;
       mLng = selectedLoc.mlng;
-      debugPrint("ACCESSING_INHERITED ${mLat}, ${mLng} ------");
+      debugPrint("ACCESSING_INHERITED_LOCATION ${mLat}, ${mLng} ------");
     }
   }
 
   @override
   Widget build(BuildContext context) {
-
     return BlocProvider(
-      create: (context) =>
-          homeBloc..add(NearbySubChildCategoryListReqEvent(token: token, categoryId: widget.categoryId, subcategory_id: widget.subCategoryId, radius: widget.radius, lat: widget.lat, lng: widget.lng)),
+      create: (context) => homeBloc
+        ..add(NearbySubChildCategoryListReqEvent(
+            token: token,
+            categoryId: widget.categoryId,
+            subcategory_id: widget.subCategoryId,
+            radius: widget.radius,
+            lat: mLat,
+            lng: mLng)),
       child: BlocListener(
         bloc: homeBloc,
         listener: (context, state) {},
         child: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {
-            if(state is NearbySubChildCategoryListResState){
+            if (state is NearbySubChildCategoryListResState) {
               return setDataToUI(state.res);
-            }else{
+            } else {
               return Container(
                 color: Colors.white,
                 child: Center(
@@ -86,6 +129,7 @@ class _NearByChildSubCategoryScreenState
   }
 
   Widget setDataToUI(NearbySubChildCategoryListResponse res) {
+    mNearbySubChildCategoryListResponse = res;
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -102,29 +146,64 @@ class _NearByChildSubCategoryScreenState
                       top: getProportionateScreenHeight(context, space_15)),
                   child: Row(
                     children: [
-                      widget.isFromNearBy?
-                      Text(
-                       "BROWSE BY NEARME",
-                        style: CommonStyles.getRalewayStyle(
-                            space_15, FontWeight.w800, Colors.black),
-                      ):
-                      Container(
-                        margin: EdgeInsets.only(
-                            left: space_15,
-                            top: getProportionateScreenHeight(context, space_15)),
-                        child: widget.subCategoryName!=null && widget.subCategoryName.isNotEmpty?
-                        Row(
-                          children: [
-                            Text(widget.categoryName, style: CommonStyles.getRalewayStyle(space_15, FontWeight.w800, CommonStyles.red),),
-                            SizedBox(height: space_15,),
-                            Container(height: space_15, child: VerticalDivider(thickness: space_2, color: CommonStyles.grey, indent: space_3,)),
-                            Text(widget.subCategoryName, style: CommonStyles.getRalewayStyle(space_15, FontWeight.w800, CommonStyles.blue),),
-                            Container(height: space_15, child: VerticalDivider(thickness: space_2, color: CommonStyles.grey, indent: space_3,)),
-                            RichTextTitleWidget("SUB", "CATEGORIES"),
-                          ],
-                        ):
-                        Text(widget.categoryName, style: CommonStyles.getRalewayStyle(space_15, FontWeight.w800, CommonStyles.red),),
-                      ),
+                      widget.isFromNearBy
+                          ? Text(
+                              "BROWSE BY NEARME",
+                              style: CommonStyles.getRalewayStyle(
+                                  space_15, FontWeight.w800, Colors.black),
+                            )
+                          : Container(
+                              margin: EdgeInsets.only(
+                                  left: space_15,
+                                  top: getProportionateScreenHeight(
+                                      context, space_15)),
+                              child: widget.subCategoryName != null &&
+                                      widget.subCategoryName.isNotEmpty
+                                  ? Row(
+                                      children: [
+                                        Text(
+                                          widget.categoryName,
+                                          style: CommonStyles.getRalewayStyle(
+                                              space_15,
+                                              FontWeight.w800,
+                                              CommonStyles.red),
+                                        ),
+                                        SizedBox(
+                                          height: space_15,
+                                        ),
+                                        Container(
+                                            height: space_15,
+                                            child: VerticalDivider(
+                                              thickness: space_2,
+                                              color: CommonStyles.grey,
+                                              indent: space_3,
+                                            )),
+                                        Text(
+                                          widget.subCategoryName,
+                                          style: CommonStyles.getRalewayStyle(
+                                              space_15,
+                                              FontWeight.w800,
+                                              CommonStyles.blue),
+                                        ),
+                                        Container(
+                                            height: space_15,
+                                            child: VerticalDivider(
+                                              thickness: space_2,
+                                              color: CommonStyles.grey,
+                                              indent: space_3,
+                                            )),
+                                        RichTextTitleWidget(
+                                            "SUB", "CATEGORIES"),
+                                      ],
+                                    )
+                                  : Text(
+                                      widget.categoryName,
+                                      style: CommonStyles.getRalewayStyle(
+                                          space_15,
+                                          FontWeight.w800,
+                                          CommonStyles.red),
+                                    ),
+                            ),
                     ],
                   ),
                 ),
@@ -151,12 +230,13 @@ class _NearByChildSubCategoryScreenState
                             crossAxisSpacing: 5.0,
                             mainAxisSpacing: 5.0,
                           ),
-                          itemCount: res.data.length,
+                          itemCount: res.data.ad_list.length,
                           itemBuilder: (context, index) {
                             return Container(
                               height: space_280,
                               width: space_230,
-                              child: ItemCardNoMarginWidget(category_adslist: res.data[index]),
+                              child: ItemCardNoMarginWidget(
+                                  category_adslist: res.data.ad_list[index]),
                             );
                           },
                         ),
@@ -172,12 +252,576 @@ class _NearByChildSubCategoryScreenState
             CommonBottomNavBarWidget(),
             Align(
               alignment: Alignment.bottomRight,
-              child: Container(child: BottomFloatingFilterBtnsWidget()),
+              child: Container(
+                  child: BottomFloatingFilterBtnsWidget(res.data.filter, openFilterSheet)),
             )
           ],
         ),
       ),
     );
+  }
+
+  void openFilterSheet(){
+    showModalBottomsheet(mNearbySubChildCategoryListResponse.data.filter);
+  }
+
+  void showModalBottomsheet(FilterRes filterRes) {
+    StateSetter dialogSetState;
+    _currentSliderValue = double.parse(filterRes.budget.min);
+    var diff = int.parse(filterRes.budget.max) -
+        int.parse(filterRes.budget.min);
+
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (builder) {
+          return Container(
+            height: MediaQuery.of(context).size.height,
+            color: Colors.transparent,
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState){
+                dialogSetState = setState;
+                return SafeArea(
+                  child: Scaffold(
+                    body: Stack(
+                      children: [
+                        Column(
+                          children: [
+                            CommonAppbarWidget(app_name, skip_for_now, () {
+                              onSearchLocation(context);
+                            }),
+                            Container(
+                              margin: EdgeInsets.only(top: space_15),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: Container(
+                                        margin: EdgeInsets.only(left: space_15),
+                                        decoration: BoxDecoration(
+                                            gradient: isFilter
+                                                ? filterTabSelectedGradient()
+                                                : filterTabUnSelectedGradient()),
+                                        height: space_50,
+                                        child: Center(
+                                          child: FlatButton.icon(
+                                              onPressed: () {
+                                                dialogSetState(() {
+                                                  isFilter = !isFilter;
+                                                });
+                                              },
+                                              icon: ImageIcon(
+                                                AssetImage(
+                                                  "assets/images/filter_icon_amber.png",
+                                                ),
+                                                color: isFilter
+                                                    ? Colors.white
+                                                    : CommonStyles.darkAmber,
+                                              ),
+                                              label: Text(
+                                                "Filter",
+                                                style: CommonStyles.getRalewayStyle(
+                                                    space_14,
+                                                    FontWeight.w600,
+                                                    isFilter
+                                                        ? Colors.white
+                                                        : CommonStyles.darkAmber),
+                                              )),
+                                        )),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Container(
+                                        margin: EdgeInsets.only(right: space_15),
+                                        decoration: BoxDecoration(
+                                            gradient: isFilter
+                                                ? filterTabUnSelectedGradient()
+                                                : filterTabSelectedGradient()),
+                                        height: space_50,
+                                        child: Center(
+                                          child: FlatButton.icon(
+                                              onPressed: () {
+                                                dialogSetState(() {
+                                                  isFilter = !isFilter;
+                                                });
+                                              },
+                                              icon: ImageIcon(
+                                                AssetImage(
+                                                  "assets/images/sortby_icon_amber.png",
+                                                ),
+                                                color: isFilter
+                                                    ? CommonStyles.darkAmber
+                                                    : Colors.white,
+                                              ),
+                                              label: Text(
+                                                "Sort By",
+                                                style: CommonStyles.getRalewayStyle(
+                                                    space_14,
+                                                    FontWeight.w600,
+                                                    isFilter
+                                                        ? CommonStyles.darkAmber
+                                                        : Colors.white),
+                                              )),
+                                        )),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                color: Colors.white,
+                                padding: EdgeInsets.only(top: space_30),
+                                child: Container(
+                                  color: Colors.white,
+                                  child: ListView(
+                                    shrinkWrap: true,
+                                    children: [
+                                      Container(
+                                          child: isFilter
+                                              ? Container(
+                                            child: ListView(
+                                              shrinkWrap: true,
+                                              primary: false,
+                                              children: [
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      left: space_15,
+                                                      right: space_15),
+                                                  child: Text(
+                                                    "SubCategories",
+                                                    style:
+                                                    CommonStyles.getRalewayStyle(
+                                                        space_15,
+                                                        FontWeight.w800,
+                                                        Colors.black),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      left: space_15,
+                                                      right: space_15),
+                                                  child: ListView.builder(
+                                                      itemCount: filterRes
+                                                          .subcategory.length,
+                                                      shrinkWrap: true,
+                                                      primary: false,
+                                                      scrollDirection: Axis.vertical,
+                                                      itemBuilder: (context, index) {
+                                                        return Container(
+                                                          height: space_50,
+                                                          child: Row(
+                                                            mainAxisSize:
+                                                            MainAxisSize.min,
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                "${filterRes.subcategory[index].sub_name}",
+                                                                style: CommonStyles
+                                                                    .getRalewayStyle(
+                                                                    space_14,
+                                                                    FontWeight
+                                                                        .w500,
+                                                                    Colors.black),
+                                                              ),
+                                                              Checkbox(
+                                                                value: filterRes
+                                                                    .subcategory[
+                                                                index]
+                                                                    .isChecked,
+                                                                onChanged:
+                                                                    (bool value) {
+                                                                  dialogSetState(() {
+                                                                    filterRes
+                                                                        .subcategory[
+                                                                    index]
+                                                                        .isChecked = value;
+                                                                  });
+                                                                },
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
+                                                      }),
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      left: space_15,
+                                                      right: space_15),
+                                                  child: Text(
+                                                    "Others",
+                                                    style:
+                                                    CommonStyles.getRalewayStyle(
+                                                        space_15,
+                                                        FontWeight.w800,
+                                                        Colors.black),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      left: space_15,
+                                                      right: space_15),
+                                                  child: ListView.builder(
+                                                      itemCount: filterRes
+                                                          .customefield.length,
+                                                      shrinkWrap: true,
+                                                      primary: false,
+                                                      scrollDirection: Axis.vertical,
+                                                      itemBuilder: (context, index) {
+                                                        return Container(
+                                                          height: space_50,
+                                                          child: Row(
+                                                            mainAxisSize:
+                                                            MainAxisSize.min,
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                "${filterRes.customefield[index].name}",
+                                                                style: CommonStyles
+                                                                    .getRalewayStyle(
+                                                                    space_14,
+                                                                    FontWeight
+                                                                        .w500,
+                                                                    Colors.black),
+                                                              ),
+                                                              Checkbox(
+                                                                value: filterRes
+                                                                    .customefield[
+                                                                index]
+                                                                    .isChecked,
+                                                                onChanged:
+                                                                    (bool value) {
+                                                                  dialogSetState(() {
+                                                                    filterRes
+                                                                        .customefield[
+                                                                    index]
+                                                                        .isChecked = value;
+                                                                  });
+                                                                },
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
+                                                      }),
+                                                ),
+                                                Container(
+                                                  padding: EdgeInsets.only(
+                                                      left: space_15,
+                                                      right: space_15,
+                                                      top: space_25),
+                                                  child: Text(
+                                                    "PRICE",
+                                                    style:
+                                                    CommonStyles.getRalewayStyle(
+                                                        space_15,
+                                                        FontWeight.w800,
+                                                        Colors.black),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  padding: EdgeInsets.only(
+                                                      left: space_15,
+                                                      right: space_15,
+                                                      top: space_15),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        "₹ ${filterRes.budget.min}",
+                                                        style: CommonStyles
+                                                            .getRalewayStyle(
+                                                            space_12,
+                                                            FontWeight.w500,
+                                                            Colors.black),
+                                                      ),
+                                                      Text(
+                                                        "₹ ${filterRes.budget.max}",
+                                                        style: CommonStyles
+                                                            .getRalewayStyle(
+                                                            space_12,
+                                                            FontWeight.w500,
+                                                            Colors.black),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Container(
+                                                  child: SliderTheme(
+                                                    data: SliderTheme.of(context)
+                                                        .copyWith(
+                                                      activeTrackColor: CommonStyles
+                                                          .primaryColor
+                                                          .withOpacity(0.8),
+                                                      inactiveTrackColor:
+                                                      CommonStyles.blue,
+                                                      trackShape:
+                                                      RectangularSliderTrackShape(),
+                                                      showValueIndicator:
+                                                      ShowValueIndicator.always,
+                                                      valueIndicatorColor:
+                                                      CommonStyles.blue,
+                                                      trackHeight: 8.0,
+                                                      thumbColor:
+                                                      CommonStyles.primaryColor,
+//          thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
+                                                      thumbShape: SliderThumbImage(
+                                                          sampleIcon),
+                                                      overlayColor: CommonStyles
+                                                          .primaryColor
+                                                          .withAlpha(32),
+                                                      overlayShape:
+                                                      RoundSliderOverlayShape(
+                                                          overlayRadius: 28.0),
+                                                    ),
+                                                    child: Slider(
+                                                      value: _currentSliderValue,
+                                                      min: double.parse(filterRes.budget.min),
+                                                      max: double.parse(filterRes.budget.max),
+                                                      divisions: diff,
+                                                      label: _currentSliderValue
+                                                          .round()
+                                                          .toString(),
+                                                      onChanged: (double value) {
+                                                        dialogSetState(() {
+                                                          _currentSliderValue = value;
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  padding: EdgeInsets.only(
+                                                      left: space_15,
+                                                      right: space_15),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                    children: [
+                                                      Container(
+                                                        child: Row(
+                                                          children: [
+                                                            Text(
+                                                              "Min.",
+                                                              style: CommonStyles
+                                                                  .getRalewayStyle(
+                                                                  space_10,
+                                                                  FontWeight.w600,
+                                                                  CommonStyles
+                                                                      .blue),
+                                                            ),
+                                                            Container(
+                                                              margin: EdgeInsets.only(
+                                                                  left: space_5),
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                  horizontal:
+                                                                  space_10,
+                                                                  vertical:
+                                                                  space_5),
+                                                              decoration: BoxDecoration(
+                                                                  color: CommonStyles
+                                                                      .grey
+                                                                      .withOpacity(
+                                                                      0.3),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      space_3)),
+                                                              child: Center(
+                                                                child: Text(
+                                                                  "₹ 200",
+                                                                  style: CommonStyles
+                                                                      .getRalewayStyle(
+                                                                      space_12,
+                                                                      FontWeight
+                                                                          .w500,
+                                                                      Colors
+                                                                          .black),
+                                                                ),
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        child: Row(
+                                                          children: [
+                                                            Container(
+                                                              margin: EdgeInsets.only(
+                                                                  right: space_5),
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                  horizontal:
+                                                                  space_10,
+                                                                  vertical:
+                                                                  space_5),
+                                                              decoration: BoxDecoration(
+                                                                  color: CommonStyles
+                                                                      .grey
+                                                                      .withOpacity(
+                                                                      0.3),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      space_3)),
+                                                              child: Center(
+                                                                child: Text(
+                                                                  "₹ 200",
+                                                                  style: CommonStyles
+                                                                      .getRalewayStyle(
+                                                                      space_12,
+                                                                      FontWeight
+                                                                          .w500,
+                                                                      Colors
+                                                                          .black),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              "Min.",
+                                                              style: CommonStyles
+                                                                  .getRalewayStyle(
+                                                                  space_10,
+                                                                  FontWeight.w600,
+                                                                  CommonStyles
+                                                                      .red),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                              : Container(
+                                            child: ListView.builder(
+                                                itemCount: 1,
+                                                shrinkWrap: true,
+                                                primary: false,
+                                                itemBuilder: (context, pos) {
+                                                  return Container(
+                                                    margin: EdgeInsets.only(
+                                                        left: space_15,
+                                                        right: space_15),
+                                                    child: FilterSortByWidget(
+                                                        "By Price",
+                                                        "PRICE",
+                                                        sortingList[0],
+                                                        this.sortingList,
+                                                            (String mType,
+                                                            String mSelectedValue) {
+                                                          onDropDownValueChange(
+                                                              mType, mSelectedValue);
+                                                        }),
+                                                  );
+                                                }),
+                                          )),
+                                      SizedBox(
+                                        height: space_35,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 1,
+                                            child: Container(
+                                                margin: EdgeInsets.only(
+                                                    left: space_15, right: space_10),
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                    BorderRadius.circular(space_5),
+                                                    gradient: filterTabSelectedGradient()),
+                                                height: space_50,
+                                                child: Center(
+                                                  child: FlatButton(
+                                                      onPressed: () {
+                                                        var dummyCustom =
+                                                        List<Customefield>();
+                                                        filterRes.customefield
+                                                            .forEach((element) {
+                                                          element.isChecked = false;
+                                                          dummyCustom.add(element);
+                                                        });
+                                                        var dummySubCategory =
+                                                        List<Subcategory>();
+                                                        filterRes.subcategory
+                                                            .forEach((element) {
+                                                          element.isChecked = false;
+                                                          dummySubCategory.add(element);
+                                                        });
+                                                        dialogSetState(() {
+                                                          filterRes.customefield =
+                                                              dummyCustom;
+                                                          filterRes.subcategory =
+                                                              dummySubCategory;
+                                                          _currentSliderValue = double.parse(filterRes.budget.min);
+                                                        });
+                                                      },
+                                                      child: Text(
+                                                        "Reset",
+                                                        style: CommonStyles.getRalewayStyle(
+                                                            space_15,
+                                                            FontWeight.w600,
+                                                            Colors.white),
+                                                      )),
+                                                )),
+                                          ),
+                                          Expanded(
+                                            flex: 1,
+                                            child: Container(
+                                                margin: EdgeInsets.only(
+                                                    right: space_15, left: space_10),
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                    BorderRadius.circular(space_5),
+                                                    color: CommonStyles.blue),
+                                                height: space_50,
+                                                child: Center(
+                                                  child: FlatButton(
+                                                      onPressed: () {
+
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text(
+                                                        "Apply",
+                                                        style: CommonStyles.getRalewayStyle(
+                                                            space_15,
+                                                            FontWeight.w600,
+                                                            Colors.white),
+                                                      )),
+                                                )),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+//            CommonBottomNavBarWidget(),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        });
+
+
+  }
+
+  onDropDownValueChange(String type, String selectedValue) {
+    debugPrint("SELECTED ${type} ----- ${selectedValue}");
   }
 
   void onSearchClick() {}

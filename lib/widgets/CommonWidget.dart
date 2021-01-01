@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/model/filter_res.dart';
 import 'package:flutter_rentry_new/model/get_all_package_list_response.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/model/location_search_response.dart';
@@ -1781,7 +1782,16 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ChooseCategoryScreen()),
+                            builder: (context) => StateContainer
+                                .of(context)
+                                .mLoginResponse !=
+                                null &&
+                                StateContainer.of(context)
+                                    .mLoginResponse
+                                    .data.token !=
+                                    null
+                                ? ChooseCategoryScreen()
+                                : LoginScreen()),
                       );
                     },
                     child: Container(
@@ -1827,6 +1837,9 @@ class CommonBottomNavBarWidget extends StatelessWidget {
 }
 
 class BottomFloatingFilterBtnsWidget extends StatelessWidget {
+  FilterRes filterRes;
+  Function openFilter;
+  BottomFloatingFilterBtnsWidget(this.filterRes, this.openFilter);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -1858,12 +1871,13 @@ class BottomFloatingFilterBtnsWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => FilterScreen()),
-                  );
-                },
+                onTap: openFilter,/*() {
+                  openFilter;
+//                  Navigator.push(
+//                    context,
+//                    MaterialPageRoute(builder: (context) => FilterScreen(filterRes)),
+//                  );
+                },*/
                 child: Container(
                   height: space_40,
                   width: space_40,
@@ -1881,12 +1895,13 @@ class BottomFloatingFilterBtnsWidget extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => FilterScreen()),
-                  );
-                },
+                onTap: openFilter,/*() {
+                  openFilter;
+//                  Navigator.push(
+//                    context,
+//                    MaterialPageRoute(builder: (context) => FilterScreen(filterRes)),
+//                  );
+                },*/
                 child: Container(
                   height: space_40,
                   width: space_40,

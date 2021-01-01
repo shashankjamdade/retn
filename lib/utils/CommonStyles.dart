@@ -145,6 +145,7 @@ const String empty_mobile = "Please enter mobile no";
 const String empty_email = "Please enter email ID";
 const String empty_conf_password = "Please enter confirm password";
 const String pwd_no_match = "Password didn't match";
+const String verify_mobile = "Please verify your mobile no";
 const String empty_type = "Please enter type";
 const String empty_price = "Please enter price";
 const String empty_img = "Please upload atleast one image";
@@ -180,10 +181,15 @@ const String USER_EMAIL = "USER_EMAIL";
 const String USER_MOBILE = "USER_MOBILE";
 const String IS_LOGGEDIN = "IS_LOGGEDIN";
 const String LOCATION_RADIUS = "500";
+const String LOGINTYPE_NOTMAL = "manually";
+const String LOGINTYPE_GOOGLE = "facebook";
+const String LOGINTYPE_FB = "google";
 
 //API
-const String BASE_URL = "http://rentozo.com/api";
+const String BASE_URL = "https://rentozo.com/sandbox/api";
+//const String BASE_URL = "http://rentozo.com/api";
 const String LOGIN_API = "/login";
+const String SOCIAL_LOGIN_API = "/social_login";
 const String REGISTRATION_API = "/registration";
 const String HOMEPAGE_API = "/homepage";
 const String GENERAL_SETTINGS = "/generalsettings";
@@ -212,6 +218,9 @@ const String GET_MY_ADS = "/myads";
 const String GET_AD_EDIT = "/ad_edit";
 const String POST_AD_EDIT_UPDATE = "/adupdate";
 const String AD_DELETE = "/addelete";
+const String SEND_OTP = "/send_otp";
+const String VERIFY_OTP = "/verify_otp";
+const String FORGOT_PWD = "/forgot_password_update";
 
 const String LOGGEDIN_SUCCESS = "LOGGEDIN_SUCCESS";
 

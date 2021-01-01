@@ -13,6 +13,7 @@ import 'package:flutter_rentry_new/screens/EditProfileScreen.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
 import 'package:flutter_rentry_new/screens/MyFavScreen.dart';
 import 'package:flutter_rentry_new/screens/NotificationListScreen.dart';
+import 'package:flutter_rentry_new/screens/OtpVerificationScreen.dart';
 import 'package:flutter_rentry_new/screens/PackageScreen.dart';
 import 'package:flutter_rentry_new/screens/ProfileScreen.dart';
 import 'package:flutter_rentry_new/screens/SplashScreen.dart';
@@ -42,7 +43,16 @@ import 'package:place_picker/place_picker.dart';
 
 
 void main() {
+  HttpOverrides.global = new MyHttpOverrides();
   runApp(StateContainer(child: MyApp()));
+}
+
+class MyHttpOverrides extends HttpOverrides{
+  @override
+  HttpClient createHttpClient(SecurityContext context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+  }
 }
 
 class MyApp extends StatelessWidget {

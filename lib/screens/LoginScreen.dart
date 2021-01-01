@@ -34,23 +34,22 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController mobileEmailController;
   TextEditingController passwordController;
   AuthenticationBloc authenticationBloc = new AuthenticationBloc();
-  GoogleSignInAccount googleSignInAccount;
+  final GoogleSignIn googleSignIn = new GoogleSignIn(scopes: ['email']);
+  String mName = "";
+  String mEmail = "";
 
-  Future<void> signInGoogle() async {
+  logininViaGoogle() async {
     try {
-      await googleSignIn.signIn();
-    } catch (error) {
-      debugPrint("GOOGLE_SIGN_IN_ERROR ${error}");
+      googleSignIn.signOut();
+      GoogleSignInAccount googleUsr = await googleSignIn.signIn();
+      debugPrint("GOOGLE_SIGNIN_INFO ${googleUsr.email}");
+      debugPrint("GOOGLE_SIGNIN_INFO ${googleUsr.displayName}");
+      authenticationBloc..add(SocialLoginReqAuthenticationEvent(emailOrMobile: googleUsr.email));
+    } catch (err) {
+      print("EXCEPTION ${err}");
     }
   }
 
-  Future<void> signOutGoogle() async {
-    try {
-      await googleSignIn.signIn();
-    } catch (error) {
-      debugPrint("GOOGLE_SIGN_IN_ERROR ${error}");
-    }
-  }
 
   @override
   void initState() {
@@ -59,12 +58,6 @@ class _LoginScreenState extends State<LoginScreen> {
     _focusNode.addListener(_onLoginUserNameFocusChange);
     mobileEmailController = TextEditingController();
     passwordController = TextEditingController();
-    googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
-      setState(() {
-        googleSignInAccount = account;
-      });
-    });
-    googleSignIn.signInSilently();
   }
 
   @override
@@ -97,6 +90,12 @@ class _LoginScreenState extends State<LoginScreen> {
           } else if (state is GoogleFbLoginResAuthenticationState) {
             if (state.res.loginStatus == LOGGEDIN_SUCCESS) {
               //Hit social Login API
+              if(state.res.map['email']!=null) {
+                authenticationBloc..add(SocialLoginReqAuthenticationEvent(
+                    emailOrMobile: state.res.map['email']));
+              }else{
+                showSnakbar(_scaffoldKey, "No email found against your profile, please try again with another account");
+              }
             }
           }
         },
@@ -261,14 +260,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                 "Login with facebook",
                                 "assets/images/facebook.png",
                                 CommonStyles.blue, () {
-                          onSocialLogin("fb");
+                          onSocialLogin("fb", context);
                         })),
                         Expanded(
                             child: IconButtonWidget(
                                 "Login with Google",
                                 "assets/images/google.png",
                                 CommonStyles.darkAmber, () {
-                          onSocialLogin("google");
+                          onSocialLogin("google", context);
                         })),
                       ],
                     ),
@@ -374,9 +373,11 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void onSocialLogin(String type) {
+  void onSocialLogin(String type, BuildContext context) {
     if (type == "fb") {
       authenticationBloc..add(LoginInViaFacebookEvent());
+    }else if(type == "google"){
+      logininViaGoogle();
     }
   }
 

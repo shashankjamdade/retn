@@ -307,3 +307,30 @@ class PostEditAdsState extends HomeState {
   @override
   List<CommonResponse> get props => [res];
 }
+
+class SendOtpState extends HomeState {
+  final res;
+
+  SendOtpState({@required this.res});
+
+  @override
+  List<CommonResponse> get props => [res];
+}
+
+class VeifyOtpState extends HomeState {
+  final res;
+
+  VeifyOtpState({@required this.res});
+
+  @override
+  List<CommonResponse> get props => [res];
+}
+
+class ForgotPwdState extends HomeState {
+  final res;
+
+  ForgotPwdState({@required this.res});
+
+  @override
+  List<CommonResponse> get props => [res];
+}

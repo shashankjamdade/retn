@@ -122,6 +122,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is GetMyAdsEditEvent) {
       yield ProgressState();
       yield* callGetMyAdEdit(event.token, event.adId);
+    }else if (event is SendOtpEvent) {
+      yield ProgressState();
+      yield* callSendOtp(event.contact, event.otpType);
+    }else if (event is VerifyOtpEvent) {
+      yield ProgressState();
+      yield* callVerifyOtp(event.contact, event.otp);
+    }else if (event is ForgotPwdEvent) {
+      yield ProgressState();
+      yield* callForgotPwd(event.contact, event.otp, event.confirm_password);
     }
   }
 
@@ -581,6 +590,54 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       yield PostEditAdsState(res: commonResponse);
     } catch (e) {
       debugPrint("Exception while callPostMyAdEditUpdate ${e.toString()}");
+    }
+  }
+
+
+  Stream<HomeState> callSendOtp(String contact, String otpType) async* {
+    try {
+      homeRepository =
+      homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callSendOtp ${contact} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final commonResponse =
+      await homeRepository.callSendOtp(contact, otpType);
+      debugPrint("callSendOtp ${jsonEncode(commonResponse)}");
+      yield SendOtpState(res: commonResponse);
+    } catch (e) {
+      debugPrint("Exception while callSendOtp ${e.toString()}");
+    }
+  }
+
+
+  Stream<HomeState> callVerifyOtp(String contact, String otp) async* {
+    try {
+      homeRepository =
+      homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callVerifyOtp ${contact} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final commonResponse =
+      await homeRepository.callVerifyOtp(contact, otp);
+      debugPrint("callVerifyOtp ${jsonEncode(commonResponse)}");
+      yield VeifyOtpState(res: commonResponse);
+    } catch (e) {
+      debugPrint("Exception while callVerifyOtp ${e.toString()}");
+    }
+  }
+
+
+  Stream<HomeState> callForgotPwd(String contact, String otp, String confirmPwd) async* {
+    try {
+      homeRepository =
+      homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callForgotPwd ${contact} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final commonResponse =
+      await homeRepository.callForgotPwd(contact, otp, confirmPwd);
+      debugPrint("callForgotPwd ${jsonEncode(commonResponse)}");
+      yield ForgotPwdState(res: commonResponse);
+    } catch (e) {
+      debugPrint("Exception while callForgotPwd ${e.toString()}");
     }
   }
 

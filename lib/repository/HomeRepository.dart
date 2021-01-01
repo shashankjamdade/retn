@@ -31,6 +31,7 @@ import 'package:flutter_rentry_new/model/sub_category_list_response.dart';
 import 'package:flutter_rentry_new/model/user_profile_response.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:gson/gson.dart';
+import 'package:http/io_client.dart';
 
 import 'base_repository.dart';
 import 'package:http/http.dart' as http;
@@ -46,10 +47,20 @@ class HomeRepository extends BaseRepository {
   HomeRepository({http.Client httpClient})
       : _httpClient = httpClient ?? http.Client();
 
+  makeHttpSecure(){
+    final ioc = new HttpClient();
+    ioc.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+    var http = new IOClient(ioc);
+    return http;
+  }
+
   Future<GeneralSettingRes> callGeneralSetting() async {
     bool status = false;
     GeneralSettingRes response;
     int code = 0;
+    //http secure connection
+    var http = makeHttpSecure();
     print("UNDER callGeneralSetting ");
     var res = await http.get(BASE_URL + GENERAL_SETTINGS);
     print("PRINTING ${res.body}");
@@ -70,6 +81,8 @@ class HomeRepository extends BaseRepository {
     bool status = false;
     HomeResponse response;
     int code = 0;
+    //http secure connection
+    var http = makeHttpSecure();
     print("UNDER callHomeApi ");
     var res =
         await http.get(BASE_URL + HOMEPAGE_API, headers: {"Token": token});
@@ -92,6 +105,8 @@ class HomeRepository extends BaseRepository {
     bool status = false;
     ItemDetailResponse response;
     int code = 0;
+    //http secure connection
+    var http = makeHttpSecure();
     print("UNDER callItemDetailApi ${categoryName}");
     var res = await http.get(
       BASE_URL + ITEMDETAIL_API + "?title=${categoryName}",
@@ -113,6 +128,8 @@ class HomeRepository extends BaseRepository {
     bool status = false;
     SearchLocationResponse response;
     int code = 0;
+    //http secure connection
+    var http = makeHttpSecure();
     print("UNDER callLocaitonSearchApi -- ${searchKey}");
     var res = await http.post(BASE_URL + LOCATION_SEARCH_API,
         headers: {"Token": token}, body: {"search": searchKey});
@@ -136,6 +153,8 @@ class HomeRepository extends BaseRepository {
     bool status = false;
     SearchCategoryResponse response;
     int code = 0;
+    //http secure connection
+    var http = makeHttpSecure();
     print(
         "UNDER SearchSubCategoryResponse -- ${searchKey} ${BASE_URL + SEARCH_SUBCATEGORY_LIST_API}");
     var res = await http.post(BASE_URL + SEARCH_SUBCATEGORY_LIST_API,
@@ -160,6 +179,8 @@ class HomeRepository extends BaseRepository {
     bool status = false;
     SubCategoryListResponse response;
     int code = 0;
+    //http secure connection
+    var http = makeHttpSecure();
     print("UNDER SubCategoryListResponse ${category_id}");
     var res = await http.post(BASE_URL + SUBCATEGORY_LIST_API,
         headers: {"Token": token}, body: {"category_id": category_id});
@@ -188,6 +209,8 @@ class HomeRepository extends BaseRepository {
     bool status = false;
     NearbySubChildCategoryListResponse response;
     int code = 0;
+    //http secure connection
+    var http = makeHttpSecure();
     print(
         "UNDER NearbySubChildCategoryListResponse ${categoryId} ${BASE_URL + ADS_SEARCH_API}");
     print(
@@ -197,7 +220,7 @@ class HomeRepository extends BaseRepository {
     }, body: {
       "category_id": categoryId,
       "subcategory_id": subCategoryId,
-      "radius": radius,
+//      "radius": radius,
       "lat": lat,
       "lng": lng,
     });
@@ -220,6 +243,8 @@ class HomeRepository extends BaseRepository {
     bool status = false;
     GetCategoryResponse response;
     int code = 0;
+    //http secure connection
+    var http = makeHttpSecure();
     print("UNDER callGetCategoryListApi ${token}, ${BASE_URL + CATEGORY_API}");
     var res =
         await http.get(BASE_URL + CATEGORY_API, headers: {'Token': token});
@@ -242,6 +267,8 @@ class HomeRepository extends BaseRepository {
     bool status = false;
     GetAllPackageListResponse response;
     int code = 0;
+    //http secure connection
+    var http = makeHttpSecure();
     print("UNDER callGetAllPackageListApi ${token}");
     var res = await http
         .get(BASE_URL + GET_ALL_PACKAGELIST_API, headers: {"Token": token});
@@ -265,6 +292,8 @@ class HomeRepository extends BaseRepository {
     bool status = false;
     GetNotificationResponse response;
     int code = 0;
+    //http secure connection
+    var http = makeHttpSecure();
     print("UNDER callGetNotificationListApi ${token}");
     Map<String, String> mainheader = {
 //      "Content-type": "application/json",
@@ -292,6 +321,8 @@ class HomeRepository extends BaseRepository {
   Future<UserProfileResponse> callUserProfileApi(String token) async {
     bool status = false;
     UserProfileResponse response;
+    //http secure connection
+    var http = makeHttpSecure();
     print("UNDER callUserProfileApi ${token}");
     Map<String, String> mainheader = {"token": token};
     var res = await http.get(
@@ -317,6 +348,8 @@ class HomeRepository extends BaseRepository {
     bool status = false;
     CommonResponse response;
     int code = 0;
+    //http secure connection
+    var http = makeHttpSecure();
     print("UNDER callChangePwd ${token}");
     Map<String, String> mainheader = {
 //      "Content-type": "application/json",
@@ -377,6 +410,8 @@ class HomeRepository extends BaseRepository {
         response = CommonResponse.fromJson(value);
       });
     } else {
+      //http secure connection
+      var http = makeHttpSecure();
       Map<String, String> mainheader = {"token": token};
       var res = await http.post(BASE_URL + GET_USER_DATA,
           headers: mainheader,
@@ -886,6 +921,59 @@ class HomeRepository extends BaseRepository {
 //    return response;
   }
 
+  Future<CommonResponse> callSendOtp(String contact, String otpType) async {
+    CommonResponse response;
+    print("UNDER callSendOtp ${contact} , ${BASE_URL + SEND_OTP}");
+    var res =
+    await http.post(BASE_URL + SEND_OTP, body: {"contact": contact, "otp_type": otpType});
+    print("PRINTING ${res.body}");
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      var status = data["status"];
+      print("PRINTING_STATUS ${status}");
+      response = CommonResponse.fromJson(data);
+      print("-----------${data}");
+    } else {
+      response = new CommonResponse();
+    }
+    return response;
+  }
+
+  Future<CommonResponse> callVerifyOtp(String contact, String otp) async {
+    CommonResponse response;
+    print("UNDER callVerifyOtp ${contact} , ${BASE_URL + VERIFY_OTP}");
+    var res =
+    await http.post(BASE_URL + VERIFY_OTP, body: {"contact": contact, "otp": otp});
+    print("PRINTING ${res.body}");
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      var status = data["status"];
+      print("PRINTING_STATUS ${status}");
+      response = CommonResponse.fromJson(data);
+      print("-----------${data}");
+    } else {
+      response = new CommonResponse();
+    }
+    return response;
+  }
+
+  Future<CommonResponse> callForgotPwd(String contact, String otp, String confirm_password) async {
+    CommonResponse response;
+    print("UNDER callSendOtp ${contact} , ${BASE_URL + SEND_OTP}");
+    var res =
+    await http.post(BASE_URL + FORGOT_PWD, body: {"contact": contact, "otp": otp, "confirm_password":confirm_password});
+    print("PRINTING ${res.body}");
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      var status = data["status"];
+      print("PRINTING_STATUS ${status}");
+      response = CommonResponse.fromJson(data);
+      print("-----------${data}");
+    } else {
+      response = new CommonResponse();
+    }
+    return response;
+  }
 
   @override
   void dispose() {}

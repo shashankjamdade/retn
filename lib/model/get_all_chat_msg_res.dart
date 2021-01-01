@@ -137,6 +137,7 @@ class Inbox {
 
 class Ad {
   String id;
+  String ad_id;
   String ad;
   String inbox_id;
   String user_id;
@@ -154,7 +155,8 @@ class Ad {
   Ad({
       this.id, 
       this.ad, 
-      this.inbox_id, 
+      this.ad_id,
+      this.inbox_id,
       this.user_id, 
       this.created_date, 
       this.pid, 
@@ -170,6 +172,7 @@ class Ad {
   Ad.fromJson(dynamic json) {
     id = json["id"];
     ad = json["ad"];
+    ad_id = json["ad_id"];
     inbox_id = json["inbox_id"];
     user_id = json["user_id"];
     created_date = json["created_date"];
@@ -188,6 +191,7 @@ class Ad {
     var map = <String, dynamic>{};
     map["id"] = id;
     map["ad"] = ad;
+    map["ad_id"] = ad_id;
     map["inbox_id"] = inbox_id;
     map["user_id"] = user_id;
     map["created_date"] = created_date;

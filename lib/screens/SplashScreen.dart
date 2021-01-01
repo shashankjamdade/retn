@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rentry_new/bloc/authentication/AuthenticationBloc.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_rentry_new/screens/LoginScreen.dart';
 import 'package:flutter_rentry_new/screens/RegisterScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:place_picker/place_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,156 +29,154 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
-      builder: (context, state){
+      builder: (context, state) {
         return Scaffold(
             body: Container(
-              child: Stack(
-                children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
-                    color: CommonStyles.primaryColor,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: space_200,
+          child: Stack(
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                color: CommonStyles.primaryColor,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: space_200,
+                    ),
+                    Text(
+                      "Welcome to",
+                      style: TextStyle(
+                          fontSize: space_25,
+                          color: Colors.white,
+                          fontFamily: CommonStyles.FONT_RALEWAY,
+                          fontWeight: FontWeight.w400,
+                          decoration: TextDecoration.none),
+                    ),
+                    SizedBox(
+                      height: space_60,
+                    ),
+                    Container(
+                      height: getProportionateScreenHeight(context, space_40),
+                      child: Image.asset(
+                        "assets/images/app_img_white.png",
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    Text(
+                      rent_pe_tagline,
+                      style: CommonStyles.getRalewayStyle(
+                          space_12, FontWeight.w500, Colors.white),
+                    ),
+                    SizedBox(
+                      height: space_80,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        redirectTo("login", context);
+                      },
+                      child: Container(
+                        width: 200.0,
+                        padding: EdgeInsets.symmetric(
+                            vertical: space_15, horizontal: space_20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(space_5),
                         ),
-                        Text(
-                          "Welcome to",
-                          style: TextStyle(
-                              fontSize: space_25,
-                              color: Colors.white,
-                              fontFamily: CommonStyles.FONT_RALEWAY,
-                              fontWeight: FontWeight.w400,
-                              decoration: TextDecoration.none),
-                        ),
-                        SizedBox(
-                          height: space_60,
-                        ),
-                        Container(
-                          height: getProportionateScreenHeight(
-                              context, space_40),
-                          child: Image.asset(
-                            "assets/images/app_img_white.png", fit: BoxFit.contain,
-                          ),
-                        ),
-                        Text(
-                          rent_pe_tagline,
-                          style: CommonStyles.getRalewayStyle(
-                              space_12, FontWeight.w500, Colors.white),
-                        ),
-                        SizedBox(
-                          height: space_80,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            redirectTo("login", context);
-                          },
-                          child: Container(
-                            width: 200.0,
-                            padding: EdgeInsets.symmetric(
-                                vertical: space_15, horizontal: space_20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(space_5),
-                            ),
-                            child: Center(
-                              child: RichText(
-                                text: new TextSpan(
-                                  text: 'Let\'s get started ',
-                                  style: TextStyle(
-                                      fontSize: space_12,
-                                      fontFamily: CommonStyles.FONT_RALEWAY,
-                                      fontWeight: FontWeight.w400,
-                                      color: CommonStyles.primaryColor),
-                                  children: <TextSpan>[
-                                    new TextSpan(
-                                      text: ' Login',
-                                      style: TextStyle(
-                                          fontSize: space_15,
-                                          fontFamily:
-                                          CommonStyles.FONT_RALEWAY,
-                                          fontWeight: FontWeight.w600,
-                                          color: CommonStyles.primaryColor),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: space_20,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => RegisterScreen()),
-                            );
-//                          redirectTo("signup", context);
-                          },
+                        child: Center(
                           child: RichText(
                             text: new TextSpan(
-                              text: 'Don\'t have account? ',
+                              text: 'Let\'s get started ',
                               style: TextStyle(
                                   fontSize: space_12,
-                                  color: Colors.white,
                                   fontFamily: CommonStyles.FONT_RALEWAY,
-                                  fontWeight: FontWeight.w400),
+                                  fontWeight: FontWeight.w400,
+                                  color: CommonStyles.primaryColor),
                               children: <TextSpan>[
-                                TextSpan(
-                                  text: ' Signup',
+                                new TextSpan(
+                                  text: ' Login',
                                   style: TextStyle(
                                       fontSize: space_15,
-                                      color: Colors.white,
                                       fontFamily: CommonStyles.FONT_RALEWAY,
-                                      fontWeight: FontWeight.w600),
+                                      fontWeight: FontWeight.w600,
+                                      color: CommonStyles.primaryColor),
                                 ),
                               ],
                             ),
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                  Positioned(
-                    bottom: space_25,
-                    child: GestureDetector(
-                      onTap: (){
-                        redirectTo("dashboard", context);
+                    SizedBox(
+                      height: space_20,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RegisterScreen()),
+                        );
+//                          redirectTo("signup", context);
                       },
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        margin: EdgeInsets.only(bottom: space_90),
-                        child: Center(
-                          child: Text(
-                            "Skip for now>>",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: space_15,
-                                fontFamily: CommonStyles.FONT_RALEWAY,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.white,
-                                decoration: TextDecoration.none),
-                          ),
+                      child: RichText(
+                        text: new TextSpan(
+                          text: 'Don\'t have account? ',
+                          style: TextStyle(
+                              fontSize: space_12,
+                              color: Colors.white,
+                              fontFamily: CommonStyles.FONT_RALEWAY,
+                              fontWeight: FontWeight.w400),
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: ' Signup',
+                              style: TextStyle(
+                                  fontSize: space_15,
+                                  color: Colors.white,
+                                  fontFamily: CommonStyles.FONT_RALEWAY,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  )
-                ],
+                  ],
+                ),
               ),
-            ));
+              Positioned(
+                bottom: space_25,
+                child: GestureDetector(
+                  onTap: () {
+                    redirectTo("dashboard", context);
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.only(bottom: space_90),
+                    child: Center(
+                      child: Text(
+                        "Skip for now>>",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: space_15,
+                            fontFamily: CommonStyles.FONT_RALEWAY,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white,
+                            decoration: TextDecoration.none),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ));
       },
     );
   }
 
   void showPlacePicker() async {
-    LocationResult result = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            PlacePicker(GOOGLE_API_KEY
-            )));
+    LocationResult result = await Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => PlacePicker(GOOGLE_API_KEY)));
     // Handle the result in your way
     print("LOCATION_SEELCTED ${result.latLng.latitude}");
   }
@@ -190,20 +190,17 @@ class _SplashScreenState extends State<SplashScreen> {
         );
         break;
       case "signup":
-
-          Navigator.push(
-            context,
-              MaterialPageRoute(builder: (_) {
-                return  RegisterScreen();
-              })
+        Navigator.push(context, MaterialPageRoute(builder: (_) {
+          return RegisterScreen();
+        })
 //            MaterialPageRoute(builder: (context) => RegisterScreen()),
-          );
+            );
         break;
       case "dashboard":
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
-          );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
         break;
     }
   }

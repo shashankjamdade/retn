@@ -84,7 +84,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       child: BlocListener(
           bloc: homeBloc,
           listener: (context, state) {
-            if (state is CommonResponse) {}
+            if (state.res is CommonResponse) {
+              if(state.res.msg!=null){
+                showSnakbar(_scaffoldKey, state.res.msg);
+              }
+            }
           },
           child: BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state) {

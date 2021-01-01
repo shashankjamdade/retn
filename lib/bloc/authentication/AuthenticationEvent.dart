@@ -21,21 +21,31 @@ class LoginReqAuthenticationEvent extends AuthenticationEvent{
   List<Object> get props => [emailOrMobile, password];
 }
 
+class SocialLoginReqAuthenticationEvent extends AuthenticationEvent{
+  final String emailOrMobile;
+  SocialLoginReqAuthenticationEvent(
+      {@required this.emailOrMobile});
+
+  @override
+  List<Object> get props => [emailOrMobile];
+}
+
 class RegisterReqAuthenticationEvent extends AuthenticationEvent{
   final String name;
   final String mobile;
   final String email;
   final String password;
+  final String loginType;
+  final String otp;
   RegisterReqAuthenticationEvent(
-      {@required this.name, @required this.mobile, @required this.email, @required this.password});
+      {@required this.name, @required this.mobile, @required this.email, @required this.password, @required this.loginType, @required this.otp});
 
   @override
-  List<Object> get props => [name, mobile, email, password];
+  List<Object> get props => [name, mobile, email, password, otp];
 }
 
 
 class OtpVerifyReqAuthenticationEvent extends AuthenticationEvent{}
-class SocialLoginReqAuthenticationEvent extends AuthenticationEvent{}
 
 class SuccessAuthenticationEvent extends AuthenticationEvent{}
 class FailureAuthenticationEvent extends AuthenticationEvent{}

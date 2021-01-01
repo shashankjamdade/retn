@@ -51,6 +51,6 @@ class RegisterResAuthenticationState extends AuthenticationState {
   final res;
   RegisterResAuthenticationState({@required this.res});
   @override
-  List<RegisterResponse> get props => [res];
+  List<LoginResponse> get props => [res];
 }
 

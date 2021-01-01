@@ -130,10 +130,10 @@ class _MyFavScreenState
               ],
             )),
             CommonBottomNavBarWidget(),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Container(child: BottomFloatingFilterBtnsWidget()),
-            )
+//            Align(
+//              alignment: Alignment.bottomRight,
+//              child: Container(child: BottomFloatingFilterBtnsWidget()),
+//            )
           ],
         ),
       ),

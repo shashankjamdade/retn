@@ -154,7 +154,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   bottom: space_60),
               child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: msgList.length,
+                  itemCount: msgList!=null?msgList.length:0,
                   itemBuilder: (context, pos) {
                     return Container(
                       margin: EdgeInsets.symmetric(vertical: space_10),
@@ -358,11 +358,14 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   }
 
   void onSubmitMsg(String msg){
+    if(msgList==null){
+      msgList = new List<Messages>();
+    }
     msgList.add(Messages(message: msg, user_id: myUserId));
     setState(() {
       msgList = msgList;
     });
-    homeBloc..add(SendMsgReqEvent(token: token, adId: mGetAllChatMsgRes.data.inbox.ad, msg: msg, recieverId: mGetAllChatMsgRes.data.inbox.receiver_id, inboxId: mGetAllChatMsgRes.data.inbox.id));
+    homeBloc..add(SendMsgReqEvent(token: token, adId: mGetAllChatMsgRes.data.ad.ad_id, msg: msg, recieverId: mGetAllChatMsgRes.data.inbox.receiver_id, inboxId: mGetAllChatMsgRes.data.inbox.id));
     chatTextController.text = "";
   }
 

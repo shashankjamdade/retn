@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_rentry_new/model/RegisterReq.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/model/register_response.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
+import 'package:http/io_client.dart';
 
 import 'base_repository.dart';
 import 'package:http/http.dart' as http;
@@ -21,6 +23,10 @@ class AuthenticationRepository extends BaseRepository {
     bool status = false;
     LoginResponse response;
     int code = 0;
+    final ioc = new HttpClient();
+    ioc.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+    final http = new IOClient(ioc);
     var res = await http.post(BASE_URL + LOGIN_API,
         body: {"email": mobileOrEmail, "password": password});
     print(res.body);
@@ -42,26 +48,63 @@ class AuthenticationRepository extends BaseRepository {
     return response;
   }
 
-  Future<RegisterResponse> callRegister(RegisterReq registerReq) async {
-    RegisterResponse response;
+  Future<LoginResponse> callSocialLogin(String email) async {
+    bool status = false;
+    LoginResponse response;
+    int code = 0;
+    final ioc = new HttpClient();
+    ioc.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+    final http = new IOClient(ioc);
+    var res = await http.post(BASE_URL + SOCIAL_LOGIN_API,
+        body: {"email": email});
+    print(res.body);
+    code = res.statusCode;
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      status = data["status"];
+      if (status) {
+        debugPrint("LOGINRES -- > ");
+        response = LoginResponse.fromJson(data);
+        debugPrint("LOGINRES -- > ${jsonEncode(response)}");
+      } else {
+        response = LoginResponse.fromJson(data);
+        print("-----------${data}");
+      }
+    } else {
+      response = new LoginResponse(status: false, message: API_ERROR_MSG);
+    }
+    return response;
+  }
+
+  Future<LoginResponse> callRegister(RegisterReq registerReq) async {
+    LoginResponse response;
     debugPrint("REGISTRATION_REQ-- ${{
       "username": registerReq.name,
       "email": registerReq.email,
       "contact": registerReq.mobile,
-      "password": registerReq.password
+      "password": registerReq.password,
+      "login_type":registerReq.login_type,
+      "otp":registerReq.otp
     }}");
+    final ioc = new HttpClient();
+    ioc.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+    final http = new IOClient(ioc);
     var res = await http.post(BASE_URL + REGISTRATION_API, body: {
       "username": registerReq.name,
       "email": registerReq.email,
       "contact": registerReq.mobile,
-      "password": registerReq.password
+      "password": registerReq.password,
+      "login_type": registerReq.login_type,
+      "otp": registerReq.otp
     });
     print(res.body);
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
-      response = RegisterResponse.fromJson(data);
+      response = LoginResponse.fromJson(data);
     } else {
-      response = RegisterResponse(status: false, message: API_ERROR_MSG);
+      response = LoginResponse(status: false, message: API_ERROR_MSG);
     }
     print("-----------${jsonEncode(response)}");
     return response;

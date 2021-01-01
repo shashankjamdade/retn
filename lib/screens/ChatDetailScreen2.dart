@@ -36,7 +36,7 @@ class _ChatDetailScreen2State extends State<ChatDetailScreen2> {
   @override
   void initState() {
     super.initState();
-    debugPrint("ENTRY_CHATHOME_SCREEN---------");
+    debugPrint("ENTRY_CHATHOME_SCREEN2222---------");
     chatTextController = TextEditingController();
   }
 

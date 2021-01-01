@@ -13,6 +13,7 @@ import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'DashboardScreen.dart';
 import 'LoginScreen.dart';
@@ -33,7 +34,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController confPasswordController;
   AuthenticationBloc authenticationBloc = new AuthenticationBloc();
   BuildContext _context;
-
+  final GoogleSignIn googleSignIn = new GoogleSignIn(scopes: ['email']);
+  String mLoginType = "";
+  String mName = "";
+  String mEmail = "";
+  String mOTP = "";
   bool _obscureText = true;
   bool _obscureText2 = true;
   // Toggles the password show status
@@ -43,14 +48,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
   }
 
+  logininViaGoogle() async {
+    try {
+      googleSignIn.signOut();
+      GoogleSignInAccount googleUsr = await googleSignIn.signIn();
+      debugPrint("GOOGLE_SIGNIN_INFO ${googleUsr.email}");
+      debugPrint("GOOGLE_SIGNIN_INFO ${googleUsr.displayName}");
+      setState(() {
+        mLoginType  = LOGINTYPE_GOOGLE;
+        mName  = googleUsr.displayName;
+        mEmail  = googleUsr.email;
+        fullnameController = TextEditingController(text: mName);
+        emailController = TextEditingController(text:mEmail);
+      });
+    } catch (err) {
+      print("EXCEPTION ${err}");
+    }
+    showSnakbar(_scaffoldKey, "Please fill all required information");
+  }
+
   @override
   void initState() {
     super.initState();
     //Add Listener to know when is updated focus
     _focusNode.addListener(_onLoginUserNameFocusChange);
-    fullnameController = TextEditingController();
+    fullnameController = TextEditingController(text: mName);
     mobileController = TextEditingController();
-    emailController = TextEditingController();
+    emailController = TextEditingController(text:mEmail);
     passwordController = TextEditingController();
     confPasswordController = TextEditingController();
   }
@@ -75,7 +99,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: BlocListener(
       bloc: authenticationBloc,
         listener: (context, state){
-          if(state is RegisterResAuthenticationState){
+        if(state is GoogleFbLoginResAuthenticationState){
+          debugPrint("GOT_STATE-- "+state.res.loginStatus);
+          if (state.res.loginStatus == LOGGEDIN_SUCCESS) {
+            //Hit social Login API
+            if(state.res.map['email']!=null) {
+              setState(() {
+                mLoginType  = LOGINTYPE_FB;
+                mName = state.res.map['name'];
+                mEmail = state.res.map['email'];
+                fullnameController = TextEditingController(text: mName);
+                emailController = TextEditingController(text:mEmail);
+              });
+              showSnakbar(_scaffoldKey, "Please fill all required information");
+            }else{
+              showSnakbar(_scaffoldKey, "No email found against your profile, please try again with another account");
+            }
+          }
+        }else if(state is RegisterResAuthenticationState){
             showSnakbar(_scaffoldKey, state.res.message);
             debugPrint("MSG_GOT_REGISTER ${state.res.message}");
             Fluttertoast.showToast(
@@ -145,11 +186,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             }
                           }, TextInputType.text),
                           SizedBox(height: getProportionateScreenHeight(context, space_20),),
-                          TextInputWidget(mobileController, "Mobile No.", false, (String value) {
-                            if (value.isEmpty) {
-                              return "Please enter valid mobile no.";
-                            }
-                          }, TextInputType.number),
+//                          TextInputWidget(mobileController, "Mobile No.", false, (String value) {
+//                            if (value.isEmpty) {
+//                              return "Please enter valid mobile no.";
+//                            }
+//                          }, TextInputType.number),
+//                          SizedBox(height: getProportionateScreenHeight(context, space_20),),
+                          BtnTextInputWidget(mobileController, "Mobile No.", "Verify", false, onVerifyClick,
+                                  (String value) {
+                                if (value.isEmpty) {
+                                  return "Please enter valid mobile no.";
+                                }
+                              }, TextInputType.emailAddress),
                           SizedBox(height: getProportionateScreenHeight(context, space_20),),
                           TextInputWidget(emailController, "Email ID", false, (String value) {
                             if (value.isEmpty) {
@@ -215,7 +263,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               Expanded(child: IconButtonWidget("Login with facebook", "assets/images/facebook.png", CommonStyles.blue ,onSocialLogin)),
-                              Expanded(child: IconButtonWidget("Login with Google", "assets/images/google.png", CommonStyles.darkAmber ,onSocialLogin)),
+                              Expanded(child: IconButtonWidget("Login with Google", "assets/images/google.png", CommonStyles.darkAmber ,onSocialGoogleLogin)),
                             ],
                           ),
                           SizedBox(height: getProportionateScreenHeight(context, space_25),),
@@ -283,6 +331,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
+
+  onVerifyClick() async{
+    if(mobileController.text.trim().isEmpty){
+      showSnakbar(_scaffoldKey, empty_mobile);
+    }else{
+      //push to verify
+      var res = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => OtpVerificationScreen(mobileController.text.trim(), "login")),
+      ).then((value) => mOTP = value);
+    }
+  }
   
   void onSignup(){
     if(fullnameController.text.trim().isEmpty){
@@ -297,10 +357,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
      showSnakbar(_scaffoldKey, empty_conf_password);
     }else if(passwordController.text.trim() != confPasswordController.text.trim()){
      showSnakbar(_scaffoldKey, pwd_no_match);
+    }else if(mOTP==null || mOTP.isEmpty){
+     showSnakbar(_scaffoldKey, verify_mobile);
     }else{
       //API hit
+      debugPrint("OTP -- > ${mOTP}");
       authenticationBloc..add(RegisterReqAuthenticationEvent(name: fullnameController.text.trim(),
-      email: emailController.text.trim(), mobile: mobileController.text.trim(), password: passwordController.text.trim()
+      email: emailController.text.trim(), mobile: mobileController.text.trim(), password: passwordController.text.trim(), loginType: mLoginType, otp: mOTP
       ));
     }
   }
@@ -313,7 +376,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void onSocialLogin(){
-
+    authenticationBloc..add(LoginInViaFacebookEvent());
+  }
+  void onSocialGoogleLogin(){
+    logininViaGoogle();
   }
 
   void skipFun() {
