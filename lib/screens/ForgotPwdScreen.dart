@@ -1,4 +1,3 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,6 +5,9 @@ import 'package:flutter_rentry_new/bloc/authentication/AuthenticationBloc.dart';
 import 'package:flutter_rentry_new/bloc/authentication/AuthenticationEvent.dart';
 import 'package:flutter_rentry_new/bloc/authentication/AuthenticationBloc.dart';
 import 'package:flutter_rentry_new/bloc/authentication/AuthenticationState.dart';
+import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
+import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
+import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/model/register_response.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
 import 'package:flutter_rentry_new/screens/OtpVerificationScreen.dart';
@@ -19,75 +21,38 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'DashboardScreen.dart';
 import 'LoginScreen.dart';
 
-class RegisterScreen extends StatefulWidget {
+class ForgotPwdScreen extends StatefulWidget {
   @override
-  _RegisterScreenState createState() => _RegisterScreenState();
+  _ForgotPwdScreenState createState() => _ForgotPwdScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _ForgotPwdScreenState extends State<ForgotPwdScreen> {
   final formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   FocusNode _focusNode = new FocusNode();
-  TextEditingController fullnameController;
   TextEditingController mobileController;
-  TextEditingController emailController;
   TextEditingController passwordController;
   TextEditingController confPasswordController;
-  AuthenticationBloc authenticationBloc = new AuthenticationBloc();
+  HomeBloc homeBloc = new HomeBloc();
   BuildContext _context;
   final GoogleSignIn googleSignIn = new GoogleSignIn(scopes: ['email']);
   String mLoginType = "";
   String mName = "";
   String mEmail = "";
   String mOTP = "";
-  String mFcmToken = "";
   bool _obscureText = true;
   bool _obscureText2 = true;
 
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  String _message = '';
 
-  _register() {
-    _firebaseMessaging.getToken().then((token) => mFcmToken = token);
-  }
-
-  // Toggles the password show status
-  void _togglePasswordStatus() {
-    setState(() {
-      _obscureText = !_obscureText;
-    });
-  }
-
-  logininViaGoogle() async {
-    try {
-      googleSignIn.signOut();
-      GoogleSignInAccount googleUsr = await googleSignIn.signIn();
-      debugPrint("GOOGLE_SIGNIN_INFO ${googleUsr.email}");
-      debugPrint("GOOGLE_SIGNIN_INFO ${googleUsr.displayName}");
-      setState(() {
-        mLoginType  = LOGINTYPE_GOOGLE;
-        mName  = googleUsr.displayName;
-        mEmail  = googleUsr.email;
-        fullnameController = TextEditingController(text: mName);
-        emailController = TextEditingController(text:mEmail);
-      });
-    } catch (err) {
-      print("EXCEPTION ${err}");
-    }
-    showSnakbar(_scaffoldKey, "Please fill all required information");
-  }
 
   @override
   void initState() {
     super.initState();
     //Add Listener to know when is updated focus
     _focusNode.addListener(_onLoginUserNameFocusChange);
-    fullnameController = TextEditingController(text: mName);
     mobileController = TextEditingController();
-    emailController = TextEditingController(text:mEmail);
     passwordController = TextEditingController();
     confPasswordController = TextEditingController();
-    _register();
   }
 
   @override
@@ -106,32 +71,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     _context = context;
     return BlocProvider(
-      create: (context) => authenticationBloc..add(InitialAuthenticationEvent()),
+      create: (context) => homeBloc..add(InitialEvent()),
       child: BlocListener(
-      bloc: authenticationBloc,
+      bloc: homeBloc,
         listener: (context, state){
-        if(state is GoogleFbLoginResAuthenticationState){
-          debugPrint("GOT_STATE-- "+state.res.loginStatus);
-          if (state.res.loginStatus == LOGGEDIN_SUCCESS) {
-            //Hit social Login API
-            if(state.res.map['email']!=null) {
-              setState(() {
-                mLoginType  = LOGINTYPE_FB;
-                mName = state.res.map['name'];
-                mEmail = state.res.map['email'];
-                fullnameController = TextEditingController(text: mName);
-                emailController = TextEditingController(text:mEmail);
-              });
-              showSnakbar(_scaffoldKey, "Please fill all required information");
-            }else{
-              showSnakbar(_scaffoldKey, "No email found against your profile, please try again with another account");
-            }
-          }
-        }else if(state is RegisterResAuthenticationState){
-            showSnakbar(_scaffoldKey, state.res.message);
-            debugPrint("MSG_GOT_REGISTER ${state.res.message}");
+          if(state is ForgotPwdState){
+            debugPrint("MSG_GOT_REGISTER ${state.res.msg}");
             Fluttertoast.showToast(
-                msg: state.res.message,
+                msg: state.res.msg,
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.BOTTOM,
                 timeInSecForIosWeb: 1,
@@ -139,7 +86,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 textColor: Colors.white,
                 fontSize: space_14
             );
-            if(state.res.status){
+            if(state.res.status is String && state.res.status == "true"){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+              );
+            }else if(state.res.status is bool && state.res.status){
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => LoginScreen()),
@@ -147,11 +99,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
             }
           }
         },
-        child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        child: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state){
             if(state is RegisterResAuthenticationState){
               return getSignupForm();
-            } else if(state is ProgressAuthenticationState){
+            } else if(state is ProgressState){
               return getSignupForm(showProgress: true);
             } else{
               return getSignupForm();
@@ -183,19 +135,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           Align(
                             alignment: Alignment.topLeft,
                             child: Text(
-                              "Please provide detail accordingly to create account",
+                              "Forgot password",
                               style: CommonStyles.getRalewayStyle(
                                   space_15, FontWeight.w500, CommonStyles.blue),
                             ),
                           ),
-                          SizedBox(
-                            height: space_20,
-                          ),
-                          TextInputWidget(fullnameController, "Full name", false, (String value) {
-                            if (value.isEmpty) {
-                              return "Please enter valid name";
-                            }
-                          }, TextInputType.text),
                           SizedBox(height: getProportionateScreenHeight(context, space_20),),
 //                          TextInputWidget(mobileController, "Mobile No.", false, (String value) {
 //                            if (value.isEmpty) {
@@ -209,12 +153,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   return "Please enter valid mobile no.";
                                 }
                               }, TextInputType.emailAddress),
-                          SizedBox(height: getProportionateScreenHeight(context, space_20),),
-                          TextInputWidget(emailController, "Email ID", false, (String value) {
-                            if (value.isEmpty) {
-                              return "Please enter valid email ID";
-                            }
-                          }, TextInputType.emailAddress),
                           SizedBox(height: getProportionateScreenHeight(context, space_20),),
                           Container(
                             height: getProportionateScreenHeight(context, space_40),
@@ -259,7 +197,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 //                            }
 //                          }, TextInputType.text),
                           SizedBox(height: getProportionateScreenHeight(context, space_20),),
-                          BtnTextInputWidget(confPasswordController, "Confirm Password", "Sign Up", true, onSignup,
+                          BtnTextInputWidget(confPasswordController, "Confirm Password", "Submit", true, onSignup,
                                   (String value) {
                                 if (value.isEmpty) {
                                   return "Please enter valid confirm password";
@@ -269,42 +207,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           Align(
                               alignment: Alignment.center,
                               child: Text("OR", style: CommonStyles.getRalewayStyle(space_18, FontWeight.w600, CommonStyles.primaryColor),)),
-                          SizedBox(height: getProportionateScreenHeight(context, space_20),),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Expanded(child: IconButtonWidget("Login with facebook", "assets/images/facebook.png", CommonStyles.blue ,onSocialLogin)),
-                              Expanded(child: IconButtonWidget("Login with Google", "assets/images/google.png", CommonStyles.darkAmber ,onSocialGoogleLogin)),
-                            ],
-                          ),
                           SizedBox(height: getProportionateScreenHeight(context, space_25),),
-                          GestureDetector(
-                            onTap: redirectToLogin,
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: RichText(
-                                text: new TextSpan(
-                                  text: 'Already have an account? ',
-                                  style: TextStyle(
-                                      fontSize: space_12,
-                                      fontFamily: CommonStyles.FONT_RALEWAY,
-                                      fontWeight: FontWeight.w400,
-                                      color: CommonStyles.primaryColor),
-                                  children: <TextSpan>[
-                                    new TextSpan(
-                                      text: ' Login',
-                                      style: TextStyle(
-                                          fontSize: space_15,
-                                          fontFamily: CommonStyles.FONT_RALEWAY,
-                                          fontWeight: FontWeight.w600,
-                                          color: CommonStyles.primaryColor),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: getProportionateScreenHeight(context, space_50),),
                           Align(
                             alignment: Alignment.center,
                             child: Text(
@@ -350,18 +253,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
       //push to verify
       var res = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => OtpVerificationScreen(mobileController.text.trim(), "login")),
+        MaterialPageRoute(builder: (context) => OtpVerificationScreen(mobileController.text.trim(), "forgot")),
       ).then((value) => mOTP = value);
     }
   }
   
   void onSignup(){
-    if(fullnameController.text.trim().isEmpty){
-     showSnakbar(_scaffoldKey, empty_full_name);
-    }else if(mobileController.text.trim().isEmpty){
+    if(mobileController.text.trim().isEmpty){
      showSnakbar(_scaffoldKey, empty_mobile);
-    }else if(emailController.text.trim().isEmpty){
-     showSnakbar(_scaffoldKey, empty_email);
     }else if(passwordController.text.trim().isEmpty){
      showSnakbar(_scaffoldKey, empty_password);
     }else if(confPasswordController.text.trim().isEmpty){
@@ -373,9 +272,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }else{
       //API hit
       debugPrint("OTP -- > ${mOTP}");
-      authenticationBloc..add(RegisterReqAuthenticationEvent(name: fullnameController.text.trim(),
-      email: emailController.text.trim(), mobile: mobileController.text.trim(), password: passwordController.text.trim(), loginType: mLoginType, otp: mOTP
-      ,deviceToken: mFcmToken));
+      homeBloc..add(ForgotPwdEvent(contact: mobileController.text.trim(), otp: mOTP, confirm_password: passwordController.text.toString().trim()));
     }
   }
 
@@ -386,12 +283,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  void onSocialLogin(){
-    authenticationBloc..add(LoginInViaFacebookEvent());
+  void _togglePasswordStatus() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
   }
-  void onSocialGoogleLogin(){
-    logininViaGoogle();
-  }
+
+
 
   void skipFun() {
     Navigator.push(

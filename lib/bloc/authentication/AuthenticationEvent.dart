@@ -37,11 +37,12 @@ class RegisterReqAuthenticationEvent extends AuthenticationEvent{
   final String password;
   final String loginType;
   final String otp;
+  final String deviceToken;
   RegisterReqAuthenticationEvent(
-      {@required this.name, @required this.mobile, @required this.email, @required this.password, @required this.loginType, @required this.otp});
+      {@required this.name, @required this.mobile, @required this.email, @required this.password, @required this.loginType, @required this.otp, @required this.deviceToken});
 
   @override
-  List<Object> get props => [name, mobile, email, password, otp];
+  List<Object> get props => [name, mobile, email, password, otp, deviceToken];
 }
 
 

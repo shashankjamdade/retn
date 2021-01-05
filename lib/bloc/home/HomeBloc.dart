@@ -131,6 +131,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }else if (event is ForgotPwdEvent) {
       yield ProgressState();
       yield* callForgotPwd(event.contact, event.otp, event.confirm_password);
+    }else if (event is RatingEvent) {
+//      yield ProgressState();
+      yield* callRating(event.token, event.seller_id, event.user_id, event.rating);
     }
   }
 
@@ -638,6 +641,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       yield ForgotPwdState(res: commonResponse);
     } catch (e) {
       debugPrint("Exception while callForgotPwd ${e.toString()}");
+    }
+  }
+
+
+  Stream<HomeState> callRating(String token, String seller_id, String user_id, String rating) async* {
+    try {
+      homeRepository =
+      homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callRating ${seller_id} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final commonResponse =
+      await homeRepository.callRating(token, seller_id, user_id, rating);
+      debugPrint("callRating ${jsonEncode(commonResponse)}");
+      yield RatingState(res: commonResponse);
+    } catch (e) {
+      debugPrint("Exception while callRating ${e.toString()}");
     }
   }
 

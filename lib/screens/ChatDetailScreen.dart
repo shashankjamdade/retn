@@ -16,7 +16,8 @@ class ChatDetailScreen extends StatefulWidget {
   String username;
   String indexId;
   String slug;
-  ChatDetailScreen({this.username, this.indexId, this.slug});
+  String sellerId;
+  ChatDetailScreen({this.username, this.indexId, this.slug, this.sellerId});
 
   @override
   _ChatDetailScreenState createState() => _ChatDetailScreenState();
@@ -365,7 +366,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     setState(() {
       msgList = msgList;
     });
-    homeBloc..add(SendMsgReqEvent(token: token, adId: mGetAllChatMsgRes.data.ad.ad_id, msg: msg, recieverId: mGetAllChatMsgRes.data.inbox.receiver_id, inboxId: mGetAllChatMsgRes.data.inbox.id));
+    homeBloc..add(SendMsgReqEvent(token: token, adId: mGetAllChatMsgRes.data.ad.ad_id, msg: msg, recieverId: mGetAllChatMsgRes.data.inbox!=null ? mGetAllChatMsgRes.data.inbox.receiver_id : widget.sellerId, inboxId: mGetAllChatMsgRes.data.inbox!=null?mGetAllChatMsgRes.data.inbox.id:""));
     chatTextController.text = "";
   }
 

@@ -221,6 +221,7 @@ const String AD_DELETE = "/addelete";
 const String SEND_OTP = "/send_otp";
 const String VERIFY_OTP = "/verify_otp";
 const String FORGOT_PWD = "/forgot_password_update";
+const String RATING = "/rating";
 
 const String LOGGEDIN_SUCCESS = "LOGGEDIN_SUCCESS";
 

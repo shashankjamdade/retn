@@ -5,6 +5,7 @@ class RegisterReq{
   String password;
   String login_type;
   String otp;
+  String deviceToken;
 
-  RegisterReq(this.name, this.mobile, this.email, this.password, this.login_type, this.otp);
+  RegisterReq(this.name, this.mobile, this.email, this.password, this.login_type, this.otp, this.deviceToken);
 }

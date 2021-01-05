@@ -597,7 +597,7 @@ class HomeRepository extends BaseRepository {
   Future<CommonResponse> callSendMsgApi(String token, String adId, String msg,
       String recieverId, String inboxId) async {
     CommonResponse response;
-    print("UNDER callSendMsgApi ${token} , ${BASE_URL + SEND_MESSAGE}");
+    print("UNDER callSendMsgApi ${adId}, ${recieverId}, ${inboxId}, ${msg}, ${token} , ${BASE_URL + SEND_MESSAGE}");
     Map<String, String> mainheader = {"token": token};
     var res = await http.post(BASE_URL + SEND_MESSAGE,
         headers: mainheader,
@@ -962,6 +962,26 @@ class HomeRepository extends BaseRepository {
     print("UNDER callSendOtp ${contact} , ${BASE_URL + SEND_OTP}");
     var res =
     await http.post(BASE_URL + FORGOT_PWD, body: {"contact": contact, "otp": otp, "confirm_password":confirm_password});
+    print("PRINTING ${res.body}");
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      var status = data["status"];
+      print("PRINTING_STATUS ${status}");
+      response = CommonResponse.fromJson(data);
+      print("-----------${data}");
+    } else {
+      response = new CommonResponse();
+    }
+    return response;
+  }
+
+
+  Future<CommonResponse> callRating(String token,String seller_id, String user_id, String rating) async {
+    CommonResponse response;
+    print("UNDER callRating ${seller_id} , ${BASE_URL + RATING}");
+    Map<String, String> mainheader = {"token": token};
+    var res =
+    await http.post(BASE_URL + RATING,headers: mainheader, body: {"seller_id": seller_id, "user_id": user_id, "rating":rating});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);

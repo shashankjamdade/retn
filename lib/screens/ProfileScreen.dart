@@ -13,6 +13,7 @@ import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
+import 'package:rating_dialog/rating_dialog.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -456,11 +457,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             MainAxisAlignment
                                                 .center,
                                             children: [
-                                              RatingIndicatorWidget(),
-                                              RatingIndicatorWidget(),
-                                              RatingIndicatorWidget(),
-                                              RatingIndicatorWidget(),
-                                              RatingIndicatorWidget(),
+//                                              RatingIndicatorWidget(),
+//                                              RatingIndicatorWidget(),
+//                                              RatingIndicatorWidget(),
+//                                              RatingIndicatorWidget(),
+//                                              RatingIndicatorWidget(),
                                             ],
                                           ),
                                         ),

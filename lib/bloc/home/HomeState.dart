@@ -334,3 +334,12 @@ class ForgotPwdState extends HomeState {
   @override
   List<CommonResponse> get props => [res];
 }
+
+class RatingState extends HomeState {
+  final res;
+
+  RatingState({@required this.res});
+
+  @override
+  List<CommonResponse> get props => [res];
+}

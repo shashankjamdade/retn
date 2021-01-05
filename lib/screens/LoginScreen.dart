@@ -9,6 +9,7 @@ import 'package:flutter_rentry_new/bloc/authentication/AuthenticationState.dart'
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/model/UserLocationSelected.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
+import 'package:flutter_rentry_new/screens/ForgotPwdScreen.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
 import 'package:flutter_rentry_new/screens/RegisterScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
@@ -241,6 +242,22 @@ class _LoginScreenState extends State<LoginScreen> {
                         return "Please enter valid password";
                       }
                     }, TextInputType.emailAddress),
+                    SizedBox(
+                      height: getProportionateScreenHeight(context, space_20),
+                    ),
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ForgotPwdScreen()),
+                        );
+                      },
+                      child: Text(
+                        "Forgot password?",
+                        style: CommonStyles.getMontserratDecorationStyle(
+                            space_14, FontWeight.w600, CommonStyles.primaryColor, TextDecoration.underline),
+                      ),
+                    ),
                     SizedBox(
                       height: getProportionateScreenHeight(context, space_20),
                     ),

@@ -85,7 +85,8 @@ class AuthenticationRepository extends BaseRepository {
       "contact": registerReq.mobile,
       "password": registerReq.password,
       "login_type":registerReq.login_type,
-      "otp":registerReq.otp
+      "otp":registerReq.otp,
+      "device_token": registerReq.deviceToken
     }}");
     final ioc = new HttpClient();
     ioc.badCertificateCallback =
@@ -97,7 +98,8 @@ class AuthenticationRepository extends BaseRepository {
       "contact": registerReq.mobile,
       "password": registerReq.password,
       "login_type": registerReq.login_type,
-      "otp": registerReq.otp
+      "otp": registerReq.otp,
+      "device_token": registerReq.deviceToken
     });
     print(res.body);
     if (res.statusCode == 200) {

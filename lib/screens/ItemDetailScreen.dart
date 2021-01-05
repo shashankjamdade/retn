@@ -165,9 +165,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                           child: Row(
                                             children: [
                                               GestureDetector(
-                                                onTap: () {
-
-                                                },
+                                                onTap: () {},
                                                 child: Container(
                                                   height: space_40,
                                                   width: space_40,
@@ -193,7 +191,9 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                                     context,
                                                     MaterialPageRoute(
                                                         builder: (context) =>
-                                                            ChooseCategoryEditAdScreen(itemDetailResponse.ad.id)),
+                                                            ChooseCategoryEditAdScreen(
+                                                                itemDetailResponse
+                                                                    .ad.id)),
                                                   );
                                                 },
                                                 child: Container(
@@ -537,6 +537,10 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                       itemDetailResponse.ad.contact != null &&
                               itemDetailResponse.ad.contact.isNotEmpty
                           ? itemDetailResponse.ad.contact
+                          : "",
+                      itemDetailResponse.ad.seller_id != null &&
+                              itemDetailResponse.ad.seller_id.isNotEmpty
+                          ? itemDetailResponse.ad.seller_id
                           : "")),
             )
           ],

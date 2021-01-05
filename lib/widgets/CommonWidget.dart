@@ -1460,8 +1460,13 @@ class OwnerInfo extends StatelessWidget {
 }
 
 class RatingIndicatorWidget extends StatelessWidget {
+  String ratingLable;
+  int total;
+  int rating;
+  RatingIndicatorWidget(this.ratingLable, this.rating, this.total);
   @override
   Widget build(BuildContext context) {
+    debugPrint("SELLER_RATING ${ratingLable}, ${total}, ${rating}");
     return Container(
       padding: EdgeInsets.symmetric(horizontal: space_8, vertical: space_5),
       child: Row(
@@ -1469,7 +1474,7 @@ class RatingIndicatorWidget extends StatelessWidget {
           Expanded(
             flex: 1,
             child: Text(
-              "5",
+              "${ratingLable}",
               style: CommonStyles.getRalewayStyle(
                   space_10, FontWeight.w500, Colors.black),
             ),
@@ -1483,7 +1488,7 @@ class RatingIndicatorWidget extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                            flex: 10,
+                            flex: total>0?total:1,
                             child: Container(
                               height: space_5,
                               color: CommonStyles.grey.withOpacity(0.3),
@@ -1494,14 +1499,14 @@ class RatingIndicatorWidget extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                            flex: 6,
+                            flex: rating,
                             child: Container(
                               height: space_5,
                               color: CommonStyles.darkAmber,
                             ),
                           ),
                           Expanded(
-                            flex: 4,
+                            flex: total-rating,
                             child: Container(
                               height: space_5,
                               color: Colors.transparent,
@@ -1516,8 +1521,8 @@ class RatingIndicatorWidget extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerRight,
               child: Text(
-                "400 Ratings",
-                style: CommonStyles.getRalewayStyle(
+                "${rating} Ratings",
+                style: CommonStyles.getMontserratStyle(
                     space_10, FontWeight.w500, Colors.black),
               ),
             ),
@@ -1527,6 +1532,88 @@ class RatingIndicatorWidget extends StatelessWidget {
     );
   }
 }
+
+class RatingBarByRatingWidget extends StatelessWidget {
+  double rating;
+  RatingBarByRatingWidget(this.rating);
+  @override
+  Widget build(BuildContext context) {
+    return  Container(
+      child: Wrap(
+        direction:
+        Axis.horizontal,
+        children: [
+          Padding(
+            padding:
+            const EdgeInsets
+                .only(
+                right:
+                space_3),
+            child: Icon(
+              rating==0.5?Icons.star_half: Icons.star,
+              color: rating>=0.5?CommonStyles
+                  .darkAmber: CommonStyles.grey,
+              size: space_12,
+            ),
+          ),
+          Padding(
+            padding:
+            const EdgeInsets
+                .only(
+                right:
+                space_3),
+            child: Icon(
+              rating==1.5?Icons.star_half: Icons.star,
+              color: rating>=1.5?CommonStyles
+                  .darkAmber: CommonStyles.grey,
+              size: space_12,
+            ),
+          ),
+          Padding(
+            padding:
+            const EdgeInsets
+                .only(
+                right:
+                space_3),
+            child: Icon(
+              rating==2.5?Icons.star_half: Icons.star,
+              color: rating>=2.5?CommonStyles
+                  .darkAmber: CommonStyles.grey,
+              size: space_12,
+            ),
+          ),
+          Padding(
+            padding:
+            const EdgeInsets
+                .only(
+                right:
+                space_3),
+            child: Icon(
+              rating==3.5?Icons.star_half: Icons.star,
+              color: rating>=3.5?CommonStyles
+                  .darkAmber: CommonStyles.grey,
+              size: space_12,
+            ),
+          ),
+          Padding(
+            padding:
+            const EdgeInsets
+                .only(
+                right:
+                space_3),
+            child: Icon(
+              rating==4.5?Icons.star_half: Icons.star,
+              color: rating>=4.5?CommonStyles
+                  .darkAmber: CommonStyles.grey,
+              size: space_12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 
 //Filter
 class FilterSortByWidget extends StatelessWidget {
@@ -1929,8 +2016,9 @@ class BottomFloatingFilterBtnsWidget extends StatelessWidget {
 class BottomFloatingChatBtnsWidget extends StatelessWidget {
   String slug;
   String mobile;
+  String sellerId;
 
-  BottomFloatingChatBtnsWidget(this.slug, this.mobile);
+  BottomFloatingChatBtnsWidget(this.slug, this.mobile, this.sellerId);
 
   @override
   Widget build(BuildContext context) {
@@ -1985,7 +2073,7 @@ class BottomFloatingChatBtnsWidget extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) => ChatDetailScreen(
-                              slug: slug,
+                              slug: slug, sellerId: sellerId,
                             )),
                   );
                 },

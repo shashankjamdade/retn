@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
+import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/model/RegisterReq.dart';
 import 'package:flutter_rentry_new/repository/AuthenticationRepository.dart';
+import 'package:flutter_rentry_new/repository/HomeRepository.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'AuthenticationEvent.dart';
@@ -34,7 +39,7 @@ class AuthenticationBloc
       yield* makeSocialLogin(event.emailOrMobile);
     }else if(event is RegisterReqAuthenticationEvent){
       yield ProgressAuthenticationState();
-      yield* makeRegister(RegisterReq(event.name, event.mobile, event.email, event.password, event.loginType, event.otp));
+      yield* makeRegister(RegisterReq(event.name, event.mobile, event.email, event.password, event.loginType, event.otp, event.deviceToken));
     }else if(event is LoginInViaFacebookEvent){
       yield ProgressAuthenticationState();
       yield* makeFbLogin();

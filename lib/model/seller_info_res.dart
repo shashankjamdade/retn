@@ -31,13 +31,16 @@ class SellerInfoRes {
 class SellerData {
   Seller_info seller_info;
   List<Category_adslist> seller_product;
+  Seller_rating seller_rating;
 
   SellerData({
       this.seller_info, 
-      this.seller_product});
+      this.seller_product,
+    this.seller_rating});
 
   SellerData.fromJson(dynamic json) {
     seller_info = json["seller_info"] != null ? Seller_info.fromJson(json["seller_info"]) : null;
+    seller_rating = json["seller_rating"] != null ? Seller_rating.fromJson(json["seller_rating"]) : null;
     if (json["seller_product"] != null) {
       seller_product = [];
       json["seller_product"].forEach((v) {
@@ -50,6 +53,9 @@ class SellerData {
     var map = <String, dynamic>{};
     if (seller_info != null) {
       map["seller_info"] = seller_info.toJson();
+    }
+     if (seller_rating != null) {
+      map["seller_rating"] = seller_rating.toJson();
     }
     if (seller_product != null) {
       map["seller_product"] = seller_product.map((v) => v.toJson()).toList();
@@ -100,6 +106,41 @@ class Seller_info {
     map["address"] = address;
     map["profile_picture"] = profile_picture;
     map["since"] = since;
+    return map;
+  }
+
+}
+
+
+class Seller_rating {
+  int star_1;
+  int star_2;
+  int star_3;
+  int star_4;
+  int star_5;
+
+  Seller_rating({
+    this.star_1,
+    this.star_2,
+    this.star_3,
+    this.star_4,
+    this.star_5});
+
+  Seller_rating.fromJson(dynamic json) {
+    star_1 = json["star_1"];
+    star_2 = json["star_2"];
+    star_3 = json["star_3"];
+    star_4 = json["star_4"];
+    star_5 = json["star_5"];
+  }
+
+  Map<String, dynamic> toJson() {
+    var map = <String, dynamic>{};
+    map["star_1"] = star_1;
+    map["star_2"] = star_2;
+    map["star_3"] = star_3;
+    map["star_4"] = star_4;
+    map["star_5"] = star_5;
     return map;
   }
 

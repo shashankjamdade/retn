@@ -363,3 +363,16 @@ class ForgotPwdEvent extends HomeEvent {
   @override
   List<Object> get props => [contact, otp, confirm_password];
 }
+
+class RatingEvent extends HomeEvent {
+  final String token;
+  final String seller_id;
+  final String user_id;
+  final String rating;
+
+  RatingEvent(
+      {@required this.token,@required this.seller_id, @required this.user_id, this.rating});
+
+  @override
+  List<Object> get props => [token, seller_id, user_id, rating];
+}
