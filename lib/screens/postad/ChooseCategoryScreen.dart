@@ -76,7 +76,15 @@ class _ChooseCategoryScreenState extends State<ChooseCategoryScreen> {
                       space_14, FontWeight.w800, CommonStyles.blue),
                 ),
               ),
-              PostAdCategoryGridWidget(mGetCategoryResponse),
+              Expanded(
+                child: ListView(
+                  shrinkWrap: true,
+                  primary: true,
+                  children: [
+                    PostAdCategoryGridWidget(mGetCategoryResponse),
+                  ],
+                ),
+              )
             ],
           ),
         ),

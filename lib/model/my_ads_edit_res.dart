@@ -33,21 +33,21 @@ class MyAdsEditRes {
 
 class EditPostData {
   Post post;
-  dynamic other_detail;
+//  dynamic other_detail;
   List<CategoryData> category;
   List<SubCategoryData> subcategory;
   List<CustomFieldsData> customefield;
 
   EditPostData({
       this.post, 
-      this.other_detail,
+//      this.other_detail,
       this.category, 
       this.subcategory, 
       this.customefield});
 
   EditPostData.fromJson(dynamic json) {
     post = json["post"] != null ? Post.fromJson(json["post"]) : null;
-    other_detail = json["other_detail"];
+//    other_detail = json["other_detail"];
     if (json["category"] != null) {
       category = [];
       json["category"].forEach((v) {
@@ -73,7 +73,7 @@ class EditPostData {
     if (post != null) {
       map["post"] = post.toJson();
     }
-    map["other_detail"] = other_detail;
+//    map["other_detail"] = other_detail;
     if (category != null) {
       map["category"] = category.map((v) => v.toJson()).toList();
     }
@@ -112,7 +112,7 @@ class Post {
   String admin_view;
   String is_featured;
   String is_status;
-  dynamic delete_request;
+//  dynamic delete_request;
   String updatedDate;
   String createdDate;
   String expiryDate;
@@ -148,7 +148,7 @@ class Post {
       this.admin_view, 
       this.is_featured, 
       this.is_status, 
-      this.delete_request, 
+//      this.delete_request,
       this.updatedDate, 
       this.createdDate, 
       this.expiryDate, 
@@ -184,7 +184,7 @@ class Post {
     admin_view = json["admin_view"];
     is_featured = json["is_featured"];
     is_status = json["is_status"];
-    delete_request = json["delete_request"];
+//    delete_request = json["delete_request"];
     updatedDate = json["updatedDate"];
     createdDate = json["createdDate"];
     expiryDate = json["expiryDate"];
@@ -222,7 +222,7 @@ class Post {
     map["admin_view"] = admin_view;
     map["is_featured"] = is_featured;
     map["is_status"] = is_status;
-    map["delete_request"] = delete_request;
+//    map["delete_request"] = delete_request;
     map["updatedDate"] = updatedDate;
     map["createdDate"] = createdDate;
     map["expiryDate"] = expiryDate;

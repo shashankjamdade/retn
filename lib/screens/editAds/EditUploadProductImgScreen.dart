@@ -138,6 +138,7 @@ class _EditUploadProductImgScreenState
                                               borderRadius:
                                                   BorderRadius.circular(
                                                       space_10)),
+                                child: Center(child: Text("Upload image", style: CommonStyles.getMontserratStyle(space_14, FontWeight.w500, Colors.black),),),
                                         ),
                             ),
                           ),
@@ -228,6 +229,7 @@ class _EditUploadProductImgScreenState
                                               borderRadius:
                                                   BorderRadius.circular(
                                                       space_10)),
+                                child: Center(child: Text("Upload image", style: CommonStyles.getMontserratStyle(space_14, FontWeight.w500, Colors.black),),),
                                         ),
                             ),
                           ),
@@ -318,6 +320,7 @@ class _EditUploadProductImgScreenState
                                               borderRadius:
                                                   BorderRadius.circular(
                                                       space_10)),
+                                child: Center(child: Text("Upload image", style: CommonStyles.getMontserratStyle(space_14, FontWeight.w500, Colors.black),),),
                                         ),
                             ),
                           ),

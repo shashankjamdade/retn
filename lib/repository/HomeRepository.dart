@@ -205,7 +205,12 @@ class HomeRepository extends BaseRepository {
       String subCategoryId,
       String radius,
       String lat,
-      String lng) async {
+      String lng,
+      String filter_subcategory_id,
+      String filter_custome_filed_id,
+      String filter_min,
+      String filter_max,
+      ) async {
     bool status = false;
     NearbySubChildCategoryListResponse response;
     int code = 0;
@@ -214,7 +219,9 @@ class HomeRepository extends BaseRepository {
     print(
         "UNDER NearbySubChildCategoryListResponse ${categoryId} ${BASE_URL + ADS_SEARCH_API}");
     print(
-        "PRINTING_REQ NearbySubChild --> ${"category_id " + categoryId + ",subcategory_id " + subCategoryId + ",radius" + radius + ",lat" + lat + ",lng" + lng}");
+        "PRINTING_REQ NearbySubChild --> ${"category_id " + categoryId + ",subcategory_id " + subCategoryId + ",radius" + radius + ",lat" + lat + ",lng" + lng+""
+            ", filter_subcategory_id ${filter_subcategory_id}, filter_custome_filed_id ${filter_custome_filed_id},"
+            "filter_min ${filter_min}, filter_max ${filter_max}"}");
     var res = await http.post(BASE_URL + ADS_SEARCH_API, headers: {
       "Token": token
     }, body: {
@@ -223,6 +230,10 @@ class HomeRepository extends BaseRepository {
 //      "radius": radius,
       "lat": lat,
       "lng": lng,
+      "filter_subcategory_id": filter_subcategory_id,
+      "filter_custome_filed_id": filter_custome_filed_id,
+      "filter_min": filter_min,
+      "filter_max": filter_max,
     });
     print("PRINTING NearbySubChild ${res.body}");
     code = res.statusCode;
@@ -688,7 +699,7 @@ class HomeRepository extends BaseRepository {
       String token, AdPostReqModel adPostReqModel) async {
     CommonResponse response;
 
-    debugPrint("ADPOST_REQ entry");
+    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.customFields}");
     Map<String, String> mainheader = {"token": token};
     var uri = Uri.parse(BASE_URL + POST_ADS);
     var request = new http.MultipartRequest("POST", uri);

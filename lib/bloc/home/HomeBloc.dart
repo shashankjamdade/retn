@@ -45,7 +45,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is NearbySubChildCategoryListReqEvent) {
       yield ProgressState();
       yield* callNearbySubChildCategoryListApi(event.token, event.categoryId,
-          event.subcategory_id, event.radius, event.lat, event.lng);
+          event.subcategory_id, event.radius, event.lat, event.lng, event.filter_subcategory_id, event.filter_custome_filed_id,
+      event.filter_min, event.filter_max);
     } else if (event is GetCategoryListEvent) {
       yield ProgressState();
       yield* callGetCategoryApi(event.token);
@@ -224,7 +225,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       String subCategoryId,
       String radius,
       String lat,
-      String lng) async* {
+      String lng,
+      String filter_subcategory_id,
+      String filter_custome_filed_id,
+      String filter_min,
+      String filter_max,
+      ) async* {
     try {
       homeRepository =
           homeRepository != null ? homeRepository : HomeRepository();
@@ -232,7 +238,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           "callNearbySubChildCategoryListApi TOKEN ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
       final nearbySubChildCategoryListResponse =
           await homeRepository.callNearbySubChildCategoryListApi(
-              token, categoryId, subCategoryId, radius, lat, lng);
+              token, categoryId, subCategoryId, radius, lat, lng, filter_subcategory_id, filter_custome_filed_id,
+              filter_min, filter_max);
       debugPrint(
           "nearbySubChildCategoryListResponse ${jsonEncode(nearbySubChildCategoryListResponse)}");
       yield NearbySubChildCategoryListResState(
@@ -517,7 +524,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           await homeRepository.callPostAds(token, adPostReqModel);
       debugPrint("callPostAds ${jsonEncode(commonResponse)}");
       yield PostAdsState(res: commonResponse);
-    } catch (e) {
+    } catch (e, st) {
       debugPrint("Exception while callPostAds ${e.toString()}");
     }
   }
@@ -561,8 +568,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final getMyEditAds = await homeRepository.callGetMyAdEdit(token, adId);
       debugPrint("callGetMyAdEdit ${jsonEncode(getMyEditAds)}");
       yield GetMyAdsEditState(res: getMyEditAds);
-    } catch (e) {
-      debugPrint("Exception while callGetMyAdEdit ${e.toString()}");
+    } catch (e, stacktrace) {
+      debugPrint("Exception while callGetMyAdEdit ${e.toString()} \n ${stacktrace.toString()}");
     }
   }
 

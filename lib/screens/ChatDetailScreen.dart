@@ -198,6 +198,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
+                padding: EdgeInsets.only(left: space_15),
                 margin: EdgeInsets.symmetric(
                     horizontal: space_15, vertical: space_10),
                 decoration: BoxDecoration(
@@ -209,14 +210,14 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                       controller: chatTextController,
                       decoration: InputDecoration(
                           focusColor: Colors.black12,
-                          prefixIcon: IconButton(
-                            onPressed: () {},
-                            icon: ImageIcon(
-                              AssetImage(
-                                "assets/images/choose_file_icon.png",
-                              ),
-                              color: CommonStyles.grey,
-                            ),),
+//                          prefixIcon: IconButton(
+//                            onPressed: () {},
+//                            icon: ImageIcon(
+//                              AssetImage(
+//                                "assets/images/choose_file_icon.png",
+//                              ),
+//                              color: CommonStyles.grey,
+//                            ),),
                           suffixIcon: IconButton(
                               onPressed: () {
                                 onSubmitMsg(chatTextController.text);
@@ -314,7 +315,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                       color: CommonStyles.red, shape: BoxShape.circle),
                   child: Center(
                     child: Text(
-                      widget.username!=null?widget.username[0].toUpperCase():"",
+                      widget.username!=null && widget.username?.isNotEmpty?widget.username[0].toUpperCase():"-",
                       style: CommonStyles.getRalewayStyle(
                           space_15, FontWeight.w500, Colors.white),
                     ),

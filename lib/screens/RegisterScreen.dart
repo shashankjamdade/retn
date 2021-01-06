@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -6,6 +8,9 @@ import 'package:flutter_rentry_new/bloc/authentication/AuthenticationBloc.dart';
 import 'package:flutter_rentry_new/bloc/authentication/AuthenticationEvent.dart';
 import 'package:flutter_rentry_new/bloc/authentication/AuthenticationBloc.dart';
 import 'package:flutter_rentry_new/bloc/authentication/AuthenticationState.dart';
+import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/model/UserLocationSelected.dart';
+import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/model/register_response.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
 import 'package:flutter_rentry_new/screens/OtpVerificationScreen.dart';
@@ -14,7 +19,10 @@ import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'DashboardScreen.dart';
 import 'LoginScreen.dart';
@@ -140,10 +148,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 fontSize: space_14
             );
             if(state.res.status){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LoginScreen()),
-              );
+              storeResInPrefs(context, state.res);
             }
           }
         },
@@ -399,4 +404,57 @@ class _RegisterScreenState extends State<RegisterScreen> {
       MaterialPageRoute(builder: (context) => HomeScreen()),
     );
   }
+
+  void storeResInPrefs(BuildContext context, LoginResponse res) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      Position position =
+      await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      LocationPermission permission = await checkPermission();
+      if (permission == LocationPermission.always ||
+          permission == LocationPermission.whileInUse) {
+        prefs.setString(USER_LOGIN_RES, jsonEncode(res));
+        prefs.setString(USER_LOCATION_LAT, "${position.latitude}");
+        prefs.setString(USER_LOCATION_LONG, "${position.longitude}");
+        debugPrint(
+            "LOCATION_FOUND ${position.latitude}, ${position.longitude}");
+        //access address from lat lng
+        final coordinates =
+        new Coordinates(position.latitude, position.longitude);
+        var addresses =
+        await Geocoder.local.findAddressesFromCoordinates(coordinates);
+        var first = addresses.first;
+        UserLocationSelected userLocationSelected = new UserLocationSelected(
+            address: first.addressLine,
+            city: first.locality,
+            state: first.adminArea,
+            coutry: first.countryName,
+            mlat: position.latitude.toString(),
+            mlng: position.longitude.toString());
+        StateContainer.of(context).updateUserLocation(userLocationSelected);
+        prefs.setString(USER_LOCATION_ADDRESS, "${first.addressLine}");
+        prefs.setString(USER_LOCATION_CITY, "${first.locality}");
+        prefs.setString(USER_LOCATION_STATE, "${first.adminArea}");
+        prefs.setString(USER_LOCATION_PINCODE, "${first.postalCode}");
+        print("@@@@-------${first} ${first.addressLine} : ${first.adminArea}");
+
+        prefs.setString(USER_NAME, res.data.username);
+        prefs.setString(USER_MOBILE, res.data.contact);
+        prefs.setString(USER_EMAIL, res.data.email);
+        prefs.setBool(IS_LOGGEDIN, true);
+        debugPrint(
+            "PREFS_STORED_LOGIN-----> ${prefs.getString(USER_LOCATION_ADDRESS)}");
+        StateContainer.of(context).updateUserInfo(res);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      } else {
+        //Show dialog for location permission
+      }
+    } catch (e) {
+      debugPrint("EXCEPTION in Loginscreen in storeResInPrefs ${e.toString()}");
+    }
+  }
+
 }

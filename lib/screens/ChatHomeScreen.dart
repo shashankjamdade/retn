@@ -173,7 +173,7 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
                         shape: BoxShape.circle),
                     child: Center(
                       child: Text(
-                        mGetAllChatUserListResponse.data.chat_list[pos].chat_with[0].toUpperCase(),
+                        mGetAllChatUserListResponse.data.chat_list[pos].chat_with!=null && mGetAllChatUserListResponse.data.chat_list[pos].chat_with?.isNotEmpty?mGetAllChatUserListResponse.data.chat_list[pos].chat_with[0].toUpperCase():"-",
                         style: CommonStyles.getRalewayStyle(
                             space_15, FontWeight.w600, Colors.white),
                       ),
@@ -185,7 +185,7 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
                         FontWeight.w600, Colors.black.withOpacity(0.8)),
                   ),
                   subtitle: Text(
-                    "sdfj hdskjfhskjd fjd fsjdfk sjdhf kjsdfks",
+                    "DUMMY",
                     style: CommonStyles.getRalewayStyle(space_15,
                         FontWeight.w500, Colors.black.withOpacity(0.5)),
                     maxLines: 1,

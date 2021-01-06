@@ -579,6 +579,9 @@ class _ItemCardWidgetState extends State<ItemCardWidget> {
   void initState() {
     super.initState();
 //    isLiked = widget.
+    if(widget.category_adslist!=null && widget.category_adslist.is_wishlist!=null){
+      isLiked = widget.category_adslist.is_wishlist;
+    }
   }
 
   @override
@@ -810,6 +813,15 @@ class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
   bool isLiked = false;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if(widget.category_adslist!=null && widget.category_adslist.is_wishlist!=null){
+      isLiked = widget.category_adslist.is_wishlist;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     @override
     void initState() {
@@ -1032,6 +1044,9 @@ class _MyItemCardNoMarginWidgetState extends State<MyItemCardNoMarginWidget> {
     void initState() {
       super.initState();
 //    isLiked = widget.
+      if(widget.category_adslist!=null && widget.category_adslist.is_wishlist!=null){
+        isLiked = widget.category_adslist.is_wishlist;
+      }
     }
 
     return InkWell(
@@ -1958,13 +1973,14 @@ class BottomFloatingFilterBtnsWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GestureDetector(
-                onTap: openFilter,/*() {
-                  openFilter;
+                onTap: () {
+                  debugPrint("FILTER_OPEN");
+                  openFilter();
 //                  Navigator.push(
 //                    context,
 //                    MaterialPageRoute(builder: (context) => FilterScreen(filterRes)),
 //                  );
-                },*/
+                },
                 child: Container(
                   height: space_40,
                   width: space_40,

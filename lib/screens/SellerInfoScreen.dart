@@ -377,7 +377,7 @@ class _SellerInfoScreenState extends State<SellerInfoScreen> {
                                             BorderRadius.circular(space_5)),
                                     child: Center(
                                       child: Text(
-                                        "READ REVIEWS",
+                                        "REVIEW NOW",
                                         style: CommonStyles.getRalewayStyle(
                                             space_14,
                                             FontWeight.w400,

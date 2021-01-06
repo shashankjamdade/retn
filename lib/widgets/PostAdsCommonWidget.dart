@@ -62,7 +62,7 @@ class PostAdCategoryGridWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final double iconSize = IconTheme.of(context).size;
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: space_15),
+      margin: EdgeInsets.symmetric(horizontal: space_15, vertical: space_15),
       elevation: space_3,
       shape: RoundedRectangleBorder(
           side: BorderSide(color: Colors.white),

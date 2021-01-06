@@ -193,6 +193,7 @@ class Category_adslist {
   String updatedDate;
   String createdDate;
   String expiryDate;
+  bool is_wishlist = false;
 
   Category_adslist({
     this.id,
@@ -222,7 +223,8 @@ class Category_adslist {
     this.deleteRequest,
     this.updatedDate,
     this.createdDate,
-    this.expiryDate});
+    this.expiryDate,
+    this.is_wishlist});
 
   Category_adslist.fromJson(dynamic json) {
     id = json["id"];
@@ -253,6 +255,7 @@ class Category_adslist {
     updatedDate = json["updatedDate"];
     createdDate = json["createdDate"];
     expiryDate = json["expiryDate"];
+    is_wishlist = json["is_wishlist"];
   }
 
   Map<String, dynamic> toJson() {
@@ -285,6 +288,7 @@ class Category_adslist {
     map["updatedDate"] = updatedDate;
     map["createdDate"] = createdDate;
     map["expiryDate"] = expiryDate;
+    map["is_wishlist"] = is_wishlist;
     return map;
   }
 

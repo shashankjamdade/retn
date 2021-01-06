@@ -407,45 +407,45 @@ class _PackageScreenState extends State<PackageScreen> {
                       SizedBox(
                         height: space_15,
                       ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: space_15, vertical: space_15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            RichTextTitleWidget("HISTORY", ""),
-                            GestureDetector(
-                              onTap: () {},
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    top: space_5,
-                                    bottom: space_5,
-                                    left: space_10),
-                                child: Text(
-                                  "SHOW MORE",
-                                  style: CommonStyles.getRalewayStyle(space_13,
-                                      FontWeight.w500, CommonStyles.blue),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: space_5,
-                      ),
-                      Container(
-                          height: space_220,
-                          child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: packageList.length,
-                              itemBuilder: (context, index) {
-                                return InkWell(
-                                    onTap: (){
-                                      openCheckout(packageList[index].price);
-                                    },
-                                    child: PackageCardWidget(packageList[index]));
-                              })),
+//                      Container(
+//                        padding: EdgeInsets.symmetric(
+//                            horizontal: space_15, vertical: space_15),
+//                        child: Row(
+//                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                          children: [
+//                            RichTextTitleWidget("HISTORY", ""),
+//                            GestureDetector(
+//                              onTap: () {},
+//                              child: Padding(
+//                                padding: const EdgeInsets.only(
+//                                    top: space_5,
+//                                    bottom: space_5,
+//                                    left: space_10),
+//                                child: Text(
+//                                  "SHOW MORE",
+//                                  style: CommonStyles.getRalewayStyle(space_13,
+//                                      FontWeight.w500, CommonStyles.blue),
+//                                ),
+//                              ),
+//                            ),
+//                          ],
+//                        ),
+//                      ),
+//                      SizedBox(
+//                        height: space_5,
+//                      ),
+//                      Container(
+//                          height: space_220,
+//                          child: ListView.builder(
+//                              scrollDirection: Axis.horizontal,
+//                              itemCount: packageList.length,
+//                              itemBuilder: (context, index) {
+//                                return InkWell(
+//                                    onTap: (){
+//                                      openCheckout(packageList[index].price);
+//                                    },
+//                                    child: PackageCardWidget(packageList[index]));
+//                              })),
                       SizedBox(
                         height: space_95,
                       ),

@@ -71,6 +71,10 @@ class NearbySubChildCategoryListReqEvent extends HomeEvent {
   final String lat;
   final String lng;
   final String subcategory_id;
+  final String filter_subcategory_id;
+  final String filter_custome_filed_id;
+  final String filter_min;
+  final String filter_max;
 
   NearbySubChildCategoryListReqEvent(
       {@required this.token,
@@ -78,11 +82,16 @@ class NearbySubChildCategoryListReqEvent extends HomeEvent {
       this.subcategory_id,
       @required this.radius,
       @required this.lat,
-      @required this.lng});
+      @required this.lng,
+      @required this.filter_subcategory_id,
+      @required this.filter_custome_filed_id,
+      @required this.filter_min,
+      @required this.filter_max
+      });
 
   @override
   List<Object> get props =>
-      [token, categoryId, subcategory_id, radius, lat, lng];
+      [token, categoryId, subcategory_id, radius, lat, lng, filter_subcategory_id, filter_custome_filed_id, filter_min, filter_max];
 }
 
 class GetCategoryListEvent extends HomeEvent {

@@ -157,98 +157,36 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                           Center(child: Icon(Icons.arrow_back)),
                                     ),
                                   ),
-                                  (userId != null &&
-                                          userId.isNotEmpty &&
-                                          (userId ==
-                                              itemDetailResponse.ad.seller_id))
-                                      ? Container(
-                                          child: Row(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () {},
-                                                child: Container(
-                                                  height: space_40,
-                                                  width: space_40,
-                                                  padding:
-                                                      EdgeInsets.all(space_5),
-                                                  margin: EdgeInsets.only(
-                                                      right: space_15),
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Colors.redAccent,
-                                                  ),
-                                                  child: Center(
-                                                    child: Icon(
-                                                      Icons.delete,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            ChooseCategoryEditAdScreen(
-                                                                itemDetailResponse
-                                                                    .ad.id)),
-                                                  );
-                                                },
-                                                child: Container(
-                                                  height: space_40,
-                                                  width: space_40,
-                                                  padding:
-                                                      EdgeInsets.all(space_5),
-                                                  margin: EdgeInsets.only(
-                                                      right: space_15),
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: CommonStyles.green,
-                                                  ),
-                                                  child: Center(
-                                                    child: Icon(
-                                                      Icons.edit,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      : GestureDetector(
-                                          onTap: () {
-                                            new HomeRepository()
-                                                .callSavefavouriteApi(
-                                                    StateContainer.of(context)
-                                                        .mLoginResponse
-                                                        .data
-                                                        .token,
-                                                    itemDetailResponse.ad.id);
-                                            setState(() {
-                                              isLiked = !isLiked;
-                                            });
-                                          },
-                                          child: Container(
-                                            height: space_30,
-                                            width: space_30,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Colors.white,
-                                            ),
-                                            child: Center(
-                                              child: Image.asset(
-                                                isLiked
-                                                    ? "assets/images/heart.png"
-                                                    : "assets/images/heart_grey.png",
-                                                width: space_15,
-                                                height: space_15,
-                                              ),
-                                            ),
-                                          ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      new HomeRepository().callSavefavouriteApi(
+                                          StateContainer.of(context)
+                                              .mLoginResponse
+                                              .data
+                                              .token,
+                                          itemDetailResponse.ad.id);
+                                      setState(() {
+                                        isLiked = !isLiked;
+                                      });
+                                    },
+                                    child: Container(
+                                      height: space_30,
+                                      width: space_30,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.white,
+                                      ),
+                                      child: Center(
+                                        child: Image.asset(
+                                          isLiked
+                                              ? "assets/images/heart.png"
+                                              : "assets/images/heart_grey.png",
+                                          width: space_15,
+                                          height: space_15,
                                         ),
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             )
