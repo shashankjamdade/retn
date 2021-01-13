@@ -29,6 +29,7 @@ import 'package:flutter_rentry_new/screens/postad/SelectLocationPostAdScreen.dar
 import 'package:flutter_rentry_new/screens/postad/PostAdsSubCategoryScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/UploadProductImgScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
+import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
@@ -88,6 +89,7 @@ class ScreenOne extends StatefulWidget {
 
 class _ScreenOneState extends State<ScreenOne> {
   bool isLogin = false;
+  bool isLocationAccess = false;
   AuthenticationBloc authenticationBloc = new AuthenticationBloc();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
@@ -115,7 +117,7 @@ class _ScreenOneState extends State<ScreenOne> {
   @override
   void initState() {
     super.initState();
-    checkUserLoggedInOrNot(context);
+//    checkUserLoggedInOrNot(context);
     getMyCurrentLocation();
     var initializationSettingsAndroid = new AndroidInitializationSettings(
         '@mipmap/ic_launcher');
@@ -158,22 +160,45 @@ class _ScreenOneState extends State<ScreenOne> {
     prefs.setString(USER_LOCATION_STATE, "${first.adminArea}");
     prefs.setString(USER_LOCATION_PINCODE, "${first.postalCode}");
     print("@@@@-------${first} ${first.addressLine} : ${first.adminArea}");
+    setState(() {
+      isLocationAccess = true;
+      isLogin = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<AuthenticationBloc>(
-      create: (_) => authenticationBloc..add(CheckLoggedInEvent()),
+      create: (_) => authenticationBloc..add(widget.isClrData?MakeLogout():CheckLoggedInEvent()),
       child: BlocListener(
         bloc: authenticationBloc,
-        listener: (context, state) {},
+        listener: (context, state) {
+          if(state.obj !=null && state.obj is LoginResponse){
+            StateContainer.of(context).updateUserInfo(state.obj);
+          }
+        },
         child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
             builder: (context, state) {
-              return SafeArea(
-                child: Scaffold(
-                  body: isLogin ? HomeScreen() : SplashScreen(),
-                ),
-              );
+              if(state is LogoutAuthentucateState){
+                return SplashScreen();
+              }else if(state is CheckLoggedInState){
+                if(state.obj !=null && state.obj is LoginResponse){
+                  return HomeScreen();
+                }else{
+                  return SplashScreen();
+                }
+              }else {
+                return SafeArea(
+                  child: Scaffold(
+                      body: Container(
+                        color: Colors.white,
+                        child: Center(
+                          child: Image.asset("assets/images/app_icon.png"),
+                        ),
+                      )//isLogin ? HomeScreen() : SplashScreen(),
+                  ),
+                );
+              }
             }),
       ),
     );
@@ -190,9 +215,18 @@ class _ScreenOneState extends State<ScreenOne> {
       var response =
       LoginResponse.fromJson(jsonDecode(prefs.getString(USER_LOGIN_RES)));
       StateContainer.of(context).updateUserInfo(response);
-      setState(() {
-        isLogin = true;
-      });
+//      setState(() {
+//        isLogin = true;
+//      });
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    }else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SplashScreen()),
+      );
     }
   }
 
@@ -206,10 +240,10 @@ class _ScreenOneState extends State<ScreenOne> {
         iOS: iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
       0,
-      message['notification']['title'],
-      message['notification']['body'],
+      message['data']['title'],
+      message['data']['message'],
       platformChannelSpecifics,
-      payload: 'hello',);
+      payload: message['data']['notification_type'],);
   }
 
   Future onSelectNotification(String payload) async {

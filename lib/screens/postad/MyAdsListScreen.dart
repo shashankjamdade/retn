@@ -11,6 +11,7 @@ import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/model/my_ads_list_res.dart';
 import 'package:flutter_rentry_new/model/nearby_item_list_response.dart';
 import 'package:flutter_rentry_new/repository/HomeRepository.dart';
+import 'package:flutter_rentry_new/screens/ItemDetailScreen.dart';
 import 'package:flutter_rentry_new/screens/editAds/ChooseCategoryEditAdScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
@@ -55,7 +56,7 @@ class _MyAdsListScreenState extends State<MyAdsListScreen> {
       child: BlocListener(
         bloc: homeBloc,
         listener: (context, state) {
-          if(state is DeleteAdState){
+          if (state is DeleteAdState) {
             if (state.res != null && state.res.message != null) {
 //                showSnakbar(_scaffoldKey, state.res.msg);
               Fluttertoast.showToast(
@@ -67,8 +68,7 @@ class _MyAdsListScreenState extends State<MyAdsListScreen> {
                   textColor: Colors.white,
                   fontSize: space_14);
             }
-            if (state.res.status != null &&
-                (state.res.status)) {
+            if (state.res.status != null && (state.res.status)) {
               homeBloc..add(MyAdsEvent(token: token));
             }
           }
@@ -80,7 +80,7 @@ class _MyAdsListScreenState extends State<MyAdsListScreen> {
             } else if (state is DeleteAdState) {
               return ProgressNormalAppBarWidget("My ADs");
             } else {
-             return ProgressNormalAppBarWidget("My ADs");
+              return ProgressNormalAppBarWidget("My ADs");
             }
           },
         ),
@@ -149,7 +149,14 @@ class _MyAdsListScreenState extends State<MyAdsListScreen> {
 
   Widget getMyitemCardNoMarginWidget(Category_adslist mCategory_adslist) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  ItemDetailScreen(categoryName: mCategory_adslist.slug)),
+        );
+      },
       child: Container(
         height: space_250,
         width: space_180,
@@ -184,8 +191,20 @@ class _MyAdsListScreenState extends State<MyAdsListScreen> {
                               ),
                             ),
                           ),
+                          Container(
+                            height: space_50,
+                            width: space_50,
+                            margin:
+                                EdgeInsets.only(left: space_15, top: space_8),
+                            child: Center(
+                              child: mCategory_adslist?.is_status == "0"?ImageIcon(AssetImage("assets/images/approved.png"), size: space_50,):Icon(
+                                Icons.watch_later,
+                                color: CommonStyles.grey, size: space_50
+                              ),
+                            ),
+                          ),
                           Positioned(
-                            top: space_15,
+                            top: space_8,
                             right: 0.0,
                             child: GestureDetector(
                               onTap: () {},
@@ -284,12 +303,12 @@ class _MyAdsListScreenState extends State<MyAdsListScreen> {
                         ),
                       ),
                       SizedBox(
-                        height: space_10,
+                        height: space_5,
                       ),
                       Container(
                         width: double.infinity,
                         margin: EdgeInsets.symmetric(horizontal: space_5),
-                        padding: EdgeInsets.symmetric(vertical: space_1),
+                        padding: EdgeInsets.symmetric(vertical: space_3),
                         decoration: BoxDecoration(
                             color: CommonStyles.primaryColor.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(space_5)),

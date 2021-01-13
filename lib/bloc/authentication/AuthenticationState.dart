@@ -12,6 +12,7 @@ abstract class AuthenticationState extends Equatable{
 class InitialAuthenticationState extends AuthenticationState {}
 class ProgressAuthenticationState extends AuthenticationState {}
 class NonProgressAuthenticationState extends AuthenticationState {}
+class LogoutAuthentucateState extends AuthenticationState {}
 class SuccessAuthenticationState extends AuthenticationState {
   final obj;
   SuccessAuthenticationState({@required this.obj});
@@ -23,7 +24,7 @@ class CheckLoggedInState extends AuthenticationState {
   final obj;
   CheckLoggedInState({@required this.obj});
   @override
-  List<bool> get props => [obj];
+  List<LoginResponse> get props => [obj];
 }
 
 class FailedAuthenticationState extends AuthenticationState {

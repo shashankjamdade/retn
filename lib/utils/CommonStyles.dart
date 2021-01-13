@@ -146,6 +146,7 @@ const String empty_email = "Please enter email ID";
 const String empty_conf_password = "Please enter confirm password";
 const String pwd_no_match = "Password didn't match";
 const String verify_mobile = "Please verify your mobile no";
+const String fcm_token_missing = "Token missing";
 const String empty_type = "Please enter type";
 const String empty_price = "Please enter price";
 const String empty_img = "Please upload atleast one image";
@@ -222,6 +223,8 @@ const String SEND_OTP = "/send_otp";
 const String VERIFY_OTP = "/verify_otp";
 const String FORGOT_PWD = "/forgot_password_update";
 const String RATING = "/rating";
+const String GOOGLE_AUTOCOMPLETE1 = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=";
+const String GOOGLE_AUTOCOMPLETE2 = "&types=geocode&language=fr&sensor=true&key=";
 
 const String LOGGEDIN_SUCCESS = "LOGGEDIN_SUCCESS";
 
@@ -237,6 +240,6 @@ const String LOGGEDIN_CANCELLED = "LOGGEDIN_CANCELLED";
 const String API_ERROR_MSG = "Something went wrong, Please try again later!";
 const String GOOGLE_API_KEY = "AIzaSyA-7MnlahCeTpKE5mOD5XQf-8ixgbdtDSs";
 
-
+//https://maps.googleapis.com/maps/api/place/autocomplete/json?input=mahatashtr&types=geocode&language=fr&sensor=true&key=AIzaSyA-7MnlahCeTpKE5mOD5XQf-8ixgbdtDSs
 
 

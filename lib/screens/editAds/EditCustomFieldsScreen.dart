@@ -616,7 +616,7 @@ class _EditCustomeFieldsScreenState extends State<EditCustomeFieldsScreen> {
 
     var customFieldStr = "";
     customFieldList.forEach((element) {
-      customFieldStr = customFieldStr + jsonEncode(element);
+      customFieldStr = customFieldStr +"${customFieldStr.isNotEmpty?",":""}"+ jsonEncode(element);
       print("SUBMITTED_Value_FINAL ${jsonEncode(element)}");
     });
     customFieldStr = "[" + customFieldStr + "]";

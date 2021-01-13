@@ -326,45 +326,45 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             thickness: space_1,
                             color: Colors.black,
                           ),
-                          SizedBox(
-                            height: space_15,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: Text(
-                                  "Location",
-                                  style: CommonStyles.getMontserratStyle(
-                                      space_12,
-                                      FontWeight.w500,
-                                      CommonStyles.grey),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 7,
-                                child: TextField(
-                                  controller: locationController,
-                                  style: TextStyle(color: Colors.black),
-                                  keyboardType: TextInputType.emailAddress,
-                                  decoration: InputDecoration(
-                                      focusColor: Colors.white,
-                                      border: InputBorder.none,
-                                      hintStyle: TextStyle(color: Colors.black),
-                                      focusedBorder: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      errorBorder: InputBorder.none,
-                                      disabledBorder: InputBorder.none,
-                                      hintText: ""),
-                                ),
-                              )
-                            ],
-                          ),
-                          Divider(
-                            height: space_1,
-                            thickness: space_1,
-                            color: Colors.black,
-                          ),
+//                          SizedBox(
+//                            height: space_15,
+//                          ),
+//                          Row(
+//                            children: [
+//                              Expanded(
+//                                flex: 3,
+//                                child: Text(
+//                                  "Location",
+//                                  style: CommonStyles.getMontserratStyle(
+//                                      space_12,
+//                                      FontWeight.w500,
+//                                      CommonStyles.grey),
+//                                ),
+//                              ),
+//                              Expanded(
+//                                flex: 7,
+//                                child: TextField(
+//                                  controller: locationController,
+//                                  style: TextStyle(color: Colors.black),
+//                                  keyboardType: TextInputType.emailAddress,
+//                                  decoration: InputDecoration(
+//                                      focusColor: Colors.white,
+//                                      border: InputBorder.none,
+//                                      hintStyle: TextStyle(color: Colors.black),
+//                                      focusedBorder: InputBorder.none,
+//                                      enabledBorder: InputBorder.none,
+//                                      errorBorder: InputBorder.none,
+//                                      disabledBorder: InputBorder.none,
+//                                      hintText: ""),
+//                                ),
+//                              )
+//                            ],
+//                          ),
+//                          Divider(
+//                            height: space_1,
+//                            thickness: space_1,
+//                            color: Colors.black,
+//                          ),
                           SizedBox(
                             height: space_50,
                           ),

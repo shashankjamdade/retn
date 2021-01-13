@@ -9,24 +9,20 @@ import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'dart:ui' as ui;
 import 'package:image/image.dart' as image;
 
-
-void showSnakbar(GlobalKey<ScaffoldState> _scaffoldKey, String msg){
+void showSnakbar(GlobalKey<ScaffoldState> _scaffoldKey, String msg) {
   _scaffoldKey.currentState.showSnackBar(SnackBar(
     content: Text(msg),
   ));
 }
 
-void onClickViewAll(BuildContext context, String type){
+void onClickViewAll(BuildContext context, String type) {}
 
-}
+void onSearchLocation(BuildContext context) {}
 
-void onSearchLocation(BuildContext context){
-
-}
-
-String getMapUrl(double lat, double longi, int w, int h){
+String getMapUrl(double lat, double longi, int w, int h) {
   var mapUrl =
-      "https://maps.googleapis.com/maps/api/staticmap?center=${lat},${longi}&zoom=10&size=${w}x${h}&markers=color:red%7Clabel:%7C${lat},${longi}&maptype=roadmap&key="+GOOGLE_API_KEY;
+      "https://maps.googleapis.com/maps/api/staticmap?center=${lat},${longi}&zoom=10&size=${w}x${h}&markers=color:red%7Clabel:%7C${lat},${longi}&maptype=roadmap&key=" +
+          GOOGLE_API_KEY;
   return mapUrl;
 }
 
@@ -54,18 +50,18 @@ String getRichText2ByType(String type) {
     case TYPE_FREELANCING:
       text2 = "FREELANCING";
       break;
-   case SIMILAR_PRODUCT:
+    case SIMILAR_PRODUCT:
       text2 = "PRODUCTS";
       break;
-  case MORE_PRODUCTS:
+    case MORE_PRODUCTS:
       text2 = "PRODUCTS";
       break;
   }
   return text2;
 }
 
-
-void onViewAllClick(BuildContext context, String type, String categoryId, String categoryName) {
+void onViewAllClick(
+    BuildContext context, String type, String categoryId, String categoryName) {
 //  switch (type) {
 //    case TYPE_FURNITURE:
 //      break;
@@ -73,9 +69,13 @@ void onViewAllClick(BuildContext context, String type, String categoryId, String
   Navigator.push(
     context,
     MaterialPageRoute(
-        builder: (context) =>
-            NearByChildSubCategoryScreen(isFromNearBy: false, lat: "",
-              lng: "", categoryId: categoryId, categoryName: categoryName,)),
+        builder: (context) => NearByChildSubCategoryScreen(
+              isFromNearBy: false,
+              lat: "",
+              lng: "",
+              categoryId: categoryId,
+              categoryName: categoryName,
+            )),
   );
 //  Navigator.push(
 //    context,
@@ -83,24 +83,36 @@ void onViewAllClick(BuildContext context, String type, String categoryId, String
 //  );
 }
 
-
-Future<ui.Image> getUiImage(String imageAssetPath, int height, int width) async {
+Future<ui.Image> getUiImage(
+    String imageAssetPath, int height, int width) async {
   final ByteData assetImageByteData = await rootBundle.load(imageAssetPath);
-  image.Image baseSizeImage = image.decodeImage(assetImageByteData.buffer.asUint8List());
-  image.Image resizeImage = image.copyResize(baseSizeImage, height: height, width: width);
+  image.Image baseSizeImage =
+      image.decodeImage(assetImageByteData.buffer.asUint8List());
+  image.Image resizeImage =
+      image.copyResize(baseSizeImage, height: height, width: width);
   ui.Codec codec = await ui.instantiateImageCodec(image.encodePng(resizeImage));
   ui.FrameInfo frameInfo = await codec.getNextFrame();
   return frameInfo.image;
 }
 
 lauchDialer(String mobile) async {
-  if(mobile.isNotEmpty) {
+  if (mobile.isNotEmpty) {
     var url = "tel:" + mobile;
     if (await canLaunch(url)) {
       await launch(url);
     } else {
       throw 'Could not launch $url';
     }
+  }
+}
+
+Future<void> openMap(double latitude, double longitude) async {
+  String googleUrl =
+      'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+  if (await canLaunch(googleUrl)) {
+    await launch(googleUrl);
+  } else {
+    throw 'Could not open the map.';
   }
 }
 //Future<bool> isInternet() async {
@@ -128,5 +140,3 @@ lauchDialer(String mobile) async {
 //    return false;
 //  }
 //}
-
-

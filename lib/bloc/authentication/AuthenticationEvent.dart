@@ -8,6 +8,7 @@ abstract class AuthenticationEvent extends Equatable{
 
 class InitialAuthenticationEvent extends AuthenticationEvent{}
 class CheckLoggedInEvent extends AuthenticationEvent{}
+class MakeLogout extends AuthenticationEvent{}
 class ProgressAuthenticationEvent extends AuthenticationEvent{}
 class NonProgressAuthenticationEvent extends AuthenticationEvent{}
 

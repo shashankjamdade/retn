@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
+import 'package:flutter_rentry_new/model/OtpObj.dart';
 import 'package:flutter_rentry_new/model/common_response.dart';
 import 'package:flutter_rentry_new/screens/DashboardScreen.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
 
@@ -63,14 +65,27 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             }
           }else if(state is VeifyOtpState){
             if(state.res!=null && state.res.msg!=null && state.res.msg.toString().isNotEmpty){
+              if(state.res.status!=null && (state.res.status == "true")){
+                Navigator.pop(context, new OtpObj(widget.contact, otpController.text.trim()));
+              }
+              Fluttertoast.showToast(
+                  msg: state.res.msg,
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                  fontSize: space_14
+              );
               showSnakbar(_scaffoldKey, state.res.msg);
-              Navigator.pop(context, otpController.text.trim());
             }
           }
         },
           child: BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state){
               if(state is SendOtpState){
+                return getScreenUi(state.res);
+              }else if(state is VeifyOtpState){
                 return getScreenUi(state.res);
               }else {
                 return getScreenProgressUi();
@@ -111,7 +126,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                               if (value.isEmpty) {
                                 return "Please enter valid OTP";
                               }
-                            }, TextInputType.number),
+                            }, TextInputType.number,),
                         SizedBox(height: getProportionateScreenHeight(context, space_20),),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -9,6 +9,7 @@ import 'package:flutter_rentry_new/bloc/authentication/AuthenticationEvent.dart'
 import 'package:flutter_rentry_new/bloc/authentication/AuthenticationBloc.dart';
 import 'package:flutter_rentry_new/bloc/authentication/AuthenticationState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/model/OtpObj.dart';
 import 'package:flutter_rentry_new/model/UserLocationSelected.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/model/register_response.dart';
@@ -22,6 +23,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:gson/gson.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'DashboardScreen.dart';
@@ -48,6 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String mName = "";
   String mEmail = "";
   String mOTP = "";
+  String mVerifiedMobile = "";
   String mFcmToken = "";
   bool _obscureText = true;
   bool _obscureText2 = true;
@@ -102,6 +105,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void dispose() {
     //Dispose Listener to know when is updated focus
     _focusNode.addListener(_onLoginUserNameFocusChange);
+    mobileController.dispose();
+
     super.dispose();
   }
 
@@ -208,12 +213,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 //                            }
 //                          }, TextInputType.number),
 //                          SizedBox(height: getProportionateScreenHeight(context, space_20),),
-                          BtnTextInputWidget(mobileController, "Mobile No.", "Verify", false, onVerifyClick,
+                          BtnTextInputWidget(mobileController, "Mobile No.", (mOTP!=null && mOTP?.isNotEmpty)? "Verified":"Verify", false, onVerifyClick,
                                   (String value) {
                                 if (value.isEmpty) {
                                   return "Please enter valid mobile no.";
                                 }
-                              }, TextInputType.emailAddress),
+                              }, TextInputType.number, isVerified: mOTP!=null && mOTP?.isNotEmpty),
                           SizedBox(height: getProportionateScreenHeight(context, space_20),),
                           TextInputWidget(emailController, "Email ID", false, (String value) {
                             if (value.isEmpty) {
@@ -356,12 +361,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
       var res = await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => OtpVerificationScreen(mobileController.text.trim(), "login")),
-      ).then((value) => mOTP = value);
+      );
+      setState(() {
+        if(res!=null && res is OtpObj) {
+          mOTP = res.otp;
+          mVerifiedMobile = res.mobile;
+          debugPrint("VERIFIED ${res.otp}, ${res.mobile}");
+        }
+      });
     }
   }
   
   void onSignup(){
-    if(fullnameController.text.trim().isEmpty){
+    if(mVerifiedMobile != mobileController.text.toString()){
+      setState(() {
+        mOTP = "";
+      });
+      showSnakbar(_scaffoldKey, verify_mobile);
+    }else if(fullnameController.text.trim().isEmpty){
      showSnakbar(_scaffoldKey, empty_full_name);
     }else if(mobileController.text.trim().isEmpty){
      showSnakbar(_scaffoldKey, empty_mobile);
@@ -375,6 +392,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
      showSnakbar(_scaffoldKey, pwd_no_match);
     }else if(mOTP==null || mOTP.isEmpty){
      showSnakbar(_scaffoldKey, verify_mobile);
+    }else if(mFcmToken==null || mFcmToken.isEmpty){
+     showSnakbar(_scaffoldKey, fcm_token_missing);
     }else{
       //API hit
       debugPrint("OTP -- > ${mOTP}");

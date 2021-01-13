@@ -385,3 +385,14 @@ class RatingEvent extends HomeEvent {
   @override
   List<Object> get props => [token, seller_id, user_id, rating];
 }
+
+class GooglePlaceEvent extends HomeEvent {
+  final String token;
+  final String query;
+
+  GooglePlaceEvent(
+      {@required this.token,@required this.query});
+
+  @override
+  List<Object> get props => [token, query];
+}

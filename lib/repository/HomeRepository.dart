@@ -15,6 +15,7 @@ import 'package:flutter_rentry_new/model/get_my_favourite_res.dart';
 import 'package:flutter_rentry_new/model/get_my_package_list_res.dart';
 import 'package:flutter_rentry_new/model/get_notification_response.dart';
 import 'package:flutter_rentry_new/model/get_rent_type_response.dart';
+import 'package:flutter_rentry_new/model/google_places_res.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/model/item_detail_response.dart';
 import 'package:flutter_rentry_new/model/my_ads_edit_res.dart';
@@ -1002,6 +1003,25 @@ class HomeRepository extends BaseRepository {
       print("-----------${data}");
     } else {
       response = new CommonResponse();
+    }
+    return response;
+  }
+
+  Future<GooglePlacesRes> callGooglePlaces(String token,String query) async {
+    GooglePlacesRes response;
+    print("UNDER callGooglePlaces ${query} , ${GOOGLE_AUTOCOMPLETE1}${query}${GOOGLE_AUTOCOMPLETE2}${GOOGLE_API_KEY}");
+//    Map<String, String> mainheader = {"token": token};
+    var res =
+    await http.get("${GOOGLE_AUTOCOMPLETE1}${query}${GOOGLE_AUTOCOMPLETE2}${GOOGLE_API_KEY}");
+    print("PRINTING ${res.body}");
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      var status = data["status"];
+      print("PRINTING_STATUS ${status}");
+      response = GooglePlacesRes.fromJson(data);
+      print("-----------${data}");
+    } else {
+      response = new GooglePlacesRes();
     }
     return response;
   }

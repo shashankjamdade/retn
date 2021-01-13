@@ -135,6 +135,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }else if (event is RatingEvent) {
 //      yield ProgressState();
       yield* callRating(event.token, event.seller_id, event.user_id, event.rating);
+    }else if (event is GooglePlaceEvent) {
+//      yield ProgressState();
+      yield* callGooglePlace(event.token, event.query);
     }
   }
 
@@ -233,20 +236,30 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       ) async* {
     try {
       homeRepository =
-          homeRepository != null ? homeRepository : HomeRepository();
+      homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
-          "callNearbySubChildCategoryListApi TOKEN ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+          "callNearbySubChildCategoryListApi TOKEN ${token} ${homeRepository ==
+              null ? "NULL" : "NOTNULL"}");
       final nearbySubChildCategoryListResponse =
-          await homeRepository.callNearbySubChildCategoryListApi(
-              token, categoryId, subCategoryId, radius, lat, lng, filter_subcategory_id, filter_custome_filed_id,
-              filter_min, filter_max);
+      await homeRepository.callNearbySubChildCategoryListApi(
+          token,
+          categoryId,
+          subCategoryId,
+          radius,
+          lat,
+          lng,
+          filter_subcategory_id,
+          filter_custome_filed_id,
+          filter_min,
+          filter_max);
       debugPrint(
-          "nearbySubChildCategoryListResponse ${jsonEncode(nearbySubChildCategoryListResponse)}");
+          "nearbySubChildCategoryListResponse ${jsonEncode(
+              nearbySubChildCategoryListResponse)}");
       yield NearbySubChildCategoryListResState(
           res: nearbySubChildCategoryListResponse);
-    } catch (e) {
+    }catch (e, stacktrace) {
       debugPrint(
-          "Exception while nearbySubChildCategoryListResponse ${e.toString()}");
+          "Exception while nearbySubChildCategoryListResponse ${e.toString()}\n ${stacktrace.toString()}");
     }
   }
 
@@ -664,6 +677,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       yield RatingState(res: commonResponse);
     } catch (e) {
       debugPrint("Exception while callRating ${e.toString()}");
+    }
+  }
+
+
+  Stream<HomeState> callGooglePlace(String token, String query) async* {
+    try {
+      homeRepository =
+      homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callGooglePlace ${query} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final googlePlacesRes =
+      await homeRepository.callGooglePlaces(token, query);
+      debugPrint("callGooglePlace ${jsonEncode(googlePlacesRes)}");
+      yield GooglePlaceState(res: googlePlacesRes);
+    } catch (e) {
+      debugPrint("Exception while callGooglePlace ${e.toString()}");
     }
   }
 

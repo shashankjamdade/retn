@@ -63,9 +63,11 @@ class _SellerInfoScreenState extends State<SellerInfoScreen> {
           listener: (context, state) {
             if (state is SellerInfoResState) {
               mSellerInfoRes = state.res;
-              var createdDateVar =
-                  DateTime.parse("${mSellerInfoRes.data.seller_info.since}");
-              createdDate = createdDateVar.toString().split(" ")[0];
+              if(mSellerInfoRes.data.seller_info.since!=null && mSellerInfoRes.data.seller_info.since?.isNotEmpty) {
+                var createdDateVar =
+                DateTime.parse("${mSellerInfoRes.data.seller_info.since}");
+                createdDate = createdDateVar.toString().split(" ")[0];
+              }
               if (createdDate.isNotEmpty) {
                 DateFormat dateFormatter = new DateFormat('dd MMM yyyy');
                 createdDate = dateFormatter.format(DateTime.parse(createdDate));
@@ -258,7 +260,7 @@ class _SellerInfoScreenState extends State<SellerInfoScreen> {
                                                       CrossAxisAlignment.center,
                                                   children: [
                                                     Text(
-                                                      "${avgRatings}",
+                                                      "${avgRatings.toStringAsFixed(1)}",
                                                       style: CommonStyles
                                                           .getMontserratStyle(
                                                               space_35,
@@ -351,14 +353,16 @@ class _SellerInfoScreenState extends State<SellerInfoScreen> {
                               )),
                         ),
                       ),
-                      Container(
+                      (mSellerInfoRes?.data?.seller_info!=null && mSellerInfoRes?.data?.seller_info?.id != userid)?Container(
                         height:
                             getProportionateScreenHeight(context, space_250),
                         child: Align(
                           alignment: Alignment.bottomCenter,
                           child: GestureDetector(
                             onTap: () {
-                              showRatingDialog();
+                              if(mSellerInfoRes?.data?.seller_info!=null && mSellerInfoRes?.data?.seller_info?.id != userid){
+                                showRatingDialog();
+                              }
                             },
                             child: Container(
                               height: space_50,
@@ -390,7 +394,7 @@ class _SellerInfoScreenState extends State<SellerInfoScreen> {
                             ),
                           ),
                         ),
-                      ),
+                      ):Container(height: space_0, width: space_0,)
                     ],
                   ),
                   SizedBox(

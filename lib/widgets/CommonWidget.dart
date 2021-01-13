@@ -274,15 +274,16 @@ class BtnTextInputWidget extends StatelessWidget {
   Function onSubmit;
   Function validatorFun;
   TextInputType textInputType;
+  bool isVerified = false;
 
   BtnTextInputWidget(this.textEditingController, this.labelText, this.btnText,
-      this.isPassword, this.onSubmit, this.validatorFun, this.textInputType);
+      this.isPassword, this.onSubmit, this.validatorFun, this.textInputType ,{this.isVerified = false});
 
   @override
   Widget build(BuildContext context) {
     return Container(
         height: getProportionateScreenHeight(context, space_40),
-        color: CommonStyles.primaryColor,
+        color: isVerified? Colors.white : CommonStyles.primaryColor,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -317,7 +318,7 @@ class BtnTextInputWidget extends StatelessWidget {
                   child: Center(
                       child: Text(
                     btnText,
-                    style: TextStyle(fontSize: 12.0, color: Colors.white),
+                    style: TextStyle(fontSize: 12.0, color: isVerified? Colors.green : Colors.white),
                   )),
                 ),
               ),
@@ -705,7 +706,7 @@ class _ItemCardWidgetState extends State<ItemCardWidget> {
                       Container(
                         width: double.infinity,
                         margin: EdgeInsets.symmetric(horizontal: space_5),
-                        padding: EdgeInsets.symmetric(vertical: space_3),
+                        padding: EdgeInsets.symmetric(vertical: space_5),
                         decoration: BoxDecoration(
                             color: CommonStyles.primaryColor.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(space_5)),
@@ -947,7 +948,7 @@ class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
                       Container(
                         width: double.infinity,
                         margin: EdgeInsets.symmetric(horizontal: space_5),
-                        padding: EdgeInsets.symmetric(vertical: space_1),
+                        padding: EdgeInsets.symmetric(vertical: space_3),
                         decoration: BoxDecoration(
                             color: CommonStyles.primaryColor.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(space_5)),

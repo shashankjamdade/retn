@@ -496,7 +496,7 @@ class _NearByChildSubCategoryScreenState
                                                             left: space_15,
                                                             right: space_15),
                                                         child: Text(
-                                                          "Others",
+                                                          "${filterRes.customefield!=null && filterRes.customefield.length>0 && filterRes.customefield[0].field_options!=null && filterRes.customefield[0].field_options.length>0 ? filterRes.customefield[0].name:""}",
                                                           style: CommonStyles
                                                               .getRalewayStyle(
                                                                   space_15,
@@ -511,8 +511,10 @@ class _NearByChildSubCategoryScreenState
                                                             right: space_15),
                                                         child: ListView.builder(
                                                             itemCount: filterRes
-                                                                .customefield
-                                                                .length,
+                                                                .customefield!=null && filterRes
+                                                                .customefield?.length>0 ? filterRes
+                                                                .customefield[0].field_options
+                                                                .length:0,
                                                             shrinkWrap: true,
                                                             primary: false,
                                                             scrollDirection:
@@ -532,8 +534,8 @@ class _NearByChildSubCategoryScreenState
                                                                           .spaceBetween,
                                                                   children: [
                                                                     Text(
-                                                                      "${filterRes.customefield[index].name}",
-                                                                      style: CommonStyles.getRalewayStyle(
+                                                                      "${filterRes.customefield!=null && filterRes.customefield.length>0 && filterRes.customefield[0].field_options!=null && filterRes.customefield[0].field_options.length>0 ? filterRes.customefield[0].field_options[index].name:""}",
+                                                                      style: CommonStyles.getMontserratStyle(
                                                                           space_14,
                                                                           FontWeight
                                                                               .w500,
@@ -542,8 +544,7 @@ class _NearByChildSubCategoryScreenState
                                                                     ),
                                                                     Checkbox(
                                                                       value: filterRes
-                                                                          .customefield[
-                                                                              index]
+                                                                          .customefield[0].field_options[index]
                                                                           .isChecked,
                                                                       onChanged:
                                                                           (bool
@@ -551,7 +552,7 @@ class _NearByChildSubCategoryScreenState
                                                                         dialogSetState(
                                                                             () {
                                                                           filterRes
-                                                                              .customefield[index]
+                                                                              .customefield[0].field_options[index]
                                                                               .isChecked = value;
                                                                         });
                                                                       },
@@ -902,10 +903,10 @@ class _NearByChildSubCategoryScreenState
                                                             }
                                                           });
                                                         }
-                                                     if(filterRes!=null && filterRes.customefield!=null && filterRes.customefield?.length>0){
-                                                          filterRes.customefield?.forEach((element) {
+                                                     if(filterRes!=null && filterRes.customefield!=null && filterRes.customefield?.length>0 && filterRes.customefield[0].field_options!=null && filterRes.customefield[0].field_options.length>0){
+                                                          filterRes.customefield[0].field_options?.forEach((element) {
                                                             if(element.isChecked){
-                                                              selectedCustomFilds = selectedCustomFilds + "${selectedCustomFilds.isNotEmpty?",":""}" + element.field;
+                                                              selectedCustomFilds = selectedCustomFilds + "${selectedCustomFilds.isNotEmpty?",":""}" + element.id;
                                                             }
                                                           });
                                                         }

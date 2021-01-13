@@ -8,6 +8,7 @@ import 'package:flutter_rentry_new/bloc/authentication/AuthenticationState.dart'
 import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
+import 'package:flutter_rentry_new/model/OtpObj.dart';
 import 'package:flutter_rentry_new/model/register_response.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
 import 'package:flutter_rentry_new/screens/OtpVerificationScreen.dart';
@@ -40,6 +41,7 @@ class _ForgotPwdScreenState extends State<ForgotPwdScreen> {
   String mName = "";
   String mEmail = "";
   String mOTP = "";
+  String mVerifiedMobile = "";
   bool _obscureText = true;
   bool _obscureText2 = true;
 
@@ -152,7 +154,7 @@ class _ForgotPwdScreenState extends State<ForgotPwdScreen> {
                                 if (value.isEmpty) {
                                   return "Please enter valid mobile no.";
                                 }
-                              }, TextInputType.emailAddress),
+                              }, TextInputType.number),
                           SizedBox(height: getProportionateScreenHeight(context, space_20),),
                           Container(
                             height: getProportionateScreenHeight(context, space_40),
@@ -253,13 +255,25 @@ class _ForgotPwdScreenState extends State<ForgotPwdScreen> {
       //push to verify
       var res = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => OtpVerificationScreen(mobileController.text.trim(), "forgot")),
-      ).then((value) => mOTP = value);
+        MaterialPageRoute(builder: (context) => OtpVerificationScreen(mobileController.text.trim(), "login")),
+      );
+      setState(() {
+        if(res!=null && res is OtpObj) {
+          mOTP = res.otp;
+          mVerifiedMobile = res.mobile;
+          debugPrint("VERIFIED ${res.otp}, ${res.mobile}");
+        }
+      });
     }
   }
   
   void onSignup(){
-    if(mobileController.text.trim().isEmpty){
+    if(mVerifiedMobile != mobileController.text.toString()){
+      setState(() {
+        mOTP = "";
+      });
+      showSnakbar(_scaffoldKey, verify_mobile);
+    }else if(mobileController.text.trim().isEmpty){
      showSnakbar(_scaffoldKey, empty_mobile);
     }else if(passwordController.text.trim().isEmpty){
      showSnakbar(_scaffoldKey, empty_password);

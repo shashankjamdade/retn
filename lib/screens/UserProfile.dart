@@ -194,6 +194,7 @@ class _UserProfileState extends State<UserProfile> {
                                   }, child: ProfileRowWidget("Notification")),
                            InkWell(
                                   onTap: () {
+                                    StateContainer.of(context).mLoginResponse = null;
                                     Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(builder: (context) => ScreenOne(true)),

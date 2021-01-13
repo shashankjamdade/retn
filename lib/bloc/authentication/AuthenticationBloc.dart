@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/model/RegisterReq.dart';
+import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/repository/AuthenticationRepository.dart';
 import 'package:flutter_rentry_new/repository/HomeRepository.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
@@ -14,10 +16,9 @@ import 'package:flutter_rentry_new/bloc/authentication/AuthenticationState.dart'
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
-
   AuthenticationRepository _authenticationService;
 
-  AuthenticationBloc(){
+  AuthenticationBloc() {
     _authenticationService = AuthenticationRepository();
   }
 
@@ -27,20 +28,23 @@ class AuthenticationBloc
   @override
   Stream<AuthenticationState> mapEventToState(
       AuthenticationEvent event) async* {
-    if(event is InitialAuthenticationEvent){
+    if (event is InitialAuthenticationEvent) {
       yield InitialAuthenticationState();
-    }else if(event is CheckLoggedInEvent){
+    } else if (event is CheckLoggedInEvent) {
       yield* checkLoggedIn();
-    }else if(event is LoginReqAuthenticationEvent){
+    } else if (event is MakeLogout) {
+      yield* makeLogout();
+    } else if (event is LoginReqAuthenticationEvent) {
       yield ProgressAuthenticationState();
       yield* makeLogin(event.emailOrMobile, event.password);
-    }else if(event is SocialLoginReqAuthenticationEvent){
+    } else if (event is SocialLoginReqAuthenticationEvent) {
       yield ProgressAuthenticationState();
       yield* makeSocialLogin(event.emailOrMobile);
-    }else if(event is RegisterReqAuthenticationEvent){
+    } else if (event is RegisterReqAuthenticationEvent) {
       yield ProgressAuthenticationState();
-      yield* makeRegister(RegisterReq(event.name, event.mobile, event.email, event.password, event.loginType, event.otp, event.deviceToken));
-    }else if(event is LoginInViaFacebookEvent){
+      yield* makeRegister(RegisterReq(event.name, event.mobile, event.email,
+          event.password, event.loginType, event.otp, event.deviceToken));
+    } else if (event is LoginInViaFacebookEvent) {
       yield ProgressAuthenticationState();
       yield* makeFbLogin();
     }
@@ -49,17 +53,38 @@ class AuthenticationBloc
   Stream<AuthenticationState> checkLoggedIn() async* {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      bool isLoggedIn = (prefs.getString(USER_NAME)!=null && prefs.getString(USER_NAME).isNotEmpty)?true:false;
-      debugPrint("PREFS_READ -- ${prefs.getString(USER_NAME)}");
-      yield CheckLoggedInState(obj: isLoggedIn);
+      bool isLoggedIn = (prefs.getString(USER_NAME) != null &&
+              prefs.getString(USER_NAME).isNotEmpty)
+          ? true
+          : false;
+      if (isLoggedIn) {
+        debugPrint("PREFS_READ -- ${prefs.getString(USER_NAME)}");
+        var response =
+            LoginResponse.fromJson(jsonDecode(prefs.getString(USER_LOGIN_RES)));
+        yield CheckLoggedInState(obj: response);
+      } else {
+        yield CheckLoggedInState(obj: null);
+      }
     } catch (e) {
       debugPrint("Exception while checkLoggedIn ${e.toString()}");
     }
   }
 
-  Stream<AuthenticationState> makeLogin(String emailOrMobile, String password) async* {
+  Stream<AuthenticationState> makeLogout() async* {
     try {
-      final loginResponse = await _authenticationService.callLogin(emailOrMobile, password);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.clear();
+      yield LogoutAuthentucateState();
+    } catch (e) {
+      debugPrint("Exception while makeLogout ${e.toString()}");
+    }
+  }
+
+  Stream<AuthenticationState> makeLogin(
+      String emailOrMobile, String password) async* {
+    try {
+      final loginResponse =
+          await _authenticationService.callLogin(emailOrMobile, password);
       yield LoginResAuthenticationState(res: loginResponse);
     } catch (e) {
       debugPrint("Exception while nativeLogin ${e.toString()}");
@@ -77,7 +102,8 @@ class AuthenticationBloc
 
   Stream<AuthenticationState> makeRegister(RegisterReq registerReq) async* {
     try {
-      final registerResponse = await _authenticationService.callRegister(registerReq);
+      final registerResponse =
+          await _authenticationService.callRegister(registerReq);
       yield RegisterResAuthenticationState(res: registerResponse);
     } catch (e) {
       debugPrint("Exception while nativeLogin ${e.toString()}");
@@ -87,13 +113,11 @@ class AuthenticationBloc
   Stream<AuthenticationState> makeFbLogin() async* {
     try {
       final loginResponse = await _authenticationService.loginViaFacebook();
-      debugPrint("FB_LOGIN_RESStatus-- "+loginResponse.loginStatus.toString());
+      debugPrint(
+          "FB_LOGIN_RESStatus-- " + loginResponse.loginStatus.toString());
       yield GoogleFbLoginResAuthenticationState(res: loginResponse);
     } catch (e) {
       debugPrint("Exception while fblogin ${e.toString()}");
     }
   }
-
-
-
 }

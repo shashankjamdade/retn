@@ -12,6 +12,7 @@ import 'package:flutter_rentry_new/model/get_my_favourite_res.dart';
 import 'package:flutter_rentry_new/model/get_my_package_list_res.dart';
 import 'package:flutter_rentry_new/model/get_notification_response.dart';
 import 'package:flutter_rentry_new/model/get_rent_type_response.dart';
+import 'package:flutter_rentry_new/model/google_places_res.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/model/item_detail_response.dart';
 import 'package:flutter_rentry_new/model/my_ads_edit_res.dart';
@@ -342,4 +343,13 @@ class RatingState extends HomeState {
 
   @override
   List<CommonResponse> get props => [res];
+}
+
+class GooglePlaceState extends HomeState {
+  final res;
+
+  GooglePlaceState({@required this.res});
+
+  @override
+  List<GooglePlacesRes> get props => [res];
 }

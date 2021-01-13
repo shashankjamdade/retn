@@ -275,7 +275,7 @@ class _CustomeFieldsScreenState extends State<CustomeFieldsScreen> {
                       }
                     },
                     obscureText: false,
-                    maxLength: data.length != null && data.length.isNotEmpty
+                    maxLength: data.length != null && data.length.isNotEmpty && int.parse(data.length)>0
                         ? int.parse(data.length)
                         : 20,
                     controller: textEditingControllerObj,

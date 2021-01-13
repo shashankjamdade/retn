@@ -63,7 +63,7 @@ class Budget {
 }
 
 class Customefield {
-  String fields_to_category;
+  List<FieldOptions> field_options;
   String category;
   String subcategory;
   String field;
@@ -72,7 +72,7 @@ class Customefield {
   bool isChecked = false;
 
   Customefield({
-      this.fields_to_category, 
+      this.field_options,
       this.category, 
       this.subcategory, 
       this.field, 
@@ -80,7 +80,12 @@ class Customefield {
       this.slug, this.isChecked});
 
   Customefield.fromJson(dynamic json) {
-    fields_to_category = json["fields_to_category"];
+    if (json["field_options"] != null) {
+      field_options = [];
+      json["field_options"].forEach((v) {
+        field_options.add(FieldOptions.fromJson(v));
+      });
+    }
     category = json["category"];
     subcategory = json["subcategory"];
     field = json["field"];
@@ -90,7 +95,10 @@ class Customefield {
 
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
-    map["fields_to_category"] = fields_to_category;
+    if (field_options != null) {
+      map["field_options"] = field_options.map((v) => v.toJson()).toList();
+    }
+//    map["field_options"] = field_options;
     map["category"] = category;
     map["subcategory"] = subcategory;
     map["field"] = field;
@@ -123,6 +131,33 @@ class Subcategory {
     map["sub_id"] = sub_id;
     map["sub_name"] = sub_name;
     map["sub_slug"] = sub_slug;
+    return map;
+  }
+
+}
+
+class FieldOptions {
+  String id;
+  String parent_field;
+  String name;
+  bool isChecked = false;
+
+  FieldOptions({
+      this.id,
+      this.parent_field,
+      this.name, this.isChecked});
+
+  FieldOptions.fromJson(dynamic json) {
+    id = json["id"];
+    parent_field = json["parent_field"];
+    name = json["name"];
+  }
+
+  Map<String, dynamic> toJson() {
+    var map = <String, dynamic>{};
+    map["id"] = id;
+    map["parent_field"] = parent_field;
+    map["name"] = name;
     return map;
   }
 

@@ -115,14 +115,14 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                     floating: false,
                     pinned: true,
 //                    leading: Container(height: space_1, width: space_0),),
-                    leading: IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        }),
+//                    leading: IconButton(
+//                        icon: Icon(
+//                          Icons.arrow_back,
+//                          color: Colors.black,
+//                        ),
+//                        onPressed: () {
+//                          Navigator.pop(context);
+//                        }),
                     flexibleSpace: InkWell(
                       onTap: () {},
                       child: FlexibleSpaceBar(
@@ -317,6 +317,50 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           SizedBox(
                             height: space_25,
                           ),
+                          ListView.builder(
+                              shrinkWrap: true,
+                              primary: false,
+                              itemCount:
+                                  itemDetailResponse?.ad?.custome_field?.length,
+                              itemBuilder: (context, pos) {
+                                return Container(
+                                  margin: EdgeInsets.only(
+                                      bottom: space_5,
+                                      left: space_15,
+                                      right: space_15),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 4,
+                                        child: Text(
+                                          itemDetailResponse?.ad
+                                              ?.custome_field[pos]?.field_name,
+                                          style:
+                                              CommonStyles.getMontserratStyle(
+                                                  space_15,
+                                                  FontWeight.w600,
+                                                  Colors.black),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 6,
+                                        child: Text(
+                                          itemDetailResponse?.ad
+                                              ?.custome_field[pos]?.field_value,
+                                          style:
+                                              CommonStyles.getMontserratStyle(
+                                                  space_15,
+                                                  FontWeight.w500,
+                                                  Colors.black),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                          SizedBox(
+                            height: space_25,
+                          ),
                           Container(
                             margin: EdgeInsets.symmetric(horizontal: space_15),
                             child: Row(
@@ -330,7 +374,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
-                                  "${itemDetailResponse.ad.city}, ${itemDetailResponse.ad.state}",
+                                  "${itemDetailResponse.ad.address}",
                                   style: CommonStyles.getRalewayStyle(space_16,
                                       FontWeight.w600, CommonStyles.blue),
                                   maxLines: 1,
@@ -342,22 +386,34 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           SizedBox(
                             height: space_10,
                           ),
-                          Container(
-                            margin: EdgeInsets.symmetric(horizontal: space_15),
-                            height: getProportionateScreenHeight(
-                                context, space_180),
-                            child: Card(
-                              elevation: space_3,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(space_15)),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(space_10),
-                                child: FadeInImage.assetNetwork(
-                                  placeholder: "assets/images/app_img.png",
-                                  image: mapUrl,
-                                  //"https://picsum.photos/250?image=9",
-                                  fit: BoxFit.fill,
+                          GestureDetector(
+                            onTap: () {
+                              if (itemDetailResponse.ad.lat != null &&
+                                  itemDetailResponse.ad.lang != null &&
+                                  itemDetailResponse.ad.lat.isNotEmpty &&
+                                  itemDetailResponse.ad.lang.isNotEmpty) {
+                                openMap(double.parse(itemDetailResponse.ad.lat),
+                                    double.parse(itemDetailResponse.ad.lang));
+                              }
+                            },
+                            child: Container(
+                              margin:
+                                  EdgeInsets.symmetric(horizontal: space_15),
+                              height: getProportionateScreenHeight(
+                                  context, space_180),
+                              child: Card(
+                                elevation: space_3,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(space_15)),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(space_10),
+                                  child: FadeInImage.assetNetwork(
+                                    placeholder: "assets/images/app_img.png",
+                                    image: mapUrl,
+                                    //"https://picsum.photos/250?image=9",
+                                    fit: BoxFit.fill,
+                                  ),
                                 ),
                               ),
                             ),
@@ -381,7 +437,17 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           OwnerInfo(
                             sellerId: itemDetailResponse.ad.seller != null
                                 ? itemDetailResponse.ad.seller
-                                : "96",
+                                : "",
+                            profilePath:
+                                itemDetailResponse.ad.profile_picture != null
+                                    ? itemDetailResponse?.ad?.profile_picture
+                                    : "",
+                            username: itemDetailResponse.ad.firstname != null
+                                ? itemDetailResponse?.ad?.firstname
+                                : "",
+                            createdDate: itemDetailResponse.ad.since != null
+                                ? itemDetailResponse?.ad?.since
+                                : "",
                           ),
                           SizedBox(
                             height: space_30,
@@ -406,15 +472,16 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                   height: space_280,
                                   child: ListView.builder(
                                       scrollDirection: Axis.horizontal,
-                                      itemCount:
-                                          itemDetailResponse.similar_ads.length,
+                                      itemCount: itemDetailResponse
+                                          .similar_ads.length,
                                       itemBuilder: (context, index) {
                                         return Container(
                                             height: space_300,
                                             child: ItemCardWidget(
                                                 category_adslist:
                                                     itemDetailResponse
-                                                        .similar_ads[index]));
+                                                            .similar_ads[
+                                                        index]));
                                       }),
                                 ),
                               ],
@@ -431,13 +498,13 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                 RichTextTitleBtnWidget(
                                     "MORE", getRichText2ByType(MORE_PRODUCTS),
                                     () {
-                                  itemDetailResponse.similar_ads.length > 0
+                                  itemDetailResponse.seller_all_product.length > 0
                                       ? onViewAllClick(
                                           context,
                                           SIMILAR_PRODUCT,
-                                          itemDetailResponse.similar_ads[0].id,
+                                          itemDetailResponse.seller_all_product[0].id,
                                           itemDetailResponse
-                                              .similar_ads[0].category)
+                                              .seller_all_product[0].category)
                                       : doNothing();
                                 }),
                                 Container(
@@ -445,14 +512,14 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                   child: ListView.builder(
                                       scrollDirection: Axis.horizontal,
                                       itemCount:
-                                          itemDetailResponse.similar_ads.length,
+                                          itemDetailResponse.seller_all_product.length,
                                       itemBuilder: (context, index) {
                                         return Container(
                                             height: space_300,
                                             child: ItemCardWidget(
                                                 category_adslist:
                                                     itemDetailResponse
-                                                        .similar_ads[index]));
+                                                        .seller_all_product[index]));
                                       }),
                                 ),
                               ],
@@ -465,22 +532,28 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                       ))),
             ),
             CommonBottomNavBarWidget(),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Container(
-                  child: BottomFloatingChatBtnsWidget(
-                      itemDetailResponse != null
-                          ? itemDetailResponse.ad.slug
-                          : "",
-                      itemDetailResponse.ad.contact != null &&
-                              itemDetailResponse.ad.contact.isNotEmpty
-                          ? itemDetailResponse.ad.contact
-                          : "",
-                      itemDetailResponse.ad.seller_id != null &&
-                              itemDetailResponse.ad.seller_id.isNotEmpty
-                          ? itemDetailResponse.ad.seller_id
-                          : "")),
-            )
+            (itemDetailResponse.ad.seller_id != null &&
+                    itemDetailResponse.ad.seller_id == userId)
+                ? Container(
+                    height: space_0,
+                    width: space_0,
+                  )
+                : Align(
+                    alignment: Alignment.bottomRight,
+                    child: Container(
+                        child: BottomFloatingChatBtnsWidget(
+                            itemDetailResponse != null
+                                ? itemDetailResponse.ad.slug
+                                : "",
+                            itemDetailResponse.ad.contact != null &&
+                                    itemDetailResponse.ad.contact.isNotEmpty
+                                ? itemDetailResponse.ad.contact
+                                : "",
+                            itemDetailResponse.ad.seller_id != null &&
+                                    itemDetailResponse.ad.seller_id.isNotEmpty
+                                ? itemDetailResponse.ad.seller_id
+                                : "")),
+                  )
           ],
         ),
       ),
