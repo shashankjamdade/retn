@@ -78,66 +78,70 @@ class _MyFavScreenState
   }
 
   Widget setDataToUI(GetMyFavouriteRes res) {
-    return SafeArea(
-      child: Scaffold(
-        body: Stack(
-          children: [
-            Container(
-                child: Column(
-              children: [
-                CommonAppbarWidget(app_name, skip_for_now, () {
-                  onSearchLocation(context);
-                }),
-                SizedBox(
-                  height: space_15,
-                ),
-                Expanded(
-                  child: ListView(
+    if(res.data!=null && res.data.length>0){
+      return SafeArea(
+        child: Scaffold(
+          body: Stack(
+            children: [
+              Container(
+                  child: Column(
                     children: [
-                      Container(
-                        child: GridView.builder(
-                          shrinkWrap: true,
-                          primary: false,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            childAspectRatio: (getProportionateScreenWidth(
-                                    context, space_230) /
-                                (Platform.isIOS
-                                    ? getProportionateScreenHeight(
-                                        context, space_300)
-                                    : getProportionateScreenHeight(
-                                        context, space_370))),
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 5.0,
-                            mainAxisSpacing: 5.0,
-                          ),
-                          itemCount: res.data.length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              height: space_280,
-                              width: space_230,
-                              child: ItemCardNoMarginWidget(category_adslist: res.data[index]),
-                            );
-                          },
+                      CommonAppbarWidget(app_name, skip_for_now, () {
+                        onSearchLocation(context);
+                      }),
+                      SizedBox(
+                        height: space_15,
+                      ),
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            Container(
+                              child: GridView.builder(
+                                shrinkWrap: true,
+                                primary: false,
+                                gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  childAspectRatio: (getProportionateScreenWidth(
+                                      context, space_230) /
+                                      (Platform.isIOS
+                                          ? getProportionateScreenHeight(
+                                          context, space_300)
+                                          : getProportionateScreenHeight(
+                                          context, space_370))),
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 5.0,
+                                  mainAxisSpacing: 5.0,
+                                ),
+                                itemCount: res.data.length,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    height: space_280,
+                                    width: space_230,
+                                    child: ItemCardNoMarginWidget(category_adslist: res.data[index]),
+                                  );
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              height: space_110,
+                            )
+                          ],
                         ),
                       ),
-                      SizedBox(
-                        height: space_110,
-                      )
                     ],
-                  ),
-                ),
-              ],
-            )),
-            CommonBottomNavBarWidget(),
+                  )),
+              CommonBottomNavBarWidget(),
 //            Align(
 //              alignment: Alignment.bottomRight,
 //              child: Container(child: BottomFloatingFilterBtnsWidget()),
 //            )
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    }else{
+      return EmptyWidget("No data found");
+    }
   }
 
   void onSearchClick() {}

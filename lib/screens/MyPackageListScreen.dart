@@ -79,7 +79,7 @@ class _MyPackageListScreenState extends State<MyPackageListScreen> {
 
   Widget getScreenUI(GetMyPackageListRes getMyPackageListRes){
     if(getMyPackageListRes.status){
-      if(getMyPackageListRes.data.length > 0){
+      if(getMyPackageListRes.data!=null && getMyPackageListRes.data.length > 0){
         return  SafeArea(
           child: Scaffold(
             body: Stack(
@@ -110,7 +110,9 @@ class _MyPackageListScreenState extends State<MyPackageListScreen> {
                                         BoxShadow(color: Colors.grey,)
                                       ]
                                     ),
-                                    child: Text("${startDate} to ${expiryDate}\n"
+                                    child: Text(
+                                      "${getMyPackageListRes.data[index].title} \n"
+                                      "${startDate} to ${expiryDate}\n"
                                         "No of Post: ${getMyPackageListRes.data[index].no_of_posts}\n"
                                         "Used: ${getMyPackageListRes.data[index].used}\n"
                                         "Due: ${getMyPackageListRes.data[index].due}\n"
@@ -127,11 +129,7 @@ class _MyPackageListScreenState extends State<MyPackageListScreen> {
           ),
         );
       }else{
-        return Container(
-          margin: EdgeInsets.symmetric(horizontal: space_15),
-          child: Center(
-          child: Text("No Package Found",style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),),
-        ),);
+        return EmptyWidget("No package found");
       }
     }else{
       return Container(

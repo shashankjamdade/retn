@@ -32,6 +32,7 @@ class GetMyPackageListRes {
 }
 
 class GetMyPackageData {
+  String title;
   String package_start_date;
   String package_expiry_date;
   String no_of_posts;
@@ -42,8 +43,9 @@ class GetMyPackageData {
   dynamic updatedAt;
 
   GetMyPackageData({
-      this.package_start_date, 
-      this.package_expiry_date, 
+      this.title,
+      this.package_start_date,
+      this.package_expiry_date,
       this.no_of_posts, 
       this.used, 
       this.due, 
@@ -52,6 +54,7 @@ class GetMyPackageData {
       this.updatedAt});
 
   GetMyPackageData.fromJson(dynamic json) {
+    title = json["title"];
     package_start_date = json["package_start_date"];
     package_expiry_date = json["package_expiry_date"];
     no_of_posts = json["no_of_posts"];
@@ -64,6 +67,7 @@ class GetMyPackageData {
 
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
+    map["title"] = title;
     map["package_start_date"] = package_start_date;
     map["package_expiry_date"] = package_expiry_date;
     map["no_of_posts"] = no_of_posts;

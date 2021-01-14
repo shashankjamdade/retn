@@ -75,6 +75,7 @@ class NearbySubChildCategoryListReqEvent extends HomeEvent {
   final String filter_custome_filed_id;
   final String filter_min;
   final String filter_max;
+  final String sort_by_price;
 
   NearbySubChildCategoryListReqEvent(
       {@required this.token,
@@ -86,12 +87,13 @@ class NearbySubChildCategoryListReqEvent extends HomeEvent {
       @required this.filter_subcategory_id,
       @required this.filter_custome_filed_id,
       @required this.filter_min,
-      @required this.filter_max
+      @required this.filter_max,
+      @required this.sort_by_price
       });
 
   @override
   List<Object> get props =>
-      [token, categoryId, subcategory_id, radius, lat, lng, filter_subcategory_id, filter_custome_filed_id, filter_min, filter_max];
+      [token, categoryId, subcategory_id, radius, lat, lng, filter_subcategory_id, filter_custome_filed_id, filter_min, filter_max, sort_by_price];
 }
 
 class GetCategoryListEvent extends HomeEvent {
@@ -223,11 +225,33 @@ class GetAllChatMsgEvent extends HomeEvent {
   List<Object> get props => [token, indexId, slug];
 }
 
+class GetAllChatMsgNoProgressEvent extends HomeEvent {
+  final String token;
+  final String indexId;
+  final String slug;
+
+  GetAllChatMsgNoProgressEvent(
+      {@required this.token, @required this.indexId, @required this.slug});
+
+  @override
+  List<Object> get props => [token, indexId, slug];
+}
+
 class GetSlugChatMsgEvent extends HomeEvent {
   final String token;
   final String slug;
 
   GetSlugChatMsgEvent({@required this.token, @required this.slug});
+
+  @override
+  List<Object> get props => [token, slug];
+}
+
+class GetSlugChatMsgNoProgressEvent extends HomeEvent {
+  final String token;
+  final String slug;
+
+  GetSlugChatMsgNoProgressEvent({@required this.token, @required this.slug});
 
   @override
   List<Object> get props => [token, slug];

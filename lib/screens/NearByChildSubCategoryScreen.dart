@@ -58,6 +58,7 @@ class _NearByChildSubCategoryScreenState
   ui.Image sampleIcon;
   String highestEducation = "Low to High";
   List<String> sortingList = List();
+  List<String> ratingList = List();
   String mType, mSelectedValue;
   NearbySubChildCategoryListResponse mNearbySubChildCategoryListResponse;
   FilterRes mFilterRes;
@@ -65,6 +66,8 @@ class _NearByChildSubCategoryScreenState
   String filter_custome_filed_id = "";
   String filter_min = "";
   String filter_max = "";
+  String priceSort = "";
+  String ratingSort = "";
 
   @override
   void initState() {
@@ -75,7 +78,9 @@ class _NearByChildSubCategoryScreenState
     //Edu
     sortingList.add("Low to High");
     sortingList.add("High to Low");
-    sortingList.add("Most Relevant");
+    //Edu
+    ratingList.add("Low to High");
+    ratingList.add("High to Low");
   }
 
   @override
@@ -115,10 +120,11 @@ class _NearByChildSubCategoryScreenState
             radius: widget.radius,
             lat: mLat,
             lng: mLng,
-            filter_subcategory_id:filter_subcategory_id,
+            filter_subcategory_id: filter_subcategory_id,
             filter_custome_filed_id: filter_custome_filed_id,
-            filter_min:filter_min,
-            filter_max:filter_max)),
+            filter_min: filter_min,
+            filter_max: filter_max,
+            sort_by_price: priceSort)),
       child: BlocListener(
         bloc: homeBloc,
         listener: (context, state) {},
@@ -275,32 +281,75 @@ class _NearByChildSubCategoryScreenState
   }
 
   void openFilterSheet() {
-    showModalBottomsheet(mNearbySubChildCategoryListResponse.data.filter);
+    if (mFilterRes != null) {
+      List<Subcategory> subcategory = List();
+      List<Customefield> customefield = List();
+      mNearbySubChildCategoryListResponse.data.filter?.subcategory
+          ?.forEach((element) {
+        if (filter_subcategory_id?.contains(element?.sub_id)) {
+          element?.isChecked = true;
+        }
+        subcategory?.add(element);
+      });
+      mNearbySubChildCategoryListResponse.data.filter?.customefield
+          ?.forEach((parentelement) {
+        List<FieldOptions> field_options = List();
+        parentelement?.field_options?.forEach((element) {
+          if (filter_custome_filed_id?.contains(element?.id)) {
+            element?.isChecked = true;
+          }
+          field_options?.add(element);
+        });
+        parentelement.field_options = field_options;
+        customefield?.add(parentelement);
+      });
+      mNearbySubChildCategoryListResponse.data.filter?.subcategory =
+          subcategory;
+      mNearbySubChildCategoryListResponse.data.filter?.customefield =
+          customefield;
+      mNearbySubChildCategoryListResponse.data.filter?.budget?.min =
+          mFilterRes?.budget?.min;
+      mNearbySubChildCategoryListResponse.data.filter?.budget?.max =
+          mFilterRes?.budget?.max;
+      mFilterRes = mNearbySubChildCategoryListResponse.data.filter;
+      showModalBottomsheet(mFilterRes);
+    } else {
+      mFilterRes = mNearbySubChildCategoryListResponse.data.filter;
+      showModalBottomsheet(mFilterRes);
+    }
   }
 
-  void recallApiWithFilter(FilterRes filterRes){
+  void recallApiWithFilter(FilterRes filterRes) {
 //    setState(() {
 //      mFilterRes = filterRes;
 //    });
     homeBloc
       ..add(NearbySubChildCategoryListReqEvent(
-        token: token,
-        categoryId: widget.categoryId,
-        subcategory_id: widget.subCategoryId,
-        radius: widget.radius,
-        lat: mLat,
-        lng: mLng,
-        filter_subcategory_id:filter_subcategory_id,
-        filter_custome_filed_id: filter_custome_filed_id,
-        filter_min:filter_min,
-        filter_max:filter_max));
+          token: token,
+          categoryId: widget.categoryId,
+          subcategory_id: widget.subCategoryId,
+          radius: widget.radius,
+          lat: mLat,
+          lng: mLng,
+          filter_subcategory_id: filter_subcategory_id,
+          filter_custome_filed_id: filter_custome_filed_id,
+          filter_min: filter_min,
+          filter_max: filter_max,
+          sort_by_price: priceSort));
   }
 
   void showModalBottomsheet(FilterRes filterRes) {
     StateSetter dialogSetState;
-    _currentSliderValue =
-        filterRes.budget != null && filterRes.budget.min!=null && filterRes.budget.min?.isNotEmpty? double.parse(filterRes.budget.min) : 0;
-    var diff = filterRes.budget != null && filterRes.budget.max!=null && filterRes.budget.max?.isNotEmpty
+    if(_currentSliderValue == 0){
+      _currentSliderValue = filterRes.budget != null &&
+          filterRes.budget.min != null &&
+          filterRes.budget.min?.isNotEmpty
+          ? double.parse(filterRes.budget.min)
+          : 0;
+    }
+    var diff = filterRes.budget != null &&
+            filterRes.budget.max != null &&
+            filterRes.budget.max?.isNotEmpty
         ? (int.parse(filterRes.budget.max) - int.parse(filterRes.budget.min))
         : 1;
 
@@ -421,7 +470,9 @@ class _NearByChildSubCategoryScreenState
                                                     shrinkWrap: true,
                                                     primary: false,
                                                     children: [
-                                                      Container(
+                                                      filterRes
+                                                          .subcategory!=null && filterRes
+                                                          .subcategory.length>0?Container(
                                                         margin: EdgeInsets.only(
                                                             left: space_15,
                                                             right: space_15),
@@ -434,7 +485,7 @@ class _NearByChildSubCategoryScreenState
                                                                       .w800,
                                                                   Colors.black),
                                                         ),
-                                                      ),
+                                                      ):Container(width: 0, height: 0,),
                                                       Container(
                                                         margin: EdgeInsets.only(
                                                             left: space_15,
@@ -495,70 +546,78 @@ class _NearByChildSubCategoryScreenState
                                                         margin: EdgeInsets.only(
                                                             left: space_15,
                                                             right: space_15),
-                                                        child: Text(
-                                                          "${filterRes.customefield!=null && filterRes.customefield.length>0 && filterRes.customefield[0].field_options!=null && filterRes.customefield[0].field_options.length>0 ? filterRes.customefield[0].name:""}",
-                                                          style: CommonStyles
-                                                              .getRalewayStyle(
-                                                                  space_15,
-                                                                  FontWeight
-                                                                      .w800,
-                                                                  Colors.black),
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                        margin: EdgeInsets.only(
-                                                            left: space_15,
-                                                            right: space_15),
                                                         child: ListView.builder(
                                                             itemCount: filterRes
-                                                                .customefield!=null && filterRes
-                                                                .customefield?.length>0 ? filterRes
-                                                                .customefield[0].field_options
-                                                                .length:0,
+                                                                            .customefield !=
+                                                                        null &&
+                                                                    filterRes
+                                                                            .customefield
+                                                                            ?.length >
+                                                                        0
+                                                                ? filterRes
+                                                                    .customefield
+                                                                    .length
+                                                                : 0,
                                                             shrinkWrap: true,
                                                             primary: false,
                                                             scrollDirection:
                                                                 Axis.vertical,
-                                                            itemBuilder:
-                                                                (context,
-                                                                    index) {
-                                                              return Container(
-                                                                height:
-                                                                    space_50,
-                                                                child: Row(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .min,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceBetween,
-                                                                  children: [
-                                                                    Text(
-                                                                      "${filterRes.customefield!=null && filterRes.customefield.length>0 && filterRes.customefield[0].field_options!=null && filterRes.customefield[0].field_options.length>0 ? filterRes.customefield[0].field_options[index].name:""}",
-                                                                      style: CommonStyles.getMontserratStyle(
-                                                                          space_14,
+                                                            itemBuilder: (context,
+                                                                parentIndex) {
+                                                              return Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Container(
+                                                                    child: Text(
+                                                                      "${filterRes.customefield != null && filterRes.customefield.length > 0 && filterRes.customefield[parentIndex].field_options != null && filterRes.customefield[parentIndex].field_options.length > 0 ? filterRes.customefield[parentIndex].name : ""}",
+                                                                      style: CommonStyles.getRalewayStyle(
+                                                                          space_15,
                                                                           FontWeight
-                                                                              .w500,
+                                                                              .w800,
                                                                           Colors
                                                                               .black),
                                                                     ),
-                                                                    Checkbox(
-                                                                      value: filterRes
-                                                                          .customefield[0].field_options[index]
-                                                                          .isChecked,
-                                                                      onChanged:
-                                                                          (bool
-                                                                              value) {
-                                                                        dialogSetState(
-                                                                            () {
-                                                                          filterRes
-                                                                              .customefield[0].field_options[index]
-                                                                              .isChecked = value;
-                                                                        });
-                                                                      },
-                                                                    ),
-                                                                  ],
-                                                                ),
+                                                                  ),
+                                                                  Container(
+                                                                    margin: EdgeInsets.only(
+                                                                        left:
+                                                                            space_15,
+                                                                        right:
+                                                                            space_15),
+                                                                    child: ListView.builder(
+                                                                        itemCount: filterRes.customefield != null && filterRes.customefield?.length > 0 ? filterRes.customefield[parentIndex].field_options.length : 0,
+                                                                        shrinkWrap: true,
+                                                                        primary: false,
+                                                                        scrollDirection: Axis.vertical,
+                                                                        itemBuilder: (context, index) {
+                                                                          return Container(
+                                                                            height:
+                                                                                space_50,
+                                                                            child:
+                                                                                Row(
+                                                                              mainAxisSize: MainAxisSize.min,
+                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                              children: [
+                                                                                Text(
+                                                                                  "${filterRes.customefield != null && filterRes.customefield.length > 0 && filterRes.customefield[parentIndex].field_options != null && filterRes.customefield[parentIndex].field_options.length > 0 ? filterRes.customefield[parentIndex].field_options[index].name : ""}",
+                                                                                  style: CommonStyles.getMontserratStyle(space_14, FontWeight.w500, Colors.black),
+                                                                                ),
+                                                                                Checkbox(
+                                                                                  value: filterRes.customefield[parentIndex].field_options[index].isChecked,
+                                                                                  onChanged: (bool value) {
+                                                                                    dialogSetState(() {
+                                                                                      filterRes.customefield[parentIndex].field_options[index].isChecked = value;
+                                                                                    });
+                                                                                  },
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          );
+                                                                        }),
+                                                                  ),
+                                                                ],
                                                               );
                                                             }),
                                                       ),
@@ -590,9 +649,9 @@ class _NearByChildSubCategoryScreenState
                                                                   .spaceBetween,
                                                           children: [
                                                             Text(
-                                                              "₹ ${filterRes.budget!=null?filterRes.budget.min:"-"}",
+                                                              "₹ ${filterRes.budget != null ? "${_currentSliderValue.toStringAsFixed(1)}" : "-"}",
                                                               style: CommonStyles
-                                                                  .getRalewayStyle(
+                                                                  .getMontserratStyle(
                                                                       space_12,
                                                                       FontWeight
                                                                           .w500,
@@ -600,9 +659,9 @@ class _NearByChildSubCategoryScreenState
                                                                           .black),
                                                             ),
                                                             Text(
-                                                              "₹ ${filterRes.budget!=null?filterRes.budget.max:"-"}",
+                                                              "₹ ${filterRes.budget != null ? filterRes.budget.max : "-"}",
                                                               style: CommonStyles
-                                                                  .getRalewayStyle(
+                                                                  .getMontserratStyle(
                                                                       space_12,
                                                                       FontWeight
                                                                           .w500,
@@ -654,16 +713,30 @@ class _NearByChildSubCategoryScreenState
                                                           child: Slider(
                                                             value:
                                                                 _currentSliderValue,
-                                                            min: double.parse(
-                                                                filterRes.budget!=null && filterRes.budget
-                                                                    .min!=null && filterRes.budget
-                                                                    .min?.isNotEmpty ?filterRes.budget
-                                                                    .min: "0"),
-                                                            max: double.parse(
-                                                                filterRes.budget!=null && filterRes.budget
-                                                                    .max!=null && filterRes.budget
-                                                                    .max?.isNotEmpty ?filterRes.budget
-                                                                    .max: "2"),
+                                                            min: double.parse(filterRes.budget != null &&
+                                                                    filterRes
+                                                                            .budget
+                                                                            .min !=
+                                                                        null &&
+                                                                    filterRes
+                                                                        .budget
+                                                                        .min
+                                                                        ?.isNotEmpty
+                                                                ? filterRes
+                                                                    .budget.min
+                                                                : "0"),
+                                                            max: double.parse(filterRes.budget != null &&
+                                                                    filterRes
+                                                                            .budget
+                                                                            .max !=
+                                                                        null &&
+                                                                    filterRes
+                                                                        .budget
+                                                                        .max
+                                                                        ?.isNotEmpty
+                                                                ? filterRes
+                                                                    .budget.max
+                                                                : "2"),
                                                             divisions: diff,
                                                             label:
                                                                 _currentSliderValue
@@ -724,8 +797,7 @@ class _NearByChildSubCategoryScreenState
                                                                         Center(
                                                                       child:
                                                                           Text(
-                                                                            "₹ ${ filterRes.budget!=null?filterRes.budget
-                                                                                .min:"-"}",
+                                                                        "₹ ${filterRes.budget != null ? filterRes.budget.min : "-"}",
                                                                         style: CommonStyles.getRalewayStyle(
                                                                             space_12,
                                                                             FontWeight.w500,
@@ -759,8 +831,7 @@ class _NearByChildSubCategoryScreenState
                                                                         Center(
                                                                       child:
                                                                           Text(
-                                                                        "₹ ${ filterRes.budget!=null?filterRes.budget
-                                                                            .max:"-"}",
+                                                                        "₹ ${filterRes.budget != null ? filterRes.budget.max : "-"}",
                                                                         style: CommonStyles.getRalewayStyle(
                                                                             space_12,
                                                                             FontWeight.w500,
@@ -787,34 +858,29 @@ class _NearByChildSubCategoryScreenState
                                                   ),
                                                 )
                                               : Container(
-                                                  child: ListView.builder(
-                                                      itemCount: 1,
-                                                      shrinkWrap: true,
-                                                      primary: false,
-                                                      itemBuilder:
-                                                          (context, pos) {
-                                                        return Container(
-                                                          margin:
-                                                              EdgeInsets.only(
-                                                                  left:
-                                                                      space_15,
-                                                                  right:
-                                                                      space_15),
-                                                          child: FilterSortByWidget(
-                                                              "By Price",
-                                                              "PRICE",
-                                                              sortingList[0],
-                                                              this.sortingList,
-                                                              (String mType,
-                                                                  String
-                                                                      mSelectedValue) {
-                                                            onDropDownValueChange(
-                                                                mType,
-                                                                mSelectedValue);
-                                                          }),
-                                                        );
+                                                  child: ListView(
+                                                  shrinkWrap: true,
+                                                  primary: false,
+                                                  children: [
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: space_15,
+                                                          right: space_15),
+                                                      child: FilterSortByWidget(
+                                                          "By Price",
+                                                          "PRICE",
+                                                          priceSort!=null && priceSort.isNotEmpty? (priceSort=="high"? sortingList[1] : sortingList[0]):sortingList[0],
+                                                          this.sortingList,
+                                                          (String mType,
+                                                              String
+                                                                  mSelectedValue) {
+                                                        onDropDownValueChange(
+                                                            mType,
+                                                            mSelectedValue);
                                                       }),
-                                                )),
+                                                    )
+                                                  ],
+                                                ))),
                                       SizedBox(
                                         height: space_35,
                                       ),
@@ -863,11 +929,21 @@ class _NearByChildSubCategoryScreenState
                                                               dummySubCategory;
                                                           _currentSliderValue =
                                                               double.parse(
-                                                                  filterRes
-                                                                      .budget!=null?filterRes
-                                                                      .budget
-                                                                      .min:"-");
+                                                                  filterRes.budget !=
+                                                                          null
+                                                                      ? filterRes
+                                                                          .budget
+                                                                          .min
+                                                                      : "-");
                                                         });
+                                                        _currentSliderValue = filterRes.budget != null &&
+                                                            filterRes.budget.min != null &&
+                                                            filterRes.budget.min?.isNotEmpty
+                                                            ? double.parse(filterRes.budget.min)
+                                                            : 0;
+                                                        priceSort = "";
+                                                        filter_subcategory_id = "";
+                                                        filter_custome_filed_id = "";
                                                       },
                                                       child: Text(
                                                         "Reset",
@@ -894,31 +970,87 @@ class _NearByChildSubCategoryScreenState
                                                 child: Center(
                                                   child: FlatButton(
                                                       onPressed: () {
-                                                        var selectedSubCategory = "";
-                                                        var selectedCustomFilds = "";
-                                                        if(filterRes!=null && filterRes.subcategory!=null && filterRes.subcategory?.length>0){
-                                                          filterRes.subcategory?.forEach((element) {
-                                                            if(element.isChecked){
-                                                              selectedSubCategory = selectedSubCategory + "${selectedSubCategory.isNotEmpty?",":""}" + element.sub_id;
+                                                        var selectedSubCategory =
+                                                            "";
+                                                        var selectedCustomFilds =
+                                                            "";
+                                                        if (filterRes != null &&
+                                                            filterRes
+                                                                    .subcategory !=
+                                                                null &&
+                                                            filterRes
+                                                                    .subcategory
+                                                                    ?.length >
+                                                                0) {
+                                                          filterRes.subcategory
+                                                              ?.forEach(
+                                                                  (element) {
+                                                            if (element
+                                                                .isChecked) {
+                                                              selectedSubCategory =
+                                                                  selectedSubCategory +
+                                                                      "${selectedSubCategory.isNotEmpty ? "," : ""}" +
+                                                                      element
+                                                                          .sub_id;
                                                             }
                                                           });
                                                         }
-                                                     if(filterRes!=null && filterRes.customefield!=null && filterRes.customefield?.length>0 && filterRes.customefield[0].field_options!=null && filterRes.customefield[0].field_options.length>0){
-                                                          filterRes.customefield[0].field_options?.forEach((element) {
-                                                            if(element.isChecked){
-                                                              selectedCustomFilds = selectedCustomFilds + "${selectedCustomFilds.isNotEmpty?",":""}" + element.id;
-                                                            }
+                                                        if (filterRes != null &&
+                                                            filterRes
+                                                                    .customefield !=
+                                                                null &&
+                                                            filterRes
+                                                                    .customefield
+                                                                    ?.length >
+                                                                0 &&
+                                                            filterRes
+                                                                    .customefield[
+                                                                        0]
+                                                                    .field_options !=
+                                                                null &&
+                                                            filterRes
+                                                                    .customefield[
+                                                                        0]
+                                                                    .field_options
+                                                                    .length >
+                                                                0) {
+                                                          filterRes.customefield
+                                                              ?.forEach(
+                                                                  (parentElement) {
+                                                            parentElement
+                                                                .field_options
+                                                                ?.forEach(
+                                                                    (element) {
+                                                              if (element
+                                                                  .isChecked) {
+                                                                selectedCustomFilds =
+                                                                    selectedCustomFilds +
+                                                                        "${selectedCustomFilds.isNotEmpty ? "," : ""}" +
+                                                                        element
+                                                                            .id;
+                                                              }
+                                                            });
                                                           });
                                                         }
                                                         dialogSetState(() {
                                                           mFilterRes =
                                                               filterRes;
-                                                          filter_subcategory_id = selectedSubCategory;
-                                                          filter_custome_filed_id = selectedCustomFilds;
-                                                          filter_min = _currentSliderValue%1==0?_currentSliderValue.toInt().toString():_currentSliderValue;
-                                                          filter_max = filterRes?.budget?.max;
+                                                          filter_subcategory_id =
+                                                              selectedSubCategory;
+                                                          filter_custome_filed_id =
+                                                              selectedCustomFilds;
+                                                          filter_min = _currentSliderValue %
+                                                                      1 ==
+                                                                  0
+                                                              ? _currentSliderValue
+                                                                  .toInt()
+                                                                  .toString()
+                                                              : _currentSliderValue;
+                                                          filter_max = filterRes
+                                                              ?.budget?.max;
                                                         });
-                                                        recallApiWithFilter(filterRes);
+                                                        recallApiWithFilter(
+                                                            filterRes);
                                                         Navigator.pop(context);
                                                       },
                                                       child: Text(
@@ -953,6 +1085,13 @@ class _NearByChildSubCategoryScreenState
 
   onDropDownValueChange(String type, String selectedValue) {
     debugPrint("SELECTED ${type} ----- ${selectedValue}");
+    setState(() {
+      switch(type){
+        case "PRICE":{
+          priceSort = selectedValue == "Low to High"? "low":"high";
+        }
+      }
+    });
   }
 
   void onSearchClick() {}

@@ -110,12 +110,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
           ),
         );
       }else{
-        return Container(
-          color: Colors.white,
-          margin: EdgeInsets.symmetric(horizontal: space_15),
-          child: Center(
-          child: Text("No Notificaitons Found",style: CommonStyles.getRalewayStyle(space_15, FontWeight.w600, Colors.black),),
-        ),);
+        return EmptyWidget("No notifications found");
       }
     }else{
       return Container(

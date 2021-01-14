@@ -317,6 +317,19 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           SizedBox(
                             height: space_25,
                           ),
+                          Container(
+                            margin: EdgeInsets.symmetric(horizontal: space_15),
+                            child: Text(
+                              "Details",
+                              style: CommonStyles.getRalewayStyle(
+                                  space_16, FontWeight.w600, Colors.black),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          SizedBox(
+                            height: space_8,
+                          ),
                           ListView.builder(
                               shrinkWrap: true,
                               primary: false,
@@ -452,7 +465,9 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           SizedBox(
                             height: space_30,
                           ),
-                          Container(
+                          itemDetailResponse
+                              .similar_ads!=null && itemDetailResponse
+                              .similar_ads?.length>0?Container(
                             height: space_360,
                             color: CommonStyles.blue.withOpacity(0.1),
                             child: Column(
@@ -483,14 +498,16 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                                             .similar_ads[
                                                         index]));
                                       }),
-                                ),
+                                )
                               ],
                             ),
-                          ),
+                          ):Container(height: 0,width: 0,),
                           SizedBox(
                             height: space_15,
                           ),
-                          Container(
+                          itemDetailResponse
+                              .similar_ads!=null && itemDetailResponse
+                              .similar_ads?.length>0?Container(
                             height: space_360,
                             color: CommonStyles.blue.withOpacity(0.1),
                             child: Column(
@@ -524,7 +541,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                 ),
                               ],
                             ),
-                          ),
+                          ):Container(height: 0, width: 0,),
                           SizedBox(
                             height: space_95,
                           ),

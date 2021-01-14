@@ -267,6 +267,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 flex: 7,
                                 child: TextField(
                                   controller: mobileController,
+                                  readOnly: true,
                                   keyboardType: TextInputType.number,
                                   style: TextStyle(color: Colors.black),
                                   decoration: InputDecoration(
@@ -439,9 +440,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       showSnakbar(_scaffoldKey, empty_mobile);
     } else if (emailController.text.trim().isEmpty) {
       showSnakbar(_scaffoldKey, empty_email);
-    } else if (locationController.text.trim().isEmpty) {
+    } /*else if (locationController.text.trim().isEmpty) {
       showSnakbar(_scaffoldKey, empty_address);
-    } else {
+    }*/ else {
       if (_image != null) {
         homeBloc
           ..add(UserUpdateEvent(

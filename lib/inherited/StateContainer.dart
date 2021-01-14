@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_rentry_new/model/UserLocNameSelected.dart';
 import 'package:flutter_rentry_new/model/UserLocationSelected.dart';
 import 'package:flutter_rentry_new/model/general_setting_res.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
@@ -9,13 +10,15 @@ class StateContainer extends StatefulWidget {
   final Widget child;
   final LoginResponse loginResponse;
   final UserLocationSelected userLocationSelected;
+  final UserLocNameSelected userLocNameSelected;
   final GeneralSettingRes generalSettingRes;
 
   StateContainer(
       {@required this.child,
       this.loginResponse,
       this.userLocationSelected,
-      this.generalSettingRes});
+      this.generalSettingRes,
+      this.userLocNameSelected});
 
   static StateContainerState of(BuildContext context) {
     return (context.inheritFromWidgetOfExactType(_InheritedStateContainer)
@@ -30,6 +33,7 @@ class StateContainer extends StatefulWidget {
 class StateContainerState extends State<StateContainer> {
   LoginResponse mLoginResponse;
   UserLocationSelected mUserLocationSelected;
+  UserLocNameSelected mUserLocNameSelected;
   GeneralSettingRes mGeneralSettingRes;
 
   void updateUserInfo(LoginResponse loginResponse) {
@@ -54,6 +58,18 @@ class StateContainerState extends State<StateContainer> {
     } else {
       setState(() {
         mUserLocationSelected = userLocationSelected;
+      });
+    }
+  }
+  void updateUserSelectedLocation(UserLocNameSelected userLocNameSelected) {
+    if (userLocNameSelected == null) {
+      mUserLocNameSelected = userLocNameSelected;
+      setState(() {
+        mUserLocNameSelected = userLocNameSelected;
+      });
+    } else {
+      setState(() {
+        mUserLocNameSelected = userLocNameSelected;
       });
     }
   }

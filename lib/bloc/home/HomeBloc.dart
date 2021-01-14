@@ -46,7 +46,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       yield ProgressState();
       yield* callNearbySubChildCategoryListApi(event.token, event.categoryId,
           event.subcategory_id, event.radius, event.lat, event.lng, event.filter_subcategory_id, event.filter_custome_filed_id,
-      event.filter_min, event.filter_max);
+      event.filter_min, event.filter_max, event.sort_by_price);
     } else if (event is GetCategoryListEvent) {
       yield ProgressState();
       yield* callGetCategoryApi(event.token);
@@ -84,8 +84,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is GetAllChatMsgEvent) {
       yield ProgressState();
       yield* callGetAllChatMsgApi(event.token, event.indexId, event.slug);
+    } else if (event is GetAllChatMsgNoProgressEvent) {
+//      yield ProgressState();
+      yield* callGetAllChatMsgApi(event.token, event.indexId, event.slug);
     } else if (event is GetSlugChatMsgEvent) {
       yield ProgressState();
+      yield* callGetSlugChatMsgApi(event.token, event.slug);
+    } else if (event is GetSlugChatMsgNoProgressEvent) {
+//      yield ProgressState();
       yield* callGetSlugChatMsgApi(event.token, event.slug);
     } else if (event is SendMsgReqEvent) {
 //      yield ProgressState();
@@ -233,6 +239,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       String filter_custome_filed_id,
       String filter_min,
       String filter_max,
+      String priceSort,
       ) async* {
     try {
       homeRepository =
@@ -251,7 +258,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           filter_subcategory_id,
           filter_custome_filed_id,
           filter_min,
-          filter_max);
+          filter_max,
+          priceSort);
       debugPrint(
           "nearbySubChildCategoryListResponse ${jsonEncode(
               nearbySubChildCategoryListResponse)}");
@@ -477,8 +485,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           token, adId, msg, recieverId, inboxId);
       debugPrint("callSendMsgApi ${jsonEncode(sendMsgRes)}");
       yield SendMsgResState(res: sendMsgRes);
-    } catch (e) {
-      debugPrint("Exception while callSendMsgApi ${e.toString()}");
+    } catch (e, stacktrace) {
+      debugPrint("Exception while callSendMsgApi ${e.toString()}\n ${stacktrace}");
     }
   }
 

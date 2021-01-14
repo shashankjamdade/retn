@@ -5,6 +5,7 @@ import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/model/UserLocNameSelected.dart';
 import 'package:flutter_rentry_new/model/UserLocationSelected.dart';
 import 'package:flutter_rentry_new/model/google_places_res.dart';
 import 'package:flutter_rentry_new/model/location_search_response.dart';
@@ -721,6 +722,8 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
         mSelectedLongitude = lng.toString();
         mLocationSelected = p?.structured_formatting?.main_text;
       });
+      var mUserLocNameSelected = new UserLocNameSelected(address: p?.structured_formatting?.main_text, mlat: lat.toString(), mlng: lng.toString());
+      StateContainer.of(context).updateUserSelectedLocation(mUserLocNameSelected);
       print("SELECTED--> ${lat}, ${lng}");
     }
   }

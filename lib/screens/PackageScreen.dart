@@ -6,11 +6,14 @@ import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/model/RazorpaySuccessRes.dart';
 import 'package:flutter_rentry_new/model/get_all_package_list_response.dart';
+import 'package:flutter_rentry_new/screens/MyPackageListScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:intl/intl.dart';  //for date format
 
@@ -27,6 +30,10 @@ class _PackageScreenState extends State<PackageScreen> {
   var token = "";
   var _razorpay = Razorpay();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  var mSelectedPackageName = "";
+  var mSelectedPackageId = "";
+  var mBuypackageId = "";
+  var mSelectedPackageAmt = "";
 
   @override
   void initState() {
@@ -55,6 +62,19 @@ class _PackageScreenState extends State<PackageScreen> {
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     debugPrint("PAYMENT_SUCCESS ------- > ${jsonEncode(response.paymentId)}");
+    var amt = "";
+//    setState(() {
+//      mSelectedPackageId = mBuypackageId;
+//    });
+    mGetAllPackageListResponse.data.forEach((element){
+      if(element.id == mSelectedPackageId){
+        amt = element.price;
+      }
+    });
+    debugPrint("PAYMENT_SUCCESS ------- > ${jsonEncode(response.paymentId)}");
+    var mRazorpaySuccessRes = new RazorpaySuccessRes(paymentId: response.paymentId, orderId: response.orderId, signature: response.signature);
+    debugPrint("PG_RES ------- > ${jsonEncode(mRazorpaySuccessRes)}");
+    homeBloc..add(PackagePaymentEvent(token: token, packageId: mSelectedPackageId, amt: amt, pgRes: jsonEncode(mRazorpaySuccessRes)));
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
@@ -66,7 +86,7 @@ class _PackageScreenState extends State<PackageScreen> {
     debugPrint("PAYMENT_EXT_WALLET ------- > ${jsonEncode(response.walletName)}");
   }
 
-  void openCheckout(String amt) async {
+  void openCheckout(String amt, String id, String title) async {
     var options = {
       'key': 'rzp_test_5JE0nfz3a956ce',
       'amount': amt,
@@ -79,6 +99,9 @@ class _PackageScreenState extends State<PackageScreen> {
     };
     try{
       _razorpay.open(options);
+      mSelectedPackageId = id;
+      mSelectedPackageName = title;
+      mSelectedPackageAmt = amt;
     }
     catch(e) {
       debugPrint(e);
@@ -92,14 +115,37 @@ class _PackageScreenState extends State<PackageScreen> {
       child: BlocListener(
         bloc: homeBloc,
         listener: (context, state) {
-          if (state is HomeResState) {
+          if (state is GetAllPackageListResState) {
             mGetAllPackageListResponse = state.res;
+          }else if(state is PackagePaymentState){
+            if(state.res!=null && state.res.status == "success") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyPackageListScreen()),
+              );
+            }
           }
         },
         child: BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
           if (state is GetAllPackageListResState) {
             return getScreenUI(state.res);
-          } else {
+          } else if (state is PackagePaymentState) {
+            if(state.res!=null){
+              debugPrint("GOTRES_POSTADS ${state.res.status}");
+              if(state.res!=null && state.res.msg!=null) {
+                Fluttertoast.showToast(
+                    msg: state.res.msg,
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.black,
+                    textColor: Colors.white,
+                    fontSize: space_14
+                );
+              }
+            }
+            return getScreenUI(mGetAllPackageListResponse);
+          }else {
             return Container(
               color: Colors.white,
               child: Center(
@@ -328,7 +374,7 @@ class _PackageScreenState extends State<PackageScreen> {
                               alignment: Alignment.bottomCenter,
                               child: InkWell(
                                 onTap: (){
-                                  openCheckout(currentPackage.price);
+                                  openCheckout(currentPackage.price, currentPackage.id, currentPackage.title);
                                 },
                                 child: Container(
                                   height: space_50,
@@ -400,7 +446,7 @@ class _PackageScreenState extends State<PackageScreen> {
                               itemBuilder: (context, index) {
                                 return InkWell(
                                     onTap: (){
-                                      openCheckout(packageList[index].price);
+                                      openCheckout(packageList[index].price, packageList[index].id, packageList[index].title);
                                     },
                                     child: PackageCardWidget(packageList[index]));
                               })),

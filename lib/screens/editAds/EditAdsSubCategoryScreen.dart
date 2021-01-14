@@ -139,7 +139,7 @@ class _EditAdsSubCategoryScreenState extends State<EditAdsSubCategoryScreen> {
                                   },
                                   child: Align(
                                       alignment: Alignment.center,
-                                      child: SubCategoryItemWidget(subCategoryData: subCategoryListResponse.data[index],))),
+                                      child: SubCategoryItemWidget(subCategoryData: subCategoryListResponse.data[index], selectedId: widget.mMyAdsEditRes?.data?.post?.subcategory,))),
                             );
                           }),
                         ),

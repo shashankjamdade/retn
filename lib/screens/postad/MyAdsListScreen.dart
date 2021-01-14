@@ -178,26 +178,35 @@ class _MyAdsListScreenState extends State<MyAdsListScreen> {
                             borderRadius: BorderRadius.only(
                                 topRight: Radius.circular(space_10),
                                 topLeft: Radius.circular(space_10)),
-                            child: Container(
-                              width: space_200,
-                              height: space_110,
-                              decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.circular(space_10)),
-                              child: FadeInImage.assetNetwork(
-                                placeholder: "assets/images/app_img_white.png",
-                                image: mCategory_adslist.img_1,
-                                fit: BoxFit.fill,
-                              ),
+                            child: Stack(
+                              children: [
+                                Container(
+                                  width: space_200,
+                                  height: space_110,
+                                  decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.circular(space_10)),
+                                  child: FadeInImage.assetNetwork(
+                                    placeholder: "assets/images/app_img_white.png",
+                                    image: mCategory_adslist.img_1,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                                Container(
+                                  width: space_200,
+                                  height: space_110,
+                                  color: Colors.white.withOpacity(0.6),
+                                )
+                              ],
                             ),
                           ),
                           Container(
                             height: space_50,
                             width: space_50,
                             margin:
-                                EdgeInsets.only(left: space_15, top: space_8),
+                                EdgeInsets.only(left: space_5, top: space_5),
                             child: Center(
-                              child: mCategory_adslist?.is_status == "0"?ImageIcon(AssetImage("assets/images/approved.png"), size: space_50,):Icon(
+                              child: mCategory_adslist?.is_status == "1"?ImageIcon(AssetImage("assets/images/approved.png"), size: space_50,):Icon(
                                 Icons.watch_later,
                                 color: CommonStyles.grey, size: space_50
                               ),

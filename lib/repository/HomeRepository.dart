@@ -211,6 +211,7 @@ class HomeRepository extends BaseRepository {
       String filter_custome_filed_id,
       String filter_min,
       String filter_max,
+      String priceSort
       ) async {
     bool status = false;
     NearbySubChildCategoryListResponse response;
@@ -221,7 +222,7 @@ class HomeRepository extends BaseRepository {
         "UNDER NearbySubChildCategoryListResponse ${categoryId} ${BASE_URL + ADS_SEARCH_API}");
     print(
         "PRINTING_REQ NearbySubChild --> ${"category_id " + categoryId + ",subcategory_id " + subCategoryId + ",radius" + radius + ",lat" + lat + ",lng" + lng+""
-            ", filter_subcategory_id ${filter_subcategory_id}, filter_custome_filed_id ${filter_custome_filed_id},"
+            ", filter_subcategory_id ${filter_subcategory_id}, filter_custome_filed_id ${filter_custome_filed_id}, priceSort ${priceSort},"
             "filter_min ${filter_min}, filter_max ${filter_max}"}");
     var res = await http.post(BASE_URL + ADS_SEARCH_API, headers: {
       "Token": token
@@ -235,6 +236,7 @@ class HomeRepository extends BaseRepository {
       "filter_custome_filed_id": filter_custome_filed_id,
       "filter_min": filter_min,
       "filter_max": filter_max,
+      "sort_by_price": priceSort,
     });
     print("PRINTING NearbySubChild ${res.body}");
     code = res.statusCode;
@@ -586,7 +588,7 @@ class HomeRepository extends BaseRepository {
     bool status = false;
     GetAllChatMsgRes response;
     print(
-        "UNDER callGetSlugChatMsgApi ${token} , ${BASE_URL + GET_CHAT_LIST + "/${slug}"}");
+        "UNDER callGetSlugChatMsgApi ${BASE_URL + GET_CHAT_LIST + "/${slug}"},  ${token} , ");
     Map<String, String> mainheader = {"token": token};
     var res = await http.get(
       BASE_URL + GET_CHAT_LIST + "/${slug}",

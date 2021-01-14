@@ -139,6 +139,7 @@ class CommonAppbarWidget extends StatelessWidget {
                         child: Container(
                             margin: EdgeInsets.symmetric(horizontal: space_5),
                             child: Text(
+                              StateContainer.of(context).mUserLocNameSelected!=null? "${StateContainer.of(context).mUserLocNameSelected.address}":
                               StateContainer.of(context)
                                           .mUserLocationSelected !=
                                       null
@@ -943,7 +944,7 @@ class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
                         ),
                       ),
                       SizedBox(
-                        height: space_10,
+                        height: space_3,
                       ),
                       Container(
                         width: double.infinity,
@@ -1294,8 +1295,8 @@ class _MyItemCardNoMarginWidgetState extends State<MyItemCardNoMarginWidget> {
 
 class SubCategoryItemWidget extends StatelessWidget {
   SubCategoryData subCategoryData;
-
-  SubCategoryItemWidget({this.subCategoryData});
+  String selectedId = "";
+  SubCategoryItemWidget({this.subCategoryData, this.selectedId});
 
   @override
   Widget build(BuildContext context) {
@@ -1306,30 +1307,34 @@ class SubCategoryItemWidget extends StatelessWidget {
         shape: RoundedRectangleBorder(
             side: BorderSide(color: Colors.white),
             borderRadius: BorderRadius.circular(space_10)),
-        child: Container(
-          padding: EdgeInsets.all(space_10),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  height: space_50,
-                  width: space_50,
-                  child: FadeInImage.assetNetwork(
-                    placeholder: "assets/images/app_img.png",
-                    image: subCategoryData.picture,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(space_10),
+          child: Container(
+            color: selectedId!=null && selectedId?.isNotEmpty && subCategoryData?.id == selectedId? CommonStyles.grey.withOpacity(0.5):Colors.white,
+            padding: EdgeInsets.all(space_10),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    height: space_50,
+                    width: space_50,
+                    child: FadeInImage.assetNetwork(
+                      placeholder: "assets/images/app_img.png",
+                      image: subCategoryData.picture,
+                    ),
                   ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: space_10),
-                  child: Text(
-                    subCategoryData.name,
-                    textAlign: TextAlign.center,
-                    style: CommonStyles.getRalewayStyle(
-                        space_15, FontWeight.w500, Colors.black),
-                  ),
-                )
-              ],
+                  Container(
+                    margin: EdgeInsets.only(top: space_10),
+                    child: Text(
+                      subCategoryData.name,
+                      textAlign: TextAlign.center,
+                      style: CommonStyles.getRalewayStyle(
+                          space_15, FontWeight.w500, Colors.black),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -2216,6 +2221,30 @@ class PackageCardWidget extends StatelessWidget {
   }
 }
 
+class EmptyWidget extends StatelessWidget {
+  String title;
+  EmptyWidget(this.title);
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          children: [
+            CommonAppbarWidget(app_name, skip_for_now, () {
+              onSearchLocation(context);
+            }),
+            Expanded(
+              child: Center(
+                child: Text(title, style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 class ProgressWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

@@ -185,7 +185,7 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
                         FontWeight.w600, Colors.black.withOpacity(0.8)),
                   ),
                   subtitle: Text(
-                    "DUMMY",
+                    "",
                     style: CommonStyles.getRalewayStyle(space_15,
                         FontWeight.w500, Colors.black.withOpacity(0.5)),
                     maxLines: 1,

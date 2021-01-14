@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
@@ -33,9 +35,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   var loginResponse;
   var token = "";
   var myUserId = "";
+  var _timer;
 
   @override
   void initState() {
+    _timer = new Timer.periodic(Duration(seconds: 10),
+            (_) => homeBloc..add(widget.indexId!=null?GetAllChatMsgNoProgressEvent(token: token, indexId: widget.indexId, slug: widget.slug): GetSlugChatMsgNoProgressEvent(token: token, slug: widget.slug)));
     super.initState();
     debugPrint("ENTRY_CHATHOME_SCREEN---------");
     chatTextController = TextEditingController();
@@ -60,6 +65,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   @override
   void dispose() {
     //Dispose Listener to know when is updated focus
+    _timer.cancel();
     _focusNode.addListener(_onLoginUserNameFocusChange);
     super.dispose();
   }
@@ -78,6 +84,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           listener: (context, state) {
             if (state is GetAllChatMsgResState) {
               mGetAllChatMsgRes = state.res;
+            }else if(state is SendMsgResState){
+              if(msgList==null || msgList.length==0){
+                homeBloc..add(widget.indexId!=null?GetAllChatMsgEvent(token: token, indexId: widget.indexId, slug: widget.slug): GetSlugChatMsgEvent(token: token, slug: widget.slug));
+              }
             }
           },
           child: BlocBuilder<HomeBloc, HomeState>(
@@ -98,6 +108,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     if(state is GetAllChatMsgResState){
       mGetAllChatMsgRes = state.res;
       msgList = mGetAllChatMsgRes.data.messages;
+    }else{
+
     }
     return Scaffold(
       appBar: AppBar(
@@ -245,43 +257,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 //                          EdgeInsets.only(left: space_15, bottom: space_15, top: space_15, right: space_15),
                           hintText: "Say something..."),
                     )
-
-//                    Row(
-//                     children: [
-//                       Expanded(
-//                         flex: 1,
-//                         child: Center(child: IconButton(icon: Icon(Icons.multiline_chart), onPressed: (){})),
-//                       ),
-//                       Expanded(
-//                         flex: 8,
-//                         child: Container(
-//                           child: Container(
-//                             margin: EdgeInsets.symmetric(horizontal: space_15),
-//                             child: TextField(
-//                               controller: chatTextController,
-//                             ),
-//                           ),
-//                         ),
-//                       ),
-//                       Expanded(
-//                         flex: 1,
-//                         child: Center(child: Container(
-//                           height: space_40,
-//                           width: space_40,
-//                           padding: EdgeInsets.all(space_5),
-//                           decoration: BoxDecoration(
-//                             color: Colors.white,
-//                             shape: BoxShape.circle,
-//                               border: Border.all(color: Colors.grey)
-//                           ),
-//                           child: Center(
-//                             child: Icon(Icons.send,),
-//                           ),
-//                         )),
-//                       ),
-//
-//                     ],
-//                    ),
                 ),
               ),
             )
@@ -361,12 +336,13 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   void onSubmitMsg(String msg){
     if(msgList==null){
-      msgList = new List<Messages>();
+       msgList = List();
     }
     msgList.add(Messages(message: msg, user_id: myUserId));
     setState(() {
       msgList = msgList;
     });
+    debugPrint("MSG_ADDED ${mGetAllChatMsgRes.data.inbox.receiver_id}");
     homeBloc..add(SendMsgReqEvent(token: token, adId: mGetAllChatMsgRes.data.ad.ad_id, msg: msg, recieverId: mGetAllChatMsgRes.data.inbox!=null ? mGetAllChatMsgRes.data.inbox.receiver_id : widget.sellerId, inboxId: mGetAllChatMsgRes.data.inbox!=null?mGetAllChatMsgRes.data.inbox.id:""));
     chatTextController.text = "";
   }
