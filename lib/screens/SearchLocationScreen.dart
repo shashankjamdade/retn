@@ -78,7 +78,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
       token = loginResponse.data.token;
       debugPrint("ACCESSING_INHERITED ${token}");
     }
-    if (userLocationSelected != null) {
+    if (userLocationSelected != null && mLocationSelected.isEmpty) {
       mLocationSelected = userLocationSelected.city;
       mSelectedLattitude = userLocationSelected.mlat;
       mSelectedLongitude = userLocationSelected.mlng;

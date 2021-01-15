@@ -91,7 +91,8 @@ class _NearByChildSubCategoryScreenState
       token = loginResponse.data.token;
       debugPrint("ACCESSING_INHERITED ${token}");
     }
-    var selectedLoc = StateContainer.of(context).mUserLocationSelected;
+    var selectedCurrentLoc = StateContainer.of(context).mUserLocationSelected;
+    var selectedLoc = StateContainer.of(context).mUserLocNameSelected;
     if (widget.lat != null &&
         widget.lng != null &&
         widget.lat.isNotEmpty &&
@@ -104,6 +105,12 @@ class _NearByChildSubCategoryScreenState
         (widget.lat.isEmpty && widget.lng.isEmpty)) {
       mLat = selectedLoc.mlat;
       mLng = selectedLoc.mlng;
+      debugPrint("ACCESSING_INHERITED_LOCATION ${mLat}, ${mLng} ------");
+    } else if (selectedCurrentLoc != null ||
+        widget.isFromNearBy ||
+        (widget.lat.isEmpty && widget.lng.isEmpty)) {
+      mLat = selectedCurrentLoc.mlat;
+      mLng = selectedCurrentLoc.mlng;
       debugPrint("ACCESSING_INHERITED_LOCATION ${mLat}, ${mLng} ------");
     }
   }
@@ -124,7 +131,7 @@ class _NearByChildSubCategoryScreenState
             filter_custome_filed_id: filter_custome_filed_id,
             filter_min: filter_min,
             filter_max: filter_max,
-            sort_by_price: priceSort)),
+            sort_by_price: priceSort!=null && priceSort.isNotEmpty? priceSort:"")),
       child: BlocListener(
         bloc: homeBloc,
         listener: (context, state) {},
@@ -237,13 +244,7 @@ class _NearByChildSubCategoryScreenState
                           primary: false,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
-                            childAspectRatio: (getProportionateScreenWidth(
-                                    context, space_230) /
-                                (Platform.isIOS
-                                    ? getProportionateScreenHeight(
-                                        context, space_300)
-                                    : getProportionateScreenHeight(
-                                        context, space_370))),
+                            childAspectRatio: getWidthToHeightRatio(context),
                             crossAxisCount: 2,
                             crossAxisSpacing: 5.0,
                             mainAxisSpacing: 5.0,
@@ -335,7 +336,7 @@ class _NearByChildSubCategoryScreenState
           filter_custome_filed_id: filter_custome_filed_id,
           filter_min: filter_min,
           filter_max: filter_max,
-          sort_by_price: priceSort));
+          sort_by_price: priceSort!=null && priceSort.isNotEmpty? priceSort:""));
   }
 
   void showModalBottomsheet(FilterRes filterRes) {
@@ -1045,7 +1046,7 @@ class _NearByChildSubCategoryScreenState
                                                               ? _currentSliderValue
                                                                   .toInt()
                                                                   .toString()
-                                                              : _currentSliderValue;
+                                                              : _currentSliderValue.toString();
                                                           filter_max = filterRes
                                                               ?.budget?.max;
                                                         });

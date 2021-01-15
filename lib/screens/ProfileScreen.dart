@@ -538,14 +538,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 primary: false,
                 gridDelegate:
                 SliverGridDelegateWithFixedCrossAxisCount(
-                  childAspectRatio:
-                  (getProportionateScreenWidth(
-                      context, space_230) /
-                      (Platform.isIOS
-                          ? getProportionateScreenHeight(
-                          context, space_300)
-                          : getProportionateScreenHeight(
-                          context, space_370))),
+                  childAspectRatio:getWidthToHeightRatio(context),
                   crossAxisCount: 2,
                   crossAxisSpacing: 5.0,
                   mainAxisSpacing: 5.0,

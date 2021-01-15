@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/screens/ChildSubCategoryScreen.dart';
 import 'package:flutter_rentry_new/screens/NearByChildSubCategoryScreen.dart';
+import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'CommonStyles.dart';
 import 'package:flutter/services.dart';
@@ -114,6 +117,19 @@ Future<void> openMap(double latitude, double longitude) async {
   } else {
     throw 'Could not open the map.';
   }
+}
+
+getWidthToHeightRatio(BuildContext context){
+  var screenHeight = MediaQuery.of(context).size.height;
+  var ratio = (getProportionateScreenWidth(
+      context, space_230) /
+      (Platform.isIOS
+          ? getProportionateScreenHeight(
+          context, space_300)
+          : screenHeight<=1530 ?getProportionateScreenHeight(
+          context, space_370): getProportionateScreenHeight(
+          context, space_340)));
+  return ratio;
 }
 //Future<bool> isInternet() async {
 //  var connectivityResult = await (Connectivity().checkConnectivity());

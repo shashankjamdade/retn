@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_rentry_new/bloc/authentication/AuthenticationBloc.dart';
@@ -46,9 +47,14 @@ import 'package:geocoder/geocoder.dart';
 import 'package:http/http.dart' as http;
 import 'package:place_picker/place_picker.dart';
 
-void main() {
+void main() async{
   HttpOverrides.global = new MyHttpOverrides();
-  runApp(StateContainer(child: MyApp()));
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]).then((_) {
+    runApp(StateContainer(child: MyApp()));
+  });
 }
 
 class MyHttpOverrides extends HttpOverrides {

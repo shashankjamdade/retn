@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/model/UserLocNameSelected.dart';
 import 'package:flutter_rentry_new/model/filter_res.dart';
 import 'package:flutter_rentry_new/model/get_all_package_list_response.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
@@ -1824,6 +1825,12 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                               Expanded(
                                   child: GestureDetector(
                                       onTap: () {
+                                        var currentLoc = StateContainer.of(
+                                            context).mUserLocationSelected!=null?StateContainer.of(
+                                            context).mUserLocationSelected:null;
+                                        if(currentLoc!=null){
+                                          StateContainer.of(context).mUserLocNameSelected = UserLocNameSelected(address: currentLoc.city, mlat: currentLoc.mlat, mlng: currentLoc.mlng);
+                                        }
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
