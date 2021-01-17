@@ -41,11 +41,12 @@ class RegisterReqAuthenticationEvent extends AuthenticationEvent{
   final String loginType;
   final String otp;
   final String deviceToken;
+  final String reffCode;
   RegisterReqAuthenticationEvent(
-      {@required this.name, @required this.mobile, @required this.email, @required this.password, @required this.loginType, @required this.otp, @required this.deviceToken});
+      {@required this.name, @required this.mobile, @required this.email, @required this.password, @required this.loginType, @required this.otp, @required this.deviceToken, @required this.reffCode});
 
   @override
-  List<Object> get props => [name, mobile, email, password, otp, deviceToken];
+  List<Object> get props => [name, mobile, email, password, otp, deviceToken, reffCode];
 }
 
 
@@ -56,3 +57,14 @@ class FailureAuthenticationEvent extends AuthenticationEvent{}
 
 class LoginInViaFacebookEvent extends AuthenticationEvent {}
 class LoginInViaGoogleEvent extends AuthenticationEvent {}
+
+
+class SendOtpAuthEvent extends AuthenticationEvent {
+  final String contact;
+  final String otpType;
+
+  SendOtpAuthEvent({@required this.contact, @required this.otpType});
+
+  @override
+  List<Object> get props => [contact, otpType];
+}

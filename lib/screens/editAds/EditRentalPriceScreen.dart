@@ -9,8 +9,10 @@ import 'package:flutter_rentry_new/model/custom_field_model2.dart';
 import 'package:flutter_rentry_new/model/get_rent_type_response.dart';
 import 'package:flutter_rentry_new/model/my_ads_edit_res.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
+import 'package:flutter_rentry_new/screens/MyPackageListScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/AdUnderPackegeListScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/LocationForAdScreen.dart';
+import 'package:flutter_rentry_new/screens/postad/MyAdsListScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
@@ -107,7 +109,7 @@ class _EditRentalPriceScreenState extends State<EditRentalPriceScreen> {
                         state.res.status == "true")) {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                    MaterialPageRoute(builder: (context) => MyAdsListScreen()),
                   );
                 }
               }

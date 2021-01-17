@@ -14,6 +14,7 @@ import 'package:flutter_rentry_new/model/get_notification_response.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
+import 'package:flutter_rentry_new/screens/MyPackageListScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/my_flutter_app_icons.dart';
@@ -24,6 +25,8 @@ import 'package:flutter_rentry_new/widgets/ListItemCardWidget.dart';
 import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+
+import 'MyAdsListScreen.dart';
 
 class AdUnderPackageListScreen extends StatefulWidget {
 
@@ -163,7 +166,7 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
                 if(state.res.status!=null && (state.res.status == "success" || state.res.status == "true")){
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                    MaterialPageRoute(builder: (context) => MyAdsListScreen()),
                   );
                 }
               }

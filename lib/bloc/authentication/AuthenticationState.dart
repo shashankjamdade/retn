@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_rentry_new/model/GoogleFbLoginResponse.dart';
+import 'package:flutter_rentry_new/model/common_response.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/model/register_response.dart';
 
@@ -55,3 +56,12 @@ class RegisterResAuthenticationState extends AuthenticationState {
   List<LoginResponse> get props => [res];
 }
 
+
+class SendOtpAuthState extends AuthenticationState {
+  final res;
+
+  SendOtpAuthState({@required this.res});
+
+  @override
+  List<CommonResponse> get props => [res];
+}

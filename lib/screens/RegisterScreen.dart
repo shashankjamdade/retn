@@ -15,6 +15,7 @@ import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/model/register_response.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
 import 'package:flutter_rentry_new/screens/OtpVerificationScreen.dart';
+import 'package:flutter_rentry_new/screens/PostRegisterScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
@@ -39,10 +40,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   FocusNode _focusNode = new FocusNode();
   TextEditingController fullnameController;
-  TextEditingController mobileController;
   TextEditingController emailController;
-  TextEditingController passwordController;
-  TextEditingController confPasswordController;
   AuthenticationBloc authenticationBloc = new AuthenticationBloc();
   BuildContext _context;
   final GoogleSignIn googleSignIn = new GoogleSignIn(scopes: ['email']);
@@ -82,10 +80,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         fullnameController = TextEditingController(text: mName);
         emailController = TextEditingController(text:mEmail);
       });
+      onSignup();
     } catch (err) {
       print("EXCEPTION ${err}");
     }
-    showSnakbar(_scaffoldKey, "Please fill all required information");
+//    showSnakbar(_scaffoldKey, "Please fill all required information");
   }
 
   @override
@@ -94,10 +93,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     //Add Listener to know when is updated focus
     _focusNode.addListener(_onLoginUserNameFocusChange);
     fullnameController = TextEditingController(text: mName);
-    mobileController = TextEditingController();
     emailController = TextEditingController(text:mEmail);
-    passwordController = TextEditingController();
-    confPasswordController = TextEditingController();
     _register();
   }
 
@@ -105,7 +101,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void dispose() {
     //Dispose Listener to know when is updated focus
     _focusNode.addListener(_onLoginUserNameFocusChange);
-    mobileController.dispose();
 
     super.dispose();
   }
@@ -135,7 +130,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 fullnameController = TextEditingController(text: mName);
                 emailController = TextEditingController(text:mEmail);
               });
-              showSnakbar(_scaffoldKey, "Please fill all required information");
+              onSignup();
+//              showSnakbar(_scaffoldKey, "Please fill all required information");
             }else{
               showSnakbar(_scaffoldKey, "No email found against your profile, please try again with another account");
             }
@@ -213,68 +209,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
 //                            }
 //                          }, TextInputType.number),
 //                          SizedBox(height: getProportionateScreenHeight(context, space_20),),
-                          BtnTextInputWidget(mobileController, "Mobile No.", (mOTP!=null && mOTP?.isNotEmpty)? "Verified":"Verify", false, onVerifyClick,
-                                  (String value) {
-                                if (value.isEmpty) {
-                                  return "Please enter valid mobile no.";
-                                }
-                              }, TextInputType.number, isVerified: mOTP!=null && mOTP?.isNotEmpty),
-                          SizedBox(height: getProportionateScreenHeight(context, space_20),),
                           TextInputWidget(emailController, "Email ID", false, (String value) {
                             if (value.isEmpty) {
                               return "Please enter valid email ID";
                             }
                           }, TextInputType.emailAddress),
                           SizedBox(height: getProportionateScreenHeight(context, space_20),),
-                          Container(
-                            height: getProportionateScreenHeight(context, space_40),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Flexible(
-                                  child:  TextFormField(
-                                    validator: (String value) {
-                                      if (value.isEmpty) {
-                                        return "Please enter valid password";
-                                      }
-                                    },
-                                    obscureText: _obscureText,
-                                    controller: passwordController,
-                                    keyboardType: TextInputType.text,
-                                    decoration: InputDecoration(
-                                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                                      labelText: "Password",
-                                      suffixIcon:  IconButton(
-                                        icon:Icon(_obscureText ? Icons.visibility:Icons.visibility_off,),
-                                        onPressed: _togglePasswordStatus,
-                                        color: CommonStyles.primaryColor,
-                                      ),
-                                      contentPadding: EdgeInsets.all(space_8),
-                                      border: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Colors.grey,
-                                          ),
-                                          borderRadius: BorderRadius.circular(0.0)),
-                                      filled: true,
-                                      fillColor: Colors.white,
-                                    ),
-                                  ),
+                          InkWell(
+                            onTap: (){
+                              onSignup();
+                            },
+                            child: Center(child: Container(
+                                padding: EdgeInsets.symmetric(vertical: space_10, horizontal: space_15),
+                                decoration: BoxDecoration(
+                                  color: CommonStyles.primaryColor
                                 ),
-                              ],
-                            ),
+                                child: Text("Next", style: CommonStyles.getMontserratStyle(space_14, FontWeight.w600, Colors.white),))),
                           ),
-//                          TextInputWidget(passwordController, "Password", false, (String value) {
-//                            if (value.isEmpty) {
-//                              return "Please enter valid password";
-//                            }
-//                          }, TextInputType.text),
-                          SizedBox(height: getProportionateScreenHeight(context, space_20),),
-                          BtnTextInputWidget(confPasswordController, "Confirm Password", "Sign Up", true, onSignup,
-                                  (String value) {
-                                if (value.isEmpty) {
-                                  return "Please enter valid confirm password";
-                                }
-                              }, TextInputType.emailAddress),
                           SizedBox(height: getProportionateScreenHeight(context, space_20),),
                           Align(
                               alignment: Alignment.center,
@@ -283,8 +234,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Expanded(child: IconButtonWidget("Login with facebook", "assets/images/facebook.png", CommonStyles.blue ,onSocialLogin)),
-                              Expanded(child: IconButtonWidget("Login with Google", "assets/images/google.png", CommonStyles.darkAmber ,onSocialGoogleLogin)),
+                              Expanded(child: IconButtonWidget("Signup with facebook", "assets/images/facebook.png", CommonStyles.blue ,onSocialLogin)),
+                              Expanded(child: IconButtonWidget("Signup with Google", "assets/images/google.png", CommonStyles.darkAmber ,onSocialGoogleLogin)),
                             ],
                           ),
                           SizedBox(height: getProportionateScreenHeight(context, space_25),),
@@ -354,52 +305,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   onVerifyClick() async{
-    if(mobileController.text.trim().isEmpty){
-      showSnakbar(_scaffoldKey, empty_mobile);
-    }else{
-      //push to verify
-      var res = await Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => OtpVerificationScreen(mobileController.text.trim(), "login")),
-      );
-      setState(() {
-        if(res!=null && res is OtpObj) {
-          mOTP = res.otp;
-          mVerifiedMobile = res.mobile;
-          debugPrint("VERIFIED ${res.otp}, ${res.mobile}");
-        }
-      });
-    }
+
   }
   
   void onSignup(){
-    if(mVerifiedMobile != mobileController.text.toString()){
-      setState(() {
-        mOTP = "";
-      });
-      showSnakbar(_scaffoldKey, verify_mobile);
-    }else if(fullnameController.text.trim().isEmpty){
+    if(fullnameController.text.trim().isEmpty){
      showSnakbar(_scaffoldKey, empty_full_name);
-    }else if(mobileController.text.trim().isEmpty){
-     showSnakbar(_scaffoldKey, empty_mobile);
     }else if(emailController.text.trim().isEmpty){
      showSnakbar(_scaffoldKey, empty_email);
-    }else if(passwordController.text.trim().isEmpty){
-     showSnakbar(_scaffoldKey, empty_password);
-    }else if(confPasswordController.text.trim().isEmpty){
-     showSnakbar(_scaffoldKey, empty_conf_password);
-    }else if(passwordController.text.trim() != confPasswordController.text.trim()){
-     showSnakbar(_scaffoldKey, pwd_no_match);
-    }else if(mOTP==null || mOTP.isEmpty){
-     showSnakbar(_scaffoldKey, verify_mobile);
     }else if(mFcmToken==null || mFcmToken.isEmpty){
      showSnakbar(_scaffoldKey, fcm_token_missing);
     }else{
       //API hit
       debugPrint("OTP -- > ${mOTP}");
-      authenticationBloc..add(RegisterReqAuthenticationEvent(name: fullnameController.text.trim(),
-      email: emailController.text.trim(), mobile: mobileController.text.trim(), password: passwordController.text.trim(), loginType: mLoginType, otp: mOTP
-      ,deviceToken: mFcmToken));
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => PostRegisterScreen(fullnameController.text.trim(), emailController.text.trim())),
+      );
+//      authenticationBloc..add(RegisterReqAuthenticationEvent(name: fullnameController.text.trim(),
+//      email: emailController.text.trim(), mobile: mobileController.text.trim(), password: passwordController.text.trim(), loginType: mLoginType, otp: mOTP
+//      ,deviceToken: mFcmToken));
     }
   }
 

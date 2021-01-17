@@ -17,6 +17,7 @@ import 'package:flutter_rentry_new/bloc/authentication/AuthenticationState.dart'
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   AuthenticationRepository _authenticationService;
+  HomeRepository homeRepository;
 
   AuthenticationBloc() {
     _authenticationService = AuthenticationRepository();
@@ -43,10 +44,13 @@ class AuthenticationBloc
     } else if (event is RegisterReqAuthenticationEvent) {
       yield ProgressAuthenticationState();
       yield* makeRegister(RegisterReq(event.name, event.mobile, event.email,
-          event.password, event.loginType, event.otp, event.deviceToken));
+          event.password, event.loginType, event.otp, event.deviceToken, event.reffCode));
     } else if (event is LoginInViaFacebookEvent) {
       yield ProgressAuthenticationState();
       yield* makeFbLogin();
+    }else if (event is SendOtpAuthEvent) {
+      yield ProgressAuthenticationState();
+      yield* callSendOtp(event.contact, event.otpType);
     }
   }
 
@@ -118,6 +122,21 @@ class AuthenticationBloc
       yield GoogleFbLoginResAuthenticationState(res: loginResponse);
     } catch (e) {
       debugPrint("Exception while fblogin ${e.toString()}");
+    }
+  }
+
+  Stream<AuthenticationState> callSendOtp(String contact, String otpType) async* {
+    try {
+      homeRepository =
+     homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint(
+          "callSendOtp ${contact} ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final commonResponse =
+      await homeRepository.callSendOtp(contact, otpType);
+      debugPrint("callSendOtp ${jsonEncode(commonResponse)}");
+      yield SendOtpAuthState(res: commonResponse);
+    } catch (e) {
+      debugPrint("Exception while callSendOtp ${e.toString()}");
     }
   }
 }
