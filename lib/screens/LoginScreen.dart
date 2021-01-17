@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,6 +39,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final GoogleSignIn googleSignIn = new GoogleSignIn(scopes: ['email']);
   String mName = "";
   String mEmail = "";
+  String mFcmToken = "";
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   logininViaGoogle() async {
     try {
@@ -45,12 +48,15 @@ class _LoginScreenState extends State<LoginScreen> {
       GoogleSignInAccount googleUsr = await googleSignIn.signIn();
       debugPrint("GOOGLE_SIGNIN_INFO ${googleUsr.email}");
       debugPrint("GOOGLE_SIGNIN_INFO ${googleUsr.displayName}");
-      authenticationBloc..add(SocialLoginReqAuthenticationEvent(emailOrMobile: googleUsr.email));
+      authenticationBloc..add(SocialLoginReqAuthenticationEvent(emailOrMobile: googleUsr.email, deviceToken: mFcmToken));
     } catch (err) {
       print("EXCEPTION ${err}");
     }
   }
 
+  _register() {
+    _firebaseMessaging.getToken().then((token) => mFcmToken = token);
+  }
 
   @override
   void initState() {
@@ -59,6 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _focusNode.addListener(_onLoginUserNameFocusChange);
     mobileEmailController = TextEditingController();
     passwordController = TextEditingController();
+    _register();
   }
 
   @override
@@ -226,13 +233,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         showSnakbar(_scaffoldKey, empty_username);
                       } else if (passwordController.text.trim().isEmpty) {
                         showSnakbar(_scaffoldKey, empty_password);
+                      }  else if (mFcmToken==null || mFcmToken.trim().isEmpty) {
+                        showSnakbar(_scaffoldKey, fcm_token_missing);
                       } else {
                         //API hit
 //      authenticationBloc.dispatch(LoginEvent(loginInfoModel: testLogin));
                         authenticationBloc
                           ..add(LoginReqAuthenticationEvent(
                               emailOrMobile: mobileEmailController.text.trim(),
-                              password: passwordController.text.trim()));
+                              password: passwordController.text.trim(), deviceToken: mFcmToken));
 
 //                            BlocProvider.of<AuthenticationBloc>(_context)
 //                              ..add(LoginReqAuthenticationEvent(emailOrMobile: mobileEmailController.text.trim(), password: passwordController.text.trim()));
@@ -372,14 +381,17 @@ class _LoginScreenState extends State<LoginScreen> {
       showSnakbar(_scaffoldKey, empty_username);
     } else if (passwordController.text.trim().isEmpty) {
       showSnakbar(_scaffoldKey, empty_password);
+    }  else if (mFcmToken==null || mFcmToken.trim().isEmpty) {
+      showSnakbar(_scaffoldKey, fcm_token_missing);
     } else {
       //API hit
 //      authenticationBloc.dispatch(LoginEvent(loginInfoModel: testLogin));
 //      BlocProvider.of<AuthenticationBloc>(_context)
+    debugPrint("CHECK_TOKEN --> ${mFcmToken}");
       authenticationBloc
         ..add(LoginReqAuthenticationEvent(
             emailOrMobile: mobileEmailController.text.trim(),
-            password: passwordController.text.trim()));
+            password: passwordController.text.trim(), deviceToken: mFcmToken));
     }
   }
 

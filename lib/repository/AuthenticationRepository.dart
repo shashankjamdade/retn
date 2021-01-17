@@ -19,16 +19,17 @@ class AuthenticationRepository extends BaseRepository {
   AuthenticationRepository({http.Client httpClient})
       : _httpClient = httpClient ?? http.Client();
 
-  Future<LoginResponse> callLogin(String mobileOrEmail, String password) async {
+  Future<LoginResponse> callLogin(String mobileOrEmail, String password, String token) async {
     bool status = false;
     LoginResponse response;
     int code = 0;
+    debugPrint("TOKEN--> ${token}");
     final ioc = new HttpClient();
     ioc.badCertificateCallback =
         (X509Certificate cert, String host, int port) => true;
     final http = new IOClient(ioc);
     var res = await http.post(BASE_URL + LOGIN_API,
-        body: {"email": mobileOrEmail, "password": password});
+        body: {"email": mobileOrEmail, "password": password, "device_token": token});
     print(res.body);
     code = res.statusCode;
     if (res.statusCode == 200) {
@@ -48,16 +49,17 @@ class AuthenticationRepository extends BaseRepository {
     return response;
   }
 
-  Future<LoginResponse> callSocialLogin(String email) async {
+  Future<LoginResponse> callSocialLogin(String email, String deviceToken) async {
     bool status = false;
     LoginResponse response;
     int code = 0;
+    debugPrint("TOKEN--> ${deviceToken}");
     final ioc = new HttpClient();
     ioc.badCertificateCallback =
         (X509Certificate cert, String host, int port) => true;
     final http = new IOClient(ioc);
     var res = await http.post(BASE_URL + SOCIAL_LOGIN_API,
-        body: {"email": email});
+        body: {"email": email,  "device_token": deviceToken});
     print(res.body);
     code = res.statusCode;
     if (res.statusCode == 200) {

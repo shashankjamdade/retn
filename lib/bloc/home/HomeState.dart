@@ -20,6 +20,8 @@ import 'package:flutter_rentry_new/model/my_ads_list_res.dart';
 import 'package:flutter_rentry_new/model/nearby_item_list_response.dart';
 import 'package:flutter_rentry_new/model/location_search_response.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
+import 'package:flutter_rentry_new/model/new_chatlist_res.dart';
+import 'package:flutter_rentry_new/model/new_inbox_chat_res.dart';
 import 'package:flutter_rentry_new/model/payment_response.dart';
 import 'package:flutter_rentry_new/model/register_response.dart';
 import 'package:flutter_rentry_new/model/save_favourite_res.dart';
@@ -207,7 +209,7 @@ class GetAllChatUserListResState extends HomeState {
   GetAllChatUserListResState({@required this.res});
 
   @override
-  List<GetAllChatUserListResponse> get props => [res];
+  List<NewChatlistRes> get props => [res];
 }
 
 class GetAllChatMsgResState extends HomeState {
@@ -216,7 +218,7 @@ class GetAllChatMsgResState extends HomeState {
   GetAllChatMsgResState({@required this.res});
 
   @override
-  List<GetAllChatMsgRes> get props => [res];
+  List<NewInboxChatRes> get props => [res];
 }
 
 class SendMsgResState extends HomeState {

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
@@ -7,10 +8,10 @@ import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/model/ChatMsgModel.dart';
-import 'package:flutter_rentry_new/model/get_all_chat_msg_res.dart';
+import 'package:flutter_rentry_new/model/new_inbox_chat_res.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
-
+import 'package:intl/intl.dart';  //for date format
 import 'LoginScreen.dart';
 
 class ChatDetailScreen extends StatefulWidget {
@@ -19,7 +20,8 @@ class ChatDetailScreen extends StatefulWidget {
   String indexId;
   String slug;
   String sellerId;
-  ChatDetailScreen({this.username, this.indexId, this.slug, this.sellerId});
+  String adId;
+  ChatDetailScreen({this.username, this.indexId = "", this.slug, this.sellerId, this.adId});
 
   @override
   _ChatDetailScreenState createState() => _ChatDetailScreenState();
@@ -31,19 +33,21 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   List<Messages> msgList = List();
   String myId = "1";
   HomeBloc homeBloc = new HomeBloc();
-  GetAllChatMsgRes mGetAllChatMsgRes;
+  NewInboxChatRes mGetAllChatMsgRes;
   var loginResponse;
   var token = "";
   var myUserId = "";
   var _timer;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   @override
   void initState() {
     _timer = new Timer.periodic(Duration(seconds: 10),
-            (_) => homeBloc..add(widget.indexId!=null?GetAllChatMsgNoProgressEvent(token: token, indexId: widget.indexId, slug: widget.slug): GetSlugChatMsgNoProgressEvent(token: token, slug: widget.slug)));
+            (_) => homeBloc..add(GetAllChatMsgNoProgressEvent(token: token, indexId: widget.indexId, adId: widget.adId)));
     super.initState();
-    debugPrint("ENTRY_CHATHOME_SCREEN---------");
+    debugPrint("ENTRY_CHATDETAIL_SCREEN--------- ${widget.sellerId}");
     chatTextController = TextEditingController();
+//    getMessage();
   }
 
   @override
@@ -53,6 +57,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     if (loginResponse != null) {
       token = loginResponse.data.token;
       myUserId = loginResponse.data.id;
+      myId = myUserId;
       debugPrint("ACCESSING_INHERITED ${token}, ${myUserId}");
     }else{
       Navigator.push(
@@ -78,7 +83,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return  BlocProvider(
-        create: (context) => homeBloc..add(widget.indexId!=null?GetAllChatMsgEvent(token: token, indexId: widget.indexId, slug: widget.slug): GetSlugChatMsgEvent(token: token, slug: widget.slug)),
+        create: (context) => homeBloc..add(GetAllChatMsgEvent(token: token, indexId: widget.indexId, adId: widget.adId)),
         child: BlocListener(
           bloc: homeBloc,
           listener: (context, state) {
@@ -86,7 +91,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               mGetAllChatMsgRes = state.res;
             }else if(state is SendMsgResState){
               if(msgList==null || msgList.length==0){
-                homeBloc..add(widget.indexId!=null?GetAllChatMsgEvent(token: token, indexId: widget.indexId, slug: widget.slug): GetSlugChatMsgEvent(token: token, slug: widget.slug));
+                homeBloc..add(GetAllChatMsgEvent(token: token, indexId: widget.indexId, adId: widget.adId));
               }
             }
           },
@@ -133,11 +138,26 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   decoration: BoxDecoration(
                       color: CommonStyles.red, shape: BoxShape.circle),
                   child: Center(
-                    child: Text(
-                      (widget.username!=null && widget.username.isNotEmpty)?widget.username[0].toUpperCase():(mGetAllChatMsgRes!=null && mGetAllChatMsgRes.data!=null)?mGetAllChatMsgRes.data.ad.chat_with[0].toUpperCase():"",
+                    child: Container(
+                      height: space_30,
+                      width: space_30,
+                      child: ClipRRect(
+                        borderRadius:
+                        BorderRadius.circular(space_15),
+                        child: FadeInImage.assetNetwork(
+                          placeholder: "assets/images/app_img.png",
+                          image: (mGetAllChatMsgRes?.data?.ad_and_user_details?.ad_image!=null && mGetAllChatMsgRes?.data?.ad_and_user_details?.ad_image?.isNotEmpty)?mGetAllChatMsgRes?.data?.ad_and_user_details?.ad_image:"http://rentozo.com/assets/img/user.jpg",
+                          fit: BoxFit.fill,
+                          width: space_80,
+                          height: space_60,
+                        ),
+                      ),
+                    )
+                    /* Text(
+                      (mGetAllChatMsgRes?.data?.ad_and_user_details?.ad_image!=null && mGetAllChatMsgRes?.data?.ad_and_user_details?.ad_image?.isNotEmpty)?mGetAllChatMsgRes?.data?.ad_and_user_details?.ad_image:"http://rentozo.com/assets/img/user.jpg",
                       style: CommonStyles.getRalewayStyle(
                           space_15, FontWeight.w500, Colors.white),
-                    ),
+                    )*/,
                   ),
                 ),
                 Positioned(
@@ -152,7 +172,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               ],
             ),
             label: Text(
-              "${(widget.username!=null && widget.username.isNotEmpty)?widget.username:(mGetAllChatMsgRes!=null && mGetAllChatMsgRes.data!=null)?mGetAllChatMsgRes.data.ad.chat_with:""}",
+              "${(mGetAllChatMsgRes.data.ad_and_user_details?.chat_with?.username!=null && mGetAllChatMsgRes.data.ad_and_user_details?.chat_with?.username.isNotEmpty)?mGetAllChatMsgRes.data.ad_and_user_details?.chat_with?.username:""}",
               style: CommonStyles.getRalewayStyle(
                   space_15, FontWeight.w500, Colors.white),
             )),
@@ -167,8 +187,14 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   bottom: space_60),
               child: ListView.builder(
                   shrinkWrap: true,
+                  reverse: true,
                   itemCount: msgList!=null?msgList.length:0,
                   itemBuilder: (context, pos) {
+                    var createDate = DateTime.parse(
+                        "${msgList[pos].created_date}");
+                    DateFormat timeFormatter = new DateFormat('HH:mm');
+                    String currentTime = timeFormatter.format(createDate);
+                    var dateTimeStr = "${currentTime}";
                     return Container(
                       margin: EdgeInsets.symmetric(vertical: space_10),
                       child: Align(
@@ -179,10 +205,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                           shape: RoundedRectangleBorder(
                               side: BorderSide(color: Colors.white),
                               borderRadius: BorderRadius.only(
-                                topLeft: msgList[pos].id == myId ? Radius
+                                topLeft: msgList[pos].user_id == myId ? Radius
                                     .circular(space_30) : Radius.circular(0),
                                 topRight: Radius.circular(space_30),
-                                bottomRight: msgList[pos].id == myId ? Radius
+                                bottomRight: msgList[pos].user_id == myId ? Radius
                                     .circular(0) : Radius.circular(space_30),
                                 bottomLeft: Radius.circular(space_30),
                               )),
@@ -192,15 +218,23 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                             decoration: BoxDecoration(
                                 gradient: chatMsgGradient(),
                                 borderRadius: BorderRadius.only(
-                                  topLeft: msgList[pos].id == myId ? Radius
+                                  topLeft: msgList[pos].user_id == myId ? Radius
                                       .circular(space_30) : Radius.circular(0),
                                   topRight: Radius.circular(space_30),
-                                  bottomRight: msgList[pos].id == myId ? Radius
+                                  bottomRight: msgList[pos].user_id == myId ? Radius
                                       .circular(0) : Radius.circular(space_30),
                                   bottomLeft: Radius.circular(space_30),
                                 )
                             ),
-                            child: Text(msgList[pos].message, style: CommonStyles.getRalewayStyle(space_14, FontWeight.w500, CommonStyles.grey),),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(msgList[pos].message, style: CommonStyles.getRalewayStyle(space_14, FontWeight.w500, CommonStyles.grey),),
+                                Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Text(dateTimeStr, style: CommonStyles.getRalewayStyle(space_10, FontWeight.w500, CommonStyles.grey),)),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -289,11 +323,26 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   decoration: BoxDecoration(
                       color: CommonStyles.red, shape: BoxShape.circle),
                   child: Center(
-                    child: Text(
-                      widget.username!=null && widget.username?.isNotEmpty?widget.username[0].toUpperCase():"-",
+                    child: Container(
+                      height: space_30,
+                      width: space_30,
+                      child: ClipRRect(
+                        borderRadius:
+                        BorderRadius.circular(space_15),
+                        child: FadeInImage.assetNetwork(
+                          placeholder: "assets/images/app_img.png",
+                          image: (mGetAllChatMsgRes?.data?.ad_and_user_details?.ad_image!=null && mGetAllChatMsgRes?.data?.ad_and_user_details?.ad_image?.isNotEmpty)?mGetAllChatMsgRes?.data?.ad_and_user_details?.ad_image:"http://rentozo.com/assets/img/user.jpg",
+                          fit: BoxFit.fill,
+                          width: space_80,
+                          height: space_60,
+                        ),
+                      ),
+                    )
+                    /* Text(
+                      (mGetAllChatMsgRes?.data?.ad_and_user_details?.ad_image!=null && mGetAllChatMsgRes?.data?.ad_and_user_details?.ad_image?.isNotEmpty)?mGetAllChatMsgRes?.data?.ad_and_user_details?.ad_image:"http://rentozo.com/assets/img/user.jpg",
                       style: CommonStyles.getRalewayStyle(
                           space_15, FontWeight.w500, Colors.white),
-                    ),
+                    )*/,
                   ),
                 ),
                 Positioned(
@@ -308,7 +357,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               ],
             ),
             label: Text(
-              "${widget.username!=null?widget.username:""}",
+              "",
               style: CommonStyles.getRalewayStyle(
                   space_15, FontWeight.w500, Colors.white),
             )),
@@ -335,16 +384,32 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   }
 
   void onSubmitMsg(String msg){
-    if(msgList==null){
-       msgList = List();
+    if(msg!=null && msg.isNotEmpty){
+      if(msgList==null){
+        msgList = List();
+      }
+      DateTime now = DateTime.now();
+      String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
+
+      msgList.insert(0, Messages(message: msg, user_id: myUserId, created_date: formattedDate));
+      setState(() {
+        msgList = msgList;
+      });
+//    debugPrint("MSG_ADDED ${mGetAllChatMsgRes.data.inbox.receiver_id}");
+      homeBloc..add(SendMsgReqEvent(token: token, adId: mGetAllChatMsgRes.data.ad_and_user_details?.ad_id, msg: msg, recieverId: mGetAllChatMsgRes.data.ad_and_user_details?.chat_with?.receiver_id, inboxId: mGetAllChatMsgRes.data.ad_and_user_details?.inbox_id!=null?mGetAllChatMsgRes.data.ad_and_user_details?.inbox_id:""));
+      chatTextController.text = "";
     }
-    msgList.add(Messages(message: msg, user_id: myUserId));
-    setState(() {
-      msgList = msgList;
+  }
+
+  void getMessage() {
+    _firebaseMessaging.configure(
+        onMessage: (Map<String, dynamic> message) async {
+          homeBloc..add(GetAllChatMsgNoProgressEvent(token: token, indexId: widget.indexId, adId: widget.adId));
+        }, onResume: (Map<String, dynamic> message) async {
+
+    }, onLaunch: (Map<String, dynamic> message) async {
+
     });
-    debugPrint("MSG_ADDED ${mGetAllChatMsgRes.data.inbox.receiver_id}");
-    homeBloc..add(SendMsgReqEvent(token: token, adId: mGetAllChatMsgRes.data.ad.ad_id, msg: msg, recieverId: mGetAllChatMsgRes.data.inbox!=null ? mGetAllChatMsgRes.data.inbox.receiver_id : widget.sellerId, inboxId: mGetAllChatMsgRes.data.inbox!=null?mGetAllChatMsgRes.data.inbox.id:""));
-    chatTextController.text = "";
   }
 
 }

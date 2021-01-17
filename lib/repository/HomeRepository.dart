@@ -23,6 +23,8 @@ import 'package:flutter_rentry_new/model/my_ads_list_res.dart';
 import 'package:flutter_rentry_new/model/nearby_item_list_response.dart';
 import 'package:flutter_rentry_new/model/location_search_response.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
+import 'package:flutter_rentry_new/model/new_chatlist_res.dart';
+import 'package:flutter_rentry_new/model/new_inbox_chat_res.dart';
 import 'package:flutter_rentry_new/model/payment_response.dart';
 import 'package:flutter_rentry_new/model/register_response.dart';
 import 'package:flutter_rentry_new/model/save_favourite_res.dart';
@@ -535,50 +537,44 @@ class HomeRepository extends BaseRepository {
     return response;
   }
 
-  Future<GetAllChatUserListResponse> callGetAllChatUserApi(String token) async {
-    bool status = false;
-    GetAllChatUserListResponse response;
-    print("UNDER GetAllChatUserListResponse ${token} ");
+  Future<NewChatlistRes> callGetAllChatUserApi(String token) async {
+    NewChatlistRes response;
+    print("UNDER NewChatlistRes ${token} ");
     Map<String, String> mainheader = {"token": token};
     var res = await http.get(
-      BASE_URL + GET_CHAT_LIST,
+      BASE_URL + GET_NEW_CHAT_LIST/*+ GET_CHAT_LIST*/,
       headers: mainheader,
     );
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
-      status = data["status"];
-      print("PRINTING_STATUS ${status}");
-      response = GetAllChatUserListResponse.fromJson(data);
+      response = NewChatlistRes.fromJson(data);
       print("-----------${data}");
     } else {
-      response = new GetAllChatUserListResponse(
-          message: API_ERROR_MSG, status: false, data: null);
+      response = new NewChatlistRes(
+          msg: API_ERROR_MSG, status: "false", data: null);
     }
     return response;
   }
 
-  Future<GetAllChatMsgRes> callGetAllChatMsgApi(
-      String token, String indexId, String slug) async {
-    bool status = false;
-    GetAllChatMsgRes response;
+  Future<NewInboxChatRes> callGetAllChatMsgApi(
+      String token, String indexId, String adId) async {
+    NewInboxChatRes response;
     print(
-        "UNDER callGetAllChatMsgApi ${token} , ${BASE_URL + GET_CHAT_LIST + "/${indexId}/${slug}"}");
+        "UNDER callGetAllChatMsgApi ${BASE_URL + NEW_INBOX_CHAT + "/${adId}/${indexId}"} ${token}");
     Map<String, String> mainheader = {"token": token};
     var res = await http.get(
-      BASE_URL + GET_CHAT_LIST + "/${indexId}/${slug}",
+      BASE_URL + NEW_INBOX_CHAT + "/${adId}/${indexId}",
       headers: mainheader,
     );
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
-      status = data["status"];
-      print("PRINTING_STATUS ${status}");
-      response = GetAllChatMsgRes.fromJson(data);
+      response = NewInboxChatRes.fromJson(data);
       print("-----------${data}");
     } else {
-      response = new GetAllChatMsgRes(
-          message: API_ERROR_MSG, status: false, data: null);
+      response = new NewInboxChatRes(
+          msg: API_ERROR_MSG, status: "false", data: null);
     }
     return response;
   }

@@ -36,10 +36,10 @@ class AuthenticationBloc
       yield* makeLogout();
     } else if (event is LoginReqAuthenticationEvent) {
       yield ProgressAuthenticationState();
-      yield* makeLogin(event.emailOrMobile, event.password);
+      yield* makeLogin(event.emailOrMobile, event.password, event.deviceToken);
     } else if (event is SocialLoginReqAuthenticationEvent) {
       yield ProgressAuthenticationState();
-      yield* makeSocialLogin(event.emailOrMobile);
+      yield* makeSocialLogin(event.emailOrMobile, event.deviceToken);
     } else if (event is RegisterReqAuthenticationEvent) {
       yield ProgressAuthenticationState();
       yield* makeRegister(RegisterReq(event.name, event.mobile, event.email,
@@ -81,19 +81,19 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> makeLogin(
-      String emailOrMobile, String password) async* {
+      String emailOrMobile, String password, String token) async* {
     try {
       final loginResponse =
-          await _authenticationService.callLogin(emailOrMobile, password);
+          await _authenticationService.callLogin(emailOrMobile, password, token);
       yield LoginResAuthenticationState(res: loginResponse);
-    } catch (e) {
-      debugPrint("Exception while nativeLogin ${e.toString()}");
+    } catch (e, stacktrace) {
+      debugPrint("Exception while nativeLogin ${e.toString()}\n ${stacktrace}");
     }
   }
 
-  Stream<AuthenticationState> makeSocialLogin(String email) async* {
+  Stream<AuthenticationState> makeSocialLogin(String email, String deviceToken) async* {
     try {
-      final loginResponse = await _authenticationService.callSocialLogin(email);
+      final loginResponse = await _authenticationService.callSocialLogin(email, deviceToken);
       yield LoginResAuthenticationState(res: loginResponse);
     } catch (e) {
       debugPrint("Exception while nativeLogin ${e.toString()}");

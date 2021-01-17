@@ -71,7 +71,7 @@ class _ChatDetailScreen2State extends State<ChatDetailScreen2> {
   @override
   Widget build(BuildContext context) {
     return  BlocProvider(
-        create: (context) => homeBloc..add(GetAllChatMsgEvent(token: token, indexId: widget.indexId, slug: widget.slug)),
+        create: (context) => homeBloc..add(GetAllChatMsgEvent(token: token, indexId: widget.indexId, adId: widget.slug)),
         child: BlocListener(
           bloc: homeBloc,
           listener: (context, state) {

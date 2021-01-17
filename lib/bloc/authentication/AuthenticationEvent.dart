@@ -15,20 +15,22 @@ class NonProgressAuthenticationEvent extends AuthenticationEvent{}
 class LoginReqAuthenticationEvent extends AuthenticationEvent{
   final String emailOrMobile;
   final String password;
+  final String deviceToken;
   LoginReqAuthenticationEvent(
-      {@required this.emailOrMobile, @required this.password});
+      {@required this.emailOrMobile, @required this.password, @required this.deviceToken});
 
   @override
-  List<Object> get props => [emailOrMobile, password];
+  List<Object> get props => [emailOrMobile, password,deviceToken];
 }
 
 class SocialLoginReqAuthenticationEvent extends AuthenticationEvent{
   final String emailOrMobile;
+  final String deviceToken;
   SocialLoginReqAuthenticationEvent(
-      {@required this.emailOrMobile});
+      {@required this.emailOrMobile, @required this.deviceToken});
 
   @override
-  List<Object> get props => [emailOrMobile];
+  List<Object> get props => [emailOrMobile, deviceToken];
 }
 
 class RegisterReqAuthenticationEvent extends AuthenticationEvent{

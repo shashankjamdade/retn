@@ -560,6 +560,9 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                     child: Container(
                         child: BottomFloatingChatBtnsWidget(
                             itemDetailResponse != null
+                                ? itemDetailResponse.ad.id
+                                : "",
+                            itemDetailResponse != null
                                 ? itemDetailResponse.ad.slug
                                 : "",
                             itemDetailResponse.ad.contact != null &&

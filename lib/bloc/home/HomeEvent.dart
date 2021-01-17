@@ -216,25 +216,25 @@ class GetAllChatUserEvent extends HomeEvent {
 class GetAllChatMsgEvent extends HomeEvent {
   final String token;
   final String indexId;
-  final String slug;
+  final String adId;
 
   GetAllChatMsgEvent(
-      {@required this.token, @required this.indexId, @required this.slug});
+      {@required this.token, @required this.indexId, @required this.adId});
 
   @override
-  List<Object> get props => [token, indexId, slug];
+  List<Object> get props => [token, indexId, adId];
 }
 
 class GetAllChatMsgNoProgressEvent extends HomeEvent {
   final String token;
   final String indexId;
-  final String slug;
+  final String adId;
 
   GetAllChatMsgNoProgressEvent(
-      {@required this.token, @required this.indexId, @required this.slug});
+      {@required this.token, @required this.indexId, @required this.adId});
 
   @override
-  List<Object> get props => [token, indexId, slug];
+  List<Object> get props => [token, indexId, adId];
 }
 
 class GetSlugChatMsgEvent extends HomeEvent {

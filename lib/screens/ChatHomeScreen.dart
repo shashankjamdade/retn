@@ -7,6 +7,7 @@ import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/model/get_all_chat_user_list_response.dart';
+import 'package:flutter_rentry_new/model/new_chatlist_res.dart';
 import 'package:flutter_rentry_new/screens/ChatDetailScreen.dart';
 import 'package:flutter_rentry_new/screens/LoginScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
@@ -22,7 +23,7 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
   List colors = [Colors.red, Colors.lightBlueAccent, Colors.amber];
   String selectedSection = "ALL";
   HomeBloc homeBloc = new HomeBloc();
-  GetAllChatUserListResponse mGetAllChatUserListResponse;
+  NewChatlistRes mGetAllChatUserListResponse;
   var loginResponse;
   var token = "";
 
@@ -74,7 +75,7 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
     if (state is GetAllChatUserListResState) {
       mGetAllChatUserListResponse = state.res;
     }
-    if(mGetAllChatUserListResponse.data.chat_list.length == 0){
+    if(mGetAllChatUserListResponse.data.length == 0){
       return getScreenProgressUI(length: 0);
     }else{
       return Scaffold(
@@ -141,10 +142,10 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
     return Container(
       child: ListView.builder(
           scrollDirection: Axis.vertical,
-          itemCount: mGetAllChatUserListResponse.data.chat_list.length,
+          itemCount: mGetAllChatUserListResponse.data.length,
           itemBuilder: (context, pos) {
             var createDate = DateTime.parse(
-                "${mGetAllChatUserListResponse.data.chat_list[pos].chat_created_date}");
+                "${mGetAllChatUserListResponse.data[pos].created_date}");
             DateFormat dateFormatter = new DateFormat('dd MMM');
             DateFormat timeFormatter = new DateFormat('HH:mm');
             String currentTime = timeFormatter.format(createDate);
@@ -155,8 +156,8 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ChatDetailScreen(username:mGetAllChatUserListResponse.data.chat_list[pos].chat_with, indexId:mGetAllChatUserListResponse.data.chat_list[pos].inbox_id,
-                      slug: mGetAllChatUserListResponse.data.chat_list[pos].ad_slug
+                  MaterialPageRoute(builder: (context) => ChatDetailScreen(username:mGetAllChatUserListResponse.data[pos].chat_with.receiver_id, indexId:mGetAllChatUserListResponse.data[pos].inbox_id,
+                      slug: mGetAllChatUserListResponse.data[pos].ad_slug, adId:  mGetAllChatUserListResponse.data[pos].ad_id,
                   )),
                 );
               },
@@ -172,20 +173,34 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
                             : pos % 3 == 1 ? colors[1] : colors[2],
                         shape: BoxShape.circle),
                     child: Center(
-                      child: Text(
-                        mGetAllChatUserListResponse.data.chat_list[pos].chat_with!=null && mGetAllChatUserListResponse.data.chat_list[pos].chat_with?.isNotEmpty?mGetAllChatUserListResponse.data.chat_list[pos].chat_with[0].toUpperCase():"-",
+                      child:  Container(
+                        height: space_50,
+                        width: space_50,
+                        child: ClipRRect(
+                          borderRadius:
+                          BorderRadius.circular(space_25),
+                          child: FadeInImage.assetNetwork(
+                            placeholder: "assets/images/app_img.png",
+                            image: (mGetAllChatUserListResponse.data[pos].ad_image!=null && mGetAllChatUserListResponse.data[pos].ad_image?.isNotEmpty)? mGetAllChatUserListResponse.data[pos].ad_image:"http://rentozo.com/assets/img/user.jpg",
+                            fit: BoxFit.fill,
+                            width: space_80,
+                            height: space_60,
+                          ),
+                        ),
+                      ),/*Text(
+                        mGetAllChatUserListResponse.data[pos].chat_with!=null && mGetAllChatUserListResponse.data[pos].chat_with?.username.isNotEmpty?mGetAllChatUserListResponse.data[pos].chat_with?.username[0].toUpperCase():"-",
                         style: CommonStyles.getRalewayStyle(
                             space_15, FontWeight.w600, Colors.white),
-                      ),
+                      ),*/
                     ),
                   ),
                   title: Text(
-                    mGetAllChatUserListResponse.data.chat_list[pos].chat_with,
+                    mGetAllChatUserListResponse.data[pos].chat_with?.username,
                     style: CommonStyles.getRalewayStyle(space_15,
                         FontWeight.w600, Colors.black.withOpacity(0.8)),
                   ),
                   subtitle: Text(
-                    "",
+                    "${mGetAllChatUserListResponse.data[pos].ad_slug}",
                     style: CommonStyles.getRalewayStyle(space_15,
                         FontWeight.w500, Colors.black.withOpacity(0.5)),
                     maxLines: 1,

@@ -2043,11 +2043,12 @@ class BottomFloatingFilterBtnsWidget extends StatelessWidget {
 }
 
 class BottomFloatingChatBtnsWidget extends StatelessWidget {
+  String adId;
   String slug;
   String mobile;
   String sellerId;
 
-  BottomFloatingChatBtnsWidget(this.slug, this.mobile, this.sellerId);
+  BottomFloatingChatBtnsWidget(this.adId,this.slug, this.mobile, this.sellerId);
 
   @override
   Widget build(BuildContext context) {
@@ -2102,7 +2103,7 @@ class BottomFloatingChatBtnsWidget extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) => ChatDetailScreen(
-                              slug: slug, sellerId: sellerId,
+                              slug: slug, sellerId: sellerId, adId: adId,
                             )),
                   );
                 },

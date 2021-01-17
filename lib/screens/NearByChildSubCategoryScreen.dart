@@ -100,9 +100,7 @@ class _NearByChildSubCategoryScreenState
       mLat = widget.lat;
       mLng = widget.lng;
       debugPrint("ACCESSING_SELECTED_LOCATION ${mLat}, ${mLng} ------");
-    } else if (selectedLoc != null ||
-        widget.isFromNearBy ||
-        (widget.lat.isEmpty && widget.lng.isEmpty)) {
+    } else if (selectedLoc != null) {
       mLat = selectedLoc.mlat;
       mLng = selectedLoc.mlng;
       debugPrint("ACCESSING_INHERITED_LOCATION ${mLat}, ${mLng} ------");

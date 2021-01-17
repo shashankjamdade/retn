@@ -83,10 +83,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       yield* callGetAllChatUserListApi(event.token);
     } else if (event is GetAllChatMsgEvent) {
       yield ProgressState();
-      yield* callGetAllChatMsgApi(event.token, event.indexId, event.slug);
+      yield* callGetAllChatMsgApi(event.token, event.indexId, event.adId);
     } else if (event is GetAllChatMsgNoProgressEvent) {
 //      yield ProgressState();
-      yield* callGetAllChatMsgApi(event.token, event.indexId, event.slug);
+      yield* callGetAllChatMsgApi(event.token, event.indexId, event.adId);
     } else if (event is GetSlugChatMsgEvent) {
       yield ProgressState();
       yield* callGetSlugChatMsgApi(event.token, event.slug);
@@ -444,14 +444,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   Stream<HomeState> callGetAllChatMsgApi(
-      String token, String indexId, String slug) async* {
+      String token, String indexId, String adId) async* {
     try {
       homeRepository =
           homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callGetAllChatMsgApi ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
       final getMyFavRes =
-          await homeRepository.callGetAllChatMsgApi(token, indexId, slug);
+          await homeRepository.callGetAllChatMsgApi(token, indexId, adId);
       debugPrint("callGetAllChatMsgApi ${jsonEncode(getMyFavRes)}");
       yield GetAllChatMsgResState(res: getMyFavRes);
     } catch (e) {
