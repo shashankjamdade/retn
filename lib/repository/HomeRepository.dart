@@ -110,7 +110,7 @@ class HomeRepository extends BaseRepository {
     int code = 0;
     //http secure connection
     var http = makeHttpSecure();
-    print("UNDER callItemDetailApi ${categoryName}");
+    print("UNDER callItemDetailApi ${BASE_URL}${ITEMDETAIL_API}?title=${categoryName}");
     var res = await http.get(
       BASE_URL + ITEMDETAIL_API + "?title=${categoryName}",
       headers: {"Token": token},

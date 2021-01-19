@@ -169,6 +169,7 @@ class Category_adslist {
   String title;
   String slug;
   String category;
+  String category_name;
   String subcategory;
   String description;
   String price;
@@ -200,6 +201,7 @@ class Category_adslist {
     this.title,
     this.slug,
     this.category,
+    this.category_name,
     this.subcategory,
     this.description,
     this.price,
@@ -231,6 +233,7 @@ class Category_adslist {
     title = json["title"];
     slug = json["slug"];
     category = json["category"];
+    category_name = json["category_name"];
     subcategory = json["subcategory"];
     description = json["description"];
     price = json["price"];
@@ -264,6 +267,7 @@ class Category_adslist {
     map["title"] = title;
     map["slug"] = slug;
     map["category"] = category;
+    map["category_name"] = category_name;
     map["subcategory"] = subcategory;
     map["description"] = description;
     map["price"] = price;

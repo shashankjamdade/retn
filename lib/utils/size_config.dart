@@ -46,6 +46,7 @@ const double space_270 = 270.0;
 const double space_280 = 280.0;
 const double space_300 = 300.0;
 const double space_340 = 340.0;
+const double space_320 = 320.0;
 const double space_350 = 350.0;
 const double space_360 = 360.0;
 const double space_370 = 370.0;

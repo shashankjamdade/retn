@@ -107,9 +107,10 @@ class _EditRentalPriceScreenState extends State<EditRentalPriceScreen> {
                 if (state.res.status != null &&
                     (state.res.status == "success" ||
                         state.res.status == "true")) {
-                  Navigator.pushReplacement(
+                  Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => MyAdsListScreen()),
+                    MaterialPageRoute(builder: (context) => HomeScreen(isRedirectToMyAds: true,)),
+                        (route) => false,
                   );
                 }
               }

@@ -121,14 +121,15 @@ Future<void> openMap(double latitude, double longitude) async {
 
 getWidthToHeightRatio(BuildContext context){
   var screenHeight = MediaQuery.of(context).size.height;
+  debugPrint("SCREEN_HEIGHT--> ${screenHeight}");
   var ratio = (getProportionateScreenWidth(
       context, space_230) /
       (Platform.isIOS
           ? getProportionateScreenHeight(
           context, space_300)
-          : screenHeight<=1530 ?getProportionateScreenHeight(
+          : screenHeight<=712 ?getProportionateScreenHeight(
           context, space_370): getProportionateScreenHeight(
-          context, space_340)));
+          context, space_320)));
   return ratio;
 }
 //Future<bool> isInternet() async {

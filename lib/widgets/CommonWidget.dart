@@ -1954,7 +1954,8 @@ class CommonBottomNavBarWidget extends StatelessWidget {
 class BottomFloatingFilterBtnsWidget extends StatelessWidget {
   FilterRes filterRes;
   Function openFilter;
-  BottomFloatingFilterBtnsWidget(this.filterRes, this.openFilter);
+  Function openSortFilter;
+  BottomFloatingFilterBtnsWidget(this.filterRes, this.openFilter, this.openSortFilter);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -1986,14 +1987,7 @@ class BottomFloatingFilterBtnsWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GestureDetector(
-                onTap: () {
-                  debugPrint("FILTER_OPEN");
-                  openFilter();
-//                  Navigator.push(
-//                    context,
-//                    MaterialPageRoute(builder: (context) => FilterScreen(filterRes)),
-//                  );
-                },
+                onTap:  openSortFilter,
                 child: Container(
                   height: space_40,
                   width: space_40,

@@ -9,6 +9,7 @@ import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/model/ChatMsgModel.dart';
 import 'package:flutter_rentry_new/model/new_inbox_chat_res.dart';
+import 'package:flutter_rentry_new/screens/ItemDetailScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:intl/intl.dart';  //for date format
@@ -129,7 +130,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               color: Colors.white,
             )),
         title: FlatButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ItemDetailScreen(categoryName: mGetAllChatMsgRes.data.ad_and_user_details?.ad_slug,)),
+              );
+            },
             icon: Stack(
               children: [
                 Container(

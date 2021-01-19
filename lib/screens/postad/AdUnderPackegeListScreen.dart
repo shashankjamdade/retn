@@ -166,7 +166,7 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
                 if(state.res.status!=null && (state.res.status == "success" || state.res.status == "true")){
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => MyAdsListScreen()),
+                    MaterialPageRoute(builder: (context) => HomeScreen(isRedirectToMyAds: true,)),
                   );
                 }
               }

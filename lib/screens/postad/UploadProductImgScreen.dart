@@ -8,6 +8,7 @@ import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UploadProductImgScreen extends StatefulWidget {
@@ -515,24 +516,67 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
   }
 
   Future getImageCamera(String imgType) async {
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
-    setState(() {
-      if (pickedFile != null) {
-        if (imgType == "img1") {
-          _image1 = File(pickedFile.path);
-          debugPrint("FILE_SELECTED ${_image1.path}");
-        } else if (imgType == "img2") {
-          _image2 = File(pickedFile.path);
-          debugPrint("FILE_SELECTED ${_image2.path}");
-        } else if (imgType == "img3") {
-          _image3 = File(pickedFile.path);
-          debugPrint("FILE_SELECTED ${_image3.path}");
+    try{
+      final pickedFile = await picker.getImage(source: ImageSource.camera);
+      setState(() {
+        if (pickedFile != null) {
+          if (imgType == "img1") {
+            _image1 = File(pickedFile.path);
+            debugPrint("FILE_SELECTED ${_image1.path}");
+            Fluttertoast.showToast(
+                msg: "Success ${_image1.path}",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.black,
+                textColor: Colors.white,
+                fontSize: space_14);
+          } else if (imgType == "img2") {
+            _image2 = File(pickedFile.path);
+            debugPrint("FILE_SELECTED ${_image2.path}");
+            Fluttertoast.showToast(
+                msg: "Success ${_image2.path}",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.black,
+                textColor: Colors.white,
+                fontSize: space_14);
+          } else if (imgType == "img3") {
+            _image3 = File(pickedFile.path);
+            debugPrint("FILE_SELECTED ${_image3.path}");
+            Fluttertoast.showToast(
+                msg: "Success ${_image3.path}",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.black,
+                textColor: Colors.white,
+                fontSize: space_14);
+          }
+          mSelectedImg = "";
+        } else {
+          mSelectedImg = "";
+          print('No image selected.');
+          Fluttertoast.showToast(
+              msg: "Cancelled",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+              fontSize: space_14);
         }
-        mSelectedImg = "";
-      } else {
-        mSelectedImg = "";
-        print('No image selected.');
-      }
-    });
+      });
+    }catch(e, stacktrace){
+      Fluttertoast.showToast(
+          msg: "EXception ${e.toString()}",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: space_14);
+    }
   }
 }

@@ -480,7 +480,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                           SIMILAR_PRODUCT,
                                           itemDetailResponse.similar_ads[0].id,
                                           itemDetailResponse
-                                              .similar_ads[0].category)
+                                              .similar_ads[0].category_name)
                                       : doNothing();
                                 }),
                                 Container(
@@ -521,7 +521,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                           SIMILAR_PRODUCT,
                                           itemDetailResponse.seller_all_product[0].id,
                                           itemDetailResponse
-                                              .seller_all_product[0].category)
+                                              .seller_all_product[0].category_name)
                                       : doNothing();
                                 }),
                                 Container(
