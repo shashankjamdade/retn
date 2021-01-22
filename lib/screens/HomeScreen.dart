@@ -61,18 +61,18 @@ class _HomeScreenState extends State<HomeScreen> {
           bloc: homeBloc,
           listener: (context, state) {
             if(state is HomeResState){
-              var screenHeight = MediaQuery.of(context).size.height;
-              debugPrint("SCREEN_HEIGHT--> ${screenHeight}");
-              Fluttertoast.showToast(
-                  msg: "${screenHeight}",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  timeInSecForIosWeb: 1,
-                  backgroundColor: Colors.black,
-                  textColor: Colors.white,
-                  fontSize: space_14);
+//              var screenHeight = MediaQuery.of(context).size.height;
+//              debugPrint("SCREEN_HEIGHT--> ${screenHeight}");
+//              Fluttertoast.showToast(
+//                  msg: "${screenHeight}",
+//                  toastLength: Toast.LENGTH_SHORT,
+//                  gravity: ToastGravity.BOTTOM,
+//                  timeInSecForIosWeb: 1,
+//                  backgroundColor: Colors.black,
+//                  textColor: Colors.white,
+//                  fontSize: space_14);
               mHomeResponse = state.res;
-              if(widget.isRedirectToMyAds){
+              if(widget.isRedirectToMyAds!=null && widget.isRedirectToMyAds){
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => MyAdsListScreen()),

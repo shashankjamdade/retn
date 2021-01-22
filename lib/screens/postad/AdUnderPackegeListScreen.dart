@@ -24,7 +24,7 @@ import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:flutter_rentry_new/widgets/ListItemCardWidget.dart';
 import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
+//import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import 'MyAdsListScreen.dart';
 
@@ -50,15 +50,15 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
   var mSelectedPackageId = "";
   var mBuypackageId = "";
   var mSelectedPackageAmt = "";
-  var _razorpay = Razorpay();
+//  var _razorpay = Razorpay();
 
   @override
   void initState() {
     super.initState();
     debugPrint("ENTRY_AdUnderPackageListScreen---------");
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+//    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+//    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+//    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
   @override
@@ -76,52 +76,52 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
   @override
   void dispose() {
     super.dispose();
-    _razorpay.clear();
+//    _razorpay.clear();
   }
 
-  void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    var amt = "";
-//    setState(() {
-//      mSelectedPackageId = mBuypackageId;
+//  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+//    var amt = "";
+////    setState(() {
+////      mSelectedPackageId = mBuypackageId;
+////    });
+//    mGetNotificationResponse.data.forEach((element){
+//      if(element.package_id == mBuypackageId){
+//        amt = element.package_price;
+//      }
 //    });
-    mGetNotificationResponse.data.forEach((element){
-      if(element.package_id == mBuypackageId){
-        amt = element.package_price;
-      }
-    });
-    debugPrint("PAYMENT_SUCCESS ------- > ${jsonEncode(response.paymentId)}");
-    var mRazorpaySuccessRes = new RazorpaySuccessRes(paymentId: response.paymentId, orderId: response.orderId, signature: response.signature);
-    debugPrint("PG_RES ------- > ${jsonEncode(mRazorpaySuccessRes)}");
-    homeBloc..add(PackagePaymentEvent(token: token, packageId: mBuypackageId, amt: amt, pgRes: jsonEncode(mRazorpaySuccessRes)));
-  }
+//    debugPrint("PAYMENT_SUCCESS ------- > ${jsonEncode(response.paymentId)}");
+//    var mRazorpaySuccessRes = new RazorpaySuccessRes(paymentId: response.paymentId, orderId: response.orderId, signature: response.signature);
+//    debugPrint("PG_RES ------- > ${jsonEncode(mRazorpaySuccessRes)}");
+//    homeBloc..add(PackagePaymentEvent(token: token, packageId: mBuypackageId, amt: amt, pgRes: jsonEncode(mRazorpaySuccessRes)));
+//  }
 
-  void _handlePaymentError(PaymentFailureResponse response) {
-    debugPrint("PAYMENT_ERROR ------- > ${response.message}");
-    showSnakbar(_scaffoldKey, response.message);
-  }
+//  void _handlePaymentError(PaymentFailureResponse response) {
+//    debugPrint("PAYMENT_ERROR ------- > ${response.message}");
+//    showSnakbar(_scaffoldKey, response.message);
+//  }
 
-  void _handleExternalWallet(ExternalWalletResponse response) {
-    debugPrint("PAYMENT_EXT_WALLET ------- > ${jsonEncode(response.walletName)}");
-  }
+//  void _handleExternalWallet(ExternalWalletResponse response) {
+//    debugPrint("PAYMENT_EXT_WALLET ------- > ${jsonEncode(response.walletName)}");
+//  }
 
   void openCheckout(String amt, String packageName, String packageId) async {
     debugPrint("PAYYYY ${amt} for $packageId");
-    var options = {
-      'key': 'rzp_test_5JE0nfz3a956ce',
-      'amount': amt,
-      'name': packageName,
-      'description': 'Buy new package',
-      'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
-      'external': {
-        'wallets' : ['paytm'],
-      }
-    };
-    try{
-      _razorpay.open(options);
-    }
-    catch(e) {
-      debugPrint(e);
-    }
+//    var options = {
+//      'key': 'rzp_test_5JE0nfz3a956ce',
+//      'amount': amt,
+//      'name': packageName,
+//      'description': 'Buy new package',
+//      'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
+//      'external': {
+//        'wallets' : ['paytm'],
+//      }
+//    };
+//    try{
+//      _razorpay.open(options);
+//    }
+//    catch(e) {
+//      debugPrint(e);
+//    }
   }
 
   @override
