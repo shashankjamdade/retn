@@ -235,34 +235,52 @@ class _NearByChildSubCategoryScreenState
                   height: space_15,
                 ),
                 Expanded(
-                  child: ListView(
-                    children: [
-                      Container(
-                        child: GridView.builder(
-                          shrinkWrap: true,
-                          primary: false,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            childAspectRatio: getWidthToHeightRatio(context),
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 5.0,
-                            mainAxisSpacing: 5.0,
+                  child: RefreshIndicator(
+                    onRefresh: (){
+                      homeBloc
+                        ..add(NearbySubChildCategoryListReqEvent(
+                            token: token,
+                            categoryId: widget.categoryId,
+                            subcategory_id: widget.subCategoryId,
+                            radius: widget.radius,
+                            lat: mLat,
+                            lng: mLng,
+                            filter_subcategory_id: filter_subcategory_id,
+                            filter_custome_filed_id: filter_custome_filed_id,
+                            filter_min: filter_min,
+                            filter_max: filter_max,
+                            sort_by_price:
+                            priceSort != null && priceSort.isNotEmpty ? priceSort : ""));
+                    },
+                    child: ListView(
+                      children: [
+                        Container(
+                          child: GridView.builder(
+                            shrinkWrap: true,
+                            primary: false,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              childAspectRatio: getWidthToHeightRatio(context),
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 5.0,
+                              mainAxisSpacing: 5.0,
+                            ),
+                            itemCount: res.data.ad_list.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                height: space_280,
+                                width: space_230,
+                                child: ItemCardNoMarginWidget(
+                                    category_adslist: res.data.ad_list[index]),
+                              );
+                            },
                           ),
-                          itemCount: res.data.ad_list.length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              height: space_280,
-                              width: space_230,
-                              child: ItemCardNoMarginWidget(
-                                  category_adslist: res.data.ad_list[index]),
-                            );
-                          },
                         ),
-                      ),
-                      SizedBox(
-                        height: space_110,
-                      )
-                    ],
+                        SizedBox(
+                          height: space_110,
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -524,50 +542,50 @@ class _NearByChildSubCategoryScreenState
                                                                       .subcategory
                                                                       .length >
                                                                   0
-                                                          ? Container(
-                                                        color: CommonStyles.grey.withOpacity(0.2),
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  dialogSetState(
-                                                                      () {
-                                                                    mExpandedTitle =
-                                                                        "SubCategories";
-                                                                  });
-                                                                },
-                                                                child: Container(
-                                                                  margin: EdgeInsets.only(
-                                                                      left:
-                                                                      space_15,
-                                                                      right:
-                                                                      space_15),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .spaceBetween,
-                                                                    children: [
-                                                                      Text(
-                                                                        "SubCategories",
-                                                                        style: CommonStyles.getRalewayStyle(
-                                                                            space_15,
-                                                                            FontWeight
-                                                                                .w800,
-                                                                            Colors
-                                                                                .black),
+                                                          ? InkWell(
+                                                        onTap: () {
+                                                          dialogSetState(
+                                                                  () {
+                                                                mExpandedTitle =
+                                                                "SubCategories";
+                                                              });
+                                                        },
+                                                            child: Container(
+                                                        color: CommonStyles.grey.withOpacity(0.1),
+                                                                child:
+                                                                    Container(
+                                                                      margin: EdgeInsets.only(
+                                                                          left:
+                                                                          space_15,
+                                                                          right:
+                                                                          space_15),
+                                                                      child: Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment
+                                                                                .spaceBetween,
+                                                                        children: [
+                                                                          Text(
+                                                                            "SubCategories",
+                                                                            style: CommonStyles.getRalewayStyle(
+                                                                                space_15,
+                                                                                FontWeight
+                                                                                    .w800,
+                                                                                Colors
+                                                                                    .black),
+                                                                          ),
+                                                                          Container(
+                                                                            padding: EdgeInsets.symmetric(
+                                                                                vertical:
+                                                                                    space_10),
+                                                                            child: mExpandedTitle != null &&
+                                                                                      mExpandedTitle == "SubCategories"
+                                                                                  ?Icon(Icons.keyboard_arrow_up):Icon(Icons.keyboard_arrow_down)
+                                                                          ),
+                                                                        ],
                                                                       ),
-                                                                      Container(
-                                                                        padding: EdgeInsets.symmetric(
-                                                                            vertical:
-                                                                                space_10),
-                                                                        child: mExpandedTitle != null &&
-                                                                                  mExpandedTitle == "SubCategories"
-                                                                              ?Icon(Icons.keyboard_arrow_up):Icon(Icons.keyboard_arrow_down)
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
+                                                                    ),
                                                               ),
-                                                            )
+                                                          )
                                                           : Container(
                                                               width: 0,
                                                               height: 0,
@@ -651,24 +669,23 @@ class _NearByChildSubCategoryScreenState
                                                                     CrossAxisAlignment
                                                                         .start,
                                                                 children: [
-                                                                  Container(
-                                                                    color: CommonStyles.grey.withOpacity(0.2),
-                                                                    margin: EdgeInsets.only(
-                                                                      top: space_15),
-                                                                    child:
-                                                                        GestureDetector(
-                                                                      onTap:
-                                                                          () {
-                                                                        dialogSetState((){
-                                                                          mExpandedTitle = filterRes.customefield[parentIndex].name;
-                                                                        });
-                                                                          },
+                                                                  InkWell(
+                                                                    onTap:
+                                                                        () {
+                                                                      dialogSetState((){
+                                                                        mExpandedTitle = filterRes.customefield[parentIndex].name;
+                                                                      });
+                                                                    },
+                                                                    child: Container(
+                                                                      color: CommonStyles.grey.withOpacity(0.1),
+                                                                      margin: EdgeInsets.only(
+                                                                        top: space_15),
                                                                       child:
                                                                           Row(
                                                                             mainAxisAlignment:
                                                                             MainAxisAlignment
                                                                                 .spaceBetween,
-                                                                        children: [
+                                                                          children: [
                                                                           Container(
                                                                             margin: EdgeInsets.only(left: space_15),
                                                                             child: Text(
@@ -688,8 +705,8 @@ class _NearByChildSubCategoryScreenState
                                                                                 mExpandedTitle == filterRes.customefield[parentIndex].name
                                                                                 ?Icon(Icons.keyboard_arrow_up):Icon(Icons.keyboard_arrow_down),
                                                                           ),
-                                                                        ],
-                                                                      ),
+                                                                          ],
+                                                                        ),
                                                                     ),
                                                                   ),
                                                                   mExpandedTitle!=null && mExpandedTitle==filterRes.customefield[parentIndex].name?Container(

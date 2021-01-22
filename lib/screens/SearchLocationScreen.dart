@@ -514,7 +514,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                                 color: CommonStyles.blue,
                               ),
                               label: Text(
-                                "Use your current locationss",
+                                "Use your current locations",
                                 style: CommonStyles.getRalewayStyle(
                                     space_15, FontWeight.w600, Colors.black),
                               )),
@@ -553,32 +553,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                                     onLocationSelected(lat, lng, name);
                                   });
                                 } else if (state is GooglePlaceState &&
-                                    state.res is GooglePlacesRes) {
-                                  if (state.res.predictions.length > 0)
-                                   /* return InkWell(
-                                      onTap: () {
-                                        if (state.res.predictions[pos] !=
-                                            null) {
-                                          debugPrint(
-                                              "MY_PLACE_SELECT-->> ${state.res.predictions[pos]?.place_id}");
-                                          onLocationSelectedFromGoogle(
-                                              state.res.predictions[pos]);
-                                        }
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: space_10,
-                                            horizontal: space_15),
-                                        child: Text(
-                                          "${state.res.predictions[pos]?.description}",
-//          locationData!=null && locationData.structured_formatting!=null && locationData.structured_formatting.mainText!=null ?locationData.structured_formatting.mainText:"1",
-                                          style: CommonStyles.getRalewayStyle(
-                                              space_14,
-                                              FontWeight.w500,
-                                              Colors.black87),
-                                        ),
-                                      ),
-                                    );*/
+                                    state.res is GooglePlacesRes && state.res.predictions.length > 0) {
                                   return GooglePlaceListWidget(
                                       state.res.predictions[pos],
                                       (Predictions prediction) {

@@ -166,6 +166,7 @@ class Category_ads {
 
 class Category_adslist {
   String id;
+  String distance;
   String title;
   String slug;
   String category;
@@ -198,6 +199,7 @@ class Category_adslist {
 
   Category_adslist({
     this.id,
+    this.distance,
     this.title,
     this.slug,
     this.category,
@@ -230,6 +232,7 @@ class Category_adslist {
 
   Category_adslist.fromJson(dynamic json) {
     id = json["id"];
+    distance = json["distance"];
     title = json["title"];
     slug = json["slug"];
     category = json["category"];
@@ -264,6 +267,7 @@ class Category_adslist {
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
     map["id"] = id;
+    map["distance"] = distance;
     map["title"] = title;
     map["slug"] = slug;
     map["category"] = category;

@@ -84,7 +84,7 @@ class CategoryListWidget extends StatelessWidget {
         padding: EdgeInsets.symmetric(
             vertical: space_10, horizontal: space_15),
         child: Text(
-          categoryObj.subcategory_name!=null? categoryObj.subcategory_name:categoryObj.category_name,
+          categoryObj?.ads_title!=null? categoryObj?.ads_title: categoryObj.subcategory_name!=null? categoryObj.subcategory_name:categoryObj.category_name,
           style: CommonStyles.getRalewayStyle(
               space_14, FontWeight.w500, Colors.black87),
         ),

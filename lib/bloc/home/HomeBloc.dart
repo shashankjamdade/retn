@@ -30,6 +30,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is HomeReqAuthenticationEvent) {
       yield ProgressState();
       yield* callHomeApi(event.token);
+    }  else if (event is HomeReqAuthenticationNoProgressEvent) {
+//      yield ProgressState();
+      yield* callHomeApi(event.token);
     } else if (event is ItemDetailReqEvent) {
       yield ProgressState();
       yield* callItemDetailApi(event.token, event.categoryName);

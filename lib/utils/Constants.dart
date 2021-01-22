@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/screens/AllCategoryScreen.dart';
 import 'package:flutter_rentry_new/screens/ChildSubCategoryScreen.dart';
 import 'package:flutter_rentry_new/screens/NearByChildSubCategoryScreen.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
@@ -84,6 +85,14 @@ void onViewAllClick(
 //    context,
 //    MaterialPageRoute(builder: (context) => ChildSubCategoryScreen()),
 //  );
+}
+
+void redirectToCategoryList(BuildContext context){
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+        builder: (context) => AllCategoryScreen()),
+  );
 }
 
 Future<ui.Image> getUiImage(

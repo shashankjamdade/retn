@@ -24,6 +24,15 @@ class HomeReqAuthenticationEvent extends HomeEvent {
   List<Object> get props => [token];
 }
 
+class HomeReqAuthenticationNoProgressEvent extends HomeEvent {
+  final String token;
+
+  HomeReqAuthenticationNoProgressEvent({@required this.token});
+
+  @override
+  List<Object> get props => [token];
+}
+
 class ItemDetailReqEvent extends HomeEvent {
   final String token;
   final String categoryName;

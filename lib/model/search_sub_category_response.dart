@@ -36,16 +36,22 @@ class CategorySearchData {
   String subcategory_name;
   String category_id;
   String category_name;
+  String ads_id;
+  String ads_title;
 
   CategorySearchData({
     this.subcategory_id,
     this.subcategory_name,
+    this.ads_id,
+    this.ads_title,
     this.category_id,
     this.category_name});
 
   CategorySearchData.fromJson(dynamic json) {
     subcategory_id = json["subcategory_id"];
     subcategory_name = json["subcategory_name"];
+    ads_id = json["ads_id"];
+    ads_title = json["ads_title"];
     category_id = json["category_id"];
     category_name = json["category_name"];
   }
@@ -54,6 +60,8 @@ class CategorySearchData {
     var map = <String, dynamic>{};
     map["subcategory_id"] = subcategory_id;
     map["subcategory_name"] = subcategory_name;
+    map["ads_id"] = ads_id;
+    map["ads_title"] = ads_title;
     map["category_id"] = category_id;
     map["category_name"] = category_name;
     return map;

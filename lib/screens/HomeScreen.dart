@@ -22,7 +22,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class HomeScreen extends StatefulWidget {
   var isRedirectToMyAds = false;
+
   HomeScreen({this.isRedirectToMyAds});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -44,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     loginResponse = StateContainer.of(context).mLoginResponse;
-    if(loginResponse!=null) {
+    if (loginResponse != null) {
       token = loginResponse.data.token;
       debugPrint("ACCESSING_INHERITED ${token}");
     }
@@ -56,11 +58,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => homeBloc..add(HomeReqAuthenticationEvent(token: token)),
+      create: (context) =>
+          homeBloc..add(HomeReqAuthenticationEvent(token: token)),
       child: BlocListener(
           bloc: homeBloc,
           listener: (context, state) {
-            if(state is HomeResState){
+            if (state is HomeResState) {
 //              var screenHeight = MediaQuery.of(context).size.height;
 //              debugPrint("SCREEN_HEIGHT--> ${screenHeight}");
 //              Fluttertoast.showToast(
@@ -72,7 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
 //                  textColor: Colors.white,
 //                  fontSize: space_14);
               mHomeResponse = state.res;
-              if(widget.isRedirectToMyAds!=null && widget.isRedirectToMyAds){
+              if (widget.isRedirectToMyAds != null &&
+                  widget.isRedirectToMyAds) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => MyAdsListScreen()),
@@ -81,14 +85,16 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           },
           child: BlocBuilder<HomeBloc, HomeState>(
-            builder: (context, state){
-              if(state is HomeResState){
+            builder: (context, state) {
+              if (state is HomeResState) {
                 return getHomeUI(state.res);
-              }else {
+              } else {
                 return Container(
                   color: Colors.white,
                   child: Center(
-                    child: CircularProgressIndicator(backgroundColor: Colors.white,),
+                    child: CircularProgressIndicator(
+                      backgroundColor: Colors.white,
+                    ),
                   ),
                 );
               }
@@ -97,88 +103,120 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget getHomeUI(HomeResponse homeResponse){
-    return  Scaffold(
+  Widget getHomeUI(HomeResponse homeResponse) {
+    return Scaffold(
       body: SafeArea(
         child: Stack(
           children: [
             Container(
                 child: Column(
-                  children: [
-                    CommonAppbarWidget(app_name, skip_for_now, () {
-                      onSearchLocation(context);
-                    }),
-                    Expanded(
-                      child: Container(
-                          child: ListView(
+              children: [
+                CommonAppbarWidget(app_name, skip_for_now, () {
+                  onSearchLocation(context);
+                }),
+                Expanded(
+                  child: Container(
+                      child: RefreshIndicator(
+                        onRefresh: (){
+                          homeBloc..add(HomeReqAuthenticationEvent(token: token));
+                        },
+                        child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                        BannerImgCarousalWidget(homeResponse),
+                        Container(
+                            child:
+                                RichTextTitleBtnWidget("TOP", "CATEGORIES", () {
+                              redirectToCategoryList(context);
+                            })),
+                        SizedBox(
+                          height: space_15,
+                        ),
+                        CategoryGridWidget(homeResponse),
+                        SizedBox(
+                          height: space_25,
+                        ),
+                        Align(
+                            alignment: Alignment.topLeft,
+                            child: BannersCarousalWidget()),
+                        SizedBox(
+                          height: space_15,
+                        ),
+                        ListView.builder(
                             shrinkWrap: true,
-                            children: [
-                              BannerImgCarousalWidget(homeResponse),
-                              Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: space_15),
-                                  child:
-                                  RichTextTitleWidget("TOP", "CATEGORIES")),
-                              SizedBox(
-                                height: space_15,
-                              ),
-                              CategoryGridWidget(homeResponse),
-                              SizedBox(
-                                height: space_25,
-                              ),
-                              Align(
-                                  alignment: Alignment.topLeft,
-                                  child: BannersCarousalWidget()),
-                              SizedBox(
-                                height: space_15,
-                              ),
-                              ListView.builder(
-                                  shrinkWrap: true,
-                                primary: false,
-                                itemCount: homeResponse.data.category_ads!=null?homeResponse.data.category_ads.length:0,
-                                  itemBuilder: (context, parentPos){
-                                  return Column(
-                                    children: [
-                                      Container(
-                                        height: space_370,
-                                        color: CommonStyles.blue.withOpacity(0.1),
-                                        child: Column(
-                                          children: [
-                                            RichTextTitleBtnWidget("TOP",
-                                                homeResponse.data.category_ads[parentPos].category_name, () {
-                                                  onViewAllClick(context, TYPE_FURNITURE,homeResponse.data.category_ads[parentPos].category_adslist[0].category, homeResponse.data.category_ads[parentPos].category_name);
-                                                }),
-                                            Container(
-                                              height: space_280,
-                                              child: ListView.builder(
-                                                  scrollDirection: Axis.horizontal,
-                                                  itemCount: homeResponse.data.category_ads[parentPos].category_adslist.length,
-                                                  itemBuilder: (context, childPos) {
-                                                    return Container(
-                                                        height: space_300,
-                                                        child: ItemCardWidget(category_adslist: homeResponse.data.category_ads[parentPos].category_adslist[childPos]));
-                                                  }),
-                                            ),
-                                            SizedBox(
-                                              height: space_20,
-                                            ),
-                                          ],
+                            primary: false,
+                            itemCount: homeResponse.data.category_ads != null
+                                ? homeResponse.data.category_ads.length
+                                : 0,
+                            itemBuilder: (context, parentPos) {
+                              return Column(
+                                children: [
+                                  Container(
+                                    height: space_370,
+                                    color: CommonStyles.blue.withOpacity(0.1),
+                                    child: Column(
+                                      children: [
+                                        RichTextTitleBtnWidget(
+                                            "TOP",
+                                            homeResponse
+                                                .data
+                                                .category_ads[parentPos]
+                                                .category_name, () {
+                                          onViewAllClick(
+                                              context,
+                                              TYPE_FURNITURE,
+                                              homeResponse
+                                                  .data
+                                                  .category_ads[parentPos]
+                                                  .category_adslist[0]
+                                                  .category,
+                                              homeResponse
+                                                  .data
+                                                  .category_ads[parentPos]
+                                                  .category_name);
+                                        }),
+                                        Container(
+                                          height: space_280,
+                                          child: ListView.builder(
+                                              scrollDirection: Axis.horizontal,
+                                              itemCount: homeResponse
+                                                  .data
+                                                  .category_ads[parentPos]
+                                                  .category_adslist
+                                                  .length,
+                                              itemBuilder: (context, childPos) {
+                                                return Container(
+                                                    height: space_300,
+                                                    child: ItemCardWidget(
+                                                        category_adslist: homeResponse
+                                                                .data
+                                                                .category_ads[
+                                                                    parentPos]
+                                                                .category_adslist[
+                                                            childPos]));
+                                              }),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        height: space_20,
-                                      ),
-                                    ],
-                                  );
-                              }),
-                              SizedBox(
-                                height: space_90,
-                              ),
-                            ],
-                          )),
-                    )
-                  ],
-                )),
+                                        SizedBox(
+                                          height: space_20,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: space_20,
+                                  ),
+                                ],
+                              );
+                            }),
+                        SizedBox(
+                          height: space_90,
+                        ),
+                    ],
+                  ),
+                      )),
+                )
+              ],
+            )),
             CommonBottomNavBarWidget(),
           ],
         ),
