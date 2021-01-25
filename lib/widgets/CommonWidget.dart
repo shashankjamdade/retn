@@ -668,7 +668,26 @@ class _ItemCardWidgetState extends State<ItemCardWidget> {
                                 ),
                               ),
                             ),
-                          )
+                          ),
+                          widget.category_adslist.distance!=null?Positioned(
+                            bottom: 0.0,
+                            right: 0.0,
+                            child: Container(
+                              height: space_30,
+                              padding:
+                              EdgeInsets.all(space_5),
+                              decoration: BoxDecoration(
+                                color: CommonStyles.primaryColor.withOpacity(0.5),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.location_on, color: Colors.white, size: space_12,),
+                                  SizedBox(width: space_3,),
+                                  Text("${widget.category_adslist.distance} Kms", style: CommonStyles.getMontserratStyle(space_10, FontWeight.w800, Colors.white),)
+                                ],
+                              ),
+                            ),
+                          ):Container(height: 0, width: 0,),
                         ],
                       ),
                       SizedBox(

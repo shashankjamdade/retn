@@ -34,13 +34,15 @@ dependencies:
   image: ^2.1.18
   flutter_facebook_login: ^3.0.0
   google_sign_in: ^4.5.5
-  image_picker: ^0.6.7+14
+  image_picker: ^0.6.7+21
   data_connection_checker: ^0.3.4
   razorpay_flutter: ^1.2.3
   fluttertoast: ^7.1.4
   url_launcher: ^5.7.1
   gson: ^0.1.4
   place_picker: ^0.9.15
+  multi_image_picker: ^4.7.14
+  flutter_absolute_path: ^1.0.6
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.3

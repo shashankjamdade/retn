@@ -156,7 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
         debugPrint(
             "PREFS_STORED_LOGIN-----> ${prefs.getString(USER_LOCATION_ADDRESS)}");
         StateContainer.of(context).updateUserInfo(res);
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomeScreen()),
         );

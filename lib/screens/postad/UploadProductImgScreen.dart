@@ -10,6 +10,8 @@ import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 
 class UploadProductImgScreen extends StatefulWidget {
   AdPostReqModel adPostReqModel;
@@ -494,7 +496,8 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
   }
 
   Future getImage(String imgType) async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    _getImageList(imgType, );
+   /* final pickedFile = await picker.getImage(source: ImageSource.gallery);
     setState(() {
       if (pickedFile != null) {
         if (imgType == "img1") {
@@ -512,7 +515,7 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
         mSelectedImg = "";
         print('No image selected.');
       }
-    });
+    });*/
   }
 
   Future getImageCamera(String imgType) async {
@@ -579,4 +582,88 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
           fontSize: space_14);
     }
   }
+
+  _getImageList(String imgType) async {
+    var count = 1;
+    if (imgType == "img1") {
+      count = 3;
+    }else if (imgType == "img2") {
+      count = 2;
+    }else if (imgType == "img3") {
+      count = 1;
+    }
+    var resultList = await MultiImagePicker.pickImages(
+      maxImages :  count ,
+      enableCamera: true,
+    );
+
+    // The data selected here comes back in the list
+    print(resultList);
+      var imageFile1;
+      var imageFile2;
+      var imageFile3;
+      if(resultList!=null && resultList?.length==1){
+        imageFile1 = await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier);
+        debugPrint("SELECTED_FILES ${imageFile1}");
+      }else if(resultList!=null && resultList?.length==2){
+        imageFile1 = await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier);
+        imageFile2 = await FlutterAbsolutePath.getAbsolutePath(resultList[1].identifier);
+        debugPrint("SELECTED_FILES ${imageFile1}");
+        debugPrint("SELECTED_FILES ${imageFile2}");
+      }else if(resultList!=null && resultList?.length==3){
+        imageFile1 = await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier);
+        imageFile2 = await FlutterAbsolutePath.getAbsolutePath(resultList[1].identifier);
+        imageFile3 = await FlutterAbsolutePath.getAbsolutePath(resultList[2].identifier);
+        debugPrint("SELECTED_FILES ${imageFile1}");
+        debugPrint("SELECTED_FILES ${imageFile2}");
+        debugPrint("SELECTED_FILES ${imageFile3}");
+      }
+
+      setState(() {
+        if (imageFile1 != null) {
+          if(resultList!=null && resultList?.length == 1){
+            if (imgType == "img1") {
+              _image1 = File(imageFile1);
+              debugPrint("FILE_SELECTED ${_image1.path}");
+            } else if (imgType == "img2") {
+              _image2 = File(imageFile1);
+              debugPrint("FILE_SELECTED ${_image2.path}");
+            } else if (imgType == "img3") {
+              _image3 = File(imageFile1);
+              debugPrint("FILE_SELECTED ${_image3.path}");
+            }
+          } else if(resultList!=null && resultList?.length == 2){
+            if (imgType == "img1") {
+              _image1 = File(imageFile1);
+              _image2 = File(imageFile2);
+              debugPrint("FILE_SELECTED ${_image1.path}");
+              debugPrint("FILE_SELECTED ${_image2.path}");
+            } else if (imgType == "img2") {
+              _image2 = File(imageFile1);
+              _image3 = File(imageFile2);
+              debugPrint("FILE_SELECTED ${_image2.path}");
+              debugPrint("FILE_SELECTED ${_image3.path}");
+            }
+          } else if(resultList!=null && resultList?.length == 3){
+            if (imgType == "img1") {
+              _image1 = File(imageFile1);
+              _image2 = File(imageFile2);
+              _image3 = File(imageFile3);
+              debugPrint("FILE_SELECTED ${_image1.path}");
+              debugPrint("FILE_SELECTED ${_image2.path}");
+              debugPrint("FILE_SELECTED ${_image3.path}");
+            }
+          } else {
+
+          }
+          mSelectedImg = "";
+        } else {
+          mSelectedImg = "";
+          print('No image selected.');
+        }
+      });
+
+  }
+
+
 }
