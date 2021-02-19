@@ -109,7 +109,7 @@ class _UserProfileState extends State<UserProfile> {
                                     decoration: BoxDecoration(shape: BoxShape.circle),
                                     child: FadeInImage.assetNetwork(
                                       placeholder: "assets/images/app_img.png",
-                                      image: mUserprofileRes.data.profile_picture != null
+                                      image: mUserprofileRes.data!=null && mUserprofileRes.data.profile_picture != null
                                           ? mUserprofileRes.data.profile_picture
                                           : "http://rentozo.com/assets/img/user.jpg",
                                       fit: BoxFit.fill,

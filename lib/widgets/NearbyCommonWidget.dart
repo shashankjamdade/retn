@@ -68,7 +68,7 @@ class GooglePlaceListWidget extends StatelessWidget {
 class CategoryListWidget extends StatelessWidget {
 
   CategorySearchData categoryObj;
-  Function(String, String, String, String) onCategorySelect;
+  Function(String, String, String, String, String) onCategorySelect;
 
   CategoryListWidget(this.categoryObj, this.onCategorySelect);
 
@@ -77,7 +77,7 @@ class CategoryListWidget extends StatelessWidget {
     return InkWell(
       onTap: (){
         if(categoryObj!=null){
-          onCategorySelect(categoryObj.category_id, categoryObj.subcategory_id, categoryObj.category_name, categoryObj.subcategory_name);
+          onCategorySelect(categoryObj.category_id, categoryObj.subcategory_id, categoryObj.category_name, categoryObj.subcategory_name, categoryObj.ads_title);
         }
       },
       child: Container(

@@ -49,7 +49,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       yield ProgressState();
       yield* callNearbySubChildCategoryListApi(event.token, event.categoryId,
           event.subcategory_id, event.radius, event.lat, event.lng, event.filter_subcategory_id, event.filter_custome_filed_id,
-      event.filter_min, event.filter_max, event.sort_by_price);
+      event.filter_min, event.filter_max, event.sort_by_price, event.ads_title);
     } else if (event is GetCategoryListEvent) {
       yield ProgressState();
       yield* callGetCategoryApi(event.token);
@@ -243,6 +243,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       String filter_min,
       String filter_max,
       String priceSort,
+      String ads_title,
       ) async* {
     try {
       homeRepository =
@@ -262,7 +263,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           filter_custome_filed_id,
           filter_min,
           filter_max,
-          priceSort);
+          priceSort, ads_title);
       debugPrint(
           "nearbySubChildCategoryListResponse ${jsonEncode(
               nearbySubChildCategoryListResponse)}");

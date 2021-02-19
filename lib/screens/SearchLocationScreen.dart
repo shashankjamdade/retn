@@ -29,6 +29,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   var token = "";
   var mCategorySelected = "";
+  var mAdsTitle = "";
   var mCategorySelectedId = "";
   var mCategorySelectedSubCategoryId = "";
   var mLocationSelected = "";
@@ -263,8 +264,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                       padding: EdgeInsets.symmetric(
                           vertical: space_25, horizontal: space_15),
                       child: FlatButton.icon(
-                          onPressed: () {
-                          },
+                          onPressed: () {},
                           icon: ImageIcon(
                             AssetImage("assets/images/bottom_nav_nearby.png"),
                             color: CommonStyles.blue,
@@ -501,11 +501,20 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                               vertical: space_25, horizontal: space_15),
                           child: FlatButton.icon(
                               onPressed: () {
-                                debugPrint("Locl --> ${StateContainer.of(context).mUserLocationSelected?.city}");
+                                debugPrint(
+                                    "Locl --> ${StateContainer.of(context).mUserLocationSelected?.city}");
                                 setState(() {
-                                  mSelectedLattitude = StateContainer.of(context).mUserLocationSelected?.mlat;
-                                  mSelectedLongitude = StateContainer.of(context).mUserLocationSelected?.mlng;
-                                  mLocationSelected = StateContainer.of(context).mUserLocationSelected?.city;
+                                  mSelectedLattitude =
+                                      StateContainer.of(context)
+                                          .mUserLocationSelected
+                                          ?.mlat;
+                                  mSelectedLongitude =
+                                      StateContainer.of(context)
+                                          .mUserLocationSelected
+                                          ?.mlng;
+                                  mLocationSelected = StateContainer.of(context)
+                                      .mUserLocationSelected
+                                      ?.city;
                                 });
                               },
                               icon: ImageIcon(
@@ -553,11 +562,12 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                                     onLocationSelected(lat, lng, name);
                                   });
                                 } else if (state is GooglePlaceState &&
-                                    state.res is GooglePlacesRes && state.res.predictions.length > 0) {
+                                    state.res is GooglePlacesRes &&
+                                    state.res.predictions.length > 0) {
                                   return GooglePlaceListWidget(
                                       state.res.predictions[pos],
                                       (Predictions prediction) {
-                                        onLocationSelectedFromGoogle(prediction);
+                                    onLocationSelectedFromGoogle(prediction);
                                   });
                                 } else if (state is SubCategorySearchResState) {
                                   debugPrint("CATEGDSGDFD ${state.res.data}");
@@ -565,12 +575,14 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                                       (String categoryId,
                                           String subCategoroyId,
                                           String categoryName,
-                                          String subCategoryName) {
+                                          String subCategoryName,
+                                          String ads_title) {
                                     onCategorySelected(
                                         categoryId,
                                         subCategoroyId,
                                         categoryName,
-                                        subCategoryName);
+                                        subCategoryName,
+                                        ads_title);
                                   });
                                 } else {
                                   return Container(
@@ -634,9 +646,10 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
   }
 
   onCategorySelected(String categoryId, String subCategoryId,
-      String categoryName, String subCategoryName) {
+      String categoryName, String subCategoryName, String ads_title) {
     debugPrint(
-        "SELECTED_________ ${categoryId}, ${subCategoryId}, ${categoryName}");
+        "SELECTED_________ ${categoryId}, ${subCategoryId}, ${categoryName}, ${ads_title}");
+    mAdsTitle = ads_title;
     mCategorySelected = categoryName;
     mCategorySelectedId = categoryId;
     mCategorySelectedSubCategoryId = subCategoryId;
@@ -661,6 +674,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                   subCategoryName:
                       subCategoryName != null ? subCategoryName : "",
                   isFromNearBy: false,
+                  ads_title: ads_title != null ? ads_title : "",
                 )),
       );
     }
@@ -697,8 +711,12 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
         mSelectedLongitude = lng.toString();
         mLocationSelected = p?.structured_formatting?.main_text;
       });
-      var mUserLocNameSelected = new UserLocNameSelected(address: p?.structured_formatting?.main_text, mlat: lat.toString(), mlng: lng.toString());
-      StateContainer.of(context).updateUserSelectedLocation(mUserLocNameSelected);
+      var mUserLocNameSelected = new UserLocNameSelected(
+          address: p?.structured_formatting?.main_text,
+          mlat: lat.toString(),
+          mlng: lng.toString());
+      StateContainer.of(context)
+          .updateUserSelectedLocation(mUserLocNameSelected);
       print("SELECTED--> ${lat}, ${lng}");
     }
   }

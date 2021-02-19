@@ -25,7 +25,8 @@ class NearByChildSubCategoryScreen extends StatefulWidget {
       lat,
       lng,
       categoryName,
-      subCategoryName;
+      subCategoryName,
+      ads_title;
 
   bool isFromNearBy;
 
@@ -37,7 +38,8 @@ class NearByChildSubCategoryScreen extends StatefulWidget {
       this.lng = "",
       this.isFromNearBy = true,
       this.categoryName = "",
-      this.subCategoryName = ""});
+      this.subCategoryName = "",
+      this.ads_title});
 
   @override
   _NearByChildSubCategoryScreenState createState() =>
@@ -130,7 +132,8 @@ class _NearByChildSubCategoryScreenState
             filter_min: filter_min,
             filter_max: filter_max,
             sort_by_price:
-                priceSort != null && priceSort.isNotEmpty ? priceSort : "")),
+                priceSort != null && priceSort.isNotEmpty ? priceSort : "",
+            ads_title: widget.ads_title!=null?widget.ads_title:"")),
       child: BlocListener(
         bloc: homeBloc,
         listener: (context, state) {},
@@ -236,7 +239,7 @@ class _NearByChildSubCategoryScreenState
                 ),
                 Expanded(
                   child: RefreshIndicator(
-                    onRefresh: (){
+                    onRefresh: () {
                       homeBloc
                         ..add(NearbySubChildCategoryListReqEvent(
                             token: token,
@@ -250,7 +253,9 @@ class _NearByChildSubCategoryScreenState
                             filter_min: filter_min,
                             filter_max: filter_max,
                             sort_by_price:
-                            priceSort != null && priceSort.isNotEmpty ? priceSort : ""));
+                                priceSort != null && priceSort.isNotEmpty
+                                    ? priceSort
+                                    : ""));
                     },
                     child: ListView(
                       children: [
@@ -543,49 +548,49 @@ class _NearByChildSubCategoryScreenState
                                                                       .length >
                                                                   0
                                                           ? InkWell(
-                                                        onTap: () {
-                                                          dialogSetState(
-                                                                  () {
-                                                                mExpandedTitle =
-                                                                "SubCategories";
-                                                              });
-                                                        },
-                                                            child: Container(
-                                                        color: CommonStyles.grey.withOpacity(0.1),
+                                                              onTap: () {
+                                                                dialogSetState(
+                                                                    () {
+                                                                  mExpandedTitle =
+                                                                      "SubCategories";
+                                                                });
+                                                              },
+                                                              child: Container(
+                                                                color: CommonStyles
+                                                                    .grey
+                                                                    .withOpacity(
+                                                                        0.1),
                                                                 child:
                                                                     Container(
-                                                                      margin: EdgeInsets.only(
-                                                                          left:
+                                                                  margin: EdgeInsets.only(
+                                                                      left:
                                                                           space_15,
-                                                                          right:
+                                                                      right:
                                                                           space_15),
-                                                                      child: Row(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment
-                                                                                .spaceBetween,
-                                                                        children: [
-                                                                          Text(
-                                                                            "SubCategories",
-                                                                            style: CommonStyles.getRalewayStyle(
-                                                                                space_15,
-                                                                                FontWeight
-                                                                                    .w800,
-                                                                                Colors
-                                                                                    .black),
-                                                                          ),
-                                                                          Container(
-                                                                            padding: EdgeInsets.symmetric(
-                                                                                vertical:
-                                                                                    space_10),
-                                                                            child: mExpandedTitle != null &&
-                                                                                      mExpandedTitle == "SubCategories"
-                                                                                  ?Icon(Icons.keyboard_arrow_up):Icon(Icons.keyboard_arrow_down)
-                                                                          ),
-                                                                        ],
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: [
+                                                                      Text(
+                                                                        "SubCategories",
+                                                                        style: CommonStyles.getRalewayStyle(
+                                                                            space_15,
+                                                                            FontWeight.w800,
+                                                                            Colors.black),
                                                                       ),
-                                                                    ),
+                                                                      Container(
+                                                                          padding: EdgeInsets.symmetric(
+                                                                              vertical:
+                                                                                  space_10),
+                                                                          child: mExpandedTitle != null && mExpandedTitle == "SubCategories"
+                                                                              ? Icon(Icons.keyboard_arrow_up)
+                                                                              : Icon(Icons.keyboard_arrow_down)),
+                                                                    ],
+                                                                  ),
+                                                                ),
                                                               ),
-                                                          )
+                                                            )
                                                           : Container(
                                                               width: 0,
                                                               height: 0,
@@ -670,79 +675,91 @@ class _NearByChildSubCategoryScreenState
                                                                         .start,
                                                                 children: [
                                                                   InkWell(
-                                                                    onTap:
-                                                                        () {
-                                                                      dialogSetState((){
-                                                                        mExpandedTitle = filterRes.customefield[parentIndex].name;
+                                                                    onTap: () {
+                                                                      dialogSetState(
+                                                                          () {
+                                                                        mExpandedTitle = filterRes
+                                                                            .customefield[parentIndex]
+                                                                            .name;
                                                                       });
                                                                     },
-                                                                    child: Container(
-                                                                      color: CommonStyles.grey.withOpacity(0.1),
-                                                                      margin: EdgeInsets.only(
-                                                                        top: space_15),
+                                                                    child:
+                                                                        Container(
+                                                                      color: CommonStyles
+                                                                          .grey
+                                                                          .withOpacity(
+                                                                              0.1),
+                                                                      margin: EdgeInsets
+                                                                          .only(
+                                                                              top: space_15),
                                                                       child:
                                                                           Row(
-                                                                            mainAxisAlignment:
-                                                                            MainAxisAlignment
-                                                                                .spaceBetween,
-                                                                          children: [
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.spaceBetween,
+                                                                        children: [
                                                                           Container(
-                                                                            margin: EdgeInsets.only(left: space_15),
-                                                                            child: Text(
-                                                                              "${filterRes.customefield != null && filterRes.customefield.length > 0 ?/*&& filterRes.customefield[parentIndex].field_options != null && filterRes.customefield[parentIndex].field_options.length > 0 ?*/ filterRes.customefield[parentIndex].name : ""}",
-                                                                              style: CommonStyles.getRalewayStyle(
-                                                                                  space_15,
-                                                                                  FontWeight.w800,
-                                                                                  Colors.black),
+                                                                            margin:
+                                                                                EdgeInsets.only(left: space_15),
+                                                                            child:
+                                                                                Text(
+                                                                              "${filterRes.customefield != null && filterRes.customefield.length > 0 ? /*&& filterRes.customefield[parentIndex].field_options != null && filterRes.customefield[parentIndex].field_options.length > 0 ?*/ filterRes.customefield[parentIndex].name : ""}",
+                                                                              style: CommonStyles.getRalewayStyle(space_15, FontWeight.w800, Colors.black),
                                                                             ),
                                                                           ),
                                                                           Container(
                                                                             padding:
                                                                                 EdgeInsets.symmetric(vertical: space_10),
-                                                                            margin: EdgeInsets.only(right: space_15),
-                                                                            child:
-                                                                            mExpandedTitle != null &&
-                                                                                mExpandedTitle == filterRes.customefield[parentIndex].name
-                                                                                ?Icon(Icons.keyboard_arrow_up):Icon(Icons.keyboard_arrow_down),
+                                                                            margin:
+                                                                                EdgeInsets.only(right: space_15),
+                                                                            child: mExpandedTitle != null && mExpandedTitle == filterRes.customefield[parentIndex].name
+                                                                                ? Icon(Icons.keyboard_arrow_up)
+                                                                                : Icon(Icons.keyboard_arrow_down),
                                                                           ),
-                                                                          ],
-                                                                        ),
+                                                                        ],
+                                                                      ),
                                                                     ),
                                                                   ),
-                                                                  mExpandedTitle!=null && mExpandedTitle==filterRes.customefield[parentIndex].name?Container(
-                                                                    child: ListView.builder(
-                                                                        itemCount: filterRes.customefield != null && filterRes.customefield?.length > 0 ? filterRes.customefield[parentIndex].field_options.length : 0,
-                                                                        shrinkWrap: true,
-                                                                        primary: false,
-                                                                        scrollDirection: Axis.vertical,
-                                                                        itemBuilder: (context, index) {
-                                                                          return Container(
-                                                                            margin: EdgeInsets.only(
-                                                                                left: space_15, right:space_15),
-                                                                            height:
-                                                                                space_50,
-                                                                            child:
-                                                                                Row(
-                                                                              mainAxisSize: MainAxisSize.min,
-                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                              children: [
-                                                                                Text(
-                                                                                  "${filterRes.customefield != null && filterRes.customefield.length > 0 && filterRes.customefield[parentIndex].field_options != null && filterRes.customefield[parentIndex].field_options.length > 0 ? filterRes.customefield[parentIndex].field_options[index].name : ""}",
-                                                                                  style: CommonStyles.getMontserratStyle(space_14, FontWeight.w500, Colors.black),
-                                                                                ),
-                                                                                Checkbox(
-                                                                                  value: filterRes.customefield[parentIndex].field_options[index].isChecked,
-                                                                                  onChanged: (bool value) {
-                                                                                    dialogSetState(() {
-                                                                                      filterRes.customefield[parentIndex].field_options[index].isChecked = value;
-                                                                                    });
-                                                                                  },
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                          );
-                                                                        }),
-                                                                  ):Container(height: 0, width: 0,),
+                                                                  mExpandedTitle !=
+                                                                              null &&
+                                                                          mExpandedTitle ==
+                                                                              filterRes.customefield[parentIndex].name
+                                                                      ? Container(
+                                                                          child: ListView.builder(
+                                                                              itemCount: filterRes.customefield != null && filterRes.customefield?.length > 0 ? filterRes.customefield[parentIndex].field_options.length : 0,
+                                                                              shrinkWrap: true,
+                                                                              primary: false,
+                                                                              scrollDirection: Axis.vertical,
+                                                                              itemBuilder: (context, index) {
+                                                                                return Container(
+                                                                                  margin: EdgeInsets.only(left: space_15, right: space_15),
+                                                                                  height: space_50,
+                                                                                  child: Row(
+                                                                                    mainAxisSize: MainAxisSize.min,
+                                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                    children: [
+                                                                                      Text(
+                                                                                        "${filterRes.customefield != null && filterRes.customefield.length > 0 && filterRes.customefield[parentIndex].field_options != null && filterRes.customefield[parentIndex].field_options.length > 0 ? filterRes.customefield[parentIndex].field_options[index].name : ""}",
+                                                                                        style: CommonStyles.getMontserratStyle(space_14, FontWeight.w500, Colors.black),
+                                                                                      ),
+                                                                                      Checkbox(
+                                                                                        value: filterRes.customefield[parentIndex].field_options[index].isChecked,
+                                                                                        onChanged: (bool value) {
+                                                                                          dialogSetState(() {
+                                                                                            filterRes.customefield[parentIndex].field_options[index].isChecked = value;
+                                                                                          });
+                                                                                        },
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                );
+                                                                              }),
+                                                                        )
+                                                                      : Container(
+                                                                          height:
+                                                                              0,
+                                                                          width:
+                                                                              0,
+                                                                        ),
                                                                 ],
                                                               );
                                                             }),
