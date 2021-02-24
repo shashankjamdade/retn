@@ -365,6 +365,30 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                                           horizontal: space_5),
                                       child: TextField(
                                         controller: categoryController,
+                                        textInputAction: TextInputAction.search,
+                                        onSubmitted: (value) {
+                                          debugPrint("CLICKED_SEARCH ${value}");
+                                          if (mSelectedLattitude.isNotEmpty &&
+                                              mSelectedLongitude.isNotEmpty &&
+                                              (value != null && value.isNotEmpty)) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => NearByChildSubCategoryScreen(
+                                                    categoryId: "",
+                                                    subCategoryId: "",
+                                                    radius: LOCATION_RADIUS,
+                                                    lat: mSelectedLattitude != null ? mSelectedLattitude : "",
+                                                    lng: mSelectedLongitude != null ? mSelectedLongitude : "",
+                                                    categoryName: "",
+                                                    subCategoryName: "",
+                                                    isFromNearBy: false,
+                                                    ads_title: value,
+                                                    searchtitle: "Search results for \'${value}\'",
+                                                  )),
+                                            );
+                                          }
+                                        },
                                         style: TextStyle(color: Colors.white),
                                         decoration: InputDecoration(
                                             focusColor: Colors.white,
@@ -672,7 +696,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                   lng: mSelectedLongitude != null ? mSelectedLongitude : "",
                   categoryName: categoryName != null ? categoryName : "",
                   subCategoryName:
-                      subCategoryName != null ? subCategoryName : "",
+                  (ads_title!=null && ads_title.isNotEmpty)? "": (subCategoryName != null ? subCategoryName : ""),
                   isFromNearBy: false,
                   ads_title: ads_title != null ? ads_title : "",
                 )),

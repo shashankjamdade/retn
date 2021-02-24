@@ -30,7 +30,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is HomeReqAuthenticationEvent) {
       yield ProgressState();
       yield* callHomeApi(event.token);
-    }  else if (event is HomeReqAuthenticationNoProgressEvent) {
+    } else if (event is HomeReqAuthenticationNoProgressEvent) {
 //      yield ProgressState();
       yield* callHomeApi(event.token);
     } else if (event is ItemDetailReqEvent) {
@@ -47,9 +47,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       yield* callSubCategoryListApi(event.token, event.categoryId);
     } else if (event is NearbySubChildCategoryListReqEvent) {
       yield ProgressState();
-      yield* callNearbySubChildCategoryListApi(event.token, event.categoryId,
-          event.subcategory_id, event.radius, event.lat, event.lng, event.filter_subcategory_id, event.filter_custome_filed_id,
-      event.filter_min, event.filter_max, event.sort_by_price, event.ads_title);
+      yield* callNearbySubChildCategoryListApi(
+          event.token,
+          event.categoryId,
+          event.subcategory_id,
+          event.radius,
+          event.lat,
+          event.lng,
+          event.filter_subcategory_id,
+          event.filter_custome_filed_id,
+          event.filter_min,
+          event.filter_max,
+          event.sort_by_price,
+          event.ads_title);
     } else if (event is GetCategoryListEvent) {
       yield ProgressState();
       yield* callGetCategoryApi(event.token);
@@ -116,7 +126,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is PostAdsEvent) {
       yield ProgressState();
       yield* callPostAds(event.token, event.adPostReqModel);
-    }  else if (event is PostEditAdsEvent) {
+    } else if (event is PostEditAdsEvent) {
       yield ProgressState();
       yield* callPostMyAdEditUpdate(event.token, event.adPostReqModel);
     } else if (event is PackagePaymentEvent) {
@@ -132,21 +142,25 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is GetMyAdsEditEvent) {
       yield ProgressState();
       yield* callGetMyAdEdit(event.token, event.adId);
-    }else if (event is SendOtpEvent) {
+    } else if (event is SendOtpEvent) {
       yield ProgressState();
       yield* callSendOtp(event.contact, event.otpType);
-    }else if (event is VerifyOtpEvent) {
+    } else if (event is VerifyOtpEvent) {
       yield ProgressState();
       yield* callVerifyOtp(event.contact, event.otp);
-    }else if (event is ForgotPwdEvent) {
+    } else if (event is ForgotPwdEvent) {
       yield ProgressState();
       yield* callForgotPwd(event.contact, event.otp, event.confirm_password);
-    }else if (event is RatingEvent) {
+    } else if (event is RatingEvent) {
 //      yield ProgressState();
-      yield* callRating(event.token, event.seller_id, event.user_id, event.rating);
-    }else if (event is GooglePlaceEvent) {
+      yield* callRating(
+          event.token, event.seller_id, event.user_id, event.rating);
+    } else if (event is GooglePlaceEvent) {
 //      yield ProgressState();
       yield* callGooglePlace(event.token, event.query);
+    } else if (event is CouponEvent) {
+      yield ProgressState();
+      yield* callCoupon(event.lat, event.lng);
     }
   }
 
@@ -232,44 +246,43 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   Stream<HomeState> callNearbySubChildCategoryListApi(
-      String token,
-      String categoryId,
-      String subCategoryId,
-      String radius,
-      String lat,
-      String lng,
-      String filter_subcategory_id,
-      String filter_custome_filed_id,
-      String filter_min,
-      String filter_max,
-      String priceSort,
-      String ads_title,
-      ) async* {
+    String token,
+    String categoryId,
+    String subCategoryId,
+    String radius,
+    String lat,
+    String lng,
+    String filter_subcategory_id,
+    String filter_custome_filed_id,
+    String filter_min,
+    String filter_max,
+    String priceSort,
+    String ads_title,
+  ) async* {
     try {
       homeRepository =
-      homeRepository != null ? homeRepository : HomeRepository();
+          homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
-          "callNearbySubChildCategoryListApi TOKEN ${token} ${homeRepository ==
-              null ? "NULL" : "NOTNULL"}");
+          "callNearbySubChildCategoryListApi TOKEN ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
       final nearbySubChildCategoryListResponse =
-      await homeRepository.callNearbySubChildCategoryListApi(
-          token,
-          categoryId,
-          subCategoryId,
-          radius,
-          lat,
-          lng,
-          filter_subcategory_id,
-          filter_custome_filed_id,
-          filter_min,
-          filter_max,
-          priceSort, ads_title);
+          await homeRepository.callNearbySubChildCategoryListApi(
+              token,
+              categoryId,
+              subCategoryId,
+              radius,
+              lat,
+              lng,
+              filter_subcategory_id,
+              filter_custome_filed_id,
+              filter_min,
+              filter_max,
+              priceSort,
+              ads_title);
       debugPrint(
-          "nearbySubChildCategoryListResponse ${jsonEncode(
-              nearbySubChildCategoryListResponse)}");
+          "nearbySubChildCategoryListResponse ${jsonEncode(nearbySubChildCategoryListResponse)}");
       yield NearbySubChildCategoryListResState(
           res: nearbySubChildCategoryListResponse);
-    }catch (e, stacktrace) {
+    } catch (e, stacktrace) {
       debugPrint(
           "Exception while nearbySubChildCategoryListResponse ${e.toString()}\n ${stacktrace.toString()}");
     }
@@ -490,7 +503,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       debugPrint("callSendMsgApi ${jsonEncode(sendMsgRes)}");
       yield SendMsgResState(res: sendMsgRes);
     } catch (e, stacktrace) {
-      debugPrint("Exception while callSendMsgApi ${e.toString()}\n ${stacktrace}");
+      debugPrint(
+          "Exception while callSendMsgApi ${e.toString()}\n ${stacktrace}");
     }
   }
 
@@ -594,7 +608,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       debugPrint("callGetMyAdEdit ${jsonEncode(getMyEditAds)}");
       yield GetMyAdsEditState(res: getMyEditAds);
     } catch (e, stacktrace) {
-      debugPrint("Exception while callGetMyAdEdit ${e.toString()} \n ${stacktrace.toString()}");
+      debugPrint(
+          "Exception while callGetMyAdEdit ${e.toString()} \n ${stacktrace.toString()}");
     }
   }
 
@@ -616,11 +631,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       String token, AdPostReqModel adPostReqModel) async* {
     try {
       homeRepository =
-      homeRepository != null ? homeRepository : HomeRepository();
+          homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callPostMyAdEditUpdate ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
       final commonResponse =
-      await homeRepository.callEditAds(token, adPostReqModel);
+          await homeRepository.callEditAds(token, adPostReqModel);
       debugPrint("callPostMyAdEditUpdate ${jsonEncode(commonResponse)}");
       yield PostEditAdsState(res: commonResponse);
     } catch (e) {
@@ -628,15 +643,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-
   Stream<HomeState> callSendOtp(String contact, String otpType) async* {
     try {
       homeRepository =
-      homeRepository != null ? homeRepository : HomeRepository();
+          homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callSendOtp ${contact} ${homeRepository == null ? "NULL" : "NOTNULL"}");
-      final commonResponse =
-      await homeRepository.callSendOtp(contact, otpType);
+      final commonResponse = await homeRepository.callSendOtp(contact, otpType);
       debugPrint("callSendOtp ${jsonEncode(commonResponse)}");
       yield SendOtpState(res: commonResponse);
     } catch (e) {
@@ -644,15 +657,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-
   Stream<HomeState> callVerifyOtp(String contact, String otp) async* {
     try {
       homeRepository =
-      homeRepository != null ? homeRepository : HomeRepository();
+          homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callVerifyOtp ${contact} ${homeRepository == null ? "NULL" : "NOTNULL"}");
-      final commonResponse =
-      await homeRepository.callVerifyOtp(contact, otp);
+      final commonResponse = await homeRepository.callVerifyOtp(contact, otp);
       debugPrint("callVerifyOtp ${jsonEncode(commonResponse)}");
       yield VeifyOtpState(res: commonResponse);
     } catch (e) {
@@ -660,15 +671,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-
-  Stream<HomeState> callForgotPwd(String contact, String otp, String confirmPwd) async* {
+  Stream<HomeState> callForgotPwd(
+      String contact, String otp, String confirmPwd) async* {
     try {
       homeRepository =
-      homeRepository != null ? homeRepository : HomeRepository();
+          homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callForgotPwd ${contact} ${homeRepository == null ? "NULL" : "NOTNULL"}");
       final commonResponse =
-      await homeRepository.callForgotPwd(contact, otp, confirmPwd);
+          await homeRepository.callForgotPwd(contact, otp, confirmPwd);
       debugPrint("callForgotPwd ${jsonEncode(commonResponse)}");
       yield ForgotPwdState(res: commonResponse);
     } catch (e) {
@@ -676,15 +687,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-
-  Stream<HomeState> callRating(String token, String seller_id, String user_id, String rating) async* {
+  Stream<HomeState> callRating(
+      String token, String seller_id, String user_id, String rating) async* {
     try {
       homeRepository =
-      homeRepository != null ? homeRepository : HomeRepository();
+          homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callRating ${seller_id} ${homeRepository == null ? "NULL" : "NOTNULL"}");
       final commonResponse =
-      await homeRepository.callRating(token, seller_id, user_id, rating);
+          await homeRepository.callRating(token, seller_id, user_id, rating);
       debugPrint("callRating ${jsonEncode(commonResponse)}");
       yield RatingState(res: commonResponse);
     } catch (e) {
@@ -692,15 +703,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-
   Stream<HomeState> callGooglePlace(String token, String query) async* {
     try {
       homeRepository =
-      homeRepository != null ? homeRepository : HomeRepository();
+          homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callGooglePlace ${query} ${homeRepository == null ? "NULL" : "NOTNULL"}");
       final googlePlacesRes =
-      await homeRepository.callGooglePlaces(token, query);
+          await homeRepository.callGooglePlaces(token, query);
       debugPrint("callGooglePlace ${jsonEncode(googlePlacesRes)}");
       yield GooglePlaceState(res: googlePlacesRes);
     } catch (e) {
@@ -708,5 +718,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-
+  Stream<HomeState> callCoupon(String lat, String lng) async* {
+    try {
+      homeRepository =
+          homeRepository != null ? homeRepository : HomeRepository();
+      debugPrint("callCoupon  ${homeRepository == null ? "NULL" : "NOTNULL"}");
+      final couponRes = await homeRepository.callCouponRes(lat, lng);
+      debugPrint("callCoupon ${jsonEncode(couponRes)}");
+      yield CouponState(res: couponRes);
+    } catch (e) {
+      debugPrint("Exception while callCoupon ${e.toString()}");
+    }
+  }
 }

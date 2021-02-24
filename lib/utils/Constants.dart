@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/screens/AllCategoryScreen.dart';
 import 'package:flutter_rentry_new/screens/ChildSubCategoryScreen.dart';
+import 'package:flutter_rentry_new/screens/CouponListScreen.dart';
 import 'package:flutter_rentry_new/screens/NearByChildSubCategoryScreen.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -87,11 +88,17 @@ void onViewAllClick(
 //  );
 }
 
-void redirectToCategoryList(BuildContext context){
+void redirectToCategoryList(BuildContext context) {
   Navigator.push(
     context,
-    MaterialPageRoute(
-        builder: (context) => AllCategoryScreen()),
+    MaterialPageRoute(builder: (context) => AllCategoryScreen()),
+  );
+}
+
+void redirectToOfferList(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => CouponListScreen()),
   );
 }
 
@@ -128,18 +135,25 @@ Future<void> openMap(double latitude, double longitude) async {
   }
 }
 
-getWidthToHeightRatio(BuildContext context){
+getWidthToHeightRatio(BuildContext context) {
   var screenHeight = MediaQuery.of(context).size.height;
   debugPrint("SCREEN_HEIGHT--> ${screenHeight}");
-  var ratio = (getProportionateScreenWidth(
-      context, space_230) /
+  var ratio = (getProportionateScreenWidth(context, space_230) /
       (Platform.isIOS
-          ? getProportionateScreenHeight(
-          context, space_300)
-          : screenHeight<=712 ?getProportionateScreenHeight(
-          context, space_370): getProportionateScreenHeight(
-          context, space_320)));
+          ? getProportionateScreenHeight(context, space_300)
+          : screenHeight <= 712
+              ? getProportionateScreenHeight(context, space_370)
+              : getProportionateScreenHeight(context, space_320)));
   return ratio;
+}
+
+launchURL(String url) async {
+//    const url = 'https://flutter.dev';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
 }
 //Future<bool> isInternet() async {
 //  var connectivityResult = await (Connectivity().checkConnectivity());

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_rentry_new/model/ad_delete_res.dart';
 import 'package:flutter_rentry_new/model/ad_under_package_res.dart';
 import 'package:flutter_rentry_new/model/common_response.dart';
+import 'package:flutter_rentry_new/model/coupon_res.dart';
 import 'package:flutter_rentry_new/model/get_all_chat_msg_res.dart';
 import 'package:flutter_rentry_new/model/get_all_chat_user_list_response.dart';
 import 'package:flutter_rentry_new/model/get_all_package_list_response.dart';
@@ -354,4 +355,13 @@ class GooglePlaceState extends HomeState {
 
   @override
   List<GooglePlacesRes> get props => [res];
+}
+
+class CouponState extends HomeState {
+  final res;
+
+  CouponState({@required this.res});
+
+  @override
+  List<CouponRes> get props => [res];
 }

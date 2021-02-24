@@ -782,7 +782,7 @@ class _ItemCardWidgetState extends State<ItemCardWidget> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              "month",
+                              widget.category_adslist.rent_type!=null && widget.category_adslist.rent_type.isNotEmpty?"${widget.category_adslist.rent_type}":"",
                               style: CommonStyles.getRalewayStyle(
                                   space_12, FontWeight.w400, Colors.white),
                               maxLines: 1,
@@ -1045,7 +1045,7 @@ class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              "month",
+                              widget.category_adslist.rent_type!=null && widget.category_adslist.rent_type.isNotEmpty?"${widget.category_adslist.rent_type}":"",
                               style: CommonStyles.getRalewayStyle(
                                   space_12, FontWeight.w400, Colors.white),
                               maxLines: 1,
@@ -1327,7 +1327,7 @@ class _MyItemCardNoMarginWidgetState extends State<MyItemCardNoMarginWidget> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              "month",
+                              widget.category_adslist.rent_type!=null && widget.category_adslist.rent_type.isNotEmpty?"${widget.category_adslist.rent_type}":"",
                               style: CommonStyles.getRalewayStyle(
                                   space_12, FontWeight.w400, Colors.white),
                               maxLines: 1,

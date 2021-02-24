@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
@@ -15,8 +16,8 @@ import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'package:intl/intl.dart';  //for date format
-
+import 'package:intl/intl.dart';
+import 'package:webview_flutter/webview_flutter.dart'; //for date format
 
 class PackageScreen extends StatefulWidget {
   @override
@@ -34,6 +35,16 @@ class _PackageScreenState extends State<PackageScreen> {
   var mSelectedPackageId = "";
   var mBuypackageId = "";
   var mSelectedPackageAmt = "";
+  WebViewController webViewController;
+  String htmlFilePath = 'assets/razorpay.html';
+  var isWebviewLaunch = false;
+
+  loadLocalHTML() async {
+    String fileHtmlContents = await rootBundle.loadString(htmlFilePath);
+    webViewController.loadUrl(Uri.dataFromString(fileHtmlContents,
+            mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
+        .toString());
+  }
 
   @override
   void initState() {
@@ -66,15 +77,23 @@ class _PackageScreenState extends State<PackageScreen> {
 //    setState(() {
 //      mSelectedPackageId = mBuypackageId;
 //    });
-    mGetAllPackageListResponse.data.forEach((element){
-      if(element.id == mSelectedPackageId){
+    mGetAllPackageListResponse.data.forEach((element) {
+      if (element.id == mSelectedPackageId) {
         amt = element.price;
       }
     });
     debugPrint("PAYMENT_SUCCESS ------- > ${jsonEncode(response.paymentId)}");
-    var mRazorpaySuccessRes = new RazorpaySuccessRes(paymentId: response.paymentId, orderId: response.orderId, signature: response.signature);
+    var mRazorpaySuccessRes = new RazorpaySuccessRes(
+        paymentId: response.paymentId,
+        orderId: response.orderId,
+        signature: response.signature);
     debugPrint("PG_RES ------- > ${jsonEncode(mRazorpaySuccessRes)}");
-    homeBloc..add(PackagePaymentEvent(token: token, packageId: mSelectedPackageId, amt: amt, pgRes: jsonEncode(mRazorpaySuccessRes)));
+    homeBloc
+      ..add(PackagePaymentEvent(
+          token: token,
+          packageId: mSelectedPackageId,
+          amt: amt,
+          pgRes: jsonEncode(mRazorpaySuccessRes)));
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
@@ -83,7 +102,8 @@ class _PackageScreenState extends State<PackageScreen> {
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
-    debugPrint("PAYMENT_EXT_WALLET ------- > ${jsonEncode(response.walletName)}");
+    debugPrint(
+        "PAYMENT_EXT_WALLET ------- > ${jsonEncode(response.walletName)}");
   }
 
   void openCheckout(String amt, String id, String title) async {
@@ -94,16 +114,18 @@ class _PackageScreenState extends State<PackageScreen> {
       'description': 'Buy new package',
       'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
       'external': {
-        'wallets' : ['paytm'],
+        'wallets': ['paytm'],
       }
     };
-    try{
-      _razorpay.open(options);
+    try {
+//      _razorpay.open(options);
+      setState(() {
+        isWebviewLaunch = true;
+      });
       mSelectedPackageId = id;
       mSelectedPackageName = title;
       mSelectedPackageAmt = amt;
-    }
-    catch(e) {
+    } catch (e) {
       debugPrint(e);
     }
   }
@@ -117,8 +139,8 @@ class _PackageScreenState extends State<PackageScreen> {
         listener: (context, state) {
           if (state is GetAllPackageListResState) {
             mGetAllPackageListResponse = state.res;
-          }else if(state is PackagePaymentState){
-            if(state.res!=null && state.res.status == "success") {
+          } else if (state is PackagePaymentState) {
+            if (state.res != null && state.res.status == "success") {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => MyPackageListScreen()),
@@ -130,9 +152,9 @@ class _PackageScreenState extends State<PackageScreen> {
           if (state is GetAllPackageListResState) {
             return getScreenUI(state.res);
           } else if (state is PackagePaymentState) {
-            if(state.res!=null){
+            if (state.res != null) {
               debugPrint("GOTRES_POSTADS ${state.res.status}");
-              if(state.res!=null && state.res.msg!=null) {
+              if (state.res != null && state.res.msg != null) {
                 Fluttertoast.showToast(
                     msg: state.res.msg,
                     toastLength: Toast.LENGTH_SHORT,
@@ -140,12 +162,11 @@ class _PackageScreenState extends State<PackageScreen> {
                     timeInSecForIosWeb: 1,
                     backgroundColor: Colors.black,
                     textColor: Colors.white,
-                    fontSize: space_14
-                );
+                    fontSize: space_14);
               }
             }
             return getScreenUI(mGetAllPackageListResponse);
-          }else {
+          } else {
             return Container(
               color: Colors.white,
               child: Center(
@@ -162,9 +183,9 @@ class _PackageScreenState extends State<PackageScreen> {
     var packageList = new List<GetAllPackageData>();
     var currentPackage = new GetAllPackageData();
     getAllPackageListResponse.data.forEach((element) {
-      if(element.sort_order == "0"){
+      if (element.sort_order == "0") {
         currentPackage = element;
-      }else{
+      } else {
         packageList.add(element);
       }
     });
@@ -172,14 +193,15 @@ class _PackageScreenState extends State<PackageScreen> {
     var currentPackToDate;
     var currentPackFromDateStr;
     var currentPackToDateStr;
-    if(currentPackage!=null && currentPackage.updated_date!=null && currentPackage.no_of_days!=null) {
-       currentPackFromDate = DateTime.parse(
-          "${currentPackage.updated_date}");
-       currentPackToDate = currentPackFromDate.add(
-          Duration(days: int.parse(currentPackage.no_of_days)));
-       DateFormat dateFormatter = new DateFormat('dd MMM yyyy');
-        currentPackFromDateStr = dateFormatter.format(currentPackFromDate);
-        currentPackToDateStr = dateFormatter.format(currentPackToDate);
+    if (currentPackage != null &&
+        currentPackage.updated_date != null &&
+        currentPackage.no_of_days != null) {
+      currentPackFromDate = DateTime.parse("${currentPackage.updated_date}");
+      currentPackToDate = currentPackFromDate
+          .add(Duration(days: int.parse(currentPackage.no_of_days)));
+      DateFormat dateFormatter = new DateFormat('dd MMM yyyy');
+      currentPackFromDateStr = dateFormatter.format(currentPackFromDate);
+      currentPackToDateStr = dateFormatter.format(currentPackToDate);
 
 //       currentPackFromDate = currentPackFromDate.toString().split(" ")[0];
 //       currentPackToDate = currentPackToDate.toString().split(" ")[0];
@@ -187,7 +209,7 @@ class _PackageScreenState extends State<PackageScreen> {
 
     return SafeArea(
         child: Scaffold(
-          key: _scaffoldKey,
+      key: _scaffoldKey,
       body: Container(
         child: Stack(
           children: [
@@ -211,7 +233,8 @@ class _PackageScreenState extends State<PackageScreen> {
                               style: CommonStyles.getMontserratStyle(
                                   space_14, FontWeight.w600, CommonStyles.blue),
                             ),
-                            RichTextTitleWidget("STATER", "${currentPackage.title}"),
+                            RichTextTitleWidget(
+                                "STATER", "${currentPackage.title}"),
                           ],
                         ),
                       ),
@@ -329,7 +352,8 @@ class _PackageScreenState extends State<PackageScreen> {
                                                 CommonStyles.primaryColor),
                                             children: <TextSpan>[
                                               new TextSpan(
-                                                  text: '\n${currentPackFromDateStr}',
+                                                  text:
+                                                      '\n${currentPackFromDateStr}',
                                                   style: CommonStyles
                                                       .getMontserratStyle(
                                                           space_13,
@@ -350,7 +374,8 @@ class _PackageScreenState extends State<PackageScreen> {
                                                 CommonStyles.primaryColor),
                                             children: <TextSpan>[
                                               new TextSpan(
-                                                  text: '\n${currentPackToDateStr}',
+                                                  text:
+                                                      '\n${currentPackToDateStr}',
                                                   style: CommonStyles
                                                       .getMontserratStyle(
                                                           space_13,
@@ -373,8 +398,9 @@ class _PackageScreenState extends State<PackageScreen> {
                             child: Align(
                               alignment: Alignment.bottomCenter,
                               child: InkWell(
-                                onTap: (){
-                                  openCheckout(currentPackage.price, currentPackage.id, currentPackage.title);
+                                onTap: () {
+                                  openCheckout(currentPackage.price,
+                                      currentPackage.id, currentPackage.title);
                                 },
                                 child: Container(
                                   height: space_50,
@@ -445,10 +471,14 @@ class _PackageScreenState extends State<PackageScreen> {
                               itemCount: packageList.length,
                               itemBuilder: (context, index) {
                                 return InkWell(
-                                    onTap: (){
-                                      openCheckout(packageList[index].price, packageList[index].id, packageList[index].title);
+                                    onTap: () {
+                                      openCheckout(
+                                          packageList[index].price,
+                                          packageList[index].id,
+                                          packageList[index].title);
                                     },
-                                    child: PackageCardWidget(packageList[index]));
+                                    child:
+                                        PackageCardWidget(packageList[index]));
                               })),
                       SizedBox(
                         height: space_15,
@@ -501,6 +531,25 @@ class _PackageScreenState extends State<PackageScreen> {
               ],
             ),
             CommonBottomNavBarWidget(),
+            isWebviewLaunch
+                ? Column(
+                    children: [
+                      Expanded(
+                        child: WebView(
+                          initialUrl: '',
+                          javascriptMode: JavascriptMode.unrestricted,
+                          onWebViewCreated: (WebViewController tmp) {
+                            webViewController = tmp;
+                            loadLocalHTML();
+                          },
+                        ),
+                      ),
+                    ],
+                  )
+                : Container(
+                    width: space_0,
+                    height: space_0,
+                  ),
           ],
         ),
       ),

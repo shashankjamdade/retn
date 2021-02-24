@@ -13,6 +13,7 @@ import 'package:flutter_rentry_new/bloc/authentication/AuthenticationEvent.dart'
 import 'package:flutter_rentry_new/model/UserLocationSelected.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/repository/HomeRepository.dart';
+import 'package:flutter_rentry_new/screens/CouponListScreen.dart';
 import 'package:flutter_rentry_new/screens/EditProfileScreen.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
 import 'package:flutter_rentry_new/screens/MyFavScreen.dart';
@@ -108,14 +109,15 @@ class _ScreenOneState extends State<ScreenOne> {
   void getMessage() {
     _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
-          print('on message $message');
+          print('FCM_PUSH_onmsg $message');
           setState(() => _message = message["notification"]["title"]);
           displayNotification(message);
+          return;
         }, onResume: (Map<String, dynamic> message) async {
-      print('on resume $message');
+      print('FCM_PUSH_onresume $message');
       setState(() => _message = message["notification"]["title"]);
     }, onLaunch: (Map<String, dynamic> message) async {
-      print('on launch $message');
+      print('FCM_PUSH_onLaunch $message');
       setState(() => _message = message["notification"]["title"]);
     });
   }
@@ -255,19 +257,20 @@ class _ScreenOneState extends State<ScreenOne> {
   Future onSelectNotification(String payload) async {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
+      redirectToChatScreen();
     }
-    await Fluttertoast.showToast(
-        msg: "Notification Clicked",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.black54,
-        textColor: Colors.white,
-        fontSize: 16.0
-    );
     /*Navigator.push(
       context,
       new MaterialPageRoute(builder: (context) => new SecondScreen(payload)),
     );*/
+  }
+
+  redirectToChatScreen(){
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => HomeScreen(isRedirectToChat: true,)),
+          (route) => false,
+    );
   }
 
   Future onDidRecieveLocalNotification(int id, String title, String body,
@@ -285,14 +288,7 @@ class _ScreenOneState extends State<ScreenOne> {
             child: new Text('Ok'),
             onPressed: () async {
               Navigator.of(context, rootNavigator: true).pop();
-              await Fluttertoast.showToast(
-                  msg: "Notification Clicked",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  backgroundColor: Colors.black54,
-                  textColor: Colors.white,
-                  fontSize: 16.0
-              );
+              redirectToChatScreen();
             },
           ),
         ],

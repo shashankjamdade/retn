@@ -5,6 +5,7 @@ import 'package:flutter_rentry_new/model/RegisterReq.dart';
 import 'package:flutter_rentry_new/model/ad_delete_res.dart';
 import 'package:flutter_rentry_new/model/ad_under_package_res.dart';
 import 'package:flutter_rentry_new/model/common_response.dart';
+import 'package:flutter_rentry_new/model/coupon_res.dart';
 import 'package:flutter_rentry_new/model/general_setting_res.dart';
 import 'package:flutter_rentry_new/model/get_all_chat_msg_res.dart';
 import 'package:flutter_rentry_new/model/get_all_chat_user_list_response.dart';
@@ -231,7 +232,7 @@ class HomeRepository extends BaseRepository {
       "Token": token
     }, body: {
       "category_id": categoryId,
-      "subcategory_id": subCategoryId,
+      "subcategory_id": ads_title!=null && ads_title.isNotEmpty?"":subCategoryId,
 //      "radius": radius,
       "lat": lat,
       "lng": lng,
@@ -1022,6 +1023,24 @@ class HomeRepository extends BaseRepository {
       print("-----------${data}");
     } else {
       response = new GooglePlacesRes();
+    }
+    return response;
+  }
+
+  Future<CouponRes> callCouponRes(String lat, String lng) async {
+    CouponRes response;
+    print("UNDER callCouponRes lat ${lat}, lng ${lng} , ${BASE_URL + COUPON}");
+    var res =
+    await http.post(BASE_URL + COUPON, body: {"lat": lat, "lng": lng});
+    print("PRINTING ${res.body}");
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      var status = data["status"];
+      print("PRINTING_STATUS ${status}");
+      response = CouponRes.fromJson(data);
+      print("-----------${data}");
+    } else {
+      response = new CouponRes();
     }
     return response;
   }

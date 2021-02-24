@@ -431,3 +431,14 @@ class GooglePlaceEvent extends HomeEvent {
   @override
   List<Object> get props => [token, query];
 }
+
+class CouponEvent extends HomeEvent {
+  final String lat;
+  final String lng;
+
+  CouponEvent(
+      {@required this.lat,@required this.lng});
+
+  @override
+  List<Object> get props => [lat, lng];
+}

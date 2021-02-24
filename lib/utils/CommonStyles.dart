@@ -225,6 +225,7 @@ const String SEND_OTP = "/send_otp";
 const String VERIFY_OTP = "/verify_otp";
 const String FORGOT_PWD = "/forgot_password_update";
 const String RATING = "/rating";
+const String COUPON = "/coupon";
 const String GOOGLE_AUTOCOMPLETE1 = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=";
 const String GOOGLE_AUTOCOMPLETE2 = "&types=geocode&language=fr&sensor=true&key=";
 

@@ -7,9 +7,11 @@ import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/model/coupon_res.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/repository/HomeRepository.dart';
+import 'package:flutter_rentry_new/screens/ChatHomeScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/MyAdsListScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
@@ -22,8 +24,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class HomeScreen extends StatefulWidget {
   var isRedirectToMyAds = false;
+  var isRedirectToChat = false;
 
-  HomeScreen({this.isRedirectToMyAds});
+  HomeScreen({this.isRedirectToMyAds, this.isRedirectToChat});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -35,6 +38,9 @@ class _HomeScreenState extends State<HomeScreen> {
   HomeResponse mHomeResponse;
   var loginResponse;
   var token = "";
+  var mLat = "";
+  var mLng = "";
+  CouponRes mCouponRes;
 
   @override
   void initState() {
@@ -50,9 +56,29 @@ class _HomeScreenState extends State<HomeScreen> {
       token = loginResponse.data.token;
       debugPrint("ACCESSING_INHERITED ${token}");
     }
-//    new HomeRepository().callGeneralSetting().then((value) =>
-//        StateContainer.of(context).updateGeneralSetting(value)
-//    );
+    var selectedCurrentLoc = StateContainer.of(context).mUserLocationSelected;
+    var selectedLoc = StateContainer.of(context).mUserLocNameSelected;
+    if (selectedLoc != null) {
+      mLat = selectedLoc.mlat;
+      mLng = selectedLoc.mlng;
+      debugPrint("ACCESSING_INHERITED_LOCATION ${mLat}, ${mLng} ------");
+    } else if (selectedCurrentLoc != null) {
+      mLat = selectedCurrentLoc.mlat;
+      mLng = selectedCurrentLoc.mlng;
+      debugPrint("ACCESSING_INHERITED_LOCATION ${mLat}, ${mLng} ------");
+    }
+    if (mLat != null && mLat.isNotEmpty) {
+      new HomeRepository()
+          .callCouponRes(mLat, mLng)
+          .then((value) => resetUiAgain(value));
+    }
+  }
+
+  resetUiAgain(CouponRes couponRes) {
+    mCouponRes = couponRes;
+    if (mHomeResponse != null) {
+      getHomeUI(mHomeResponse);
+    }
   }
 
   @override
@@ -80,6 +106,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => MyAdsListScreen()),
+                );
+              } else if (widget.isRedirectToChat != null &&
+                  widget.isRedirectToChat) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ChatHomeScreen()),
                 );
               }
             }
@@ -117,18 +149,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: Container(
                       child: RefreshIndicator(
-                        onRefresh: (){
-                          homeBloc..add(HomeReqAuthenticationEvent(token: token));
-                        },
-                        child: ListView(
-                    shrinkWrap: true,
-                    children: [
+                    onRefresh: () {
+                      homeBloc..add(HomeReqAuthenticationEvent(token: token));
+                    },
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: [
                         BannerImgCarousalWidget(homeResponse),
                         Container(
                             child:
                                 RichTextTitleBtnWidget("TOP", "CATEGORIES", () {
-                              redirectToCategoryList(context);
-                            })),
+                          redirectToCategoryList(context);
+                        })),
                         SizedBox(
                           height: space_15,
                         ),
@@ -136,11 +168,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(
                           height: space_25,
                         ),
-                        Align(
-                            alignment: Alignment.topLeft,
-                            child: BannersCarousalWidget()),
+                        Container(
+                            child: RichTextTitleBtnWidget("TOP", "OFFERS", () {
+                          redirectToOfferList(context);
+                        })),
                         SizedBox(
                           height: space_15,
+                        ),
+                        mCouponRes != null
+                            ? Align(
+                                alignment: Alignment.topLeft,
+                                child: BannersCarousalWidget(mCouponRes))
+                            : Container(
+                                height: 0,
+                                width: 0,
+                              ),
+                        SizedBox(
+                          height: mCouponRes != null ? space_15 : 0,
                         ),
                         ListView.builder(
                             shrinkWrap: true,
@@ -211,9 +255,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(
                           height: space_90,
                         ),
-                    ],
-                  ),
-                      )),
+                      ],
+                    ),
+                  )),
                 )
               ],
             )),

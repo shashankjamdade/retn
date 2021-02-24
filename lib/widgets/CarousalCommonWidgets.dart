@@ -1,16 +1,18 @@
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rentry_new/model/coupon_res.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
+import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
-
 
 //Carousal
 class BannerImgCarousalWidget extends StatefulWidget {
   HomeResponse homeResponse;
 
   BannerImgCarousalWidget(this.homeResponse);
+
   @override
   _BannerImgCorousalWidgetState createState() =>
       _BannerImgCorousalWidgetState();
@@ -47,33 +49,36 @@ class _BannerImgCorousalWidgetState extends State<BannerImgCarousalWidget> {
                         carouselController: _controller,
                         items: widget.homeResponse.data.banner
                             .map((item) => Stack(
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                              ),
-                              height: getProportionateScreenHeight(
-                                  context, space_150),
-                              child:FadeInImage.assetNetwork(
-                                placeholder: "assets/images/app_img_white.png",
-                                image: widget.homeResponse.data.banner[_current].banner, fit: BoxFit.fill,
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
-                                  margin:
-                                  EdgeInsets.only(bottom: space_15),
-                                  child: Text(
-                                    widget.homeResponse.data.banner[_current].title,
-                                    style: CommonStyles.getRalewayStyle(
-                                        space_20,
-                                        FontWeight.w900,
-                                        Colors.white),
-                                  )),
-                            )
-                          ],
-                        ))
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(),
+                                      height: getProportionateScreenHeight(
+                                          context, space_150),
+                                      child: FadeInImage.assetNetwork(
+                                        placeholder:
+                                            "assets/images/app_img_white.png",
+                                        image: widget.homeResponse.data
+                                            .banner[_current].banner,
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: Container(
+                                          margin:
+                                              EdgeInsets.only(bottom: space_15),
+                                          child: Text(
+                                            widget.homeResponse.data
+                                                .banner[_current].title,
+                                            style: CommonStyles.getRalewayStyle(
+                                                space_20,
+                                                FontWeight.w900,
+                                                Colors.white),
+                                          )),
+                                    )
+                                  ],
+                                ))
                             .toList(),
                       ),
                     ],
@@ -132,30 +137,31 @@ class _BannerImgCorousalWidgetState extends State<BannerImgCarousalWidget> {
               int index = widget.homeResponse.data.banner.indexOf(url);
               return _current == index
                   ? Container(
-                width: space_12,
-                height: space_12,
-                decoration: BoxDecoration(
-                    border: Border.all(color: CommonStyles.primaryColor),
-                    shape: BoxShape.circle),
-                child: Center(
-                  child: Container(
-                    width: space_5,
-                    height: space_5,
-                    decoration: BoxDecoration(
-                        color: CommonStyles.primaryColor, shape: BoxShape.circle),
-                  ),
-                ),
-              )
+                      width: space_12,
+                      height: space_12,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: CommonStyles.primaryColor),
+                          shape: BoxShape.circle),
+                      child: Center(
+                        child: Container(
+                          width: space_5,
+                          height: space_5,
+                          decoration: BoxDecoration(
+                              color: CommonStyles.primaryColor,
+                              shape: BoxShape.circle),
+                        ),
+                      ),
+                    )
                   : Container(
-                width: 8.0,
-                height: 8.0,
-                margin:
-                EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: CommonStyles.primaryColor,
-                ),
-              );
+                      width: 8.0,
+                      height: 8.0,
+                      margin:
+                          EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: CommonStyles.primaryColor,
+                      ),
+                    );
             }).toList(),
           )
         ],
@@ -166,6 +172,10 @@ class _BannerImgCorousalWidgetState extends State<BannerImgCarousalWidget> {
 
 //2
 class BannersCarousalWidget extends StatefulWidget {
+  CouponRes mCouponres;
+
+  BannersCarousalWidget(this.mCouponres);
+
   @override
   _BannersCorousalWidgetState createState() => _BannersCorousalWidgetState();
 }
@@ -173,10 +183,18 @@ class BannersCarousalWidget extends StatefulWidget {
 class _BannersCorousalWidgetState extends State<BannersCarousalWidget> {
   final CarouselController _controller = CarouselController();
   int _current = 0;
+  List<CouponData> list;
+
+  @override
+  void initState() {
+    super.initState();
+    list = widget.mCouponres.data;
+    debugPrint("COUPONLIST--> ${list.length}");
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<int> list = [1, 2, 3, 4, 5];
+//    List<int> list = [1, 2, 3, 4, 5];
     return Container(
       height: getProportionateScreenHeight(context, space_250),
       child: Column(
@@ -204,24 +222,30 @@ class _BannersCorousalWidgetState extends State<BannersCarousalWidget> {
                             }),
                         carouselController: _controller,
                         items: list
-                            .map((item) => Stack(
-                          children: [
-                            Container(
-                              width: space_250,
-                              decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius:
-                                  BorderRadius.circular(space_15)),
-                              height: getProportionateScreenHeight(
-                                  context, space_200),
-                              child:FadeInImage.assetNetwork(
-                                placeholder: "assets/images/app_img_white.png",
-                                image: "http://rentozo.com/assets/newdesign/images/advrm02.png", fit: BoxFit.fill,
-                              ),
-                            ),
-                          ],
-                        ))
-                            .toList(),
+                            .map((item){
+                          int index = list.indexOf(item);
+                              return GestureDetector(
+                                onTap: (){
+                                  launchURL(list[index].slug);
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(space_15),
+                                  child: Container(
+                                    width: space_250,
+                                    decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                        borderRadius:
+                                        BorderRadius.circular(space_15)),
+                                    height: getProportionateScreenHeight(
+                                        context, space_200),
+                                    child:FadeInImage.assetNetwork(
+                                      placeholder: "assets/images/app_img_white.png",
+                                      image: list[index].image, fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                ),
+                              );
+                        }).toList(),
                       ),
                     ],
                   ),
@@ -233,30 +257,31 @@ class _BannersCorousalWidgetState extends State<BannersCarousalWidget> {
               int index = list.indexOf(url);
               return _current == index
                   ? Container(
-                width: space_12,
-                height: space_12,
-                decoration: BoxDecoration(
-                    border: Border.all(color: CommonStyles.primaryColor),
-                    shape: BoxShape.circle),
-                child: Center(
-                  child: Container(
-                    width: space_5,
-                    height: space_5,
-                    decoration: BoxDecoration(
-                        color: CommonStyles.primaryColor, shape: BoxShape.circle),
-                  ),
-                ),
-              )
+                      width: space_12,
+                      height: space_12,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: CommonStyles.primaryColor),
+                          shape: BoxShape.circle),
+                      child: Center(
+                        child: Container(
+                          width: space_5,
+                          height: space_5,
+                          decoration: BoxDecoration(
+                              color: CommonStyles.primaryColor,
+                              shape: BoxShape.circle),
+                        ),
+                      ),
+                    )
                   : Container(
-                width: 8.0,
-                height: 8.0,
-                margin:
-                EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: CommonStyles.primaryColor,
-                ),
-              );
+                      width: 8.0,
+                      height: 8.0,
+                      margin:
+                          EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: CommonStyles.primaryColor,
+                      ),
+                    );
             }).toList(),
           )
         ],
@@ -287,26 +312,26 @@ class BannerImgCarousalWidget2 extends StatelessWidget {
               carouselController: _controller,
               items: list
                   .map((item) => Stack(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.orangeAccent,
-                    ),
-                    height: getProportionateScreenHeight(
-                        context, space_150),
-                    child: Center(child: Text(item.toString())),
-                  ),
-                  Positioned(
-                    bottom: space_15,
-                    child: Text(
-                      "Dummy banner",
-                      style: CommonStyles.getRalewayStyle(
-                          space_18, FontWeight.w600, Colors.white),
-                    ),
-                  )
-                ],
-              ))
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.orangeAccent,
+                            ),
+                            height: getProportionateScreenHeight(
+                                context, space_150),
+                            child: Center(child: Text(item.toString())),
+                          ),
+                          Positioned(
+                            bottom: space_15,
+                            child: Text(
+                              "Dummy banner",
+                              style: CommonStyles.getRalewayStyle(
+                                  space_18, FontWeight.w600, Colors.white),
+                            ),
+                          )
+                        ],
+                      ))
                   .toList(),
             ),
             Align(
@@ -362,16 +387,17 @@ class BannerImgCarousalWidget2 extends StatelessWidget {
 
 //4
 class ItemDetailBannerImgCarousalWidget extends StatefulWidget {
-
   List<String> bannerList;
 
   ItemDetailBannerImgCarousalWidget({this.bannerList});
+
   @override
   _ItemDetailBannerImgCorousalWidgetState createState() =>
       _ItemDetailBannerImgCorousalWidgetState();
 }
 
-class _ItemDetailBannerImgCorousalWidgetState extends State<ItemDetailBannerImgCarousalWidget> {
+class _ItemDetailBannerImgCorousalWidgetState
+    extends State<ItemDetailBannerImgCarousalWidget> {
   final CarouselController _controller = CarouselController();
   int _current = 0;
 
@@ -402,29 +428,29 @@ class _ItemDetailBannerImgCorousalWidgetState extends State<ItemDetailBannerImgC
                         carouselController: _controller,
                         items: widget.bannerList
                             .map((item) => Stack(
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: CommonStyles.lightGrey,
-                              ),
-                              height: getProportionateScreenHeight(
-                                  context, space_250),
-                              child:FadeInImage.assetNetwork(
-                                placeholder: "assets/images/app_img.png",
-                                image: widget.bannerList[_current],
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ],
-                        ))
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        color: CommonStyles.lightGrey,
+                                      ),
+                                      height: getProportionateScreenHeight(
+                                          context, space_250),
+                                      child: FadeInImage.assetNetwork(
+                                        placeholder:
+                                            "assets/images/app_img.png",
+                                        image: widget.bannerList[_current],
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                  ],
+                                ))
                             .toList(),
                       ),
                     ],
                   ),
                 ],
-              )
-          ),
+              )),
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -435,31 +461,31 @@ class _ItemDetailBannerImgCorousalWidgetState extends State<ItemDetailBannerImgC
                   int index = widget.bannerList.indexOf(url);
                   return _current == index
                       ? Container(
-                    width: space_12,
-                    height: space_12,
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                        border: Border.all(color: Colors.white),
-                        shape: BoxShape.circle),
-                    child: Center(
-                      child: Container(
-                        width: space_5,
-                        height: space_5,
-                        decoration: BoxDecoration(
-                            color: Colors.white, shape: BoxShape.circle),
-                      ),
-                    ),
-                  )
+                          width: space_12,
+                          height: space_12,
+                          decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              border: Border.all(color: Colors.white),
+                              shape: BoxShape.circle),
+                          child: Center(
+                            child: Container(
+                              width: space_5,
+                              height: space_5,
+                              decoration: BoxDecoration(
+                                  color: Colors.white, shape: BoxShape.circle),
+                            ),
+                          ),
+                        )
                       : Container(
-                    width: 8.0,
-                    height: 8.0,
-                    margin:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                    ),
-                  );
+                          width: 8.0,
+                          height: 8.0,
+                          margin: EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 2.0),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                        );
                 }).toList(),
               ),
             ),
@@ -469,4 +495,3 @@ class _ItemDetailBannerImgCorousalWidgetState extends State<ItemDetailBannerImgC
     );
   }
 }
-

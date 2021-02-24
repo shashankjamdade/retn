@@ -26,7 +26,8 @@ class NearByChildSubCategoryScreen extends StatefulWidget {
       lng,
       categoryName,
       subCategoryName,
-      ads_title;
+      ads_title,
+      searchtitle;
 
   bool isFromNearBy;
 
@@ -39,7 +40,8 @@ class NearByChildSubCategoryScreen extends StatefulWidget {
       this.isFromNearBy = true,
       this.categoryName = "",
       this.subCategoryName = "",
-      this.ads_title});
+      this.ads_title,
+      this.searchtitle});
 
   @override
   _NearByChildSubCategoryScreenState createState() =>
@@ -133,7 +135,7 @@ class _NearByChildSubCategoryScreenState
             filter_max: filter_max,
             sort_by_price:
                 priceSort != null && priceSort.isNotEmpty ? priceSort : "",
-            ads_title: widget.ads_title!=null?widget.ads_title:"")),
+            ads_title: widget.ads_title != null ? widget.ads_title : "")),
       child: BlocListener(
         bloc: homeBloc,
         listener: (context, state) {},
@@ -223,13 +225,21 @@ class _NearByChildSubCategoryScreenState
 //                                            "SUB", "CATEGORIES"),
                                       ],
                                     )
-                                  : Text(
-                                      widget.categoryName,
-                                      style: CommonStyles.getRalewayStyle(
-                                          space_15,
-                                          FontWeight.w800,
-                                          CommonStyles.red),
-                                    ),
+                                  : widget.categoryName.isNotEmpty
+                                      ? Text(
+                                          widget.categoryName,
+                                          style: CommonStyles.getRalewayStyle(
+                                              space_15,
+                                              FontWeight.w800,
+                                              CommonStyles.red),
+                                        )
+                                      : Text(
+                                          widget.searchtitle,
+                                          style: CommonStyles.getRalewayStyle(
+                                              space_15,
+                                              FontWeight.w800,
+                                              CommonStyles.blue),
+                                        ),
                             ),
                     ],
                   ),
