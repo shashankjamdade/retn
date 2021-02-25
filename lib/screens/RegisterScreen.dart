@@ -186,12 +186,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         shrinkWrap: true,
                         physics: BouncingScrollPhysics(),
                         children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              "Please provide detail accordingly to create account",
-                              style: CommonStyles.getRalewayStyle(
-                                  space_15, FontWeight.w500, CommonStyles.blue),
+                          Container(
+                            margin: EdgeInsets.only(top: space_40),
+                            child: Align(
+                              alignment: Alignment.topLeft,
+                              child: Text(
+                                "Please provide detail accordingly to create account",
+                                style: CommonStyles.getRalewayStyle(
+                                    space_15, FontWeight.w500, CommonStyles.blue),
+                              ),
                             ),
                           ),
                           SizedBox(

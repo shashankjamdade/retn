@@ -13,6 +13,8 @@ import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'ReadMoreText.dart';
+
 class CouponListScreen extends StatefulWidget {
   @override
   _CouponListScreenState createState() => _CouponListScreenState();
@@ -52,6 +54,8 @@ class _CouponListScreenState extends State<CouponListScreen> {
       mLng = selectedLoc.mlng;
       debugPrint("ACCESSING_INHERITED_LOCATION ${mLat}, ${mLng} ------");
     }
+//    mLat = "23.2599";
+//    mLng = "77.4126";
   }
 
   @override
@@ -209,14 +213,18 @@ class _CouponWidgetState extends State<CouponWidget> {
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(left: space_8),
-                          child: ExpandableText(
+                          child: ReadMoreText(
                             widget.mCouponRes?.description != null &&
                                     widget.mCouponRes?.description?.isNotEmpty
                                 ? widget.mCouponRes?.description
                                 : "",
+                            colorClickableText: CommonStyles.blue,
+                            trimMode: TrimMode.Line,
+                            trimCollapsedText: '...read more ',
+                            trimExpandedText: '...read less',
 //                          expandText: 'show more',
 //                          collapseText: 'show less',
-                            trimLines: 1,
+                            trimLines: 2,
 //                          linkColor: Colors.blue,
 //                            style: CommonStyles.getMontserratStyle(
 //                                space_14, FontWeight.w500, Colors.black),
@@ -307,7 +315,7 @@ class _CouponWidgetState extends State<CouponWidget> {
 }
 
 class ExpandableText extends StatefulWidget {
-  const ExpandableText(
+   ExpandableText(
       this.text, {
         Key key,
         this.trimLines = 2,
