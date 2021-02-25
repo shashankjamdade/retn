@@ -36,7 +36,7 @@ dependencies:
   google_sign_in: ^4.5.5
   image_picker: ^0.6.7+21
   data_connection_checker: ^0.3.4
-  razorpay_flutter: ^1.2.3
+  razorpay_flutter: 1.1.0
   fluttertoast: ^7.1.4
   url_launcher: ^5.7.1
   gson: ^0.1.4
@@ -54,7 +54,8 @@ dependencies:
   flutter_google_places: ^0.2.0
   webview_flutter: ^0.3.19+7
   dotted_border: ^1.0.7
-  expandable_text: ^1.2.0
+  flutter_exif_rotation: ^0.3.2
+  photo_view: ^0.10.3
 
 dev_dependencies:
   flutter_test:

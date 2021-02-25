@@ -42,7 +42,7 @@ packages:
       name: carousel_slider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.3.1"
+    version: "2.3.4"
   charcode:
     dependency: transitive
     description:
@@ -112,7 +112,7 @@ packages:
       name: equatable
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.5"
+    version: "1.2.6"
   eventify:
     dependency: transitive
     description:
@@ -120,13 +120,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.4"
-  expandable_text:
-    dependency: "direct main"
-    description:
-      name: expandable_text
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.3.2"
   fake_async:
     dependency: transitive
     description:
@@ -195,6 +188,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.2.0"
+  flutter_exif_rotation:
+    dependency: "direct main"
+    description:
+      name: flutter_exif_rotation
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.2"
   flutter_facebook_login:
     dependency: "direct main"
     description:
@@ -246,7 +246,7 @@ packages:
       name: fluttertoast
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.1.6"
+    version: "7.1.8"
   geocoder:
     dependency: "direct main"
     description:
@@ -267,7 +267,7 @@ packages:
       name: geolocator_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.8"
+    version: "1.0.9"
   google_maps_flutter:
     dependency: transitive
     description:
@@ -344,14 +344,14 @@ packages:
       name: image_picker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.7+21"
+    version: "0.6.7+22"
   image_picker_platform_interface:
     dependency: transitive
     description:
       name: image_picker_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.1"
+    version: "1.1.6"
   intl:
     dependency: transitive
     description:
@@ -393,7 +393,7 @@ packages:
       name: multi_image_picker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.7.14"
+    version: "4.7.15"
   nested:
     dependency: transitive
     description:
@@ -457,6 +457,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.4"
+  photo_view:
+    dependency: "direct main"
+    description:
+      name: photo_view
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.10.3"
   place_picker:
     dependency: "direct main"
     description:
@@ -512,7 +519,7 @@ packages:
       name: razorpay_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.3"
+    version: "1.1.0"
   rxdart:
     dependency: transitive
     description:
@@ -561,7 +568,7 @@ packages:
       name: shared_preferences_windows
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.1+3"
+    version: "0.0.2+3"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -692,7 +699,7 @@ packages:
       name: win32
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.7.4"
+    version: "1.7.4+1"
   xdg_directories:
     dependency: transitive
     description:

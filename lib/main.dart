@@ -35,7 +35,7 @@ import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
+//import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'bloc/authentication/AuthenticationBloc.dart';
 import 'bloc/authentication/AuthenticationBloc.dart';
@@ -72,7 +72,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Rentozo',
       debugShowCheckedModeBanner: false,
       home: ScreenOne(false),
     );

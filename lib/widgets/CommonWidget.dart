@@ -140,12 +140,14 @@ class CommonAppbarWidget extends StatelessWidget {
                         child: Container(
                             margin: EdgeInsets.symmetric(horizontal: space_5),
                             child: Text(
-                              StateContainer.of(context).mUserLocNameSelected!=null? "${StateContainer.of(context).mUserLocNameSelected.address}":
-                              StateContainer.of(context)
-                                          .mUserLocationSelected !=
+                              StateContainer.of(context).mUserLocNameSelected !=
                                       null
-                                  ? "${StateContainer.of(context).mUserLocationSelected.city}, ${StateContainer.of(context).mUserLocationSelected.state}"
-                                  : "",
+                                  ? "${StateContainer.of(context).mUserLocNameSelected.address}"
+                                  : StateContainer.of(context)
+                                              .mUserLocationSelected !=
+                                          null
+                                      ? "${StateContainer.of(context).mUserLocationSelected.city}, ${StateContainer.of(context).mUserLocationSelected.state}"
+                                      : "",
                               style: CommonStyles.getRalewayStyle(
                                   space_12, FontWeight.w500, Colors.white),
                               maxLines: 1,
@@ -279,13 +281,14 @@ class BtnTextInputWidget extends StatelessWidget {
   bool isVerified = false;
 
   BtnTextInputWidget(this.textEditingController, this.labelText, this.btnText,
-      this.isPassword, this.onSubmit, this.validatorFun, this.textInputType ,{this.isVerified = false});
+      this.isPassword, this.onSubmit, this.validatorFun, this.textInputType,
+      {this.isVerified = false});
 
   @override
   Widget build(BuildContext context) {
     return Container(
         height: getProportionateScreenHeight(context, space_40),
-        color: isVerified? Colors.white : CommonStyles.primaryColor,
+        color: isVerified ? Colors.white : CommonStyles.primaryColor,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -320,7 +323,9 @@ class BtnTextInputWidget extends StatelessWidget {
                   child: Center(
                       child: Text(
                     btnText,
-                    style: TextStyle(fontSize: 12.0, color: isVerified? Colors.green : Colors.white),
+                    style: TextStyle(
+                        fontSize: 12.0,
+                        color: isVerified ? Colors.green : Colors.white),
                   )),
                 ),
               ),
@@ -487,9 +492,9 @@ class CategoryGridWidget extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) => SubCategoryScreen(
-                              categoryId: homeResponse.data.category[index].id,
-                            categoryName: homeResponse.data.category[index].name
-                            )),
+                            categoryId: homeResponse.data.category[index].id,
+                            categoryName:
+                                homeResponse.data.category[index].name)),
                   );
                 },
                 child: Container(
@@ -582,7 +587,8 @@ class _ItemCardWidgetState extends State<ItemCardWidget> {
   void initState() {
     super.initState();
 //    isLiked = widget.
-    if(widget.category_adslist!=null && widget.category_adslist.is_wishlist!=null){
+    if (widget.category_adslist != null &&
+        widget.category_adslist.is_wishlist != null) {
       isLiked = widget.category_adslist.is_wishlist;
     }
   }
@@ -626,12 +632,13 @@ class _ItemCardWidgetState extends State<ItemCardWidget> {
                               width: space_180,
                               height: space_110,
                               decoration: BoxDecoration(
+                                  color: Colors.white,
                                   borderRadius:
                                       BorderRadius.circular(space_10)),
                               child: FadeInImage.assetNetwork(
                                 placeholder: "assets/images/app_img_white.png",
                                 image: widget.category_adslist.img_1,
-                                fit: BoxFit.fill,
+                                fit: BoxFit.contain,
                               ),
                             ),
                           ),
@@ -669,25 +676,43 @@ class _ItemCardWidgetState extends State<ItemCardWidget> {
                               ),
                             ),
                           ),
-                          widget.category_adslist.distance!=null?Positioned(
-                            bottom: 0.0,
-                            right: 0.0,
-                            child: Container(
-                              height: space_30,
-                              padding:
-                              EdgeInsets.all(space_5),
-                              decoration: BoxDecoration(
-                                color: CommonStyles.primaryColor.withOpacity(0.5),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.location_on, color: Colors.white, size: space_12,),
-                                  SizedBox(width: space_3,),
-                                  Text("${widget.category_adslist.distance} Kms", style: CommonStyles.getMontserratStyle(space_10, FontWeight.w800, Colors.white),)
-                                ],
-                              ),
-                            ),
-                          ):Container(height: 0, width: 0,),
+                          widget.category_adslist.distance != null
+                              ? Positioned(
+                                  bottom: 0.0,
+                                  right: 0.0,
+                                  child: Container(
+                                    height: space_30,
+                                    padding: EdgeInsets.all(space_5),
+                                    decoration: BoxDecoration(
+                                      color: CommonStyles.primaryColor
+                                          .withOpacity(0.5),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.location_on,
+                                          color: Colors.white,
+                                          size: space_12,
+                                        ),
+                                        SizedBox(
+                                          width: space_3,
+                                        ),
+                                        Text(
+                                          "${widget.category_adslist.distance} Kms",
+                                          style:
+                                              CommonStyles.getMontserratStyle(
+                                                  space_10,
+                                                  FontWeight.w800,
+                                                  Colors.white),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  height: 0,
+                                  width: 0,
+                                ),
                         ],
                       ),
                       SizedBox(
@@ -782,7 +807,11 @@ class _ItemCardWidgetState extends State<ItemCardWidget> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              widget.category_adslist.rent_type!=null && widget.category_adslist.rent_type.isNotEmpty?"${widget.category_adslist.rent_type}":"",
+                              widget.category_adslist.rent_type != null &&
+                                      widget
+                                          .category_adslist.rent_type.isNotEmpty
+                                  ? "${widget.category_adslist.rent_type}"
+                                  : "",
                               style: CommonStyles.getRalewayStyle(
                                   space_12, FontWeight.w400, Colors.white),
                               maxLines: 1,
@@ -838,7 +867,8 @@ class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if(widget.category_adslist!=null && widget.category_adslist.is_wishlist!=null){
+    if (widget.category_adslist != null &&
+        widget.category_adslist.is_wishlist != null) {
       isLiked = widget.category_adslist.is_wishlist;
     }
   }
@@ -885,12 +915,13 @@ class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
                               width: space_200,
                               height: space_110,
                               decoration: BoxDecoration(
+                                color: Colors.white,
                                   borderRadius:
                                       BorderRadius.circular(space_10)),
                               child: FadeInImage.assetNetwork(
                                 placeholder: "assets/images/app_img_white.png",
                                 image: widget.category_adslist.img_1,
-                                fit: BoxFit.fill,
+                                fit: BoxFit.contain,
                               ),
                             ),
                           ),
@@ -928,25 +959,43 @@ class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
                               ),
                             ),
                           ),
-                          widget.category_adslist.distance!=null?Positioned(
-                            bottom: 0.0,
-                            right: 0.0,
-                            child: Container(
-                              height: space_30,
-                              padding:
-                              EdgeInsets.all(space_5),
-                              decoration: BoxDecoration(
-                                color: CommonStyles.primaryColor.withOpacity(0.5),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.location_on, color: Colors.white, size: space_12,),
-                                  SizedBox(width: space_3,),
-                                  Text("${widget.category_adslist.distance} Kms", style: CommonStyles.getMontserratStyle(space_10, FontWeight.w800, Colors.white),)
-                                ],
-                              ),
-                            ),
-                          ):Container(height: 0, width: 0,),
+                          widget.category_adslist.distance != null
+                              ? Positioned(
+                                  bottom: 0.0,
+                                  right: 0.0,
+                                  child: Container(
+                                    height: space_30,
+                                    padding: EdgeInsets.all(space_5),
+                                    decoration: BoxDecoration(
+                                      color: CommonStyles.primaryColor
+                                          .withOpacity(0.5),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.location_on,
+                                          color: Colors.white,
+                                          size: space_12,
+                                        ),
+                                        SizedBox(
+                                          width: space_3,
+                                        ),
+                                        Text(
+                                          "${widget.category_adslist.distance} Kms",
+                                          style:
+                                              CommonStyles.getMontserratStyle(
+                                                  space_10,
+                                                  FontWeight.w800,
+                                                  Colors.white),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  height: 0,
+                                  width: 0,
+                                ),
                         ],
                       ),
                       SizedBox(
@@ -1045,7 +1094,11 @@ class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              widget.category_adslist.rent_type!=null && widget.category_adslist.rent_type.isNotEmpty?"${widget.category_adslist.rent_type}":"",
+                              widget.category_adslist.rent_type != null &&
+                                      widget
+                                          .category_adslist.rent_type.isNotEmpty
+                                  ? "${widget.category_adslist.rent_type}"
+                                  : "",
                               style: CommonStyles.getRalewayStyle(
                                   space_12, FontWeight.w400, Colors.white),
                               maxLines: 1,
@@ -1066,14 +1119,14 @@ class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
   }
 }
 
-
 class MyItemCardNoMarginWidget extends StatefulWidget {
   Category_adslist category_adslist;
 
   MyItemCardNoMarginWidget({this.category_adslist});
 
   @override
-  _MyItemCardNoMarginWidgetState createState() => _MyItemCardNoMarginWidgetState();
+  _MyItemCardNoMarginWidgetState createState() =>
+      _MyItemCardNoMarginWidgetState();
 }
 
 class _MyItemCardNoMarginWidgetState extends State<MyItemCardNoMarginWidget> {
@@ -1085,7 +1138,8 @@ class _MyItemCardNoMarginWidgetState extends State<MyItemCardNoMarginWidget> {
     void initState() {
       super.initState();
 //    isLiked = widget.
-      if(widget.category_adslist!=null && widget.category_adslist.is_wishlist!=null){
+      if (widget.category_adslist != null &&
+          widget.category_adslist.is_wishlist != null) {
         isLiked = widget.category_adslist.is_wishlist;
       }
     }
@@ -1130,12 +1184,13 @@ class _MyItemCardNoMarginWidgetState extends State<MyItemCardNoMarginWidget> {
                               width: space_200,
                               height: space_110,
                               decoration: BoxDecoration(
+                                color: Colors.white,
                                   borderRadius:
                                       BorderRadius.circular(space_10)),
                               child: FadeInImage.assetNetwork(
                                 placeholder: "assets/images/app_img_white.png",
                                 image: widget.category_adslist.img_1,
-                                fit: BoxFit.fill,
+                                fit: BoxFit.contain,
                               ),
                             ),
                           ),
@@ -1158,16 +1213,13 @@ class _MyItemCardNoMarginWidgetState extends State<MyItemCardNoMarginWidget> {
                                 child: Row(
                                   children: [
                                     GestureDetector(
-                                      onTap: () {
-
-                                      },
+                                      onTap: () {},
                                       child: Container(
                                         height: space_30,
                                         width: space_30,
-                                        padding:
-                                        EdgeInsets.all(space_5),
-                                        margin: EdgeInsets.only(
-                                            right: space_15),
+                                        padding: EdgeInsets.all(space_5),
+                                        margin:
+                                            EdgeInsets.only(right: space_15),
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           color: Colors.redAccent,
@@ -1186,16 +1238,17 @@ class _MyItemCardNoMarginWidgetState extends State<MyItemCardNoMarginWidget> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  ChooseCategoryEditAdScreen(widget.category_adslist.id)),
+                                                  ChooseCategoryEditAdScreen(
+                                                      widget.category_adslist
+                                                          .id)),
                                         );
                                       },
                                       child: Container(
                                         height: space_30,
                                         width: space_30,
-                                        padding:
-                                        EdgeInsets.all(space_5),
-                                        margin: EdgeInsets.only(
-                                            right: space_15),
+                                        padding: EdgeInsets.all(space_5),
+                                        margin:
+                                            EdgeInsets.only(right: space_15),
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           color: CommonStyles.green,
@@ -1213,20 +1266,31 @@ class _MyItemCardNoMarginWidgetState extends State<MyItemCardNoMarginWidget> {
                               ),
                             ),
                           ),
-                           Positioned(
+                          Positioned(
                             bottom: 0.0,
                             right: 0.0,
                             child: Container(
                               height: space_30,
                               width: space_30,
-                              padding:
-                              EdgeInsets.all(space_5),
-                              margin: EdgeInsets.only(
-                                  right: space_15),
+                              padding: EdgeInsets.all(space_5),
+                              margin: EdgeInsets.only(right: space_15),
                               decoration: BoxDecoration(
-                                color: CommonStyles.primaryColor.withOpacity(0.5),
+                                color:
+                                    CommonStyles.primaryColor.withOpacity(0.5),
                               ),
-                              child: FlatButton.icon(onPressed: (){}, icon: Icon(Icons.location_on, color: Colors.white,), label: Text("2 Kms", style: CommonStyles.getMontserratStyle(space_12, FontWeight.w800, Colors.white),)),
+                              child: FlatButton.icon(
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.location_on,
+                                    color: Colors.white,
+                                  ),
+                                  label: Text(
+                                    "2 Kms",
+                                    style: CommonStyles.getMontserratStyle(
+                                        space_12,
+                                        FontWeight.w800,
+                                        Colors.white),
+                                  )),
                             ),
                           ),
                         ],
@@ -1327,7 +1391,11 @@ class _MyItemCardNoMarginWidgetState extends State<MyItemCardNoMarginWidget> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              widget.category_adslist.rent_type!=null && widget.category_adslist.rent_type.isNotEmpty?"${widget.category_adslist.rent_type}":"",
+                              widget.category_adslist.rent_type != null &&
+                                      widget
+                                          .category_adslist.rent_type.isNotEmpty
+                                  ? "${widget.category_adslist.rent_type}"
+                                  : "",
                               style: CommonStyles.getRalewayStyle(
                                   space_12, FontWeight.w400, Colors.white),
                               maxLines: 1,
@@ -1351,6 +1419,7 @@ class _MyItemCardNoMarginWidgetState extends State<MyItemCardNoMarginWidget> {
 class SubCategoryItemWidget extends StatelessWidget {
   SubCategoryData subCategoryData;
   String selectedId = "";
+
   SubCategoryItemWidget({this.subCategoryData, this.selectedId});
 
   @override
@@ -1365,7 +1434,11 @@ class SubCategoryItemWidget extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(space_10),
           child: Container(
-            color: selectedId!=null && selectedId?.isNotEmpty && subCategoryData?.id == selectedId? CommonStyles.grey.withOpacity(0.5):Colors.white,
+            color: selectedId != null &&
+                    selectedId?.isNotEmpty &&
+                    subCategoryData?.id == selectedId
+                ? CommonStyles.grey.withOpacity(0.5)
+                : Colors.white,
             padding: EdgeInsets.all(space_10),
             child: Center(
               child: Column(
@@ -1539,7 +1612,9 @@ class RatingIndicatorWidget extends StatelessWidget {
   String ratingLable;
   int total;
   int rating;
+
   RatingIndicatorWidget(this.ratingLable, this.rating, this.total);
+
   @override
   Widget build(BuildContext context) {
     debugPrint("SELLER_RATING ${ratingLable}, ${total}, ${rating}");
@@ -1564,7 +1639,7 @@ class RatingIndicatorWidget extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                            flex: total>0?total:1,
+                            flex: total > 0 ? total : 1,
                             child: Container(
                               height: space_5,
                               color: CommonStyles.grey.withOpacity(0.3),
@@ -1582,7 +1657,7 @@ class RatingIndicatorWidget extends StatelessWidget {
                             ),
                           ),
                           Expanded(
-                            flex: total-rating,
+                            flex: total - rating,
                             child: Container(
                               height: space_5,
                               color: Colors.transparent,
@@ -1611,76 +1686,52 @@ class RatingIndicatorWidget extends StatelessWidget {
 
 class RatingBarByRatingWidget extends StatelessWidget {
   double rating;
+
   RatingBarByRatingWidget(this.rating);
+
   @override
   Widget build(BuildContext context) {
-    return  Container(
+    return Container(
       child: Wrap(
-        direction:
-        Axis.horizontal,
+        direction: Axis.horizontal,
         children: [
           Padding(
-            padding:
-            const EdgeInsets
-                .only(
-                right:
-                space_3),
+            padding: const EdgeInsets.only(right: space_3),
             child: Icon(
-              rating==0.5?Icons.star_half: Icons.star,
-              color: rating>=0.5?CommonStyles
-                  .darkAmber: CommonStyles.grey,
+              rating == 0.5 ? Icons.star_half : Icons.star,
+              color: rating >= 0.5 ? CommonStyles.darkAmber : CommonStyles.grey,
               size: space_12,
             ),
           ),
           Padding(
-            padding:
-            const EdgeInsets
-                .only(
-                right:
-                space_3),
+            padding: const EdgeInsets.only(right: space_3),
             child: Icon(
-              rating==1.5?Icons.star_half: Icons.star,
-              color: rating>=1.5?CommonStyles
-                  .darkAmber: CommonStyles.grey,
+              rating == 1.5 ? Icons.star_half : Icons.star,
+              color: rating >= 1.5 ? CommonStyles.darkAmber : CommonStyles.grey,
               size: space_12,
             ),
           ),
           Padding(
-            padding:
-            const EdgeInsets
-                .only(
-                right:
-                space_3),
+            padding: const EdgeInsets.only(right: space_3),
             child: Icon(
-              rating==2.5?Icons.star_half: Icons.star,
-              color: rating>=2.5?CommonStyles
-                  .darkAmber: CommonStyles.grey,
+              rating == 2.5 ? Icons.star_half : Icons.star,
+              color: rating >= 2.5 ? CommonStyles.darkAmber : CommonStyles.grey,
               size: space_12,
             ),
           ),
           Padding(
-            padding:
-            const EdgeInsets
-                .only(
-                right:
-                space_3),
+            padding: const EdgeInsets.only(right: space_3),
             child: Icon(
-              rating==3.5?Icons.star_half: Icons.star,
-              color: rating>=3.5?CommonStyles
-                  .darkAmber: CommonStyles.grey,
+              rating == 3.5 ? Icons.star_half : Icons.star,
+              color: rating >= 3.5 ? CommonStyles.darkAmber : CommonStyles.grey,
               size: space_12,
             ),
           ),
           Padding(
-            padding:
-            const EdgeInsets
-                .only(
-                right:
-                space_3),
+            padding: const EdgeInsets.only(right: space_3),
             child: Icon(
-              rating==4.5?Icons.star_half: Icons.star,
-              color: rating>=4.5?CommonStyles
-                  .darkAmber: CommonStyles.grey,
+              rating == 4.5 ? Icons.star_half : Icons.star,
+              color: rating >= 4.5 ? CommonStyles.darkAmber : CommonStyles.grey,
               size: space_12,
             ),
           ),
@@ -1689,7 +1740,6 @@ class RatingBarByRatingWidget extends StatelessWidget {
     );
   }
 }
-
 
 //Filter
 class FilterSortByWidget extends StatelessWidget {
@@ -1856,13 +1906,14 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => StateContainer
-                                                  .of(context)
-                                                  .mLoginResponse !=
-                                                  null &&
-                                                  StateContainer.of(context)
-                                                      .mLoginResponse
-                                                      .data.token !=
-                                                      null
+                                                                  .of(context)
+                                                              .mLoginResponse !=
+                                                          null &&
+                                                      StateContainer.of(context)
+                                                              .mLoginResponse
+                                                              .data
+                                                              .token !=
+                                                          null
                                                   ? ChatHomeScreen()
                                                   : LoginScreen()),
                                         );
@@ -1880,10 +1931,19 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                                   child: GestureDetector(
                                       onTap: () {
                                         var currentLoc = StateContainer.of(
-                                            context).mUserLocationSelected!=null?StateContainer.of(
-                                            context).mUserLocationSelected:null;
-                                        if(currentLoc!=null){
-                                          StateContainer.of(context).mUserLocNameSelected = UserLocNameSelected(address: currentLoc.city, mlat: currentLoc.mlat, mlng: currentLoc.mlng);
+                                                        context)
+                                                    .mUserLocationSelected !=
+                                                null
+                                            ? StateContainer.of(context)
+                                                .mUserLocationSelected
+                                            : null;
+                                        if (currentLoc != null) {
+                                          StateContainer.of(context)
+                                                  .mUserLocNameSelected =
+                                              UserLocNameSelected(
+                                                  address: currentLoc.city,
+                                                  mlat: currentLoc.mlat,
+                                                  mlng: currentLoc.mlng);
                                         }
                                         Navigator.push(
                                           context,
@@ -1928,7 +1988,8 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                                                           null &&
                                                       StateContainer.of(context)
                                                               .mLoginResponse
-                                                              .data.token !=
+                                                              .data
+                                                              .token !=
                                                           null
                                                   ? UserProfile()
                                                   : LoginScreen()),
@@ -1951,16 +2012,16 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => StateContainer
-                                .of(context)
-                                .mLoginResponse !=
-                                null &&
-                                StateContainer.of(context)
-                                    .mLoginResponse
-                                    .data.token !=
-                                    null
-                                ? ChooseCategoryScreen()
-                                : LoginScreen()),
+                            builder: (context) =>
+                                StateContainer.of(context).mLoginResponse !=
+                                            null &&
+                                        StateContainer.of(context)
+                                                .mLoginResponse
+                                                .data
+                                                .token !=
+                                            null
+                                    ? ChooseCategoryScreen()
+                                    : LoginScreen()),
                       );
                     },
                     child: Container(
@@ -2009,7 +2070,10 @@ class BottomFloatingFilterBtnsWidget extends StatelessWidget {
   FilterRes filterRes;
   Function openFilter;
   Function openSortFilter;
-  BottomFloatingFilterBtnsWidget(this.filterRes, this.openFilter, this.openSortFilter);
+
+  BottomFloatingFilterBtnsWidget(
+      this.filterRes, this.openFilter, this.openSortFilter);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -2041,7 +2105,7 @@ class BottomFloatingFilterBtnsWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GestureDetector(
-                onTap:  openSortFilter,
+                onTap: openSortFilter,
                 child: Container(
                   height: space_40,
                   width: space_40,
@@ -2059,7 +2123,8 @@ class BottomFloatingFilterBtnsWidget extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: openFilter,/*() {
+                onTap: openFilter,
+                /*() {
                   openFilter;
 //                  Navigator.push(
 //                    context,
@@ -2096,7 +2161,8 @@ class BottomFloatingChatBtnsWidget extends StatelessWidget {
   String mobile;
   String sellerId;
 
-  BottomFloatingChatBtnsWidget(this.adId,this.slug, this.mobile, this.sellerId);
+  BottomFloatingChatBtnsWidget(
+      this.adId, this.slug, this.mobile, this.sellerId);
 
   @override
   Widget build(BuildContext context) {
@@ -2151,7 +2217,9 @@ class BottomFloatingChatBtnsWidget extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) => ChatDetailScreen(
-                              slug: slug, sellerId: sellerId, adId: adId,
+                              slug: slug,
+                              sellerId: sellerId,
+                              adId: adId,
                             )),
                   );
                 },
@@ -2279,7 +2347,9 @@ class PackageCardWidget extends StatelessWidget {
 
 class EmptyWidget extends StatelessWidget {
   String title;
+
   EmptyWidget(this.title);
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -2292,7 +2362,11 @@ class EmptyWidget extends StatelessWidget {
             }),
             Expanded(
               child: Center(
-                child: Text(title, style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),),
+                child: Text(
+                  title,
+                  style: CommonStyles.getMontserratStyle(
+                      space_15, FontWeight.w600, Colors.black),
+                ),
               ),
             ),
           ],
@@ -2301,6 +2375,7 @@ class EmptyWidget extends StatelessWidget {
     );
   }
 }
+
 class ProgressWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -2328,7 +2403,10 @@ class ProgressNormalAppBarWidget extends StatelessWidget {
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [PostAdsCommonAppbar(title: title), Expanded(child: ProgressWidget())],
+                children: [
+                  PostAdsCommonAppbar(title: title),
+                  Expanded(child: ProgressWidget())
+                ],
               ),
             ],
           ),

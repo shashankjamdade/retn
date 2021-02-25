@@ -8,6 +8,7 @@ import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/model/item_detail_response.dart';
 import 'package:flutter_rentry_new/repository/HomeRepository.dart';
+import 'package:flutter_rentry_new/screens/ImagePreviewScreen.dart';
 import 'package:flutter_rentry_new/screens/ProfileScreen.dart';
 import 'package:flutter_rentry_new/screens/editAds/ChooseCategoryEditAdScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
@@ -124,7 +125,19 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
 //                          Navigator.pop(context);
 //                        }),
                     flexibleSpace: InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        var imgList = new List<String>();
+                        if(itemDetailResponse.ad.img_1!=null && itemDetailResponse.ad.img_1.isNotEmpty)
+                          imgList.add(itemDetailResponse.ad.img_1);
+                        if(itemDetailResponse.ad.img_2!=null && itemDetailResponse.ad.img_2.isNotEmpty)
+                          imgList.add(itemDetailResponse.ad.img_2);
+                        if(itemDetailResponse.ad.img_3!=null && itemDetailResponse.ad.img_3.isNotEmpty)
+                          imgList.add(itemDetailResponse.ad.img_3);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ImagePreviewScreen(imgList)),
+                        );
+                      },
                       child: FlexibleSpaceBar(
                         centerTitle: true,
                         background: Container(

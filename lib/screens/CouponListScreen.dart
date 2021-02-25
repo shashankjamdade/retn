@@ -1,8 +1,5 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:dotted_border/dotted_border.dart';
-import 'package:expandable_text/expandable_text.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
@@ -10,16 +7,10 @@ import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/model/coupon_res.dart';
-import 'package:flutter_rentry_new/model/get_notification_response.dart';
-import 'package:flutter_rentry_new/model/home_response.dart';
-import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
-import 'package:flutter_rentry_new/utils/my_flutter_app_icons.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
-import 'package:flutter_rentry_new/widgets/CarousalCommonWidgets.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
-import 'package:flutter_rentry_new/widgets/ListItemCardWidget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CouponListScreen extends StatefulWidget {
@@ -218,17 +209,17 @@ class _CouponWidgetState extends State<CouponWidget> {
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(left: space_8),
-                          child: Text(
+                          child: ExpandableText(
                             widget.mCouponRes?.description != null &&
                                     widget.mCouponRes?.description?.isNotEmpty
                                 ? widget.mCouponRes?.description
                                 : "",
 //                          expandText: 'show more',
 //                          collapseText: 'show less',
-                            maxLines: 1,
+                            trimLines: 1,
 //                          linkColor: Colors.blue,
-                            style: CommonStyles.getMontserratStyle(
-                                space_14, FontWeight.w500, Colors.black),
+//                            style: CommonStyles.getMontserratStyle(
+//                                space_14, FontWeight.w500, Colors.black),
                           ),
                         ),
                       ),
@@ -312,5 +303,93 @@ class _CouponWidgetState extends State<CouponWidget> {
     } else {
       throw 'Could not launch $url';
     }
+  }
+}
+
+class ExpandableText extends StatefulWidget {
+  const ExpandableText(
+      this.text, {
+        Key key,
+        this.trimLines = 2,
+      })  : assert(text != null),
+        super(key: key);
+
+  final String text;
+  final int trimLines;
+
+  @override
+  ExpandableTextState createState() => ExpandableTextState();
+}
+
+class ExpandableTextState extends State<ExpandableText> {
+  bool _readMore = true;
+  void _onTapLink() {
+    setState(() => _readMore = !_readMore);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final DefaultTextStyle defaultTextStyle = DefaultTextStyle.of(context);
+    final colorClickableText = Colors.blue;
+    final widgetColor = Colors.black;
+    TextSpan link = TextSpan(
+        text: _readMore ? "... read more" : " read less",
+        style: TextStyle(
+          color: colorClickableText,
+        ),
+        recognizer: TapGestureRecognizer()..onTap = _onTapLink
+    );
+    Widget result = LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        assert(constraints.hasBoundedWidth);
+        final double maxWidth = constraints.maxWidth;
+        // Create a TextSpan with data
+        final text = TextSpan(
+          text: widget.text,
+        );
+        // Layout and measure link
+        TextPainter textPainter = TextPainter(
+          text: link,
+          textDirection: TextDirection.rtl,//better to pass this from master widget if ltr and rtl both supported
+          maxLines: widget.trimLines,
+          ellipsis: '...',
+        );
+        textPainter.layout(minWidth: constraints.minWidth, maxWidth: maxWidth);
+        final linkSize = textPainter.size;
+        // Layout and measure text
+        textPainter.text = text;
+        textPainter.layout(minWidth: constraints.minWidth, maxWidth: maxWidth);
+        final textSize = textPainter.size;
+        // Get the endIndex of data
+        int endIndex;
+        final pos = textPainter.getPositionForOffset(Offset(
+          textSize.width - linkSize.width,
+          textSize.height,
+        ));
+        endIndex = textPainter.getOffsetBefore(pos.offset);
+        var textSpan;
+        if (textPainter.didExceedMaxLines) {
+          textSpan = TextSpan(
+            text: _readMore
+                ? widget.text.substring(0, endIndex)
+                : widget.text,
+            style: TextStyle(
+              color: widgetColor,
+            ),
+            children: <TextSpan>[link],
+          );
+        } else {
+          textSpan = TextSpan(
+            text: widget.text,
+          );
+        }
+        return RichText(
+          softWrap: true,
+          overflow: TextOverflow.clip,
+          text: textSpan,
+        );
+      },
+    );
+    return result;
   }
 }

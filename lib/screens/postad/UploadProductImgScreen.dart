@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 import 'package:flutter_rentry_new/model/AdPostReqModel.dart';
 import 'package:flutter_rentry_new/model/custom_field_model2.dart';
 import 'package:flutter_rentry_new/screens/postad/RentalPriceScreen.dart';
@@ -87,7 +88,8 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
                                                 BorderRadius.circular(space_10),
                                             child: Image.file(
                                               _image1,
-                                              fit: BoxFit.fill,
+                                              color: CommonStyles.grey,
+                                              fit: BoxFit.contain,
                                               width: space_200,
                                               height: space_150,
                                             ),
@@ -173,6 +175,7 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
                                                 BorderRadius.circular(space_10),
                                             child: Image.file(
                                               _image2,
+                                              color: CommonStyles.grey,
                                               fit: BoxFit.fill,
                                               width: space_200,
                                               height: space_150,
@@ -259,6 +262,7 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
                                                 BorderRadius.circular(space_10),
                                             child: Image.file(
                                               _image3,
+                                              color: CommonStyles.grey,
                                               fit: BoxFit.fill,
                                               width: space_200,
                                               height: space_150,
@@ -519,12 +523,21 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
   }
 
   Future getImageCamera(String imgType) async {
+    File _image;
     try{
       final pickedFile = await picker.getImage(source: ImageSource.camera);
-      setState(() {
+      if (pickedFile != null && pickedFile.path != null) {
+        File rotatedImage = await FlutterExifRotation.rotateImage(path: pickedFile.path);
         if (pickedFile != null) {
+          setState(() {
+            _image = rotatedImage;
+          });
+        }
+      }
+      setState(() {
+        if (_image != null) {
           if (imgType == "img1") {
-            _image1 = File(pickedFile.path);
+            _image1 = File(_image.path);
             debugPrint("FILE_SELECTED ${_image1.path}");
             Fluttertoast.showToast(
                 msg: "Success ${_image1.path}",
@@ -535,7 +548,7 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
                 textColor: Colors.white,
                 fontSize: space_14);
           } else if (imgType == "img2") {
-            _image2 = File(pickedFile.path);
+            _image2 = File(_image.path);
             debugPrint("FILE_SELECTED ${_image2.path}");
             Fluttertoast.showToast(
                 msg: "Success ${_image2.path}",
@@ -546,7 +559,7 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
                 textColor: Colors.white,
                 fontSize: space_14);
           } else if (imgType == "img3") {
-            _image3 = File(pickedFile.path);
+            _image3 = File(_image.path);
             debugPrint("FILE_SELECTED ${_image3.path}");
             Fluttertoast.showToast(
                 msg: "Success ${_image3.path}",

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 import 'package:flutter_rentry_new/model/AdPostReqModel.dart';
 import 'package:flutter_rentry_new/model/custom_field_model2.dart';
 import 'package:flutter_rentry_new/model/my_ads_edit_res.dart';
@@ -120,10 +121,12 @@ class _EditUploadProductImgScreenState
                                       : _image1 != null
                                           ? ClipRRect(
                                               borderRadius:
-                                                  BorderRadius.circular(space_10),
+                                                  BorderRadius.circular(
+                                                      space_10),
                                               child: Image.file(
                                                 _image1,
-                                                fit: BoxFit.fill,
+                                                fit: BoxFit.contain,
+                                                color: CommonStyles.grey,
                                                 width: space_200,
                                                 height: space_150,
                                               ),
@@ -140,7 +143,16 @@ class _EditUploadProductImgScreenState
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           space_10)),
-                                    child: Center(child: Text("Upload image", style: CommonStyles.getMontserratStyle(space_14, FontWeight.w500, Colors.black),),),
+                                              child: Center(
+                                                child: Text(
+                                                  "Upload image",
+                                                  style: CommonStyles
+                                                      .getMontserratStyle(
+                                                          space_14,
+                                                          FontWeight.w500,
+                                                          Colors.black),
+                                                ),
+                                              ),
                                             ),
                                 ),
                               ),
@@ -211,10 +223,12 @@ class _EditUploadProductImgScreenState
                                       : _image2 != null
                                           ? ClipRRect(
                                               borderRadius:
-                                                  BorderRadius.circular(space_10),
+                                                  BorderRadius.circular(
+                                                      space_10),
                                               child: Image.file(
                                                 _image2,
-                                                fit: BoxFit.fill,
+                                                fit: BoxFit.contain,
+                                                color: CommonStyles.grey,
                                                 width: space_200,
                                                 height: space_150,
                                               ),
@@ -231,7 +245,16 @@ class _EditUploadProductImgScreenState
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           space_10)),
-                                    child: Center(child: Text("Upload image", style: CommonStyles.getMontserratStyle(space_14, FontWeight.w500, Colors.black),),),
+                                              child: Center(
+                                                child: Text(
+                                                  "Upload image",
+                                                  style: CommonStyles
+                                                      .getMontserratStyle(
+                                                          space_14,
+                                                          FontWeight.w500,
+                                                          Colors.black),
+                                                ),
+                                              ),
                                             ),
                                 ),
                               ),
@@ -302,10 +325,12 @@ class _EditUploadProductImgScreenState
                                       : _image3 != null
                                           ? ClipRRect(
                                               borderRadius:
-                                                  BorderRadius.circular(space_10),
+                                                  BorderRadius.circular(
+                                                      space_10),
                                               child: Image.file(
                                                 _image3,
-                                                fit: BoxFit.fill,
+                                                fit: BoxFit.contain,
+                                                color: CommonStyles.grey,
                                                 width: space_200,
                                                 height: space_150,
                                               ),
@@ -322,7 +347,16 @@ class _EditUploadProductImgScreenState
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           space_10)),
-                                    child: Center(child: Text("Upload image", style: CommonStyles.getMontserratStyle(space_14, FontWeight.w500, Colors.black),),),
+                                              child: Center(
+                                                child: Text(
+                                                  "Upload image",
+                                                  style: CommonStyles
+                                                      .getMontserratStyle(
+                                                          space_14,
+                                                          FontWeight.w500,
+                                                          Colors.black),
+                                                ),
+                                              ),
                                             ),
                                 ),
                               ),
@@ -361,7 +395,8 @@ class _EditUploadProductImgScreenState
                   ),
                   GestureDetector(
                     onTap: () {
-                      if (_image1 != null || (img1 != null && img1.isNotEmpty)) {
+                      if (_image1 != null ||
+                          (img1 != null && img1.isNotEmpty)) {
                         widget.adPostReqModel.imgPath1 =
                             _image1 != null ? _image1.path : "";
 
@@ -380,8 +415,8 @@ class _EditUploadProductImgScreenState
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  EditRentalPriceScreen(widget.adPostReqModel, widget.mMyAdsEditRes)),
+                              builder: (context) => EditRentalPriceScreen(
+                                  widget.adPostReqModel, widget.mMyAdsEditRes)),
                         );
                       } else {
                         showSnakbar(_scaffoldKey, empty_img);
@@ -413,119 +448,119 @@ class _EditUploadProductImgScreenState
               ),
               mSelectedImg != null && mSelectedImg.isNotEmpty
                   ? GestureDetector(
-                onTap: () {
-                  setState(() {
-                    mSelectedImg = null;
-                  });
-                },
-                child: Container(
-                  color: Colors.grey.withOpacity(0.6),
-                  child: Center(
-                    child: Container(
-                      margin: EdgeInsets.all(space_15),
-                      padding: EdgeInsets.only(
-                          top: space_15,
-                          left: space_15,
-                          right: space_15,
-                          bottom: space_15),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black, blurRadius: space_5)
-                          ],
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(space_15),
-                            topRight: Radius.circular(space_15),
-                            bottomRight: Radius.circular(space_15),
-                            bottomLeft: Radius.circular(space_15),
-                          )),
-                      child: Row(
-                        children: [
-                          Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  getImageCamera(mSelectedImg);
-                                },
-                                child: Container(
-                                  height: space_80,
-                                  margin: EdgeInsets.only(right: space_5),
-                                  decoration: BoxDecoration(
-                                      color: CommonStyles.lightGrey,
-                                      borderRadius:
-                                      BorderRadius.circular(space_10)),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.camera_alt,
-                                          color: CommonStyles.primaryColor,
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.all(space_5),
-                                          child: Text(
-                                            "Camera",
-                                            style: CommonStyles
-                                                .getMontserratStyle(
-                                                space_15,
-                                                FontWeight.w500,
-                                                Colors.black),
+                      onTap: () {
+                        setState(() {
+                          mSelectedImg = null;
+                        });
+                      },
+                      child: Container(
+                        color: Colors.grey.withOpacity(0.6),
+                        child: Center(
+                          child: Container(
+                            margin: EdgeInsets.all(space_15),
+                            padding: EdgeInsets.only(
+                                top: space_15,
+                                left: space_15,
+                                right: space_15,
+                                bottom: space_15),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black, blurRadius: space_5)
+                                ],
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(space_15),
+                                  topRight: Radius.circular(space_15),
+                                  bottomRight: Radius.circular(space_15),
+                                  bottomLeft: Radius.circular(space_15),
+                                )),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                    child: GestureDetector(
+                                  onTap: () {
+                                    getImageCamera(mSelectedImg);
+                                  },
+                                  child: Container(
+                                    height: space_80,
+                                    margin: EdgeInsets.only(right: space_5),
+                                    decoration: BoxDecoration(
+                                        color: CommonStyles.lightGrey,
+                                        borderRadius:
+                                            BorderRadius.circular(space_10)),
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.camera_alt,
+                                            color: CommonStyles.primaryColor,
                                           ),
-                                        )
-                                      ],
+                                          Container(
+                                            margin: EdgeInsets.all(space_5),
+                                            child: Text(
+                                              "Camera",
+                                              style: CommonStyles
+                                                  .getMontserratStyle(
+                                                      space_15,
+                                                      FontWeight.w500,
+                                                      Colors.black),
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              )),
-                          Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  getImage(mSelectedImg);
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.only(left: space_5),
-                                  height: space_80,
-                                  decoration: BoxDecoration(
-                                      color: CommonStyles.lightGrey,
-                                      borderRadius:
-                                      BorderRadius.circular(space_10)),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.photo,
-                                          color: CommonStyles.primaryColor,
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.all(space_5),
-                                          child: Text(
-                                            "Gallery",
-                                            style: CommonStyles
-                                                .getMontserratStyle(
-                                                space_15,
-                                                FontWeight.w500,
-                                                Colors.black),
+                                )),
+                                Expanded(
+                                    child: GestureDetector(
+                                  onTap: () {
+                                    getImage(mSelectedImg);
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.only(left: space_5),
+                                    height: space_80,
+                                    decoration: BoxDecoration(
+                                        color: CommonStyles.lightGrey,
+                                        borderRadius:
+                                            BorderRadius.circular(space_10)),
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.photo,
+                                            color: CommonStyles.primaryColor,
                                           ),
-                                        )
-                                      ],
+                                          Container(
+                                            margin: EdgeInsets.all(space_5),
+                                            child: Text(
+                                              "Gallery",
+                                              style: CommonStyles
+                                                  .getMontserratStyle(
+                                                      space_15,
+                                                      FontWeight.w500,
+                                                      Colors.black),
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              )),
-                        ],
+                                )),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-              )
+                    )
                   : Container(
-                height: space_0,
-                width: space_0,
-              ),
+                      height: space_0,
+                      width: space_0,
+                    ),
             ],
           ),
         ),
@@ -559,20 +594,30 @@ class _EditUploadProductImgScreenState
   }
 
   Future getImageCamera(String imgType) async {
+    File _image;
     final pickedFile = await picker.getImage(source: ImageSource.camera);
-    setState(() {
+    if (pickedFile != null && pickedFile.path != null) {
+      File rotatedImage =
+          await FlutterExifRotation.rotateImage(path: pickedFile.path);
       if (pickedFile != null) {
+        setState(() {
+          _image = rotatedImage;
+        });
+      }
+    }
+    setState(() {
+      if (_image != null) {
         if (imgType == "img1") {
           img1 = "";
-          _image1 = File(pickedFile.path);
+          _image1 = File(_image.path);
           debugPrint("FILE_SELECTED ${_image1.path}");
         } else if (imgType == "img2") {
           img2 = "";
-          _image2 = File(pickedFile.path);
+          _image2 = File(_image.path);
           debugPrint("FILE_SELECTED ${_image2.path}");
         } else if (imgType == "img3") {
           img3 = "";
-          _image3 = File(pickedFile.path);
+          _image3 = File(_image.path);
           debugPrint("FILE_SELECTED ${_image3.path}");
         }
         mSelectedImg = "";

@@ -15,8 +15,8 @@ import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart'; //for date format
 
 class PackageScreen extends StatefulWidget {
@@ -107,9 +107,10 @@ class _PackageScreenState extends State<PackageScreen> {
   }
 
   void openCheckout(String amt, String id, String title) async {
+    var amtNum = int.parse(amt);
     var options = {
-      'key': 'rzp_test_5JE0nfz3a956ce',
-      'amount': amt,
+      'key': 'rzp_test_NNbwJ9tmM0fbxj',
+      'amount': "${amtNum*100}",
       'name': 'Rentozo',
       'description': 'Buy new package',
       'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
@@ -118,13 +119,13 @@ class _PackageScreenState extends State<PackageScreen> {
       }
     };
     try {
-//      _razorpay.open(options);
-      setState(() {
-        isWebviewLaunch = true;
-      });
       mSelectedPackageId = id;
       mSelectedPackageName = title;
       mSelectedPackageAmt = amt;
+      _razorpay.open(options);
+//      setState(() {
+//        isWebviewLaunch = true;
+//      });
     } catch (e) {
       debugPrint(e);
     }

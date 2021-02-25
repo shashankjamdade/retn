@@ -440,7 +440,7 @@ class _ItemDetailBannerImgCorousalWidgetState
                                         placeholder:
                                             "assets/images/app_img.png",
                                         image: widget.bannerList[_current],
-                                        fit: BoxFit.fill,
+                                        fit: BoxFit.contain,
                                       ),
                                     ),
                                   ],
