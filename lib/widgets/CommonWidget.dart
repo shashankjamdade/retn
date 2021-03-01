@@ -89,15 +89,24 @@ class CommonAppbarWidget extends StatelessWidget {
         children: [
           Expanded(
             flex: 2,
-            child: Container(
-              width: getProportionateScreenWidth(context, space_80),
-              height: getProportionateScreenHeight(context, space_50),
-              child: FittedBox(
-                fit: BoxFit.contain,
-                child: Image.asset(
-                  "assets/images/app_img_white.png",
-                  width: getProportionateScreenWidth(context, space_40),
-                  height: getProportionateScreenHeight(context, space_20),
+            child: GestureDetector(
+              onTap: (){
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => HomeScreen()),
+                );
+              },
+              child: Container(
+                width: getProportionateScreenWidth(context, space_80),
+                height: getProportionateScreenHeight(context, space_50),
+                child: FittedBox(
+                  fit: BoxFit.contain,
+                  child: Image.asset(
+                    "assets/images/app_img_white.png",
+                    width: getProportionateScreenWidth(context, space_40),
+                    height: getProportionateScreenHeight(context, space_20),
+                  ),
                 ),
               ),
             ),

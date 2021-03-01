@@ -267,6 +267,8 @@ class AllCategoryGridWidget extends StatelessWidget {
                                       child: Text(
                                         "${mGetCategoryResponse.data[index].name}",
                                         textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
                                         style: CommonStyles.getRalewayStyle(
                                             space_12,
                                             FontWeight.w500,
