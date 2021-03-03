@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
@@ -67,11 +68,11 @@ class _HomeScreenState extends State<HomeScreen> {
       mLng = selectedCurrentLoc.mlng;
       debugPrint("ACCESSING_INHERITED_LOCATION ${mLat}, ${mLng} ------");
     }
-    if (mLat != null && mLat.isNotEmpty) {
+   /* if (mLat != null && mLat.isNotEmpty) {
       new HomeRepository()
           .callCouponRes(mLat, mLng)
           .then((value) => resetUiAgain(value));
-    }
+    }*/
   }
 
   resetUiAgain(CouponRes couponRes) {
@@ -83,13 +84,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          homeBloc..add(HomeReqAuthenticationEvent(token: token)),
-      child: BlocListener(
-          bloc: homeBloc,
-          listener: (context, state) {
-            if (state is HomeResState) {
+    return WillPopScope(
+      onWillPop: (){
+        if (Platform.isAndroid) {
+          SystemNavigator.pop();
+        } else if (Platform.isIOS) {
+          exit(0);
+        }
+      },
+      child: BlocProvider(
+        create: (context) =>
+            homeBloc..add(HomeReqAuthenticationEvent(token: token)),
+        child: BlocListener(
+            bloc: homeBloc,
+            listener: (context, state) {
+              if (state is HomeResState) {
 //              var screenHeight = MediaQuery.of(context).size.height;
 //              debugPrint("SCREEN_HEIGHT--> ${screenHeight}");
 //              Fluttertoast.showToast(
@@ -100,38 +109,39 @@ class _HomeScreenState extends State<HomeScreen> {
 //                  backgroundColor: Colors.black,
 //                  textColor: Colors.white,
 //                  fontSize: space_14);
-              mHomeResponse = state.res;
-              if (widget.isRedirectToMyAds != null &&
-                  widget.isRedirectToMyAds) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MyAdsListScreen()),
-                );
-              } else if (widget.isRedirectToChat != null &&
-                  widget.isRedirectToChat) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ChatHomeScreen()),
-                );
-              }
-            }
-          },
-          child: BlocBuilder<HomeBloc, HomeState>(
-            builder: (context, state) {
-              if (state is HomeResState) {
-                return getHomeUI(state.res);
-              } else {
-                return Container(
-                  color: Colors.white,
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      backgroundColor: Colors.white,
-                    ),
-                  ),
-                );
+                mHomeResponse = state.res;
+                if (widget.isRedirectToMyAds != null &&
+                    widget.isRedirectToMyAds) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MyAdsListScreen()),
+                  );
+                } else if (widget.isRedirectToChat != null &&
+                    widget.isRedirectToChat) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ChatHomeScreen()),
+                  );
+                }
               }
             },
-          )),
+            child: BlocBuilder<HomeBloc, HomeState>(
+              builder: (context, state) {
+                if (state is HomeResState) {
+                  return getHomeUI(state.res);
+                } else {
+                  return Container(
+                    color: Colors.white,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        backgroundColor: Colors.white,
+                      ),
+                    ),
+                  );
+                }
+              },
+            )),
+      ),
     );
   }
 
@@ -168,24 +178,24 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(
                           height: space_25,
                         ),
-                        Container(
-                            child: RichTextTitleBtnWidget("TOP", "OFFERS", () {
-                          redirectToOfferList(context);
-                        })),
-                        SizedBox(
-                          height: space_15,
-                        ),
-                        mCouponRes != null
-                            ? Align(
-                                alignment: Alignment.topLeft,
-                                child: BannersCarousalWidget(mCouponRes))
-                            : Container(
-                                height: 0,
-                                width: 0,
-                              ),
-                        SizedBox(
-                          height: mCouponRes != null ? space_15 : 0,
-                        ),
+//                        Container(
+//                            child: RichTextTitleBtnWidget("TOP", "OFFERS", () {
+//                          redirectToOfferList(context);
+//                        })),
+//                        SizedBox(
+//                          height: space_15,
+//                        ),
+//                        mCouponRes != null
+//                            ? Align(
+//                                alignment: Alignment.topLeft,
+//                                child: BannersCarousalWidget(mCouponRes))
+//                            : Container(
+//                                height: 0,
+//                                width: 0,
+//                              ),
+//                        SizedBox(
+//                          height: mCouponRes != null ? space_15 : 0,
+//                        ),
                         ListView.builder(
                             shrinkWrap: true,
                             primary: false,

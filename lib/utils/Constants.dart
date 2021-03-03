@@ -115,7 +115,7 @@ Future<ui.Image> getUiImage(
 }
 
 lauchDialer(String mobile) async {
-  if (mobile.isNotEmpty) {
+  if (mobile!=null && mobile.isNotEmpty) {
     var url = "tel:" + mobile;
     if (await canLaunch(url)) {
       await launch(url);

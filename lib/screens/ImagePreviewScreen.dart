@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:zoom_widget/zoom_widget.dart';
 
 class ImagePreviewScreen extends StatefulWidget {
   List<String> imglist;
@@ -33,6 +34,8 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
                         children: [
                           CarouselSlider(
                             options: CarouselOptions(
+                                height:getProportionateScreenHeight(
+                                    context, space_400),
                                 viewportFraction: 1.0,
                                 enlargeCenterPage: false,
                                 onPageChanged: (index, reason) {

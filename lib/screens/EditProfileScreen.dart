@@ -85,7 +85,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           bloc: homeBloc,
           listener: (context, state) {
             if (state.res is CommonResponse) {
-              if(state.res.msg!=null){
+              if (state.res.msg != null) {
                 showSnakbar(_scaffoldKey, state.res.msg);
               }
             }
@@ -110,13 +110,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             }),
             (state is ProgressState)
                 ? Expanded(
-                  child: Container(
+                    child: Container(
                       color: Colors.white,
                       child: Center(
                         child: CircularProgressIndicator(),
                       ),
                     ),
-                )
+                  )
                 : Expanded(
                     child: Container(
                       padding: EdgeInsets.symmetric(
@@ -163,31 +163,58 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   getImage();
                                 },
                                 child: Container(
-                                  height: space_80,
-                                  width: space_80,
-                                  child: ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.circular(space_10),
-                                    child: _image != null
-                                        ? Image.file(
-                                            _image,
-                                            fit: BoxFit.cover,
-                                            width: space_80,
-                                            height: space_80,
-                                          )
-                                        : FadeInImage.assetNetwork(
-                                            placeholder:
-                                                "assets/images/app_img.png",
-                                            image: widget.mUserprofileRes.data
-                                                        .profile_picture !=
-                                                    null
-                                                ? widget.mUserprofileRes.data
-                                                    .profile_picture
-                                                : "http://rentozo.com/assets/img/user.jpg",
-                                            fit: BoxFit.cover,
-                                            width: space_80,
-                                            height: space_80,
+                                  height: space_90,
+                                  width: space_90,
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        height: space_80,
+                                        width: space_80,
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(space_10),
+                                          child: _image != null
+                                              ? Image.file(
+                                                  _image,
+                                                  fit: BoxFit.cover,
+                                                  width: space_80,
+                                                  height: space_80,
+                                                )
+                                              : FadeInImage.assetNetwork(
+                                                  placeholder:
+                                                      "assets/images/userlogo.png",
+                                                  image: widget
+                                                              .mUserprofileRes
+                                                              .data
+                                                              .profile_picture !=
+                                                          null
+                                                      ? widget.mUserprofileRes
+                                                          .data.profile_picture
+                                                      : "http://rentozo.com/assets/img/user.jpg",
+                                                  fit: BoxFit.cover,
+                                                  width: space_80,
+                                                  height: space_80,
+                                                ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        right: 0,
+                                        bottom: 0,
+                                        child: Container(
+                                          width: space_30,
+                                          height: space_30,
+                                          decoration: BoxDecoration(
+                                              color: CommonStyles.primaryColor,
+                                              borderRadius: BorderRadius.circular(space_15),
+                                              border: Border.all(
+                                                  color:
+                                                      Colors.white)),
+                                          child: Center(
+                                            child: Icon(Icons.camera_alt, color: Colors.white, size: space_15,),
                                           ),
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 ),
                               ),
@@ -440,9 +467,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       showSnakbar(_scaffoldKey, empty_mobile);
     } else if (emailController.text.trim().isEmpty) {
       showSnakbar(_scaffoldKey, empty_email);
-    } /*else if (locationController.text.trim().isEmpty) {
+    }
+    /*else if (locationController.text.trim().isEmpty) {
       showSnakbar(_scaffoldKey, empty_address);
-    }*/ else {
+    }*/
+    else {
       if (_image != null) {
         homeBloc
           ..add(UserUpdateEvent(

@@ -50,6 +50,7 @@ class AuthenticationRepository extends BaseRepository {
   }
 
   Future<LoginResponse> callSocialLogin(String email, String deviceToken) async {
+    debugPrint("FB_EMAIL3-->> ${email}");
     bool status = false;
     LoginResponse response;
     int code = 0;
@@ -128,7 +129,7 @@ class AuthenticationRepository extends BaseRepository {
       case FacebookLoginStatus.loggedIn:
         final token = result.accessToken.token;
         final graphResponse = await http.get(
-            'https://graph.facebook.com/v2.12/me?fields=name,picture,email,link&access_token=${token}');
+            'https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=${token}');
         final profile = jsonDecode(graphResponse.body);
         debugPrint("FB_RES " + jsonEncode(graphResponse.body));
         userProfile = profile;

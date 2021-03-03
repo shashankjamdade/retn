@@ -126,7 +126,6 @@ class _EditUploadProductImgScreenState
                                               child: Image.file(
                                                 _image1,
                                                 fit: BoxFit.contain,
-                                                color: CommonStyles.grey,
                                                 width: space_200,
                                                 height: space_150,
                                               ),
@@ -228,7 +227,6 @@ class _EditUploadProductImgScreenState
                                               child: Image.file(
                                                 _image2,
                                                 fit: BoxFit.contain,
-                                                color: CommonStyles.grey,
                                                 width: space_200,
                                                 height: space_150,
                                               ),
@@ -330,7 +328,6 @@ class _EditUploadProductImgScreenState
                                               child: Image.file(
                                                 _image3,
                                                 fit: BoxFit.contain,
-                                                color: CommonStyles.grey,
                                                 width: space_200,
                                                 height: space_150,
                                               ),

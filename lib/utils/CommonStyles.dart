@@ -27,6 +27,7 @@ class CommonStyles{
   //styles
   static TextStyle getRalewayStyle(double fontSize, FontWeight fontWeight, Color color){
     return TextStyle(
+      decoration: TextDecoration.none,
       fontSize: fontSize,
       fontFamily: FONT_RALEWAY,
       fontWeight:fontWeight,
@@ -36,6 +37,7 @@ class CommonStyles{
 
  static TextStyle getMontserratStyle(double fontSize, FontWeight fontWeight, Color color){
     return TextStyle(
+        decoration: TextDecoration.none,
       fontSize: fontSize,
       fontFamily: FONT_MONTSERRAT,
       fontWeight:fontWeight,
@@ -136,6 +138,8 @@ const String skip_for_now = "Skip for now>>";
 const String empty_username = "Please enter mobile no or Email";
 const String empty_password = "Please enter password";
 const String empty_package = "Please select package";
+const String accept_tnc = "Please accept terms and conditions";
+const String accept_covid_tnc = "Please accept covid guidelines";
 const String empty_address = "Please enter address";
 const String empty_new_password = "Please enter new password";
 const String rent_pe_tagline = "Rent pe le, Rent pe de...";

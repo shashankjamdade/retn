@@ -7,6 +7,7 @@ import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/main.dart';
 import 'package:flutter_rentry_new/model/user_profile_response.dart';
+import 'package:flutter_rentry_new/screens/CouponListScreen.dart';
 import 'package:flutter_rentry_new/screens/EditProfileScreen.dart';
 import 'package:flutter_rentry_new/screens/MyFavScreen.dart';
 import 'package:flutter_rentry_new/screens/NotificationListScreen.dart';
@@ -108,7 +109,7 @@ class _UserProfileState extends State<UserProfile> {
                                   child: Container(
                                     decoration: BoxDecoration(shape: BoxShape.circle),
                                     child: FadeInImage.assetNetwork(
-                                      placeholder: "assets/images/app_img.png",
+                                      placeholder: "assets/images/userlogo.png",
                                       image: mUserprofileRes.data!=null && mUserprofileRes.data.profile_picture != null
                                           ? mUserprofileRes.data.profile_picture
                                           : "http://rentozo.com/assets/img/user.jpg",
@@ -159,9 +160,16 @@ class _UserProfileState extends State<UserProfile> {
                                   onTap: () {
                                     Navigator.push(
                                       context,
+                                      MaterialPageRoute(builder: (context) => CouponListScreen()),
+                                    );
+                                  }, child: ProfileRowWidget("Offers", "assets/images/nearbyoffers.png")),
+                             InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
                                       MaterialPageRoute(builder: (context) => MyPackageListScreen()),
                                     );
-                                  }, child: ProfileRowWidget("My Package")),
+                                  }, child: ProfileRowWidget("My Package", "assets/images/mypackage.png")),
                               InkWell(
                                   onTap: () {
                                     Navigator.push(
@@ -169,7 +177,7 @@ class _UserProfileState extends State<UserProfile> {
                                       MaterialPageRoute(builder: (context) => PackageScreen()),
                                     );
                                   },
-                                  child: ProfileRowWidget("Upgrade Package")),
+                                  child: ProfileRowWidget("Upgrade Package", "assets/images/upgradepackage.png")),
                              InkWell(
                                   onTap: () {
                                     Navigator.push(
@@ -177,21 +185,21 @@ class _UserProfileState extends State<UserProfile> {
                                       MaterialPageRoute(builder: (context) => MyAdsListScreen()),
                                     );
                                   },
-                                  child: ProfileRowWidget("My Ads")),
+                                  child: ProfileRowWidget("My Ads", "assets/images/myads.png")),
                               InkWell(
                                   onTap: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(builder: (context) => MyFavScreen()),
                                     );
-                                  }, child: ProfileRowWidget("My Favourites")),
+                                  }, child: ProfileRowWidget("My Favourites", "assets/images/myfavourites.png")),
                               InkWell(
                                   onTap: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(builder: (context) => NotificationListScreen()),
                                     );
-                                  }, child: ProfileRowWidget("Notification")),
+                                  }, child: ProfileRowWidget("Notification", "assets/images/notification.png")),
                            InkWell(
                                   onTap: () {
                                     StateContainer.of(context).mLoginResponse = null;
@@ -200,7 +208,7 @@ class _UserProfileState extends State<UserProfile> {
                                       MaterialPageRoute(builder: (context) => ScreenOne(true)),
                                         ModalRoute.withName("/Home")
                                     );
-                                  }, child: ProfileRowWidget("Logout")),
+                                  }, child: ProfileRowWidget("Logout", "assets/images/logout.png")),
                             ],
                           ),
                         )

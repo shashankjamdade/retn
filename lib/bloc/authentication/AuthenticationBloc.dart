@@ -97,10 +97,11 @@ class AuthenticationBloc
 
   Stream<AuthenticationState> makeSocialLogin(String email, String deviceToken) async* {
     try {
+      debugPrint("FB_EMAIL2-->> ${email}");
       final loginResponse = await _authenticationService.callSocialLogin(email, deviceToken);
       yield LoginResAuthenticationState(res: loginResponse);
-    } catch (e) {
-      debugPrint("Exception while nativeLogin ${e.toString()}");
+    } catch (e, stacktrace) {
+      debugPrint("Exception while nativeLogin ${e.toString()} \n ${stacktrace.toString()}");
     }
   }
 
@@ -109,8 +110,8 @@ class AuthenticationBloc
       final registerResponse =
           await _authenticationService.callRegister(registerReq);
       yield RegisterResAuthenticationState(res: registerResponse);
-    } catch (e) {
-      debugPrint("Exception while nativeLogin ${e.toString()}");
+    } catch (e, stacktrace) {
+      debugPrint("Exception while nativeLogin ${e.toString()} \n ${stacktrace.toString()}");
     }
   }
 

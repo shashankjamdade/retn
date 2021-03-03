@@ -701,7 +701,8 @@ class HomeRepository extends BaseRepository {
       String token, AdPostReqModel adPostReqModel) async {
     CommonResponse response;
 
-    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.customFields}");
+    debugPrint("ADPOST_REQ custfield --> ${adPostReqModel.customFields}");
+
     Map<String, String> mainheader = {"token": token};
     var uri = Uri.parse(BASE_URL + POST_ADS);
     var request = new http.MultipartRequest("POST", uri);
@@ -745,6 +746,20 @@ class HomeRepository extends BaseRepository {
     request.fields['address-lang'] = adPostReqModel.addresslng;
     request.fields['rent_type_id'] = adPostReqModel.rentTypeId;
     request.fields['custome_field'] = adPostReqModel.customFields;
+
+    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.categoryId}");
+    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.subCategoryId}");
+    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.title}");
+    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.price}");
+    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.tags}");
+    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.desc}");
+    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.packageId}");
+    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.address}");
+    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.addresslat}");
+    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.addresslng}");
+    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.rentTypeId}");
+    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.customFields}");
+
     var res = await request.send();
     print(res.statusCode);
     if (res.statusCode == 200) {

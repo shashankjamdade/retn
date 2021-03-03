@@ -11,6 +11,7 @@ import 'package:flutter_rentry_new/model/ChatMsgModel.dart';
 import 'package:flutter_rentry_new/model/new_inbox_chat_res.dart';
 import 'package:flutter_rentry_new/screens/ItemDetailScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
+import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:intl/intl.dart';  //for date format
 import 'LoginScreen.dart';
@@ -121,6 +122,19 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: CommonStyles.primaryColor,
+        actions: [
+          InkWell(
+              onTap: () {
+                lauchDialer(mGetAllChatMsgRes.data.ad_and_user_details?.chat_with?.contact!=null && mGetAllChatMsgRes.data.ad_and_user_details?.chat_with?.contact?.isNotEmpty? mGetAllChatMsgRes.data.ad_and_user_details?.chat_with?.contact:"");
+              },
+              child: Container(
+                margin: EdgeInsets.only(right: space_15),
+                child: Icon(
+                  Icons.call,
+                  color: Colors.white,
+                ),
+              )),
+        ],
         leading: InkWell(
             onTap: () {
               Navigator.pop(context);

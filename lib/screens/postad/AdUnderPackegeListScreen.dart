@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
@@ -52,6 +53,8 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
   var mSelectedPackageAmt = "";
   var _razorpay = Razorpay();
   var mShowProgress = false;
+  var mCheckedTnC = false;
+  var mCheckedCovidGuidelines = false;
 
   @override
   void initState() {
@@ -224,58 +227,78 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
                     ),
                     Expanded(
                       child: Container(
-                        margin: EdgeInsets.only(bottom: space_60),
-                        child: ListView.builder(
-                            itemCount: adUnderPackageRes.data.length,
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: (context, index) {
-                              if(adUnderPackageRes.data[index].purchase_button == "show"){
-                                return ListTile(
-                                  key: Key("${index}"),
+                            child: ListView.builder(
+                                itemCount: adUnderPackageRes.data.length,
+                                scrollDirection: Axis.vertical,
+                                primary: false,
+                                itemBuilder: (context, index) {
+                                  if(adUnderPackageRes.data[index].purchase_button == "show"){
+                                    return ListTile(
+                                      key: Key("${index}"),
 //                                  leading: Icon(Icons.notification_important),
-                                  title: Row(
-                                    children: [
-                                      Text(
-                                        adUnderPackageRes.data[index].package_name + " (${adUnderPackageRes.data[index].package_price} for ${adUnderPackageRes.data[index].no_of_days} days)",
-                                        style: CommonStyles.getMontserratStyle(
-                                            space_15, FontWeight.w500, Colors.black),
-                                      ),
-                                      SizedBox(width: space_15,),
-                                      GestureDetector(
-                                        onTap: (){
-                                          mBuypackageId = adUnderPackageRes.data[index].package_id;
-                                          openCheckout(adUnderPackageRes.data[index].package_price, adUnderPackageRes.data[index].package_name, adUnderPackageRes.data[index].package_id);
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(space_8),
-                                          child: Text(
-                                            "Buy Now",
-                                            style: CommonStyles.getMontserratDecorationStyle(
-                                                space_15, FontWeight.w600, Colors.redAccent, TextDecoration.underline),
+                                      title: Row(
+                                        children: [
+                                          Text(
+                                            adUnderPackageRes.data[index].package_name + " (${adUnderPackageRes.data[index].package_price} for ${adUnderPackageRes.data[index].no_of_days} days)",
+                                            style: CommonStyles.getMontserratStyle(
+                                                space_15, FontWeight.w500, Colors.black),
                                           ),
-                                        ),
+                                          SizedBox(width: space_15,),
+                                          GestureDetector(
+                                            onTap: (){
+                                              mBuypackageId = adUnderPackageRes.data[index].package_id;
+                                              openCheckout(adUnderPackageRes.data[index].package_price, adUnderPackageRes.data[index].package_name, adUnderPackageRes.data[index].package_id);
+                                            },
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(space_8),
+                                              child: Text(
+                                                "Buy Now",
+                                                style: CommonStyles.getMontserratDecorationStyle(
+                                                    space_15, FontWeight.w600, Colors.redAccent, TextDecoration.underline),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                );
-                              }else{
-                                return RadioListTile(
-                                  groupValue: mSelectedPackageName,
-                                  title: Text(
-                                    adUnderPackageRes.data[index].package_name + " (${adUnderPackageRes.data[index].package_price} for ${adUnderPackageRes.data[index].no_of_days} days)",
-                                  ),
-                                  value: adUnderPackageRes.data[index].package_id,
-                                  onChanged: (val) {
-                                    debugPrint("Selected_Package - ${val}");
-                                    setState(() {
-                                      mSelectedPackageName = val;
-                                      mSelectedPackageId = val;
-                                    });
-                                  },
-                                );
-                              }
-                            }),
-                      ),
+                                    );
+                                  }else{
+                                    return RadioListTile(
+                                      groupValue: mSelectedPackageName,
+                                      title: Text(
+                                        adUnderPackageRes.data[index].package_name + " (${adUnderPackageRes.data[index].package_price} for ${adUnderPackageRes.data[index].no_of_days} days)",
+                                      ),
+                                      value: adUnderPackageRes.data[index].package_id,
+                                      onChanged: (val) {
+                                        debugPrint("Selected_Package - ${val}");
+                                        setState(() {
+                                          mSelectedPackageName = val;
+                                          mSelectedPackageId = val;
+                                        });
+                                      },
+                                    );
+                                  }
+                                }),
+                          ),
+                    ),
+                    CheckboxListTile(
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: privacyPolicyLinkAndTermsOfService(),
+                      value: mCheckedTnC,
+                      onChanged: (bool value) {
+                        setState(() {
+                          mCheckedTnC = value;
+                        });
+                      },
+                    ),
+                    CheckboxListTile(
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: Text("I Agree to Follow proper covid guidelines before delivering product & services", style: CommonStyles.getRalewayStyle(space_12, FontWeight.w400, Colors.black),),
+                      value: mCheckedCovidGuidelines,
+                      onChanged: (bool value) {
+                        setState(() {
+                          mCheckedCovidGuidelines = value;
+                        });
+                      },
                     ),
                     GestureDetector(
                       onTap: () {
@@ -339,10 +362,50 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
   void onSubmit() {
     if(mSelectedPackageId.isEmpty){
       showSnakbar(_scaffoldKey, empty_package);
-    }else{
+    }else if(!mCheckedTnC){
+      showSnakbar(_scaffoldKey, accept_tnc);
+    }else if(!mCheckedCovidGuidelines){
+      showSnakbar(_scaffoldKey, accept_covid_tnc);
+    }else {
       //api call
       widget.adPostReqModel.packageId = mSelectedPackageId;
       homeBloc..add(PostAdsEvent(token: token, adPostReqModel: widget.adPostReqModel));
     }
   }
+
+  Widget privacyPolicyLinkAndTermsOfService() {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.all(10),
+      child: Center(
+          child: Text.rich(
+              TextSpan(
+                  text: 'By continuing, you agree to our ', style: CommonStyles.getRalewayStyle(space_12, FontWeight.w400, Colors.black),
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: 'Terms and Conditions', style: CommonStyles.getMontserratDecorationStyle(space_12, FontWeight.w400, Colors.black, TextDecoration.underline),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            launchURL("https://rentozo.com/home/page/terms-and-conditions");
+                          }
+                    ),
+                    TextSpan(
+                        text: ' and ', style: CommonStyles.getRalewayStyle(space_12, FontWeight.w400, Colors.black),
+                        children: <TextSpan>[
+                          TextSpan(
+                              text: 'Privacy Policy', style: CommonStyles.getMontserratDecorationStyle(space_12, FontWeight.w400, Colors.black, TextDecoration.underline),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  launchURL("https://rentozo.com/home/page/privacy-policy");
+                                }
+                          )
+                        ]
+                    )
+                  ]
+              )
+          )
+      ),
+    );
+  }
+
 }

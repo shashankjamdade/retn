@@ -154,7 +154,7 @@ class _ForgotPwdScreenState extends State<ForgotPwdScreen> {
                                 if (value.isEmpty) {
                                   return "Please enter valid mobile no.";
                                 }
-                              }, TextInputType.number),
+                              }, TextInputType.number, isVerified:  mOTP?.isNotEmpty,),
                           SizedBox(height: getProportionateScreenHeight(context, space_20),),
                           Container(
                             height: getProportionateScreenHeight(context, space_40),
@@ -173,7 +173,7 @@ class _ForgotPwdScreenState extends State<ForgotPwdScreen> {
                                     keyboardType: TextInputType.text,
                                     decoration: InputDecoration(
                                       floatingLabelBehavior: FloatingLabelBehavior.always,
-                                      labelText: "Password",
+                                      labelText: "New Password",
                                       suffixIcon:  IconButton(
                                         icon:Icon(_obscureText ? Icons.visibility:Icons.visibility_off,),
                                         onPressed: _togglePasswordStatus,

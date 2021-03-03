@@ -101,9 +101,10 @@ class _LoginScreenState extends State<LoginScreen> {
             if (state.res.loginStatus == LOGGEDIN_SUCCESS) {
               //Hit social Login API
               if (state.res.map['email'] != null) {
+                debugPrint("FB_EMAIL-->> ${state.res.map['email']}");
                 authenticationBloc
                   ..add(SocialLoginReqAuthenticationEvent(
-                      emailOrMobile: state.res.map['email']));
+                      emailOrMobile: state.res.map['email'], deviceToken: mFcmToken));
               } else {
                 showSnakbar(_scaffoldKey,
                     "No email found against your profile, please try again with another account");

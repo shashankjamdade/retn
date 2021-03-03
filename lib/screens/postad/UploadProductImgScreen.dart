@@ -88,7 +88,6 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
                                                 BorderRadius.circular(space_10),
                                             child: Image.file(
                                               _image1,
-                                              color: CommonStyles.grey,
                                               fit: BoxFit.contain,
                                               width: space_200,
                                               height: space_150,
@@ -175,8 +174,7 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
                                                 BorderRadius.circular(space_10),
                                             child: Image.file(
                                               _image2,
-                                              color: CommonStyles.grey,
-                                              fit: BoxFit.fill,
+                                              fit: BoxFit.contain,
                                               width: space_200,
                                               height: space_150,
                                             ),
@@ -262,8 +260,7 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
                                                 BorderRadius.circular(space_10),
                                             child: Image.file(
                                               _image3,
-                                              color: CommonStyles.grey,
-                                              fit: BoxFit.fill,
+                                              fit: BoxFit.contain,
                                               width: space_200,
                                               height: space_150,
                                             ),
@@ -525,10 +522,12 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
   Future getImageCamera(String imgType) async {
     File _image;
     try{
-      final pickedFile = await picker.getImage(source: ImageSource.camera);
+      final pickedFile = await picker.getImage(source: ImageSource.camera, imageQuality: 75,
+      maxHeight: 300, maxWidth: 300);
       if (pickedFile != null && pickedFile.path != null) {
         File rotatedImage = await FlutterExifRotation.rotateImage(path: pickedFile.path);
         if (pickedFile != null) {
+          rotatedImage.length().then((value) => debugPrint("FILESIZE--> ${value}"));
           setState(() {
             _image = rotatedImage;
           });
@@ -539,36 +538,36 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
           if (imgType == "img1") {
             _image1 = File(_image.path);
             debugPrint("FILE_SELECTED ${_image1.path}");
-            Fluttertoast.showToast(
-                msg: "Success ${_image1.path}",
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                timeInSecForIosWeb: 1,
-                backgroundColor: Colors.black,
-                textColor: Colors.white,
-                fontSize: space_14);
+//            Fluttertoast.showToast(
+//                msg: "Success ${_image1.path}",
+//                toastLength: Toast.LENGTH_SHORT,
+//                gravity: ToastGravity.BOTTOM,
+//                timeInSecForIosWeb: 1,
+//                backgroundColor: Colors.black,
+//                textColor: Colors.white,
+//                fontSize: space_14);
           } else if (imgType == "img2") {
             _image2 = File(_image.path);
             debugPrint("FILE_SELECTED ${_image2.path}");
-            Fluttertoast.showToast(
-                msg: "Success ${_image2.path}",
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                timeInSecForIosWeb: 1,
-                backgroundColor: Colors.black,
-                textColor: Colors.white,
-                fontSize: space_14);
+//            Fluttertoast.showToast(
+//                msg: "Success ${_image2.path}",
+//                toastLength: Toast.LENGTH_SHORT,
+//                gravity: ToastGravity.BOTTOM,
+//                timeInSecForIosWeb: 1,
+//                backgroundColor: Colors.black,
+//                textColor: Colors.white,
+//                fontSize: space_14);
           } else if (imgType == "img3") {
             _image3 = File(_image.path);
             debugPrint("FILE_SELECTED ${_image3.path}");
-            Fluttertoast.showToast(
-                msg: "Success ${_image3.path}",
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                timeInSecForIosWeb: 1,
-                backgroundColor: Colors.black,
-                textColor: Colors.white,
-                fontSize: space_14);
+//            Fluttertoast.showToast(
+//                msg: "Success ${_image3.path}",
+//                toastLength: Toast.LENGTH_SHORT,
+//                gravity: ToastGravity.BOTTOM,
+//                timeInSecForIosWeb: 1,
+//                backgroundColor: Colors.black,
+//                textColor: Colors.white,
+//                fontSize: space_14);
           }
           mSelectedImg = "";
         } else {

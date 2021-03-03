@@ -2427,8 +2427,9 @@ class ProgressNormalAppBarWidget extends StatelessWidget {
 
 class ProfileRowWidget extends StatelessWidget {
   String title;
+  String iconpath;
 
-  ProfileRowWidget(this.title);
+  ProfileRowWidget(this.title, this.iconpath);
 
   @override
   Widget build(BuildContext context) {
@@ -2441,9 +2442,11 @@ class ProfileRowWidget extends StatelessWidget {
             children: [
               Container(
                 margin: EdgeInsets.all(space_15),
-                child: Icon(
-                  Icons.supervised_user_circle,
-                  color: CommonStyles.primaryColor,
+                child: ImageIcon(
+                  AssetImage(
+                    iconpath,
+                  ),
+                  color: CommonStyles.grey,
                 ),
               ),
               Expanded(
@@ -2454,7 +2457,7 @@ class ProfileRowWidget extends StatelessWidget {
                     Text(
                       title,
                       style: CommonStyles.getMontserratStyle(
-                          space_15, FontWeight.w600, Colors.black),
+                          space_15, FontWeight.w500, Colors.black),
                     )
                   ],
                 ),

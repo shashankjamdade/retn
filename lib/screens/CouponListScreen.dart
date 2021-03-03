@@ -124,7 +124,7 @@ class _CouponListScreenState extends State<CouponListScreen> {
           ),
         );
       } else {
-        return EmptyWidget("No notifications found");
+        return EmptyWidget("No offers found");
       }
     }
     /*else {
