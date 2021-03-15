@@ -181,7 +181,7 @@ class _MyAdsListScreenState extends State<MyAdsListScreen> {
                                       borderRadius:
                                           BorderRadius.circular(space_10)),
                                   child: FadeInImage.assetNetwork(
-                                    placeholder: "assets/images/app_img_white.png",
+                                    placeholder: "assets/images/loader.jpg",
                                     image: mCategory_adslist.img_1,
                                     fit: BoxFit.fill,
                                   ),

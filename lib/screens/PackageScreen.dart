@@ -1,14 +1,20 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+//import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
-import 'package:flutter_rentry_new/model/RazorpaySuccessRes.dart';
+
+//import 'package:flutter_rentry_new/model/RazorpaySuccessRes.dart';
 import 'package:flutter_rentry_new/model/get_all_package_list_response.dart';
+import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/screens/MyPackageListScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
@@ -16,7 +22,9 @@ import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+//import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart'; //for date format
 
 class PackageScreen extends StatefulWidget {
@@ -27,9 +35,10 @@ class PackageScreen extends StatefulWidget {
 class _PackageScreenState extends State<PackageScreen> {
   HomeBloc homeBloc = new HomeBloc();
   GetAllPackageListResponse mGetAllPackageListResponse;
-  var loginResponse;
+  LoginResponse loginResponse;
   var token = "";
-  var _razorpay = Razorpay();
+
+//  var _razorpay = Razorpay();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   var mSelectedPackageName = "";
   var mSelectedPackageId = "";
@@ -38,21 +47,24 @@ class _PackageScreenState extends State<PackageScreen> {
   WebViewController webViewController;
   String htmlFilePath = 'assets/razorpay.html';
   var isWebviewLaunch = false;
+  String mWebLink = "";
+  double progress = 0;
+  final Completer<WebViewController> _controller =
+      Completer<WebViewController>();
+  num _stackToView = 1;
 
   loadLocalHTML() async {
     String fileHtmlContents = await rootBundle.loadString(htmlFilePath);
-    webViewController.loadUrl(Uri.dataFromString(fileHtmlContents,
-            mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
-        .toString());
+    webViewController.loadUrl(mWebLink);
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+//    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+//    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+//    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
   @override
@@ -68,10 +80,10 @@ class _PackageScreenState extends State<PackageScreen> {
   @override
   void dispose() {
     super.dispose();
-    _razorpay.clear();
+//    _razorpay.clear();
   }
 
-  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+  /*void _handlePaymentSuccess(PaymentSuccessResponse response) {
     debugPrint("PAYMENT_SUCCESS ------- > ${jsonEncode(response.paymentId)}");
     var amt = "";
 //    setState(() {
@@ -104,28 +116,32 @@ class _PackageScreenState extends State<PackageScreen> {
   void _handleExternalWallet(ExternalWalletResponse response) {
     debugPrint(
         "PAYMENT_EXT_WALLET ------- > ${jsonEncode(response.walletName)}");
-  }
+  }*/
 
   void openCheckout(String amt, String id, String title) async {
     var amtNum = int.parse(amt);
-    var options = {
-      'key': 'rzp_test_NNbwJ9tmM0fbxj',
-      'amount': "${amtNum*100}",
-      'name': 'Rentozo',
-      'description': 'Buy new package',
-      'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
-      'external': {
-        'wallets': ['paytm'],
-      }
-    };
+    debugPrint("PAYMENT_CHECKOUT");
+//    var options = {
+//      'key': 'rzp_test_NNbwJ9tmM0fbxj',
+//      'amount': "${amtNum*100}",
+//      'name': 'Rentozo',
+//      'description': 'Buy new package',
+//      'prefill': {'contact': '${loginResponse?.data?.contact}', 'email': '${loginResponse?.data?.email}'},
+//      'external': {
+//        'wallets': ['paytm'],
+//      }
+//    };
     try {
       mSelectedPackageId = id;
       mSelectedPackageName = title;
       mSelectedPackageAmt = amt;
-      _razorpay.open(options);
-//      setState(() {
-//        isWebviewLaunch = true;
-//      });
+//      _razorpay.open(options);
+      setState(() {
+        isWebviewLaunch = true;
+        mWebLink =
+            "https://rentozo.com/rentozo/webviewpayment/view/${mSelectedPackageId}/${loginResponse?.data?.id}";
+      });
+      redirectToWebView(mWebLink);
     } catch (e) {
       debugPrint(e);
     }
@@ -532,28 +548,161 @@ class _PackageScreenState extends State<PackageScreen> {
               ],
             ),
             CommonBottomNavBarWidget(),
-            isWebviewLaunch
-                ? Column(
+            /* isWebviewLaunch
+                ?Column(
                     children: [
                       Expanded(
                         child: WebView(
-                          initialUrl: '',
+                          initialUrl: mWebLink,
                           javascriptMode: JavascriptMode.unrestricted,
+                         onPageStarted: (String url) {
+                            print('Page started loading: $url');
+                          },
+                          onPageFinished: (String url) {
+                            print('Page finished loading: $url');
+                          },
+                          gestureNavigationEnabled: true,
+                          navigationDelegate: (NavigationRequest request) {
+                            print('allowing navigation to $request');
+                            webViewController.loadUrl(request.url);
+                            return NavigationDecision.navigate;
+                          },
                           onWebViewCreated: (WebViewController tmp) {
                             webViewController = tmp;
-                            loadLocalHTML();
+                            _controller.complete(webViewController);
                           },
                         ),
                       ),
                     ],
                   )
+//            Container(
+//              width: space_0,
+//              height: space_0,
+//            )
                 : Container(
                     width: space_0,
                     height: space_0,
-                  ),
+                  ),*/
           ],
         ),
       ),
     ));
+  }
+
+  redirectToWebView(String mWebLink)async{
+    var res = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AppPage("Rentozo", mWebLink)),
+    );
+  }
+}
+
+class AppPage extends StatefulWidget {
+  final String _appTitle;
+  final String _connectionString;
+
+  AppPage(this._appTitle, this._connectionString);
+
+  @override
+  _AppPageState createState() =>
+      _AppPageState(this._appTitle, this._connectionString);
+}
+
+class _AppPageState extends State<AppPage> {
+  final String _appTitle;
+  String connectionString;
+  num _stackToView = 1;
+  bool launchFileInProgress = false;
+  bool shouldChangeStack = true;
+  final _key = GlobalKey();
+  final Completer<WebViewController> _controller =
+      Completer<WebViewController>();
+
+  _AppPageState(this._appTitle, this.connectionString);
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(middle: Text(_appTitle)),
+      child: Container(
+        child: SafeArea(
+          child: IndexedStack(
+            index: _stackToView,
+            children: <Widget>[
+              WebView(
+                key: _key,
+                javascriptMode: JavascriptMode.unrestricted,
+                initialUrl: this.connectionString,
+                onPageStarted: (value) => setState(() {
+                  debugPrint("URL --> ${value}");
+                  if (shouldChangeStack) {
+                    _stackToView = 1;
+                  } else {
+                    _stackToView = 0;
+                  }
+                }),
+                onPageFinished: (value) => setState(() {
+                  _stackToView = 0;
+                }),
+                onWebViewCreated: (WebViewController tmp) {
+                  _controller.complete(tmp);
+                },
+                navigationDelegate: (NavigationRequest request) async {
+                  print(request.url);
+//                  if (request.url.contains("download")) {
+                  setState(() {
+                    shouldChangeStack = true;
+                    connectionString = request.url;
+                  });
+//                    if (await canLaunch(request.url)) {
+//                      await launch(request.url);
+//                    }
+                  return showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                            content: Container(
+                              height: double.infinity,
+                              width: double.infinity,
+                          child: WebView(
+                            javascriptMode: JavascriptMode.unrestricted,
+                            initialUrl: request.url,
+                            onPageStarted: (value) => {
+                              if(value?.contains("success")){
+                                debugPrint("URL2 -->> ${value}"),
+                                Navigator.pop(context),
+                                Navigator.of(context)
+                                .pushReplacement(new MaterialPageRoute(builder: (context) => PackageScreen())),
+//                            Navigator.pop(context, "success")
+                              }else if(value?.contains("failure")){
+                                debugPrint("URL2 -->> ${value}"),
+                                Navigator.pop(context),
+                                Navigator.of(context)
+                                    .pushReplacement(new MaterialPageRoute(builder: (context) => PackageScreen())),
+                              }
+                            },
+                          ),
+                        ));
+                      });
+                  return NavigationDecision.prevent;
+//                  } else {
+//                    setState(() {
+//                      shouldChangeStack = true;
+//                    });
+//                    return NavigationDecision.navigate;
+//                  }
+                },
+              ),
+              Container(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              )
+            ],
+          ),
+          top: true,
+        ),
+      ),
+    );
   }
 }

@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,6 +28,7 @@ import 'package:flutter_rentry_new/widgets/ListItemCardWidget.dart';
 import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 import 'MyAdsListScreen.dart';
 
@@ -117,8 +120,16 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
     });
   }
 
+  redirectToWebView(String mWebLink, AdPostReqModel adPostReqModel)async{
+    var res = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AppPage2("Rentozo", mWebLink, adPostReqModel)),
+    );
+  }
+
+
   void openCheckout(String amt, String packageName, String packageId) async {
-    setState(() {
+   /* setState(() {
       mShowProgress = true;
     });
     var amtNum = int.parse(amt);
@@ -133,9 +144,12 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
       'external': {
         'wallets' : ['paytm'],
       }
-    };
+    };*/
     try{
-      _razorpay.open(options);
+//      _razorpay.open(options);
+      var mWebLink =
+      "https://rentozo.com/rentozo/webviewpayment/view/${packageId}/${loginResponse?.data?.id}";
+      redirectToWebView(mWebLink, widget.adPostReqModel);
     }
     catch(e) {
       debugPrint(e);
@@ -409,3 +423,116 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
   }
 
 }
+
+
+class AppPage2 extends StatefulWidget {
+  final String _appTitle;
+  final String _connectionString;
+  AdPostReqModel adPostReqModel;
+
+  AppPage2(this._appTitle, this._connectionString, this.adPostReqModel);
+
+  @override
+  _AppPage2State createState() =>
+      _AppPage2State(this._appTitle, this._connectionString);
+}
+
+class _AppPage2State extends State<AppPage2> {
+  final String _appTitle;
+  String connectionString;
+  num _stackToView = 1;
+  bool launchFileInProgress = false;
+  bool shouldChangeStack = true;
+  final _key = GlobalKey();
+  final Completer<WebViewController> _controller =
+  Completer<WebViewController>();
+
+  _AppPage2State(this._appTitle, this.connectionString);
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(middle: Text(_appTitle)),
+      child: Container(
+        child: SafeArea(
+          child: IndexedStack(
+            index: _stackToView,
+            children: <Widget>[
+              WebView(
+                key: _key,
+                javascriptMode: JavascriptMode.unrestricted,
+                initialUrl: this.connectionString,
+                onPageStarted: (value) => setState(() {
+                  debugPrint("URL --> ${value}");
+                  if (shouldChangeStack) {
+                    _stackToView = 1;
+                  } else {
+                    _stackToView = 0;
+                  }
+                }),
+                onPageFinished: (value) => setState(() {
+                  _stackToView = 0;
+                }),
+                onWebViewCreated: (WebViewController tmp) {
+                  _controller.complete(tmp);
+                },
+                navigationDelegate: (NavigationRequest request) async {
+                  print(request.url);
+//                  if (request.url.contains("download")) {
+                  setState(() {
+                    shouldChangeStack = true;
+                    connectionString = request.url;
+                  });
+//                    if (await canLaunch(request.url)) {
+//                      await launch(request.url);
+//                    }
+                  return showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                            content: Container(
+                              height: double.infinity,
+                              width: double.infinity,
+                              child: WebView(
+                                javascriptMode: JavascriptMode.unrestricted,
+                                initialUrl: request.url,
+                                onPageStarted: (value) => {
+                                  if(value?.contains("success")){
+                                    debugPrint("URL2 -->> ${value}"),
+                                    Navigator.pop(context),
+                                    Navigator.of(context)
+                                        .pushReplacement(new MaterialPageRoute(builder: (context) => AdUnderPackageListScreen(widget.adPostReqModel))),
+//                            Navigator.pop(context, "success")
+                                  }else if(value?.contains("failure")){
+                                    debugPrint("URL2 -->> ${value}"),
+                                    Navigator.pop(context),
+                                    Navigator.of(context)
+                                        .pushReplacement(new MaterialPageRoute(builder: (context) => AdUnderPackageListScreen(widget.adPostReqModel))),
+                                  }
+                                },
+                              ),
+                            ));
+                      });
+                  return NavigationDecision.prevent;
+//                  } else {
+//                    setState(() {
+//                      shouldChangeStack = true;
+//                    });
+//                    return NavigationDecision.navigate;
+//                  }
+                },
+              ),
+              Container(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              )
+            ],
+          ),
+          top: true,
+        ),
+      ),
+    );
+  }
+}
+

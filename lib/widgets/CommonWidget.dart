@@ -90,11 +90,10 @@ class CommonAppbarWidget extends StatelessWidget {
           Expanded(
             flex: 2,
             child: GestureDetector(
-              onTap: (){
+              onTap: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => HomeScreen()),
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
                 );
               },
               child: Container(
@@ -493,7 +492,8 @@ class CategoryGridWidget extends StatelessWidget {
           shrinkWrap: true,
           crossAxisCount: 3,
           primary: false,
-          children: List.generate(9, (index) {
+          children:
+              List.generate(homeResponse?.data?.category?.length, (index) {
             return Container(
               child: InkWell(
                 onTap: () {
@@ -532,7 +532,7 @@ class CategoryGridWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         FadeInImage.assetNetwork(
-                          placeholder: "assets/images/app_img_white.png",
+                          placeholder: "assets/images/loader.jpg",
                           image: homeResponse.data.category[index].picture,
                           fit: BoxFit.fill,
                           height: iconSize,
@@ -645,7 +645,7 @@ class _ItemCardWidgetState extends State<ItemCardWidget> {
                                   borderRadius:
                                       BorderRadius.circular(space_10)),
                               child: FadeInImage.assetNetwork(
-                                placeholder: "assets/images/app_img_white.png",
+                                placeholder: "assets/images/loader.jpg",
                                 image: widget.category_adslist.img_1,
                                 fit: BoxFit.contain,
                               ),
@@ -924,11 +924,11 @@ class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
                               width: space_200,
                               height: space_110,
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                  color: Colors.white,
                                   borderRadius:
                                       BorderRadius.circular(space_10)),
                               child: FadeInImage.assetNetwork(
-                                placeholder: "assets/images/app_img_white.png",
+                                placeholder: "assets/images/loader.jpg",
                                 image: widget.category_adslist.img_1,
                                 fit: BoxFit.contain,
                               ),
@@ -1128,6 +1128,276 @@ class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
   }
 }
 
+
+class ItemCardNoMargin2Widget extends StatefulWidget {
+  Category_adslist category_adslist;
+
+  ItemCardNoMargin2Widget({this.category_adslist});
+
+  @override
+  _ItemCardNoMargin2WidgetState createState() => _ItemCardNoMargin2WidgetState();
+}
+
+class _ItemCardNoMargin2WidgetState extends State<ItemCardNoMargin2Widget> {
+  bool isLiked = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.category_adslist != null &&
+        widget.category_adslist.is_wishlist != null) {
+      isLiked = widget.category_adslist.is_wishlist;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    @override
+    void initState() {
+      super.initState();
+//    isLiked = widget.
+    }
+
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  ItemDetailScreen(categoryName: widget.category_adslist.slug)),
+        );
+      },
+      child: Container(
+        height: space_250,
+        width: space_180,
+        child: Stack(
+          children: [
+            Container(
+              child: Card(
+                elevation: space_3,
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.white),
+                    borderRadius: BorderRadius.circular(space_10)),
+                child: Container(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(space_10),
+                                topLeft: Radius.circular(space_10)),
+                            child: Container(
+                              width: space_200,
+                              height: space_110,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius:
+                                  BorderRadius.circular(space_10)),
+                              child: FadeInImage.assetNetwork(
+                                placeholder: "assets/images/loader.jpg",
+                                image: widget.category_adslist.img_1,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 0.0,
+                            right: 0.0,
+                            child: GestureDetector(
+                              onTap: () {
+                                new HomeRepository().callSavefavouriteApi(
+                                    StateContainer.of(context)
+                                        .mLoginResponse
+                                        .data
+                                        .token,
+                                    widget.category_adslist.ad_id);
+                                setState(() {
+                                  isLiked = !isLiked;
+                                });
+                              },
+                              child: Container(
+                                height: space_50,
+                                width: space_50,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.transparent,
+                                ),
+                                child: Center(
+                                  child: Image.asset(
+                                    isLiked
+                                        ? "assets/images/heart.png"
+                                        : "assets/images/heart_grey.png",
+                                    width: space_22,
+                                    height: space_22,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          widget.category_adslist.distance != null
+                              ? Positioned(
+                            bottom: 0.0,
+                            right: 0.0,
+                            child: Container(
+                              height: space_30,
+                              padding: EdgeInsets.all(space_5),
+                              decoration: BoxDecoration(
+                                color: CommonStyles.primaryColor
+                                    .withOpacity(0.5),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
+                                    color: Colors.white,
+                                    size: space_12,
+                                  ),
+                                  SizedBox(
+                                    width: space_3,
+                                  ),
+                                  Text(
+                                    "${widget.category_adslist.distance} Kms",
+                                    style:
+                                    CommonStyles.getMontserratStyle(
+                                        space_10,
+                                        FontWeight.w800,
+                                        Colors.white),
+                                  )
+                                ],
+                              ),
+                            ),
+                          )
+                              : Container(
+                            height: 0,
+                            width: 0,
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: space_10,
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: space_5),
+                        child: Text(
+                          widget.category_adslist.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: CommonStyles.getRalewayStyle(
+                              space_14, FontWeight.w800, Colors.black),
+                        ),
+                      ),
+                      SizedBox(
+                        height: space_5,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            height: space_30,
+                            child: Text(
+                              widget.category_adslist.description != null
+                                  ? widget.category_adslist.description
+                                  : "",
+                              style: CommonStyles.getRalewayStyle(
+                                  space_12, FontWeight.w500, Colors.black),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: space_3,
+                      ),
+                      Container(
+                        width: double.infinity,
+                        margin: EdgeInsets.symmetric(horizontal: space_5),
+                        padding: EdgeInsets.symmetric(vertical: space_3),
+                        decoration: BoxDecoration(
+                            color: CommonStyles.primaryColor.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(space_5)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Icon(
+                                Icons.location_on,
+                                color: CommonStyles.primaryColor,
+                                size: space_15,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 7,
+                              child: Padding(
+                                padding: EdgeInsets.only(right: space_10),
+                                child: Text(
+                                  widget.category_adslist.location != null
+                                      ? widget.category_adslist.location
+                                      : "",
+                                  style: CommonStyles.getRalewayStyle(
+                                      space_12,
+                                      FontWeight.w500,
+                                      CommonStyles.primaryColor),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: space_5,
+                      ),
+                      Container(
+                        width: double.infinity,
+                        margin: EdgeInsets.only(
+                            left: space_5, right: space_5, bottom: space_5),
+                        padding: EdgeInsets.symmetric(vertical: space_8),
+                        decoration: BoxDecoration(
+                            color: CommonStyles.blue,
+                            borderRadius: BorderRadius.circular(space_5)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "${widget.category_adslist.price}/",
+                              style: CommonStyles.getMontserratStyle(
+                                  space_15, FontWeight.w800, Colors.white),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              widget.category_adslist.rent_type != null &&
+                                  widget
+                                      .category_adslist.rent_type.isNotEmpty
+                                  ? "${widget.category_adslist.rent_type}"
+                                  : "",
+                              style: CommonStyles.getRalewayStyle(
+                                  space_12, FontWeight.w400, Colors.white),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
 class MyItemCardNoMarginWidget extends StatefulWidget {
   Category_adslist category_adslist;
 
@@ -1193,11 +1463,11 @@ class _MyItemCardNoMarginWidgetState extends State<MyItemCardNoMarginWidget> {
                               width: space_200,
                               height: space_110,
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                  color: Colors.white,
                                   borderRadius:
                                       BorderRadius.circular(space_10)),
                               child: FadeInImage.assetNetwork(
-                                placeholder: "assets/images/app_img_white.png",
+                                placeholder: "assets/images/loader.jpg",
                                 image: widget.category_adslist.img_1,
                                 fit: BoxFit.contain,
                               ),
@@ -2205,7 +2475,17 @@ class BottomFloatingChatBtnsWidget extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  lauchDialer(mobile);
+                  StateContainer.of(context).mLoginResponse != null &&
+                          StateContainer.of(context)
+                                  .mLoginResponse
+                                  .data
+                                  .token !=
+                              null
+                      ? lauchDialer(mobile)
+                      : Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginScreen()),
+                        );
                 },
                 child: Container(
                   height: space_40,

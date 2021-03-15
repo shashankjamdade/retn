@@ -51,7 +51,7 @@ class HomeRepository extends BaseRepository {
   HomeRepository({http.Client httpClient})
       : _httpClient = httpClient ?? http.Client();
 
-  makeHttpSecure(){
+  makeHttpSecure() {
     final ioc = new HttpClient();
     ioc.badCertificateCallback =
         (X509Certificate cert, String host, int port) => true;
@@ -81,15 +81,15 @@ class HomeRepository extends BaseRepository {
     return response;
   }
 
-  Future<HomeResponse> callHomeApi(String token) async {
+  Future<HomeResponse> callHomeApi(String token, String lat, String lng) async {
     bool status = false;
     HomeResponse response;
     int code = 0;
     //http secure connection
     var http = makeHttpSecure();
-    print("UNDER callHomeApi ");
-    var res =
-        await http.get(BASE_URL + HOMEPAGE_API, headers: {"Token": token});
+    print("UNDER callHomeApi ${BASE_URL + HOMEPAGE_API}, body--> ${lat} ${lng}");
+    var res = await http.post(BASE_URL + HOMEPAGE_API,
+        headers: {"Token": token}, body: {"lat": lat, "lng": lng});
     print("PRINTING ${res.body}");
     code = res.statusCode;
     if (res.statusCode == 200) {
@@ -111,7 +111,8 @@ class HomeRepository extends BaseRepository {
     int code = 0;
     //http secure connection
     var http = makeHttpSecure();
-    print("UNDER callItemDetailApi ${BASE_URL}${ITEMDETAIL_API}?title=${categoryName}");
+    print(
+        "UNDER callItemDetailApi ${BASE_URL}${ITEMDETAIL_API}?title=${categoryName}");
     var res = await http.get(
       BASE_URL + ITEMDETAIL_API + "?title=${categoryName}",
       headers: {"Token": token},
@@ -215,8 +216,7 @@ class HomeRepository extends BaseRepository {
       String filter_min,
       String filter_max,
       String priceSort,
-      String ads_title
-      ) async {
+      String ads_title) async {
     bool status = false;
     NearbySubChildCategoryListResponse response;
     int code = 0;
@@ -224,15 +224,15 @@ class HomeRepository extends BaseRepository {
     var http = makeHttpSecure();
     print(
         "UNDER NearbySubChildCategoryListResponse ${categoryId} ${BASE_URL + ADS_SEARCH_API}");
-    print(
-        "PRINTING_REQ NearbySubChild --> ${"category_id " + categoryId + ",subcategory_id " + subCategoryId + ",radius" + radius + ",lat" + lat + ",lng" + lng+""
-            ", filter_subcategory_id ${filter_subcategory_id}, filter_custome_filed_id ${filter_custome_filed_id}, priceSort ${priceSort}, ads_title ${ads_title}"
-            "filter_min ${filter_min}, filter_max ${filter_max}"}");
+    print("PRINTING_REQ NearbySubChild --> ${"category_id " + categoryId + ",subcategory_id " + subCategoryId + ",radius" + radius + ",lat" + lat + ",lng" + lng + ""
+        ", filter_subcategory_id ${filter_subcategory_id}, filter_custome_filed_id ${filter_custome_filed_id}, priceSort ${priceSort}, ads_title ${ads_title}"
+        "filter_min ${filter_min}, filter_max ${filter_max}"}");
     var res = await http.post(BASE_URL + ADS_SEARCH_API, headers: {
       "Token": token
     }, body: {
       "category_id": categoryId,
-      "subcategory_id": ads_title!=null && ads_title.isNotEmpty?"":subCategoryId,
+      "subcategory_id":
+          ads_title != null && ads_title.isNotEmpty ? "" : subCategoryId,
 //      "radius": radius,
       "lat": lat,
       "lng": lng,
@@ -405,7 +405,7 @@ class HomeRepository extends BaseRepository {
       File imageFile) async {
     bool status = false;
     CommonResponse response;
-
+    address = "dummy";
     if (imageFile != null) {
       var stream =
           new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
@@ -545,7 +545,7 @@ class HomeRepository extends BaseRepository {
     print("UNDER NewChatlistRes ${token} ");
     Map<String, String> mainheader = {"token": token};
     var res = await http.get(
-      BASE_URL + GET_NEW_CHAT_LIST/*+ GET_CHAT_LIST*/,
+      BASE_URL + GET_NEW_CHAT_LIST /*+ GET_CHAT_LIST*/,
       headers: mainheader,
     );
     print("PRINTING ${res.body}");
@@ -554,8 +554,8 @@ class HomeRepository extends BaseRepository {
       response = NewChatlistRes.fromJson(data);
       print("-----------${data}");
     } else {
-      response = new NewChatlistRes(
-          msg: API_ERROR_MSG, status: "false", data: null);
+      response =
+          new NewChatlistRes(msg: API_ERROR_MSG, status: "false", data: null);
     }
     return response;
   }
@@ -576,8 +576,8 @@ class HomeRepository extends BaseRepository {
       response = NewInboxChatRes.fromJson(data);
       print("-----------${data}");
     } else {
-      response = new NewInboxChatRes(
-          msg: API_ERROR_MSG, status: "false", data: null);
+      response =
+          new NewInboxChatRes(msg: API_ERROR_MSG, status: "false", data: null);
     }
     return response;
   }
@@ -610,7 +610,8 @@ class HomeRepository extends BaseRepository {
   Future<CommonResponse> callSendMsgApi(String token, String adId, String msg,
       String recieverId, String inboxId) async {
     CommonResponse response;
-    print("UNDER callSendMsgApi ${adId}, ${recieverId}, ${inboxId}, ${msg}, ${token} , ${BASE_URL + SEND_MESSAGE}");
+    print(
+        "UNDER callSendMsgApi ${adId}, ${recieverId}, ${inboxId}, ${msg}, ${token} , ${BASE_URL + SEND_MESSAGE}");
     Map<String, String> mainheader = {"token": token};
     var res = await http.post(BASE_URL + SEND_MESSAGE,
         headers: mainheader,
@@ -764,9 +765,7 @@ class HomeRepository extends BaseRepository {
     print(res.statusCode);
     if (res.statusCode == 200) {
       return CommonResponse(
-          status: "success",
-          msg:
-              "Your ad has been created successfully");
+          status: "success", msg: "Your ad has been created successfully");
     } else {
       var resStr = await res.stream.transform(utf8.decoder);
       resStr.listen((value) {
@@ -814,13 +813,11 @@ class HomeRepository extends BaseRepository {
     return response;
   }
 
-  Future<MyAdsListRes> callGetMyAdsList(
-      String token) async {
+  Future<MyAdsListRes> callGetMyAdsList(String token) async {
     MyAdsListRes response;
     print("UNDER callGetMyAdsList ${token} , ${BASE_URL + GET_MY_ADS}");
     Map<String, String> mainheader = {"token": token};
-    var res =
-        await http.get(BASE_URL + GET_MY_ADS, headers: mainheader);
+    var res = await http.get(BASE_URL + GET_MY_ADS, headers: mainheader);
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -834,13 +831,13 @@ class HomeRepository extends BaseRepository {
     return response;
   }
 
-  Future<MyAdsEditRes> callGetMyAdEdit(
-      String token, String adId) async {
+  Future<MyAdsEditRes> callGetMyAdEdit(String token, String adId) async {
     MyAdsEditRes response;
-    print("UNDER callGetMyAdEdit ${token} , ${BASE_URL + GET_AD_EDIT}, ${adId} ");
+    print(
+        "UNDER callGetMyAdEdit , ${BASE_URL + GET_AD_EDIT}, ${adId} ");
     Map<String, String> mainheader = {"token": token};
-    var res =
-        await http.post(BASE_URL + GET_AD_EDIT, headers: mainheader, body: {"ad_id":adId});
+    var res = await http.post(BASE_URL + GET_AD_EDIT,
+        headers: mainheader, body: {"ad_id": adId});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -854,13 +851,12 @@ class HomeRepository extends BaseRepository {
     return response;
   }
 
-  Future<AdDeleteRes> callDeleteAd(
-      String token, String adId) async {
+  Future<AdDeleteRes> callDeleteAd(String token, String adId) async {
     AdDeleteRes response;
     print("UNDER callDeleteAd ${token} , ${BASE_URL + AD_DELETE}, ${adId} ");
     Map<String, String> mainheader = {"token": token};
-    var res =
-        await http.post(BASE_URL + AD_DELETE, headers: mainheader, body: {"ad_id":adId});
+    var res = await http
+        .post(BASE_URL + AD_DELETE, headers: mainheader, body: {"ad_id": adId});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -926,9 +922,7 @@ class HomeRepository extends BaseRepository {
     print(res.statusCode);
     if (res.statusCode == 200) {
       return CommonResponse(
-          status: "success",
-          msg:
-          "Your ad has been updated successfully");
+          status: "success", msg: "Your ad has been updated successfully");
     } else {
       var resStr = await res.stream.transform(utf8.decoder);
       resStr.listen((value) {
@@ -952,8 +946,8 @@ class HomeRepository extends BaseRepository {
   Future<CommonResponse> callSendOtp(String contact, String otpType) async {
     CommonResponse response;
     print("UNDER callSendOtp ${contact} , ${BASE_URL + SEND_OTP}");
-    var res =
-    await http.post(BASE_URL + SEND_OTP, body: {"contact": contact, "otp_type": otpType});
+    var res = await http.post(BASE_URL + SEND_OTP,
+        body: {"contact": contact, "otp_type": otpType});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -970,8 +964,8 @@ class HomeRepository extends BaseRepository {
   Future<CommonResponse> callVerifyOtp(String contact, String otp) async {
     CommonResponse response;
     print("UNDER callVerifyOtp ${contact} , ${BASE_URL + VERIFY_OTP}");
-    var res =
-    await http.post(BASE_URL + VERIFY_OTP, body: {"contact": contact, "otp": otp});
+    var res = await http
+        .post(BASE_URL + VERIFY_OTP, body: {"contact": contact, "otp": otp});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -985,11 +979,15 @@ class HomeRepository extends BaseRepository {
     return response;
   }
 
-  Future<CommonResponse> callForgotPwd(String contact, String otp, String confirm_password) async {
+  Future<CommonResponse> callForgotPwd(
+      String contact, String otp, String confirm_password) async {
     CommonResponse response;
     print("UNDER callSendOtp ${contact} , ${BASE_URL + SEND_OTP}");
-    var res =
-    await http.post(BASE_URL + FORGOT_PWD, body: {"contact": contact, "otp": otp, "confirm_password":confirm_password});
+    var res = await http.post(BASE_URL + FORGOT_PWD, body: {
+      "contact": contact,
+      "otp": otp,
+      "confirm_password": confirm_password
+    });
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -1003,13 +1001,14 @@ class HomeRepository extends BaseRepository {
     return response;
   }
 
-
-  Future<CommonResponse> callRating(String token,String seller_id, String user_id, String rating) async {
+  Future<CommonResponse> callRating(
+      String token, String seller_id, String user_id, String rating) async {
     CommonResponse response;
     print("UNDER callRating ${seller_id} , ${BASE_URL + RATING}");
     Map<String, String> mainheader = {"token": token};
-    var res =
-    await http.post(BASE_URL + RATING,headers: mainheader, body: {"seller_id": seller_id, "user_id": user_id, "rating":rating});
+    var res = await http.post(BASE_URL + RATING,
+        headers: mainheader,
+        body: {"seller_id": seller_id, "user_id": user_id, "rating": rating});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -1023,12 +1022,13 @@ class HomeRepository extends BaseRepository {
     return response;
   }
 
-  Future<GooglePlacesRes> callGooglePlaces(String token,String query) async {
+  Future<GooglePlacesRes> callGooglePlaces(String token, String query) async {
     GooglePlacesRes response;
-    print("UNDER callGooglePlaces ${query} , ${GOOGLE_AUTOCOMPLETE1}${query}${GOOGLE_AUTOCOMPLETE2}${GOOGLE_API_KEY}");
+    print(
+        "UNDER callGooglePlaces ${query} , ${GOOGLE_AUTOCOMPLETE1}${query}${GOOGLE_AUTOCOMPLETE2}${GOOGLE_API_KEY}");
 //    Map<String, String> mainheader = {"token": token};
-    var res =
-    await http.get("${GOOGLE_AUTOCOMPLETE1}${query}${GOOGLE_AUTOCOMPLETE2}${GOOGLE_API_KEY}");
+    var res = await http.get(
+        "${GOOGLE_AUTOCOMPLETE1}${query}${GOOGLE_AUTOCOMPLETE2}${GOOGLE_API_KEY}");
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -1046,7 +1046,7 @@ class HomeRepository extends BaseRepository {
     CouponRes response;
     print("UNDER callCouponRes lat ${lat}, lng ${lng} , ${BASE_URL + COUPON}");
     var res =
-    await http.post(BASE_URL + COUPON, body: {"lat": lat, "lng": lng});
+        await http.post(BASE_URL + COUPON, body: {"lat": lat, "lng": lng});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -1056,6 +1056,27 @@ class HomeRepository extends BaseRepository {
       print("-----------${data}");
     } else {
       response = new CouponRes();
+    }
+    return response;
+  }
+
+  Future<CommonResponse> callChatDelete(String token,String inbox_id) async {
+    CommonResponse response;
+    print("UNDER callChatDelete inbox_id ${inbox_id} , ${BASE_URL + CHAT_DELETE}");
+    Map<String, String> mainheader = {"token": token};
+    var res =
+        await http.post(BASE_URL + CHAT_DELETE,
+            headers: mainheader,
+            body: {"inbox_id": inbox_id});
+    print("PRINTING ${res.body}");
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      var status = data["status"];
+      print("PRINTING_STATUS ${status}");
+      response = CommonResponse.fromJson(data);
+      print("-----------${data}");
+    } else {
+      response = new CommonResponse();
     }
     return response;
   }

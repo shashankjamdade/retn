@@ -8,6 +8,7 @@ import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/model/get_all_chat_user_list_response.dart';
 import 'package:flutter_rentry_new/model/new_chatlist_res.dart';
+import 'package:flutter_rentry_new/repository/HomeRepository.dart';
 import 'package:flutter_rentry_new/screens/ChatDetailScreen.dart';
 import 'package:flutter_rentry_new/screens/LoginScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
@@ -152,70 +153,125 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
             String currentDate = dateFormatter.format(createDate);
             var dateTimeStr = "${currentDate}\n${currentTime}";
 //            var currentDaterentTime = createDate.toString().split(" ")[1];
-            return InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ChatDetailScreen(username:mGetAllChatUserListResponse.data[pos].chat_with.receiver_id, indexId:mGetAllChatUserListResponse.data[pos].inbox_id,
-                      slug: mGetAllChatUserListResponse.data[pos].ad_slug, adId:  mGetAllChatUserListResponse.data[pos].ad_id,
-                  )),
-                );
+            return Dismissible(
+              key: Key("Ss"),
+              background: Container(color: Colors.red, child: Center(child: Icon(Icons.delete, color: Colors.white,),),),
+              onDismissed: (direction){
+                //API hit
+                new HomeRepository()
+                    .callChatDelete(token, mGetAllChatUserListResponse.data[pos].inbox_id);
+                setState(() {
+                  mGetAllChatUserListResponse.data.removeAt(pos);
+                });
               },
-              child: Container(
-                child: ListTile(
-                  key: Key("${pos}"),
-                  leading: Container(
-                    height: space_50,
-                    width: space_50,
-                    decoration: BoxDecoration(
-                        color: pos % 3 == 0
-                            ? colors[0]
-                            : pos % 3 == 1 ? colors[1] : colors[2],
-                        shape: BoxShape.circle),
-                    child: Center(
-                      child:  Container(
-                        height: space_50,
-                        width: space_50,
-                        child: ClipRRect(
-                          borderRadius:
-                          BorderRadius.circular(space_25),
-                          child: FadeInImage.assetNetwork(
-                            placeholder: "assets/images/app_img.png",
-                            image: (mGetAllChatUserListResponse.data[pos].ad_image!=null && mGetAllChatUserListResponse.data[pos].ad_image?.isNotEmpty)? mGetAllChatUserListResponse.data[pos].ad_image:"http://rentozo.com/assets/img/user.jpg",
-                            fit: BoxFit.fill,
-                            width: space_80,
-                            height: space_60,
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ChatDetailScreen(username:mGetAllChatUserListResponse.data[pos].chat_with.receiver_id, indexId:mGetAllChatUserListResponse.data[pos].inbox_id,
+                        slug: mGetAllChatUserListResponse.data[pos].ad_slug, adId:  mGetAllChatUserListResponse.data[pos].ad_id,
+                    )),
+                  );
+                },
+                child: Container(
+                  child: ListTile(
+                    key: Key("${pos}"),
+                    leading: Container(
+                      height: space_50,
+                      width: space_50,
+                      decoration: BoxDecoration(
+                          color: pos % 3 == 0
+                              ? colors[0]
+                              : pos % 3 == 1 ? colors[1] : colors[2],
+                          shape: BoxShape.circle),
+                      child: Center(
+                        child:  Container(
+                          height: space_50,
+                          width: space_50,
+                          child: ClipRRect(
+                            borderRadius:
+                            BorderRadius.circular(space_25),
+                            child: FadeInImage.assetNetwork(
+                              placeholder: "assets/images/app_img.png",
+                              image: (mGetAllChatUserListResponse.data[pos].ad_image!=null && mGetAllChatUserListResponse.data[pos].ad_image?.isNotEmpty)? mGetAllChatUserListResponse.data[pos].ad_image:"http://rentozo.com/assets/img/user.jpg",
+                              fit: BoxFit.fill,
+                              width: space_80,
+                              height: space_60,
+                            ),
                           ),
-                        ),
-                      ),/*Text(
-                        mGetAllChatUserListResponse.data[pos].chat_with!=null && mGetAllChatUserListResponse.data[pos].chat_with?.username.isNotEmpty?mGetAllChatUserListResponse.data[pos].chat_with?.username[0].toUpperCase():"-",
-                        style: CommonStyles.getRalewayStyle(
-                            space_15, FontWeight.w600, Colors.white),
-                      ),*/
+                        ),/*Text(
+                          mGetAllChatUserListResponse.data[pos].chat_with!=null && mGetAllChatUserListResponse.data[pos].chat_with?.username.isNotEmpty?mGetAllChatUserListResponse.data[pos].chat_with?.username[0].toUpperCase():"-",
+                          style: CommonStyles.getRalewayStyle(
+                              space_15, FontWeight.w600, Colors.white),
+                        ),*/
+                      ),
                     ),
-                  ),
-                  title: Text(
-                    mGetAllChatUserListResponse.data[pos].chat_with?.username,
-                    style: CommonStyles.getRalewayStyle(space_15,
-                        FontWeight.w600, Colors.black.withOpacity(0.8)),
-                  ),
-                  subtitle: Text(
-                    "${mGetAllChatUserListResponse.data[pos].ad_slug}",
-                    style: CommonStyles.getRalewayStyle(space_15,
-                        FontWeight.w500, Colors.black.withOpacity(0.5)),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  trailing: Text(
-                    dateTimeStr,
-                    textAlign: TextAlign.center,
-                    style: CommonStyles.getMontserratStyle(space_12,
-                        FontWeight.w500, Colors.black.withOpacity(0.8)),
+                    title: Text(
+                      mGetAllChatUserListResponse.data[pos].chat_with?.username,
+                      style: CommonStyles.getRalewayStyle(space_15,
+                          FontWeight.w600, Colors.black.withOpacity(0.8)),
+                    ),
+                    subtitle: Text(
+                      "${mGetAllChatUserListResponse.data[pos].ad_slug}",
+                      style: CommonStyles.getRalewayStyle(space_15,
+                          FontWeight.w500, Colors.black.withOpacity(0.5)),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    trailing: Text(
+                      dateTimeStr,
+                      textAlign: TextAlign.center,
+                      style: CommonStyles.getMontserratStyle(space_12,
+                          FontWeight.w500, Colors.black.withOpacity(0.8)),
+                    ),
                   ),
                 ),
               ),
             );
           }),
+    );
+  }
+
+  Widget slideRightBackground() {
+    return Container(
+      color: Colors.red,
+      child: Align(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(
+              width: 20,
+            ),
+            Icon(
+              Icons.delete,
+              color: Colors.white,
+            ),
+          ],
+        ),
+        alignment: Alignment.centerLeft,
+      ),
+    );
+  }
+
+
+  Widget slideLeftBackground() {
+    return Container(
+      color: Colors.red,
+      child: Align(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Icon(
+              Icons.delete,
+              color: Colors.white,
+            ),
+            SizedBox(
+              width: 20,
+            ),
+          ],
+        ),
+        alignment: Alignment.centerRight,
+      ),
     );
   }
 }

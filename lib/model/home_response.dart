@@ -166,6 +166,7 @@ class Category_ads {
 
 class Category_adslist {
   String id;
+  String ad_id;
   String distance;
   String rent_type;
   String title;
@@ -200,6 +201,7 @@ class Category_adslist {
 
   Category_adslist({
     this.id,
+    this.ad_id,
     this.rent_type,
     this.distance,
     this.title,
@@ -234,6 +236,7 @@ class Category_adslist {
 
   Category_adslist.fromJson(dynamic json) {
     id = json["id"];
+    ad_id = json["ad_id"];
     rent_type = json["rent_type"];
     distance = json["distance"];
     title = json["title"];
@@ -270,6 +273,7 @@ class Category_adslist {
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
     map["id"] = id;
+    map["ad_id"] = ad_id;
     map["rent_type"] = rent_type;
     map["distance"] = distance;
     map["title"] = title;
@@ -388,12 +392,18 @@ class Banner {
   String _bannerId;
   String _title;
   String _slug;
+  String _category_id;
+  String _category;
+  String _redirect_type;
   String _banner;
   String _status;
   String _createdAt;
   String _updatedAt;
 
   String get bannerId => _bannerId;
+  String get category_id => _category_id;
+  String get redirect_type => _redirect_type;
+  String get category => _category;
   String get title => _title;
   String get slug => _slug;
   String get banner => _banner;
@@ -403,6 +413,9 @@ class Banner {
 
   Banner({
       String bannerId,
+      String category_id,
+      String redirect_type,
+      String category,
       String title,
       String slug,
       String banner,
@@ -410,6 +423,9 @@ class Banner {
       String createdAt,
       String updatedAt}){
     _bannerId = bannerId;
+    _category_id = category_id;
+    _redirect_type = redirect_type;
+    _category = category;
     _title = title;
     _slug = slug;
     _banner = banner;
@@ -419,10 +435,13 @@ class Banner {
 }
 
   Banner.fromJson(dynamic json) {
+    _category_id = json["category_id"];
     _bannerId = json["bannerId"];
+    _category = json["category"];
     _title = json["title"];
     _slug = json["slug"];
     _banner = json["banner"];
+    _redirect_type = json["redirect_type"];
     _status = json["status"];
     _createdAt = json["createdAt"];
     _updatedAt = json["updatedAt"];
@@ -430,6 +449,9 @@ class Banner {
 
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
+    map["category_id"] = _category_id;
+    map["redirect_type"] = _redirect_type;
+    map["category"] = _category;
     map["bannerId"] = _bannerId;
     map["title"] = _title;
     map["slug"] = _slug;

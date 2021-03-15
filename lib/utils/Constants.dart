@@ -148,11 +148,12 @@ getWidthToHeightRatio(BuildContext context) {
 }
 
 launchURL(String url) async {
-//    const url = 'https://flutter.dev';
-  if (await canLaunch(url)) {
-    await launch(url);
-  } else {
-    throw 'Could not launch $url';
+  if(url!=null && url.isNotEmpty){
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
 //Future<bool> isInternet() async {

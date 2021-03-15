@@ -165,7 +165,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                         borderRadius:
                         BorderRadius.circular(space_15),
                         child: FadeInImage.assetNetwork(
-                          placeholder: "assets/images/app_img.png",
+                          placeholder: "assets/images/userlogo.png",
                           image: (mGetAllChatMsgRes?.data?.ad_and_user_details?.ad_image!=null && mGetAllChatMsgRes?.data?.ad_and_user_details?.ad_image?.isNotEmpty)?mGetAllChatMsgRes?.data?.ad_and_user_details?.ad_image:"http://rentozo.com/assets/img/user.jpg",
                           fit: BoxFit.fill,
                           width: space_80,
@@ -350,7 +350,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                         borderRadius:
                         BorderRadius.circular(space_15),
                         child: FadeInImage.assetNetwork(
-                          placeholder: "assets/images/app_img.png",
+                          placeholder: "assets/images/userlogo.png",
                           image: (mGetAllChatMsgRes?.data?.ad_and_user_details?.ad_image!=null && mGetAllChatMsgRes?.data?.ad_and_user_details?.ad_image?.isNotEmpty)?mGetAllChatMsgRes?.data?.ad_and_user_details?.ad_image:"http://rentozo.com/assets/img/user.jpg",
                           fit: BoxFit.fill,
                           width: space_80,

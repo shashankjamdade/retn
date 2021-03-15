@@ -29,10 +29,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       yield InitialHomeState();
     } else if (event is HomeReqAuthenticationEvent) {
       yield ProgressState();
-      yield* callHomeApi(event.token);
+      yield* callHomeApi(event.token, event.lat, event.lng);
     } else if (event is HomeReqAuthenticationNoProgressEvent) {
 //      yield ProgressState();
-      yield* callHomeApi(event.token);
+      yield* callHomeApi(event.token, event.lat, event.lng);
     } else if (event is ItemDetailReqEvent) {
       yield ProgressState();
       yield* callItemDetailApi(event.token, event.categoryName);
@@ -164,13 +164,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Stream<HomeState> callHomeApi(String token) async* {
+  Stream<HomeState> callHomeApi(String token, String lat, String lng) async* {
     try {
       homeRepository =
           homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "HOME_API_CALL ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
-      final homeResponse = await homeRepository.callHomeApi(token);
+      final homeResponse = await homeRepository.callHomeApi(token, lat, lng);
       debugPrint("HOME_API_CALL_RES ${jsonEncode(homeResponse)}");
       yield HomeResState(res: homeResponse);
     } catch (e) {

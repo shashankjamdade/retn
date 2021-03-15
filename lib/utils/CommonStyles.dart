@@ -191,7 +191,7 @@ const String LOGINTYPE_GOOGLE = "facebook";
 const String LOGINTYPE_FB = "google";
 
 //API
-const String BASE_URL = "https://rentozo.com/api";
+const String BASE_URL = "https://rentozo.com/rentozo/api";
 //const String BASE_URL = "http://rentozo.com/api";
 const String LOGIN_API = "/login";
 const String SOCIAL_LOGIN_API = "/social_login";
@@ -230,6 +230,7 @@ const String VERIFY_OTP = "/verify_otp";
 const String FORGOT_PWD = "/forgot_password_update";
 const String RATING = "/rating";
 const String COUPON = "/coupon";
+const String CHAT_DELETE = "/chatdelete";
 const String GOOGLE_AUTOCOMPLETE1 = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=";
 const String GOOGLE_AUTOCOMPLETE2 = "&types=geocode&language=fr&sensor=true&key=";
 

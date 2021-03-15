@@ -17,20 +17,24 @@ class NonProgressEvent extends HomeEvent {}
 
 class HomeReqAuthenticationEvent extends HomeEvent {
   final String token;
+  final String lat;
+  final String lng;
 
-  HomeReqAuthenticationEvent({@required this.token});
+  HomeReqAuthenticationEvent({@required this.token, @required this.lat, @required this.lng});
 
   @override
-  List<Object> get props => [token];
+  List<Object> get props => [token, lat, lng];
 }
 
 class HomeReqAuthenticationNoProgressEvent extends HomeEvent {
   final String token;
+  final String lat;
+  final String lng;
 
-  HomeReqAuthenticationNoProgressEvent({@required this.token});
+  HomeReqAuthenticationNoProgressEvent({@required this.token, @required this.lat, @required this.lng});
 
   @override
-  List<Object> get props => [token];
+  List<Object> get props => [token, lat, lng];
 }
 
 class ItemDetailReqEvent extends HomeEvent {
@@ -441,4 +445,14 @@ class CouponEvent extends HomeEvent {
 
   @override
   List<Object> get props => [lat, lng];
+}
+
+class ChatDeleteEvent extends HomeEvent {
+  final String inbox_id;
+
+  ChatDeleteEvent(
+      {@required this.inbox_id});
+
+  @override
+  List<Object> get props => [inbox_id];
 }

@@ -365,3 +365,12 @@ class CouponState extends HomeState {
   @override
   List<CouponRes> get props => [res];
 }
+
+class ChatDeleteState extends HomeState {
+  final res;
+
+  ChatDeleteState({@required this.res});
+
+  @override
+  List<CommonResponse> get props => [res];
+}

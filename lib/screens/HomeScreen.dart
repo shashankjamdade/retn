@@ -8,6 +8,7 @@ import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/model/UserLocationSelected.dart';
 import 'package:flutter_rentry_new/model/coupon_res.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
@@ -22,6 +23,10 @@ import 'package:flutter_rentry_new/widgets/CarousalCommonWidgets.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:flutter_rentry_new/widgets/ListItemCardWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:geocoder/model.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   var isRedirectToMyAds = false;
@@ -51,28 +56,82 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void didChangeDependencies() {
-    super.didChangeDependencies();
+    var selectedCurrentLoc = StateContainer.of(context).mUserLocationSelected;
     loginResponse = StateContainer.of(context).mLoginResponse;
     if (loginResponse != null) {
       token = loginResponse.data.token;
       debugPrint("ACCESSING_INHERITED ${token}");
     }
-    var selectedCurrentLoc = StateContainer.of(context).mUserLocationSelected;
-    var selectedLoc = StateContainer.of(context).mUserLocNameSelected;
-    if (selectedLoc != null) {
-      mLat = selectedLoc.mlat;
-      mLng = selectedLoc.mlng;
-      debugPrint("ACCESSING_INHERITED_LOCATION ${mLat}, ${mLng} ------");
-    } else if (selectedCurrentLoc != null) {
+//    var selectedLoc = StateContainer.of(context).mUserLocNameSelected;
+    /*if (selectedLoc != null) {
+      setState(() {
+        mLat = selectedLoc.mlat;
+        mLng = selectedLoc.mlng;
+      });
+      debugPrint("ACCESSING_INHERITED_LOCATION1 ${mLat}, ${mLng} ------");
+    } else*/
+    if (selectedCurrentLoc != null) {
       mLat = selectedCurrentLoc.mlat;
       mLng = selectedCurrentLoc.mlng;
-      debugPrint("ACCESSING_INHERITED_LOCATION ${mLat}, ${mLng} ------");
+      debugPrint("ACCESSING_INHERITED_LOCATION2 ${mLat}, ${mLng} ------");
+      homeBloc
+        ..add(HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+    } else {
+      storeResInPrefs(context);
     }
-   /* if (mLat != null && mLat.isNotEmpty) {
+    /* if (mLat != null && mLat.isNotEmpty) {
       new HomeRepository()
           .callCouponRes(mLat, mLng)
           .then((value) => resetUiAgain(value));
     }*/
+    super.didChangeDependencies();
+  }
+
+  void storeResInPrefs(BuildContext context) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      Position position =
+          await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      LocationPermission permission = await checkPermission();
+      if (permission == LocationPermission.always ||
+          permission == LocationPermission.whileInUse) {
+        prefs.setString(USER_LOCATION_LAT, "${position.latitude}");
+        prefs.setString(USER_LOCATION_LONG, "${position.longitude}");
+        debugPrint(
+            "LOCATION_FOUND ${position.latitude}, ${position.longitude}");
+        //access address from lat lng
+        final coordinates =
+            new Coordinates(position.latitude, position.longitude);
+        var addresses =
+            await Geocoder.local.findAddressesFromCoordinates(coordinates);
+        var first = addresses.first;
+        UserLocationSelected userLocationSelected = new UserLocationSelected(
+            address: first.addressLine,
+            city: first.locality,
+            state: first.adminArea,
+            coutry: first.countryName,
+            mlat: position.latitude.toString(),
+            mlng: position.longitude.toString());
+        StateContainer.of(context).updateUserLocation(userLocationSelected);
+        prefs.setString(USER_LOCATION_ADDRESS, "${first.addressLine}");
+        prefs.setString(USER_LOCATION_CITY, "${first.locality}");
+        prefs.setString(USER_LOCATION_STATE, "${first.adminArea}");
+        prefs.setString(USER_LOCATION_PINCODE, "${first.postalCode}");
+        print("@@@@-------${first} ${first.addressLine} : ${first.adminArea}");
+
+        prefs.setBool(IS_LOGGEDIN, true);
+        debugPrint(
+            "PREFS_STORED_LOGIN-----> ${prefs.getString(USER_LOCATION_ADDRESS)}");
+        mLat = position.latitude.toString();
+        mLng = position.longitude.toString();
+        homeBloc
+          ..add(HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+      } else {
+        //Show dialog for location permission
+      }
+    } catch (e) {
+      debugPrint("EXCEPTION in Loginscreen in storeResInPrefs ${e.toString()}");
+    }
   }
 
   resetUiAgain(CouponRes couponRes) {
@@ -85,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: (){
+      onWillPop: () {
         if (Platform.isAndroid) {
           SystemNavigator.pop();
         } else if (Platform.isIOS) {
@@ -93,8 +152,8 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       },
       child: BlocProvider(
-        create: (context) =>
-            homeBloc..add(HomeReqAuthenticationEvent(token: token)),
+        create: (context) => homeBloc
+          ..add(HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng)),
         child: BlocListener(
             bloc: homeBloc,
             listener: (context, state) {
@@ -112,12 +171,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 mHomeResponse = state.res;
                 if (widget.isRedirectToMyAds != null &&
                     widget.isRedirectToMyAds) {
+                  widget.isRedirectToMyAds = false;
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => MyAdsListScreen()),
                   );
                 } else if (widget.isRedirectToChat != null &&
                     widget.isRedirectToChat) {
+                  widget.isRedirectToChat = false;
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => ChatHomeScreen()),
@@ -127,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             child: BlocBuilder<HomeBloc, HomeState>(
               builder: (context, state) {
-                if (state is HomeResState) {
+                if (state is HomeResState && state.res is HomeResponse && state.res.status) {
                   return getHomeUI(state.res);
                 } else {
                   return Container(
@@ -160,7 +221,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Container(
                       child: RefreshIndicator(
                     onRefresh: () {
-                      homeBloc..add(HomeReqAuthenticationEvent(token: token));
+                      homeBloc
+                        ..add(HomeReqAuthenticationEvent(
+                            token: token, lat: mLat, lng: mLng));
                     },
                     child: ListView(
                       shrinkWrap: true,

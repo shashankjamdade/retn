@@ -111,7 +111,7 @@ class _MyFavScreenState
                                   return Container(
                                     height: space_280,
                                     width: space_230,
-                                    child: ItemCardNoMarginWidget(category_adslist: res.data[index]),
+                                    child: ItemCardNoMargin2Widget(category_adslist: res.data[index]),
                                   );
                                 },
                               ),

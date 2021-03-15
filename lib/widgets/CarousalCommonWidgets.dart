@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rentry_new/model/coupon_res.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
+import 'package:flutter_rentry_new/screens/SubCategoryScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
@@ -48,36 +49,59 @@ class _BannerImgCorousalWidgetState extends State<BannerImgCarousalWidget> {
                             }),
                         carouselController: _controller,
                         items: widget.homeResponse.data.banner
-                            .map((item) => Stack(
-                                  children: [
-                                    Container(
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(),
-                                      height: getProportionateScreenHeight(
-                                          context, space_150),
-                                      child: FadeInImage.assetNetwork(
-                                        placeholder:
-                                            "assets/images/app_img_white.png",
-                                        image: widget.homeResponse.data
-                                            .banner[_current].banner,
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: Container(
-                                          margin:
-                                              EdgeInsets.only(bottom: space_15),
-                                          child: Text(
-                                            widget.homeResponse.data
-                                                .banner[_current].title,
-                                            style: CommonStyles.getRalewayStyle(
-                                                space_20,
-                                                FontWeight.w900,
-                                                Colors.white),
-                                          )),
+                            .map((item) => GestureDetector(
+                                  onTap: () {
+                                    (widget.homeResponse.data
+                                        .banner[_current].redirect_type!=null && widget.homeResponse.data
+                                        .banner[_current].redirect_type?.isNotEmpty && widget.homeResponse.data
+                                        .banner[_current].redirect_type == "category" && widget.homeResponse.data
+                                        .banner[_current].category_id!=null && widget.homeResponse.data
+                                        .banner[_current].category_id?.isNotEmpty)?
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => SubCategoryScreen(
+                                              categoryId: widget.homeResponse.data
+                                                  .banner[_current].category_id,
+                                              categoryName:widget.homeResponse.data
+                                                  .banner[_current].category)),
                                     )
-                                  ],
+                                        :
+                                    launchURL(widget.homeResponse.data
+                                        .banner[_current].slug);
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(),
+                                        height: getProportionateScreenHeight(
+                                            context, space_150),
+                                        child: FadeInImage.assetNetwork(
+                                          placeholder:
+                                              "assets/images/loader.jpg",
+                                          image: widget.homeResponse.data
+                                              .banner[_current].banner,
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: Container(
+                                            margin: EdgeInsets.only(
+                                                bottom: space_15),
+                                            child: Text(
+                                              widget.homeResponse.data
+                                                  .banner[_current].title,
+                                              style:
+                                                  CommonStyles.getRalewayStyle(
+                                                      space_20,
+                                                      FontWeight.w900,
+                                                      Colors.white),
+                                            )),
+                                      )
+                                    ],
+                                  ),
                                 ))
                             .toList(),
                       ),
@@ -221,30 +245,31 @@ class _BannersCorousalWidgetState extends State<BannersCarousalWidget> {
                               });
                             }),
                         carouselController: _controller,
-                        items: list
-                            .map((item){
+                        items: list.map((item) {
                           int index = list.indexOf(item);
-                              return GestureDetector(
-                                onTap: (){
-                                  launchURL(list[index].slug);
-                                },
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(space_15),
-                                  child: Container(
-                                    width: space_250,
-                                    decoration: BoxDecoration(
-                                        color: Colors.transparent,
-                                        borderRadius:
+                          return GestureDetector(
+                            onTap: () {
+                              launchURL(list[index].slug);
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(space_15),
+                              child: Container(
+                                width: space_250,
+                                decoration: BoxDecoration(
+                                    color: Colors.transparent,
+                                    borderRadius:
                                         BorderRadius.circular(space_15)),
-                                    height: getProportionateScreenHeight(
-                                        context, space_200),
-                                    child:FadeInImage.assetNetwork(
-                                      placeholder: "assets/images/app_img_white.png",
-                                      image: list[index].image, fit: BoxFit.fill,
-                                    ),
-                                  ),
+                                height: getProportionateScreenHeight(
+                                    context, space_200),
+                                child: FadeInImage.assetNetwork(
+                                  placeholder:
+                                      "assets/images/loader.jpg",
+                                  image: list[index].image,
+                                  fit: BoxFit.fill,
                                 ),
-                              );
+                              ),
+                            ),
+                          );
                         }).toList(),
                       ),
                     ],
@@ -438,7 +463,7 @@ class _ItemDetailBannerImgCorousalWidgetState
                                           context, space_250),
                                       child: FadeInImage.assetNetwork(
                                         placeholder:
-                                            "assets/images/app_img.png",
+                                            "assets/images/loader.jpg",
                                         image: widget.bannerList[_current],
                                         fit: BoxFit.contain,
                                       ),
