@@ -74,8 +74,11 @@ class _HomeScreenState extends State<HomeScreen> {
       mLat = selectedCurrentLoc.mlat;
       mLng = selectedCurrentLoc.mlng;
       debugPrint("ACCESSING_INHERITED_LOCATION2 ${mLat}, ${mLng} ------");
-      homeBloc
-        ..add(HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+//      if (mHomeResponse == null) {
+//        homeBloc
+//          ..add(
+//              HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+//      }
     } else {
       storeResInPrefs(context);
     }
@@ -124,8 +127,11 @@ class _HomeScreenState extends State<HomeScreen> {
             "PREFS_STORED_LOGIN-----> ${prefs.getString(USER_LOCATION_ADDRESS)}");
         mLat = position.latitude.toString();
         mLng = position.longitude.toString();
-        homeBloc
-          ..add(HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+//        if (mHomeResponse == null) {
+//          homeBloc
+//            ..add(
+//                HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+//        }
       } else {
         //Show dialog for location permission
       }
@@ -168,27 +174,38 @@ class _HomeScreenState extends State<HomeScreen> {
 //                  backgroundColor: Colors.black,
 //                  textColor: Colors.white,
 //                  fontSize: space_14);
-                mHomeResponse = state.res;
-                if (widget.isRedirectToMyAds != null &&
-                    widget.isRedirectToMyAds) {
-                  widget.isRedirectToMyAds = false;
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => MyAdsListScreen()),
-                  );
-                } else if (widget.isRedirectToChat != null &&
-                    widget.isRedirectToChat) {
-                  widget.isRedirectToChat = false;
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ChatHomeScreen()),
-                  );
+                if (state.res.status) {
+                  mHomeResponse = state.res;
+                  if (widget.isRedirectToMyAds != null &&
+                      widget.isRedirectToMyAds) {
+                    widget.isRedirectToMyAds = false;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MyAdsListScreen()),
+                    );
+                  } else if (widget.isRedirectToChat != null &&
+                      widget.isRedirectToChat) {
+                    widget.isRedirectToChat = false;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ChatHomeScreen()),
+                    );
+                  }
+                }else{
+                  if (mHomeResponse == null) {
+                    homeBloc
+                      ..add(
+                          HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+                  }
                 }
               }
             },
             child: BlocBuilder<HomeBloc, HomeState>(
               builder: (context, state) {
-                if (state is HomeResState && state.res is HomeResponse && state.res.status) {
+                if (state is HomeResState &&
+                    state.res is HomeResponse &&
+                    state.res.status) {
                   return getHomeUI(state.res);
                 } else {
                   return Container(

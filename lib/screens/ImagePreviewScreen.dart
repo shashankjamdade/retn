@@ -25,42 +25,43 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                  width: double.infinity,
-                  child: Stack(
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CarouselSlider(
-                            options: CarouselOptions(
-                                height:getProportionateScreenHeight(
-                                    context, space_400),
-                                viewportFraction: 1.0,
-                                enlargeCenterPage: false,
-                                onPageChanged: (index, reason) {
-                                  setState(() {
-                                    _current = index;
-                                  });
-                                }),
-                            carouselController: _controller,
-                            items: widget.imglist.map((item) => Stack(
-                              children: [
-                                Container(
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(),
-                                  child: Center(
-                                    child: PhotoView(
-                                      imageProvider: NetworkImage(widget.imglist[_current]),
+              Expanded(
+                child: Container(
+                    width: double.infinity,
+                    child: Stack(
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CarouselSlider(
+                              options: CarouselOptions(
+                                  height:getProportionateScreenHeight(
+                                      context, space_500),
+                                  viewportFraction: 1.0,
+                                  enlargeCenterPage: false,
+                                  onPageChanged: (index, reason) {
+                                    setState(() {
+                                      _current = index;
+                                    });
+                                  }),
+                              carouselController: _controller,
+                              items: widget.imglist.map((item) => Stack(
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(),
+                                    child: Center(
+                                      child: PhotoView(
+                                        imageProvider: NetworkImage(widget.imglist[_current]),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ))
-                                .toList(),
-                          ),
-                        ],
-                      ),
+                                ],
+                              ))
+                                  .toList(),
+                            ),
+                          ],
+                        ),
 //                  Align(
 //                    alignment: Alignment.center,
 //                    child: Container(
@@ -107,40 +108,44 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
 //                      ),
 //                    ),
 //                  )
-                    ],
-                  )),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: widget.imglist.map((url) {
-                  int index = widget.imglist.indexOf(url);
-                  return _current == index
-                      ? Container(
-                    width: space_12,
-                    height: space_12,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white),
-                        shape: BoxShape.circle),
-                    child: Center(
-                      child: Container(
-                        width: space_5,
-                        height: space_5,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle),
+                      ],
+                    )),
+              ),
+              Container(
+                margin: EdgeInsets.all(space_15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: widget.imglist.map((url) {
+                    int index = widget.imglist.indexOf(url);
+                    return _current == index
+                        ? Container(
+                      width: space_12,
+                      height: space_12,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.white),
+                          shape: BoxShape.circle),
+                      child: Center(
+                        child: Container(
+                          width: space_5,
+                          height: space_5,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle),
+                        ),
                       ),
-                    ),
-                  )
-                      : Container(
-                    width: 8.0,
-                    height: 8.0,
-                    margin:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                    ),
-                  );
-                }).toList(),
+                    )
+                        : Container(
+                      width: 8.0,
+                      height: 8.0,
+                      margin:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                    );
+                  }).toList(),
+                ),
               )
             ],
           ),

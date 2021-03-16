@@ -143,11 +143,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                         background: Container(
                             child: Stack(
                           children: [
-                            ItemDetailBannerImgCarousalWidget(bannerList: [
-                              itemDetailResponse.ad.img_1,
-                              itemDetailResponse.ad.img_2,
-                              itemDetailResponse.ad.img_3
-                            ]),
+                            ItemDetailBannerImgCarousalWidget(bannerList: bannerlist),
                             Container(
                               margin: EdgeInsets.symmetric(
                                   horizontal: space_15, vertical: space_10),
@@ -239,7 +235,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                         CommonStyles.blue),
                                   ),
                                   Text(
-                                    "month",
+                                    "${itemDetailResponse.ad.rent_type}",
                                     style: CommonStyles.getRalewayStyle(
                                         space_14,
                                         FontWeight.w500,
@@ -252,51 +248,62 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           SizedBox(
                             height: space_15,
                           ),
-                          Container(
-                            margin: EdgeInsets.symmetric(horizontal: space_15),
-                            child: Card(
-                              elevation: space_3,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(space_5)),
-                              child: Container(
-                                width: double.infinity,
-                                padding:
-                                    EdgeInsets.symmetric(vertical: space_15),
-                                decoration: BoxDecoration(
-                                    color: CommonStyles.lightGrey,
-                                    borderRadius:
-                                        BorderRadius.circular(space_5)),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Icon(
-                                          Icons.location_on,
-                                          color: CommonStyles.primaryColor,
-                                          size: space_15,
+                          InkWell(
+                            onTap: (){
+                              if (itemDetailResponse.ad.lat != null &&
+                                  itemDetailResponse.ad.lang != null &&
+                                  itemDetailResponse.ad.lat.isNotEmpty &&
+                                  itemDetailResponse.ad.lang.isNotEmpty) {
+                                openMap(double.parse(itemDetailResponse.ad.lat),
+                                    double.parse(itemDetailResponse.ad.lang));
+                              }
+                            },
+                            child: Container(
+                              margin: EdgeInsets.symmetric(horizontal: space_15),
+                              child: Card(
+                                elevation: space_3,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(space_5)),
+                                child: Container(
+                                  width: double.infinity,
+                                  padding:
+                                      EdgeInsets.symmetric(vertical: space_15),
+                                  decoration: BoxDecoration(
+                                      color: CommonStyles.lightGrey,
+                                      borderRadius:
+                                          BorderRadius.circular(space_5)),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Icon(
+                                            Icons.location_on,
+                                            color: CommonStyles.primaryColor,
+                                            size: space_15,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      flex: 7,
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: space_10),
-                                        child: Text(
-                                          itemDetailResponse.ad.location,
-                                          style: CommonStyles.getRalewayStyle(
-                                              space_12,
-                                              FontWeight.w500,
-                                              CommonStyles.primaryColor),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
+                                      Expanded(
+                                        flex: 7,
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: space_10),
+                                          child: Text(
+                                            itemDetailResponse.ad.location,
+                                            style: CommonStyles.getRalewayStyle(
+                                                space_12,
+                                                FontWeight.w500,
+                                                CommonStyles.primaryColor),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
-                                      ),
-                                    )
-                                  ],
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),

@@ -423,11 +423,9 @@ class HomeRepository extends BaseRepository {
       request.fields['contact'] = contact;
       request.fields['address'] = address;
       var res = await request.send();
-      print(res.statusCode);
-      res.stream.transform(utf8.decoder).listen((value) {
-        print(value);
-        response = CommonResponse.fromJson(value);
-      });
+      var resss = await http.Response.fromStream(res);
+      debugPrint("PRRRR ${resss.body}");
+      response =  CommonResponse.fromJson(json.decode(resss.body));
     } else {
       //http secure connection
       var http = makeHttpSecure();

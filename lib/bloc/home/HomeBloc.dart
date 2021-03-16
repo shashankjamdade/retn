@@ -189,8 +189,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           await homeRepository.callItemDetailApi(token, categoryName);
       debugPrint("ITEMDETAIL_API_CALL_RES ${jsonEncode(itemDetailResponse)}");
       yield ItemDetailResState(res: itemDetailResponse);
-    } catch (e) {
-      debugPrint("Exception while itemDetail ${e.toString()}");
+    } catch (e, stacktrace) {
+      debugPrint("Exception while itemDetail ${e.toString()}, ${stacktrace.toString()}");
     }
   }
 
@@ -380,10 +380,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           "callUserUpdateApi ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
       final changePwdRes = await homeRepository.callUpdateUser(
           token, username, aboutus, contact, email, address, img);
-      debugPrint("callUserUpdateApi ${jsonEncode(changePwdRes)}");
+      debugPrint("callUserUpdateApi RES ${jsonEncode(changePwdRes)}");
       yield ChangePwdResState(res: changePwdRes);
-    } catch (e) {
-      debugPrint("Exception while callUserUpdateApi ${e.toString()}");
+    } catch (e, stacktrace) {
+      debugPrint("Exception while callUserUpdateApi ${e.toString()}\n${stacktrace.toString()}");
     }
   }
 

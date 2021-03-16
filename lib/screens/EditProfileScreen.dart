@@ -84,7 +84,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       child: BlocListener(
           bloc: homeBloc,
           listener: (context, state) {
-            if (state.res is CommonResponse) {
+            if ((state is ChangePwdResState || state is UserUpdateResState) && state.res is CommonResponse) {
               if (state.res.msg != null) {
                 showSnakbar(_scaffoldKey, state.res.msg);
               }
@@ -496,7 +496,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future getImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker.getImage(source: ImageSource.gallery, imageQuality: 80, maxWidth: 500, maxHeight: 600);
 
     setState(() {
       if (pickedFile != null) {

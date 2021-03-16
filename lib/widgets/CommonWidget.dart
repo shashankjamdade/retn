@@ -278,7 +278,7 @@ class TextInputWidget extends StatelessWidget {
   }
 }
 
-class BtnTextInputWidget extends StatelessWidget {
+class BtnTextInputWidget extends StatefulWidget {
   TextEditingController textEditingController;
   String labelText;
   String btnText;
@@ -293,53 +293,98 @@ class BtnTextInputWidget extends StatelessWidget {
       {this.isVerified = false});
 
   @override
+  _BtnTextInputWidgetState createState() => _BtnTextInputWidgetState();
+}
+
+class _BtnTextInputWidgetState extends State<BtnTextInputWidget>
+    with TickerProviderStateMixin {
+  AnimationController animation;
+  Animation<double> _fadeInFadeOut;
+
+  @override
+  void initState() {
+    super.initState();
+    animation = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 200),
+    );
+    _fadeInFadeOut = Tween<double>(begin: 0.0, end: 0.1).animate(animation);
+    animation.addListener(() {
+      debugPrint("ANIM - O");
+      if (animation.isCompleted) {
+        debugPrint("ANIM -R");
+        animation.reverse();
+      } else {
+        debugPrint("ANIM -F");
+        animation.forward();
+      }
+    });
+    animation.forward();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
-        height: getProportionateScreenHeight(context, space_40),
-        color: isVerified ? Colors.white : CommonStyles.primaryColor,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Flexible(
-              child: TextFormField(
-                validator: validatorFun,
-                obscureText: isPassword,
-                controller: textEditingController,
-                keyboardType: textInputType,
-                decoration: InputDecoration(
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  labelText: labelText,
-                  contentPadding: EdgeInsets.all(space_8),
+      height: getProportionateScreenHeight(context, space_40),
+      color: CommonStyles.green,
+      child: Container(
+          height: getProportionateScreenHeight(context, space_40),
+          color: widget.isVerified ? Colors.white : CommonStyles.primaryColor,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Flexible(
+                child: TextFormField(
+                  validator: widget.validatorFun,
+                  obscureText: widget.isPassword,
+                  controller: widget.textEditingController,
+                  keyboardType: widget.textInputType,
+                  decoration: InputDecoration(
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    labelText: widget.labelText,
+                    contentPadding: EdgeInsets.all(space_8),
 //                                  enabledBorder: inputBorderDecoration,
 //                                  focusedBorder: inputBorderDecoration,
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                      borderRadius: BorderRadius.circular(0.0)),
-                  filled: true,
-                  fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                        ),
+                        borderRadius: BorderRadius.circular(0.0)),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
                 ),
               ),
-            ),
-            FittedBox(
-              child: InkWell(
-                onTap: onSubmit,
-                child: Container(
-                  padding: EdgeInsets.all(space_8),
-                  width: 70.0,
-                  child: Center(
-                      child: Text(
-                    btnText,
-                    style: TextStyle(
-                        fontSize: 12.0,
-                        color: isVerified ? Colors.green : Colors.white),
-                  )),
+              FittedBox(
+                child: InkWell(
+                  splashColor: CommonStyles.green,
+                  hoverColor: CommonStyles.green,
+                  highlightColor: CommonStyles.green,
+                  onTap: () {
+                    animation.repeat(min: 0, max: 1);
+                    widget.onSubmit();
+                  },
+                  child: FadeTransition(
+                    opacity: animation,
+                    child: Container(
+                      padding: EdgeInsets.all(space_8),
+                      width: 70.0,
+                      child: Center(
+                          child: Text(
+                        widget.btnText,
+                        style: TextStyle(
+                            fontSize: 12.0,
+                            color: widget.isVerified
+                                ? Colors.green
+                                : Colors.white),
+                      )),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ],
-        ));
+            ],
+          )),
+    );
   }
 }
 
@@ -1128,14 +1173,14 @@ class _ItemCardNoMarginWidgetState extends State<ItemCardNoMarginWidget> {
   }
 }
 
-
 class ItemCardNoMargin2Widget extends StatefulWidget {
   Category_adslist category_adslist;
 
   ItemCardNoMargin2Widget({this.category_adslist});
 
   @override
-  _ItemCardNoMargin2WidgetState createState() => _ItemCardNoMargin2WidgetState();
+  _ItemCardNoMargin2WidgetState createState() =>
+      _ItemCardNoMargin2WidgetState();
 }
 
 class _ItemCardNoMargin2WidgetState extends State<ItemCardNoMargin2Widget> {
@@ -1195,7 +1240,7 @@ class _ItemCardNoMargin2WidgetState extends State<ItemCardNoMargin2Widget> {
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius:
-                                  BorderRadius.circular(space_10)),
+                                      BorderRadius.circular(space_10)),
                               child: FadeInImage.assetNetwork(
                                 placeholder: "assets/images/loader.jpg",
                                 image: widget.category_adslist.img_1,
@@ -1239,41 +1284,41 @@ class _ItemCardNoMargin2WidgetState extends State<ItemCardNoMargin2Widget> {
                           ),
                           widget.category_adslist.distance != null
                               ? Positioned(
-                            bottom: 0.0,
-                            right: 0.0,
-                            child: Container(
-                              height: space_30,
-                              padding: EdgeInsets.all(space_5),
-                              decoration: BoxDecoration(
-                                color: CommonStyles.primaryColor
-                                    .withOpacity(0.5),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.location_on,
-                                    color: Colors.white,
-                                    size: space_12,
+                                  bottom: 0.0,
+                                  right: 0.0,
+                                  child: Container(
+                                    height: space_30,
+                                    padding: EdgeInsets.all(space_5),
+                                    decoration: BoxDecoration(
+                                      color: CommonStyles.primaryColor
+                                          .withOpacity(0.5),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.location_on,
+                                          color: Colors.white,
+                                          size: space_12,
+                                        ),
+                                        SizedBox(
+                                          width: space_3,
+                                        ),
+                                        Text(
+                                          "${widget.category_adslist.distance} Kms",
+                                          style:
+                                              CommonStyles.getMontserratStyle(
+                                                  space_10,
+                                                  FontWeight.w800,
+                                                  Colors.white),
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                  SizedBox(
-                                    width: space_3,
-                                  ),
-                                  Text(
-                                    "${widget.category_adslist.distance} Kms",
-                                    style:
-                                    CommonStyles.getMontserratStyle(
-                                        space_10,
-                                        FontWeight.w800,
-                                        Colors.white),
-                                  )
-                                ],
-                              ),
-                            ),
-                          )
+                                )
                               : Container(
-                            height: 0,
-                            width: 0,
-                          ),
+                                  height: 0,
+                                  width: 0,
+                                ),
                         ],
                       ),
                       SizedBox(
@@ -1373,8 +1418,8 @@ class _ItemCardNoMargin2WidgetState extends State<ItemCardNoMargin2Widget> {
                             ),
                             Text(
                               widget.category_adslist.rent_type != null &&
-                                  widget
-                                      .category_adslist.rent_type.isNotEmpty
+                                      widget
+                                          .category_adslist.rent_type.isNotEmpty
                                   ? "${widget.category_adslist.rent_type}"
                                   : "",
                               style: CommonStyles.getRalewayStyle(
@@ -1396,7 +1441,6 @@ class _ItemCardNoMargin2WidgetState extends State<ItemCardNoMargin2Widget> {
     );
   }
 }
-
 
 class MyItemCardNoMarginWidget extends StatefulWidget {
   Category_adslist category_adslist;
@@ -2274,7 +2318,7 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                                                   : LoginScreen()),
                                         );
                                       },
-                                      child: BottomBarItemWidget("LOGIN",
+                                      child: BottomBarItemWidget("PROFILE",
                                           "assets/images/bottom_nav_login.png",
                                           isVisible: true))),
                             ],
@@ -2484,7 +2528,8 @@ class BottomFloatingChatBtnsWidget extends StatelessWidget {
                       ? lauchDialer(mobile)
                       : Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => LoginScreen()),
+                          MaterialPageRoute(
+                              builder: (context) => LoginScreen()),
                         );
                 },
                 child: Container(
@@ -2502,15 +2547,26 @@ class BottomFloatingChatBtnsWidget extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ChatDetailScreen(
-                              slug: slug,
-                              sellerId: sellerId,
-                              adId: adId,
-                            )),
-                  );
+                  StateContainer.of(context).mLoginResponse != null &&
+                          StateContainer.of(context)
+                                  .mLoginResponse
+                                  .data
+                                  .token !=
+                              null
+                      ? Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ChatDetailScreen(
+                                    slug: slug,
+                                    sellerId: sellerId,
+                                    adId: adId,
+                                  )),
+                        )
+                      : Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginScreen()),
+                        );
                 },
                 child: Container(
                   height: space_40,

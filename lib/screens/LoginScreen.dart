@@ -104,7 +104,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 debugPrint("FB_EMAIL-->> ${state.res.map['email']}");
                 authenticationBloc
                   ..add(SocialLoginReqAuthenticationEvent(
-                      emailOrMobile: state.res.map['email'], deviceToken: mFcmToken));
+                      emailOrMobile: state.res.map['email'],
+                      deviceToken: mFcmToken));
               } else {
                 showSnakbar(_scaffoldKey,
                     "No email found against your profile, please try again with another account");
@@ -200,179 +201,191 @@ class _LoginScreenState extends State<LoginScreen> {
       key: _scaffoldKey,
       body: SafeArea(
         child: Container(
-            child: Column(
+            child: Stack(
           children: [
-            AuthPageHeaderWidget(app_name, skip_for_now, skipFun),
-            Expanded(
-              child: Stack(
-                children: [
-                  ListView(
+            Column(
+              children: [
+                AuthPageHeaderWidget(app_name, skip_for_now, skipFun),
+                Expanded(
+                  child: Stack(
                     children: [
-                      Container(
-                        margin: EdgeInsets.only(
-                            left: space_15, right: space_15, top: space_70),
-                        child: Form(
-                          key: formKey,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Align(
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                  "Please provide your login information",
-                                  style: CommonStyles.getRalewayStyle(space_15,
-                                      FontWeight.w500, CommonStyles.blue),
-                                ),
-                              ),
-                              SizedBox(
-                                height: space_20,
-                              ),
-                              TextInputWidget(
-                                  mobileEmailController,
-                                  "Mobile no / Email ID",
-                                  false, (String value) {
-                                if (value.isEmpty) {
-                                  return "Please enter valid email/mobile";
-                                }
-                              }, TextInputType.emailAddress),
-                              SizedBox(
-                                height: getProportionateScreenHeight(
-                                    context, space_20),
-                              ),
-                              BtnTextInputWidget(
-                                  passwordController, "Password", "Login", true,
-                                  () {
-                                if (mobileEmailController.text.trim().isEmpty) {
-                                  showSnakbar(_scaffoldKey, empty_username);
-                                } else if (passwordController.text
-                                    .trim()
-                                    .isEmpty) {
-                                  showSnakbar(_scaffoldKey, empty_password);
-                                } else if (mFcmToken == null ||
-                                    mFcmToken.trim().isEmpty) {
-                                  showSnakbar(_scaffoldKey, fcm_token_missing);
-                                } else {
-                                  //API hit
+                      ListView(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(
+                                left: space_15, right: space_15, top: space_70),
+                            child: Form(
+                              key: formKey,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Text(
+                                      "Please provide your login information",
+                                      style: CommonStyles.getRalewayStyle(
+                                          space_15,
+                                          FontWeight.w500,
+                                          CommonStyles.blue),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: space_20,
+                                  ),
+                                  TextInputWidget(
+                                      mobileEmailController,
+                                      "Mobile no / Email ID",
+                                      false, (String value) {
+                                    if (value.isEmpty) {
+                                      return "Please enter valid email/mobile";
+                                    }
+                                  }, TextInputType.emailAddress),
+                                  SizedBox(
+                                    height: getProportionateScreenHeight(
+                                        context, space_20),
+                                  ),
+                                  BtnTextInputWidget(passwordController,
+                                      "Password", "Login", true, () {
+                                    if (mobileEmailController.text
+                                        .trim()
+                                        .isEmpty) {
+                                      showSnakbar(_scaffoldKey, empty_username);
+                                    } else if (passwordController.text
+                                        .trim()
+                                        .isEmpty) {
+                                      showSnakbar(_scaffoldKey, empty_password);
+                                    } else if (mFcmToken == null ||
+                                        mFcmToken.trim().isEmpty) {
+                                      showSnakbar(
+                                          _scaffoldKey, fcm_token_missing);
+                                    } else {
+                                      //API hit
 //      authenticationBloc.dispatch(LoginEvent(loginInfoModel: testLogin));
-                                  authenticationBloc
-                                    ..add(LoginReqAuthenticationEvent(
-                                        emailOrMobile:
-                                            mobileEmailController.text.trim(),
-                                        password:
-                                            passwordController.text.trim(),
-                                        deviceToken: mFcmToken));
+                                      authenticationBloc
+                                        ..add(LoginReqAuthenticationEvent(
+                                            emailOrMobile: mobileEmailController
+                                                .text
+                                                .trim(),
+                                            password:
+                                                passwordController.text.trim(),
+                                            deviceToken: mFcmToken));
 
 //                            BlocProvider.of<AuthenticationBloc>(_context)
 //                              ..add(LoginReqAuthenticationEvent(emailOrMobile: mobileEmailController.text.trim(), password: passwordController.text.trim()));
-                                }
-                              }, (String value) {
-                                if (value.isEmpty) {
-                                  return "Please enter valid password";
-                                }
-                              }, TextInputType.emailAddress),
-                              SizedBox(
-                                height: getProportionateScreenHeight(
-                                    context, space_20),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            ForgotPwdScreen()),
-                                  );
-                                },
-                                child: Text(
-                                  "Forgot password?",
-                                  style:
-                                      CommonStyles.getMontserratDecorationStyle(
-                                          space_14,
-                                          FontWeight.w600,
-                                          CommonStyles.primaryColor,
-                                          TextDecoration.underline),
-                                ),
-                              ),
-                              SizedBox(
-                                height: getProportionateScreenHeight(
-                                    context, space_20),
-                              ),
-                              Text(
-                                "OR",
-                                style: CommonStyles.getRalewayStyle(space_18,
-                                    FontWeight.w600, CommonStyles.primaryColor),
-                              ),
-                              SizedBox(
-                                height: getProportionateScreenHeight(
-                                    context, space_20),
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Expanded(
-                                      child: IconButtonWidget(
-                                          "Login with facebook",
-                                          "assets/images/facebook.png",
-                                          CommonStyles.blue, () {
-                                    onSocialLogin("fb", context);
-                                  })),
-                                  Expanded(
-                                      child: IconButtonWidget(
-                                          "Login with Google",
-                                          "assets/images/google.png",
-                                          CommonStyles.darkAmber, () {
-                                    onSocialLogin("google", context);
-                                  })),
-                                ],
-                              ),
-                              SizedBox(
-                                height: getProportionateScreenHeight(
-                                    context, space_25),
-                              ),
-                              GestureDetector(
-                                onTap: redirectToSignup,
-                                child: RichText(
-                                  text: new TextSpan(
-                                    text: 'Don\'t have account? ',
-                                    style: TextStyle(
-                                        fontSize: space_12,
-                                        fontFamily: CommonStyles.FONT_RALEWAY,
-                                        fontWeight: FontWeight.w400,
-                                        color: CommonStyles.primaryColor),
-                                    children: <TextSpan>[
-                                      new TextSpan(
-                                        text: ' Signup',
+                                    }
+                                  }, (String value) {
+                                    if (value.isEmpty) {
+                                      return "Please enter valid password";
+                                    }
+                                  }, TextInputType.emailAddress),
+                                  SizedBox(
+                                    height: getProportionateScreenHeight(
+                                        context, space_20),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ForgotPwdScreen()),
+                                      );
+                                    },
+                                    child: Text(
+                                      "Forgot password?",
+                                      style: CommonStyles
+                                          .getMontserratDecorationStyle(
+                                              space_14,
+                                              FontWeight.w600,
+                                              CommonStyles.primaryColor,
+                                              TextDecoration.underline),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: getProportionateScreenHeight(
+                                        context, space_20),
+                                  ),
+                                  Text(
+                                    "OR",
+                                    style: CommonStyles.getRalewayStyle(
+                                        space_18,
+                                        FontWeight.w600,
+                                        CommonStyles.primaryColor),
+                                  ),
+                                  SizedBox(
+                                    height: getProportionateScreenHeight(
+                                        context, space_20),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Expanded(
+                                          child: IconButtonWidget(
+                                              "Login with facebook",
+                                              "assets/images/facebook.png",
+                                              CommonStyles.blue, () {
+                                        onSocialLogin("fb", context);
+                                      })),
+                                      Expanded(
+                                          child: IconButtonWidget(
+                                              "Login with Google",
+                                              "assets/images/google.png",
+                                              CommonStyles.darkAmber, () {
+                                        onSocialLogin("google", context);
+                                      })),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: getProportionateScreenHeight(
+                                        context, space_25),
+                                  ),
+                                  GestureDetector(
+                                    onTap: redirectToSignup,
+                                    child: RichText(
+                                      text: new TextSpan(
+                                        text: 'Don\'t have account? ',
+                                        style: TextStyle(
+                                            fontSize: space_12,
+                                            fontFamily:
+                                                CommonStyles.FONT_RALEWAY,
+                                            fontWeight: FontWeight.w400,
+                                            color: CommonStyles.primaryColor),
+                                        children: <TextSpan>[
+                                          new TextSpan(
+                                            text: ' Signup',
+                                            style: TextStyle(
+                                                fontSize: space_15,
+                                                fontFamily:
+                                                    CommonStyles.FONT_RALEWAY,
+                                                fontWeight: FontWeight.w600,
+                                                color:
+                                                    CommonStyles.primaryColor),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(top: space_70),
+                                    child: Center(
+                                      child: Text(
+                                        rent_pe_tagline,
                                         style: TextStyle(
                                             fontSize: space_15,
                                             fontFamily:
                                                 CommonStyles.FONT_RALEWAY,
-                                            fontWeight: FontWeight.w600,
-                                            color: CommonStyles.primaryColor),
+                                            fontWeight: FontWeight.w400,
+                                            color: CommonStyles.primaryColor,
+                                            decoration: TextDecoration.none),
                                       ),
-                                    ],
-                                  ),
-                                ),
+                                    ),
+                                  )
+                                ],
                               ),
-                              Container(
-                                margin: EdgeInsets.only(top: space_70),
-                                child: Center(
-                                  child: Text(
-                                    rent_pe_tagline,
-                                    style: TextStyle(
-                                        fontSize: space_15,
-                                        fontFamily: CommonStyles.FONT_RALEWAY,
-                                        fontWeight: FontWeight.w400,
-                                        color: CommonStyles.primaryColor,
-                                        decoration: TextDecoration.none),
-                                  ),
-                                ),
-                              )
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
 //            Column(
 //              crossAxisAlignment: CrossAxisAlignment.center,
 //              mainAxisAlignment: MainAxisAlignment.end,
@@ -393,19 +406,21 @@ class _LoginScreenState extends State<LoginScreen> {
 //                )
 //              ],
 //            ),
+                        ],
+                      ),
                     ],
                   ),
-                  showProgress
-                      ? Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : Container(
-                          height: space_0,
-                          width: space_0,
-                        )
-                ],
-              ),
+                ),
+              ],
             ),
+            showProgress
+                ? Center(
+              child: CircularProgressIndicator(),
+            )
+                : Container(
+              height: space_0,
+              width: space_0,
+            )
           ],
         )),
       ),
