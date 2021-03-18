@@ -679,7 +679,7 @@ class HomeRepository extends BaseRepository {
       String token, String subcategory_id) async {
     GetCustomFieldsResponse response;
     print(
-        "UNDER callCustomFields ${token} , ${BASE_URL + SUBCATEGORY_CUSTOM_FIELDS}");
+        "UNDER callCustomFields  ${BASE_URL + SUBCATEGORY_CUSTOM_FIELDS}, ${subcategory_id}");
     Map<String, String> mainheader = {"token": token};
     var res = await http.post(BASE_URL + SUBCATEGORY_CUSTOM_FIELDS,
         headers: mainheader, body: {"subcategory_id": subcategory_id});
@@ -739,7 +739,7 @@ class HomeRepository extends BaseRepository {
     request.fields['price'] = adPostReqModel.price;
     request.fields['tags'] = adPostReqModel.tags;
     request.fields['description'] = adPostReqModel.desc;
-    request.fields['package_id'] = adPostReqModel.packageId;
+    request.fields['user_package_id'] = adPostReqModel.packageId;
     request.fields['address'] = adPostReqModel.address;
     request.fields['address-lat'] = adPostReqModel.addresslat;
     request.fields['address-lang'] = adPostReqModel.addresslng;
@@ -787,7 +787,7 @@ class HomeRepository extends BaseRepository {
   Future<PaymentRes> callPackagePayment(
       String token, String packageId, String amt, String pgRes) async {
     PaymentRes response;
-    print("UNDER callPackagePayment ${token} , ${BASE_URL + PACKAGE_PAYMENT}");
+    print("UNDER callPackagePayment ${BASE_URL + PACKAGE_PAYMENT}, ${packageId}, ${amt}");
     Map<String, String> mainheader = {"token": token};
     var res =
         await http.post(BASE_URL + PACKAGE_PAYMENT, headers: mainheader, body: {
@@ -916,6 +916,20 @@ class HomeRepository extends BaseRepository {
     request.fields['address-lang'] = adPostReqModel.addresslng;
     request.fields['rent_type_id'] = adPostReqModel.rentTypeId;
     request.fields['custome_field'] = adPostReqModel.customFields;
+
+//    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.categoryId}");
+//    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.subCategoryId}");
+//    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.title}");
+//    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.price}");
+//    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.tags}");
+//    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.desc}");
+////    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.packageId}");
+//    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.address}");
+//    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.addresslat}");
+//    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.addresslng}");
+//    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.rentTypeId}");
+    debugPrint("ADPOST_REQ entry --> ${adPostReqModel.customFields}");
+
     var res = await request.send();
     print(res.statusCode);
     if (res.statusCode == 200) {

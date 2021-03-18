@@ -57,7 +57,7 @@ class _MyFavScreenState
       create: (context) =>
           homeBloc..add(GetMyFavListEvent(token: token)),
       child: BlocListener(
-        bloc: homeBloc,
+        cubit: homeBloc,
         listener: (context, state) {},
         child: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {

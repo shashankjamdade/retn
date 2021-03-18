@@ -11,6 +11,7 @@ import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/model/RazorpaySuccessRes.dart';
 
 //import 'package:flutter_rentry_new/model/RazorpaySuccessRes.dart';
 import 'package:flutter_rentry_new/model/get_all_package_list_response.dart';
@@ -22,6 +23,7 @@ import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 //import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -37,6 +39,7 @@ class _PackageScreenState extends State<PackageScreen> {
   GetAllPackageListResponse mGetAllPackageListResponse;
   LoginResponse loginResponse;
   var token = "";
+  var _razorpay = Razorpay();
 
 //  var _razorpay = Razorpay();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -62,9 +65,9 @@ class _PackageScreenState extends State<PackageScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-//    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-//    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-//    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
   @override
@@ -80,10 +83,10 @@ class _PackageScreenState extends State<PackageScreen> {
   @override
   void dispose() {
     super.dispose();
-//    _razorpay.clear();
+    _razorpay.clear();
   }
 
-  /*void _handlePaymentSuccess(PaymentSuccessResponse response) {
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
     debugPrint("PAYMENT_SUCCESS ------- > ${jsonEncode(response.paymentId)}");
     var amt = "";
 //    setState(() {
@@ -116,32 +119,35 @@ class _PackageScreenState extends State<PackageScreen> {
   void _handleExternalWallet(ExternalWalletResponse response) {
     debugPrint(
         "PAYMENT_EXT_WALLET ------- > ${jsonEncode(response.walletName)}");
-  }*/
+  }
 
   void openCheckout(String amt, String id, String title) async {
     var amtNum = int.parse(amt);
     debugPrint("PAYMENT_CHECKOUT");
-//    var options = {
-//      'key': 'rzp_test_NNbwJ9tmM0fbxj',
-//      'amount': "${amtNum*100}",
-//      'name': 'Rentozo',
-//      'description': 'Buy new package',
-//      'prefill': {'contact': '${loginResponse?.data?.contact}', 'email': '${loginResponse?.data?.email}'},
-//      'external': {
-//        'wallets': ['paytm'],
-//      }
-//    };
+    mSelectedPackageId = id;
+    mSelectedPackageName = title;
+    mSelectedPackageAmt = amt;
+    var options = {
+      'key': 'rzp_test_NNbwJ9tmM0fbxj',
+      'amount': "${amtNum*100}",
+      'name': 'Rentozo',
+      'description': 'Buy new package',
+      'prefill': {'contact': '${loginResponse?.data?.contact}', 'email': '${loginResponse?.data?.email}'},
+      'external': {
+        'wallets': ['paytm'],
+      }
+    };
     try {
       mSelectedPackageId = id;
       mSelectedPackageName = title;
       mSelectedPackageAmt = amt;
-//      _razorpay.open(options);
-      setState(() {
-        isWebviewLaunch = true;
-        mWebLink =
-            "https://rentozo.com/rentozo/webviewpayment/view/${mSelectedPackageId}/${loginResponse?.data?.id}";
-      });
-      redirectToWebView(mWebLink);
+      _razorpay.open(options);
+//      setState(() {
+//        isWebviewLaunch = true;
+//        mWebLink =
+//            "https://rentozo.com/webviewpayment/view/${mSelectedPackageId}/${loginResponse?.data?.id}";
+//      });
+//      redirectToWebView(mWebLink);
     } catch (e) {
       debugPrint(e);
     }
@@ -152,7 +158,7 @@ class _PackageScreenState extends State<PackageScreen> {
     return BlocProvider(
       create: (context) => homeBloc..add(GetAllPackageListEvent(token: token)),
       child: BlocListener(
-        bloc: homeBloc,
+        cubit: homeBloc,
         listener: (context, state) {
           if (state is GetAllPackageListResState) {
             mGetAllPackageListResponse = state.res;

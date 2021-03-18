@@ -1819,18 +1819,18 @@ class OwnerInfo extends StatelessWidget {
     return Container(
       child: ListTile(
         leading: Container(
-          height: space_80,
-          width: space_60,
+          height: space_70,
+          width: space_70,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(space_10),
             child: FadeInImage.assetNetwork(
-              placeholder: "assets/images/app_img.png",
+              placeholder: "assets/images/loader.jpg",
               image: profilePath != null
                   ? profilePath
                   : 'https://picsum.photos/250?image=9',
               fit: BoxFit.cover,
-              width: space_80,
-              height: space_60,
+              width: space_70,
+              height: space_70,
             ),
           ),
         ),

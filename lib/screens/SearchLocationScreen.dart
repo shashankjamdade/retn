@@ -94,7 +94,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
       create: (context) =>
           homeBloc..add(SubCategorySearchReqEvent(token: token, seachKey: "")),
       child: BlocListener(
-        bloc: homeBloc,
+        cubit: homeBloc,
         listener: (context, state) {},
         child: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {

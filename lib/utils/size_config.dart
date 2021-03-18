@@ -30,6 +30,7 @@ const double space_90 = 90.0;
 const double space_95 = 95.0;
 const double space_100 = 100.0;
 const double space_110 = 110.0;
+const double space_115 = 115.0;
 const double space_120 = 120.0;
 const double space_140 = 140.0;
 const double space_150 = 150.0;

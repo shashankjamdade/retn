@@ -65,7 +65,7 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
     return BlocProvider(
         create: (context) => homeBloc..add(GetRentTypeEvent(token: token)),
         child: BlocListener(
-          bloc: homeBloc,
+          cubit: homeBloc,
           listener: (context, state) {
             if (state is GetRentTypeResState) {
               mGetRentTypeResponse = state.res;

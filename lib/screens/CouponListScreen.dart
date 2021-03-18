@@ -65,7 +65,7 @@ class _CouponListScreenState extends State<CouponListScreen> {
             create: (context) =>
                 homeBloc..add(CouponEvent(lat: mLat, lng: mLng)),
             child: BlocListener(
-                bloc: homeBloc,
+                cubit: homeBloc,
                 listener: (context, state) {
                   if (state is CouponState) {
                     mCouponRes = state.res;

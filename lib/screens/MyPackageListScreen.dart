@@ -54,7 +54,7 @@ class _MyPackageListScreenState extends State<MyPackageListScreen> {
     return BlocProvider(
       create: (context) => homeBloc..add(GetMyPackageEvent(token: token)),
       child: BlocListener(
-          bloc: homeBloc,
+          cubit: homeBloc,
           listener: (context, state) {
             if(state is GetMyPackageListState){
               mGetNotificationResponse = state.res;

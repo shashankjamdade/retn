@@ -137,7 +137,7 @@ class _NearByChildSubCategoryScreenState
                 priceSort != null && priceSort.isNotEmpty ? priceSort : "",
             ads_title: widget.ads_title != null ? widget.ads_title : "")),
       child: BlocListener(
-        bloc: homeBloc,
+        cubit: homeBloc,
         listener: (context, state) {},
         child: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {

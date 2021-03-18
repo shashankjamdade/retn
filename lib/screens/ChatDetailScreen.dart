@@ -87,7 +87,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     return  BlocProvider(
         create: (context) => homeBloc..add(GetAllChatMsgEvent(token: token, indexId: widget.indexId, adId: widget.adId)),
         child: BlocListener(
-          bloc: homeBloc,
+          cubit: homeBloc,
           listener: (context, state) {
             if (state is GetAllChatMsgResState) {
               mGetAllChatMsgRes = state.res;
@@ -115,8 +115,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     if(state is GetAllChatMsgResState){
       mGetAllChatMsgRes = state.res;
       msgList = mGetAllChatMsgRes.data.messages;
-    }else{
-
     }
     return Scaffold(
       appBar: AppBar(
@@ -252,7 +250,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                 Text(msgList[pos].message, style: CommonStyles.getRalewayStyle(space_14, FontWeight.w500, CommonStyles.grey),),
                                 Align(
                                     alignment: Alignment.bottomRight,
-                                    child: Text(dateTimeStr, style: CommonStyles.getRalewayStyle(space_10, FontWeight.w500, CommonStyles.grey),)),
+                                    child: Text(dateTimeStr, style: CommonStyles.getMontserratStyle(space_10, FontWeight.w500, CommonStyles.grey),)),
                               ],
                             ),
                           ),

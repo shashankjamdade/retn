@@ -54,7 +54,7 @@ class _UserProfileState extends State<UserProfile> {
     return BlocProvider(
       create: (context) => homeBloc..add(GetUserProfileDataEvent(token: token)),
       child: BlocListener(
-          bloc: homeBloc,
+          cubit: homeBloc,
           listener: (context, state) {
             if (state is GetUserProfileResState) {
               mUserprofileRes = state.res;
@@ -101,11 +101,11 @@ class _UserProfileState extends State<UserProfile> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Container(
-                                height: space_50,
-                                width: space_50,
+                                height: space_70,
+                                width: space_70,
                                 margin: EdgeInsets.only(right: space_15),
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(space_25),
+                                  borderRadius: BorderRadius.circular(space_35),
                                   child: Container(
                                     decoration: BoxDecoration(shape: BoxShape.circle),
                                     child: FadeInImage.assetNetwork(
@@ -114,8 +114,8 @@ class _UserProfileState extends State<UserProfile> {
                                           ? mUserprofileRes.data.profile_picture
                                           : "http://rentozo.com/assets/img/user.jpg",
                                       fit: BoxFit.fill,
-                                      width: space_80,
-                                      height: space_60,
+                                      width: space_70,
+                                      height: space_70,
                                     ),
                                   ),
                                 ),

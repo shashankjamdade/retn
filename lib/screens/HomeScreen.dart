@@ -161,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
         create: (context) => homeBloc
           ..add(HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng)),
         child: BlocListener(
-            bloc: homeBloc,
+            cubit: homeBloc,
             listener: (context, state) {
               if (state is HomeResState) {
 //              var screenHeight = MediaQuery.of(context).size.height;

@@ -75,7 +75,7 @@ class _ForgotPwdScreenState extends State<ForgotPwdScreen> {
     return BlocProvider(
       create: (context) => homeBloc..add(InitialEvent()),
       child: BlocListener(
-      bloc: homeBloc,
+        cubit: homeBloc,
         listener: (context, state){
           if(state is ForgotPwdState){
             debugPrint("MSG_GOT_REGISTER ${state.res.msg}");
@@ -255,7 +255,7 @@ class _ForgotPwdScreenState extends State<ForgotPwdScreen> {
       //push to verify
       var res = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => OtpVerificationScreen(mobileController.text.trim(), "login")),
+        MaterialPageRoute(builder: (context) => OtpVerificationScreen(mobileController.text.trim(), "forgot")),
       );
       setState(() {
         if(res!=null && res is OtpObj) {

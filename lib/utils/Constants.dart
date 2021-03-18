@@ -31,6 +31,7 @@ String getMapUrl(double lat, double longi, int w, int h) {
   return mapUrl;
 }
 
+
 String getRichText2ByType(String type) {
   String text2;
   switch (type) {

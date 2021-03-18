@@ -54,7 +54,7 @@ class _MyAdsListScreenState extends State<MyAdsListScreen> {
     return BlocProvider(
       create: (context) => homeBloc..add(MyAdsEvent(token: token)),
       child: BlocListener(
-        bloc: homeBloc,
+        cubit: homeBloc,
         listener: (context, state) {
           if (state is DeleteAdState) {
             if (state.res != null && state.res.message != null) {

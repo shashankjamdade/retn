@@ -54,7 +54,7 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
     return BlocProvider(
         create: (context) => homeBloc..add(GetAllChatUserEvent(token: token)),
         child: BlocListener(
-          bloc: homeBloc,
+          cubit: homeBloc,
           listener: (context, state) {
             if (state is GetAllChatUserListResState) {
               mGetAllChatUserListResponse = state.res;

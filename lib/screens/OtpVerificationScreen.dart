@@ -57,17 +57,26 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     return BlocProvider(
       create: (context) => homeBloc..add(SendOtpEvent(contact: widget.contact, otpType: widget.otp_type)),
       child: BlocListener(
-        bloc: homeBloc,
+          cubit: homeBloc,
         listener: (context, state) {
           if(state is SendOtpState){
             if(state.res!=null && state.res.msg!=null && state.res.msg.toString().isNotEmpty){
               showSnakbar(_scaffoldKey, state.res.msg);
+              if(state.res.status == "false"){
+                Fluttertoast.showToast(
+                    msg: state.res.msg,
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.black,
+                    textColor: Colors.white,
+                    fontSize: space_14
+                );
+                Navigator.pop(context, null);
+              }
             }
           }else if(state is VeifyOtpState){
             if(state.res!=null && state.res.msg!=null && state.res.msg.toString().isNotEmpty){
-              if(state.res.status!=null && (state.res.status == "true")){
-                Navigator.pop(context, new OtpObj(widget.contact, otpController.text.trim()));
-              }
               Fluttertoast.showToast(
                   msg: state.res.msg,
                   toastLength: Toast.LENGTH_SHORT,
@@ -78,6 +87,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   fontSize: space_14
               );
               showSnakbar(_scaffoldKey, state.res.msg);
+              if(state.res.status!=null && (state.res.status == "true")){
+                Navigator.pop(context, new OtpObj(widget.contact, otpController.text.trim()));
+              }
             }
           }
         },
@@ -86,7 +98,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               if(state is SendOtpState){
                 return getScreenUi(state.res);
               }else if(state is VeifyOtpState){
-                return getScreenUi(state.res);
+                if(state.res.status!=null && (state.res.status == "true")){
+                  return getScreenProgressUi();
+                }else{
+                  return getScreenUi(state.res);
+                }
               }else {
                 return getScreenProgressUi();
               }
@@ -116,7 +132,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                           alignment: Alignment.topLeft,
                           child: Text(
                             "We have sent OTP on ${widget.contact}",
-                            style: CommonStyles.getRalewayStyle(
+                            style: CommonStyles.getMontserratStyle(
                                 space_15, FontWeight.w500, CommonStyles.blue),
                           ),
                         ),

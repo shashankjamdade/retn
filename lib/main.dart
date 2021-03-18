@@ -187,7 +187,7 @@ class _ScreenOneState extends State<ScreenOne> {
       create: (_) => authenticationBloc
         ..add(widget.isClrData ? MakeLogout() : CheckLoggedInEvent()),
       child: BlocListener(
-        bloc: authenticationBloc,
+        cubit: authenticationBloc,
         listener: (context, state) {
           if (state.obj != null && state.obj is LoginResponse) {
             StateContainer.of(context).updateUserInfo(state.obj);

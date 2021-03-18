@@ -35,7 +35,7 @@ class _ChooseCategoryScreenState extends State<ChooseCategoryScreen> {
     return BlocProvider(
       create: (context) => homeBloc..add(GetCategoryListEvent(token: token)),
       child: BlocListener(
-        bloc: homeBloc,
+        cubit: homeBloc,
         listener: (context, state) {
           if (state is GetAllCategoryListResState) {
             mGetCategoryResponse = state.res;

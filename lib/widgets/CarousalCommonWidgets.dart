@@ -39,7 +39,7 @@ class _BannerImgCorousalWidgetState extends State<BannerImgCarousalWidget> {
                       CarouselSlider(
                         options: CarouselOptions(
                             height: getProportionateScreenHeight(
-                                context, space_120),
+                                context, space_115),
                             viewportFraction: 1.0,
                             enlargeCenterPage: false,
                             onPageChanged: (index, reason) {
@@ -82,7 +82,7 @@ class _BannerImgCorousalWidgetState extends State<BannerImgCarousalWidget> {
                                               "assets/images/loader.jpg",
                                           image: widget.homeResponse.data
                                               .banner[_current].banner,
-                                          fit: BoxFit.fill,
+                                          fit: BoxFit.fitHeight,
                                         ),
                                       ),
                                       Align(

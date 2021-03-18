@@ -50,7 +50,7 @@ class _PostAdsSubCategoryScreenState extends State<PostAdsSubCategoryScreen> {
       create: (context) =>
           homeBloc..add(SubCategoryListReqEvent(categoryId: widget.adPostReqModel.categoryId, token: token)),
       child: BlocListener(
-        bloc: homeBloc,
+        cubit: homeBloc,
         listener: (context, state) {
           if (state is SubCategoryListResState) {
             mSubCategoryListResponse = state.res;

@@ -65,7 +65,7 @@ class _CustomeFieldsScreenState extends State<CustomeFieldsScreen> {
         ..add(CustomFieldsEvent(
             token: token, subCategoryId: widget.adPostReqModel.subCategoryId)),
       child: BlocListener(
-          bloc: homeBloc,
+          cubit: homeBloc,
           listener: (context, state) {
             if (state is GetNotificationListResState) {
               mGetCustomFieldsResponse = state.res;

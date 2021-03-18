@@ -51,7 +51,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
     return BlocProvider(
       create: (context) => homeBloc..add(GetNotificationListEvent(token: token)),
       child: BlocListener(
-          bloc: homeBloc,
+          cubit: homeBloc,
           listener: (context, state) {
             if(state is GetNotificationListResState){
               mGetNotificationResponse = state.res;

@@ -50,7 +50,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
       create: (context) =>
           homeBloc..add(SubCategoryListReqEvent(categoryId: widget.categoryId, token: token)),
       child: BlocListener(
-        bloc: homeBloc,
+        cubit: homeBloc,
         listener: (context, state) {
           if (state is SubCategoryListResState) {
             mSubCategoryListResponse = state.res;

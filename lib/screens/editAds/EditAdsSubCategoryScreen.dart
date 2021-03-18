@@ -53,7 +53,7 @@ class _EditAdsSubCategoryScreenState extends State<EditAdsSubCategoryScreen> {
       create: (context) =>
           homeBloc..add((widget.adPostReqModel.categoryId == widget.mMyAdsEditRes.data.post.category)?InitialEvent():SubCategoryListReqEvent(categoryId: widget.adPostReqModel.categoryId, token: token)),
       child: BlocListener(
-        bloc: homeBloc,
+        cubit: homeBloc,
         listener: (context, state) {
           if (state is InitialHomeState) {
             mSubCategoryListResponse = new SubCategoryListResponse(status: true, message: "",data: widget.mMyAdsEditRes.data.subcategory);
@@ -95,7 +95,7 @@ class _EditAdsSubCategoryScreenState extends State<EditAdsSubCategoryScreen> {
           children: [
             Column(
               children: [
-                PostAdsCommonAppbar(title: "What are you offering?"),
+                PostAdsCommonAppbar(title: ""),
                 Container(
                   margin: EdgeInsets.only(
                       left: space_15,

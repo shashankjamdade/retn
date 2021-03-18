@@ -20,10 +20,14 @@ class StateContainer extends StatefulWidget {
       this.generalSettingRes,
       this.userLocNameSelected});
 
+//  static StateContainerState of(BuildContext context) {
+//    return (context.inheritFromWidgetOfExactType(_InheritedStateContainer)
+//            as _InheritedStateContainer)
+//        .data;
+//  }
+
   static StateContainerState of(BuildContext context) {
-    return (context.inheritFromWidgetOfExactType(_InheritedStateContainer)
-            as _InheritedStateContainer)
-        .data;
+    return context.dependOnInheritedWidgetOfExactType<_InheritedStateContainer>().data;
   }
 
   @override

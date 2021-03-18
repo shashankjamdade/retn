@@ -73,7 +73,7 @@ class _ChatDetailScreen2State extends State<ChatDetailScreen2> {
     return  BlocProvider(
         create: (context) => homeBloc..add(GetAllChatMsgEvent(token: token, indexId: widget.indexId, adId: widget.slug)),
         child: BlocListener(
-          bloc: homeBloc,
+          cubit: homeBloc,
           listener: (context, state) {
             if (state is GetAllChatMsgResState) {
               mGetAllChatMsgRes = state.res;

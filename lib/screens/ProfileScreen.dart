@@ -48,7 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return BlocProvider(
       create: (context) => homeBloc..add(GetUserProfileDataEvent(token: token)),
       child: BlocListener(
-          bloc: homeBloc,
+          cubit: homeBloc,
           listener: (context, state) {
             if (state is GetUserProfileResState) {
               mUserprofileRes = state.res;

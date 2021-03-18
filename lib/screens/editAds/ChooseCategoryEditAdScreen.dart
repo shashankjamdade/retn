@@ -38,7 +38,7 @@ class _ChooseCategoryEditAdScreenState extends State<ChooseCategoryEditAdScreen>
     return BlocProvider(
       create: (context) => homeBloc..add(GetMyAdsEditEvent(token: token, adId: widget.myAdId)),
       child: BlocListener(
-        bloc: homeBloc,
+        cubit: homeBloc,
         listener: (context, state) {
           if (state is GetMyAdsEditState) {
             mMyAdsEditRes = state.res;

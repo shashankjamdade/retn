@@ -61,7 +61,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
         ..add(ItemDetailReqEvent(
             token: token, categoryName: widget.categoryName)),
       child: BlocListener(
-        bloc: homeBloc,
+        cubit: homeBloc,
         listener: (context, state) {
           if (state is ItemDetailResState) {
             mItemDetailResponse = state.res;
@@ -316,7 +316,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                             child: Text(
                               "Description",
                               style: CommonStyles.getRalewayStyle(
-                                  space_16, FontWeight.w600, Colors.black),
+                                  space_18, FontWeight.w600, Colors.black),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -342,7 +342,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                             child: Text(
                               "Details",
                               style: CommonStyles.getRalewayStyle(
-                                  space_16, FontWeight.w600, Colors.black),
+                                  space_18, FontWeight.w600, Colors.black),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -372,7 +372,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                               CommonStyles.getMontserratStyle(
                                                   space_15,
                                                   FontWeight.w600,
-                                                  Colors.black),
+                                                  CommonStyles.grey),
                                         ),
                                       ),
                                       Expanded(
@@ -402,7 +402,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                 Text(
                                   "Location",
                                   style: CommonStyles.getRalewayStyle(
-                                      space_16, FontWeight.w600, Colors.black),
+                                      space_18, FontWeight.w600, Colors.black),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -459,7 +459,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                             child: Text(
                               "Owner Info",
                               style: CommonStyles.getRalewayStyle(
-                                  space_16, FontWeight.w600, Colors.black),
+                                  space_18, FontWeight.w600, Colors.black),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),

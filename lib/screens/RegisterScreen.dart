@@ -116,7 +116,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return BlocProvider(
       create: (context) => authenticationBloc..add(InitialAuthenticationEvent()),
       child: BlocListener(
-      bloc: authenticationBloc,
+        cubit: authenticationBloc,
         listener: (context, state){
         if(state is GoogleFbLoginResAuthenticationState){
           debugPrint("GOT_STATE-- "+state.res.loginStatus);

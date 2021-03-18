@@ -19,7 +19,7 @@ class AuthenticationBloc
   AuthenticationRepository _authenticationService;
   HomeRepository homeRepository;
 
-  AuthenticationBloc() {
+  AuthenticationBloc() : super(null) {
     _authenticationService = AuthenticationRepository();
   }
 

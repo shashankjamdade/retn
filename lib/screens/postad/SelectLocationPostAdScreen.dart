@@ -61,7 +61,7 @@ class _SelectLocationPostAdScreenState
       create: (context) =>
           homeBloc..add(LocationSeachReqEvent(token: token, seachKey: "")),
       child: BlocListener(
-        bloc: homeBloc,
+        cubit: homeBloc,
         listener: (context, state) {},
         child: BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
           if (state is LocationSearchResState) {

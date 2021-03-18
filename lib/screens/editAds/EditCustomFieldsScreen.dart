@@ -74,7 +74,7 @@ class _EditCustomeFieldsScreenState extends State<EditCustomeFieldsScreen> {
                 token: token,
                 subCategoryId: widget.adPostReqModel.subCategoryId)),
       child: BlocListener(
-          bloc: homeBloc,
+          cubit: homeBloc,
           listener: (context, state) {
             if (state is InitialHomeState) {
               mGetCustomFieldsResponse = new GetCustomFieldsResponse(status: true, message: "",data: widget.mMyAdsEditRes.data.customefield);
@@ -159,7 +159,7 @@ class _EditCustomeFieldsScreenState extends State<EditCustomeFieldsScreen> {
                                   ),
                                   subtitle: Container(
                                     child: getCustomWidgetByType(
-                                        mGetCustomFieldsResponse.data[index]),
+                                        mGetCustomFieldsResponse.data[index], index),
                                   ),
                                 ),
                               );
@@ -200,7 +200,7 @@ class _EditCustomeFieldsScreenState extends State<EditCustomeFieldsScreen> {
     ));
   }
 
-  Widget getCustomWidgetByType(CustomFieldsData data) {
+  Widget getCustomWidgetByType(CustomFieldsData data, int poss) {
     switch (data.type) {
       case CUSTOMFIELD_TEXT:
         {
@@ -311,15 +311,27 @@ class _EditCustomeFieldsScreenState extends State<EditCustomeFieldsScreen> {
         {
           var idList = List<String>();
           var nameList = List<String>();
+          var isNeedToSetDefaultDrop = true;
+          debugPrint("DROPDOWN_DEFAULT --> ${data.default_value}");
+
           data.type_value.forEach((element) {
-            if(element.is_selected!=null && element.is_selected == 1){
-                data.default_value = element.dropdown_value;
-                data.default_id = element.dropdown_id;
+            if(data.default_value!=null && data.default_value?.isNotEmpty && data?.default_value == element?.dropdown_value){
+              isNeedToSetDefaultDrop = false;
             }
             idList.add(element.dropdown_id);
             nameList.add(element.dropdown_value);
           });
-          debugPrint("HASHMAP_VALUE -->> ${data.default_value}");
+
+          debugPrint("ISSSS_DROPDOWN ${isNeedToSetDefaultDrop}");
+          if(isNeedToSetDefaultDrop){
+            data.type_value.forEach((element) {
+              if(element.is_selected!=null && element.is_selected == 1){
+                data.default_value = element.dropdown_value;
+                data.default_id = element.dropdown_id;
+              }
+            });
+          }
+
           return DropdownButton(
             hint: data.default_value == null || data.default_value.isEmpty
                 ? Text(
@@ -346,7 +358,13 @@ class _EditCustomeFieldsScreenState extends State<EditCustomeFieldsScreen> {
             onChanged: (value) {
               setState(
                 () {
+                  var i = data?.type_value?.indexOf(value);
+                  debugPrint("DROPDOWN_SELECTED_INDEX ${i}");
+                  mGetCustomFieldsResponse.data[poss].type_value[i].is_selected = 1;
+                  data.type_value[i].is_selected = 1;
                   if (value is Type_value) {
+                    mGetCustomFieldsResponse.data[poss].default_value = value.dropdown_value;
+                    mGetCustomFieldsResponse.data[poss].default_id = value.dropdown_id;
                     data.default_value = value.dropdown_value;
                     data.default_id = value.dropdown_id;
                     debugPrint(
@@ -386,6 +404,9 @@ class _EditCustomeFieldsScreenState extends State<EditCustomeFieldsScreen> {
                               onChanged: (val) {
                                 setState(() {
                                   data.default_value = val;
+                                  data.type_value[index].checked = true;
+                                  mGetCustomFieldsResponse.data[poss].type_value[index].checked = true;
+                                  mGetCustomFieldsResponse.data[poss].default_value = val;
                                 });
                               },
                             ),
@@ -398,11 +419,21 @@ class _EditCustomeFieldsScreenState extends State<EditCustomeFieldsScreen> {
         break;
       case CUSTOMFIELD_MULTI_RADIO:
         {
+          var isNeedToSetDefault = true;
           data.type_value.forEach((element) {
-            if(element.checked!=null && element.checked){
-              data.default_value = element.value;
+            if(data.default_value!=null && data.default_value?.isNotEmpty && data?.default_value == element?.value){
+              isNeedToSetDefault = false;
             }
           });
+          debugPrint("ISSSS ${isNeedToSetDefault}");
+          if(isNeedToSetDefault){
+            data.type_value.forEach((element) {
+              if(element.checked!=null && element.checked){
+                data.default_value = element.value;
+              }
+            });
+          }
+          debugPrint("MULT_RADIO --> ${data.default_value}");
           return Container(
               child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -422,8 +453,12 @@ class _EditCustomeFieldsScreenState extends State<EditCustomeFieldsScreen> {
                           title: Text(data.type_value[index].name),
                           value: data.type_value[index].value,
                           onChanged: (val) {
+                            debugPrint("SELECTED--> ${val}");
                             setState(() {
                               data.default_value = val;
+                              data.type_value[index].checked = true;
+                              mGetCustomFieldsResponse.data[poss].type_value[index].checked = true;
+                              mGetCustomFieldsResponse.data[poss].default_value = val;
                             });
                           },
                         ),

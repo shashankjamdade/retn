@@ -48,7 +48,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     return BlocProvider(
         create: (context) => homeBloc..add(InitialEvent()),
         child: BlocListener(
-          bloc: homeBloc,
+          cubit: homeBloc,
           listener: (context, state) {
             if (state is ChangePwdResState) {
               commonResponse = state.res;

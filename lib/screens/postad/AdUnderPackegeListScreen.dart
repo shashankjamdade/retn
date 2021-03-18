@@ -95,7 +95,7 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
 //      mSelectedPackageId = mBuypackageId;
 //    });
     mGetNotificationResponse.data.forEach((element){
-      if(element.package_id == mBuypackageId){
+      if(element.user_package_id == mBuypackageId){
         amt = element.package_price;
       }
     });
@@ -129,27 +129,27 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
 
 
   void openCheckout(String amt, String packageName, String packageId) async {
-   /* setState(() {
+    setState(() {
       mShowProgress = true;
     });
     var amtNum = int.parse(amt);
     var finalAmt = amtNum*100;
-    debugPrint("PAYYYY ${finalAmt} for $packageId");
+    debugPrint("PAYYYY ${finalAmt} for $mBuypackageId");
     var options = {
       'key': 'rzp_test_NNbwJ9tmM0fbxj',
       'amount': "${finalAmt}",
       'name': packageName,
       'description': 'Buy new package',
-      'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
+      'prefill': {'contact': '${loginResponse?.data?.contact}', 'email': '${loginResponse?.data?.email}'},
       'external': {
         'wallets' : ['paytm'],
       }
-    };*/
+    };
     try{
-//      _razorpay.open(options);
-      var mWebLink =
-      "https://rentozo.com/rentozo/webviewpayment/view/${packageId}/${loginResponse?.data?.id}";
-      redirectToWebView(mWebLink, widget.adPostReqModel);
+      _razorpay.open(options);
+//      var mWebLink =
+//      "https://rentozo.com/webviewpayment/view/${packageId}/${loginResponse?.data?.id}";
+//      redirectToWebView(mWebLink, widget.adPostReqModel);
     }
     catch(e) {
       debugPrint(e);
@@ -161,7 +161,7 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
     return BlocProvider(
       create: (context) => homeBloc..add(AdUnderPackageEvent(token: token)),
       child: BlocListener(
-          bloc: homeBloc,
+          cubit: homeBloc,
           listener: (context, state) {
             if (state is AdUnderPackageState) {
               mGetNotificationResponse = state.res;
@@ -260,7 +260,7 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
                                           SizedBox(width: space_15,),
                                           GestureDetector(
                                             onTap: (){
-                                              mBuypackageId = adUnderPackageRes.data[index].package_id;
+                                              mBuypackageId = adUnderPackageRes.data[index].user_package_id;
                                               openCheckout(adUnderPackageRes.data[index].package_price, adUnderPackageRes.data[index].package_name, adUnderPackageRes.data[index].package_id);
                                             },
                                             child: Padding(
@@ -281,7 +281,7 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
                                       title: Text(
                                         adUnderPackageRes.data[index].package_name + " (${adUnderPackageRes.data[index].package_price} for ${adUnderPackageRes.data[index].no_of_days} days)",
                                       ),
-                                      value: adUnderPackageRes.data[index].package_id,
+                                      value: adUnderPackageRes.data[index].user_package_id,
                                       onChanged: (val) {
                                         debugPrint("Selected_Package - ${val}");
                                         setState(() {

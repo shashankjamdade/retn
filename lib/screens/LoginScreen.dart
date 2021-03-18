@@ -88,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
       create: (context) =>
           authenticationBloc..add(InitialAuthenticationEvent()),
       child: BlocListener(
-        bloc: authenticationBloc,
+        cubit: authenticationBloc,
         listener: (context, state) {
           if (state is LoginResAuthenticationState) {
             if (state.res.status) {

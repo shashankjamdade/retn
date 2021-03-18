@@ -16,7 +16,7 @@ import 'HomeState.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeRepository homeRepository;
 
-  AuthenticationBloc() {
+  HomeBloc() : super(null) {
     homeRepository = HomeRepository();
   }
 
@@ -579,8 +579,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           await homeRepository.callPackagePayment(token, packageId, amt, pgRes);
       debugPrint("callPackagePayment ${jsonEncode(commonResponse)}");
       yield PackagePaymentState(res: commonResponse);
-    } catch (e) {
-      debugPrint("Exception while callPackagePayment ${e.toString()}");
+    } catch (e, stacktrace) {
+      debugPrint("Exception while callPackagePayment ${e.toString()}\n ${stacktrace.toString()}");
     }
   }
 

@@ -82,7 +82,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return BlocProvider(
       create: (context) => homeBloc..add(InitialEvent()),
       child: BlocListener(
-          bloc: homeBloc,
+          cubit: homeBloc,
           listener: (context, state) {
             if ((state is ChangePwdResState || state is UserUpdateResState) && state.res is CommonResponse) {
               if (state.res.msg != null) {

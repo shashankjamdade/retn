@@ -10,6 +10,7 @@ import 'package:flutter_rentry_new/model/seller_info_res.dart';
 import 'package:flutter_rentry_new/model/user_profile_response.dart';
 import 'package:flutter_rentry_new/repository/HomeRepository.dart';
 import 'package:flutter_rentry_new/screens/EditProfileScreen.dart';
+import 'package:flutter_rentry_new/screens/LoginScreen.dart';
 import 'package:flutter_rentry_new/screens/PackageScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
@@ -59,7 +60,7 @@ class _SellerInfoScreenState extends State<SellerInfoScreen> {
       create: (context) => homeBloc
         ..add(SellerInfoEvent(token: token, sellerId: widget.sellerId)),
       child: BlocListener(
-          bloc: homeBloc,
+          cubit: homeBloc,
           listener: (context, state) {
             if (state is SellerInfoResState) {
               mSellerInfoRes = state.res;
@@ -361,7 +362,21 @@ class _SellerInfoScreenState extends State<SellerInfoScreen> {
                           child: GestureDetector(
                             onTap: () {
                               if(mSellerInfoRes?.data?.seller_info!=null && mSellerInfoRes?.data?.seller_info?.id != userid){
-                                showRatingDialog();
+                                StateContainer
+                                    .of(context)
+                                    .mLoginResponse !=
+                                    null &&
+                                    StateContainer.of(context)
+                                        .mLoginResponse
+                                        .data
+                                        .token !=
+                                        null?
+                                showRatingDialog():
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginScreen()),
+                                );
                               }
                             },
                             child: Container(

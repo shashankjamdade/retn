@@ -127,7 +127,7 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
         create: (context) =>
             authenticationBloc..add(InitialAuthenticationEvent()),
         child: BlocListener(
-          bloc: authenticationBloc,
+          cubit: authenticationBloc,
           listener: (context, state) {
             if (state is SendOtpAuthState) {
               if (state.res != null &&

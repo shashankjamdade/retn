@@ -566,7 +566,7 @@ class _EditUploadProductImgScreenState
   }
 
   Future getImage(String imgType) async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker.getImage(source: ImageSource.gallery, maxHeight: 600, maxWidth: 600);
     setState(() {
       if (pickedFile != null) {
         if (imgType == "img1") {
@@ -592,7 +592,8 @@ class _EditUploadProductImgScreenState
 
   Future getImageCamera(String imgType) async {
     File _image;
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    final pickedFile = await picker.getImage(source: ImageSource.camera, imageQuality: 80,
+        maxHeight: 600, maxWidth: 600);
     if (pickedFile != null && pickedFile.path != null) {
       File rotatedImage =
           await FlutterExifRotation.rotateImage(path: pickedFile.path);
