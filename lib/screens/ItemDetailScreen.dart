@@ -442,10 +442,10 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(space_10),
                                   child: FadeInImage.assetNetwork(
-                                    placeholder: "assets/images/app_img.png",
+                                    placeholder: "assets/images/loader.jpg",
                                     image: mapUrl,
                                     //"https://picsum.photos/250?image=9",
-                                    fit: BoxFit.fill,
+                                    fit: BoxFit.contain,
                                   ),
                                 ),
                               ),

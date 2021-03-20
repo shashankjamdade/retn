@@ -2721,6 +2721,72 @@ class EmptyWidget extends StatelessWidget {
   }
 }
 
+class EmptyAdsWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          children: [
+            CommonAppbarWidget(app_name, skip_for_now, () {
+              onSearchLocation(context);
+            }),
+            Expanded(
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'There is no post available!',
+                      style: CommonStyles.getRalewayStyle(
+                          space_16, FontWeight.w500, Colors.black),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  StateContainer.of(context).mLoginResponse !=
+                                              null &&
+                                          StateContainer.of(context)
+                                                  .mLoginResponse
+                                                  .data
+                                                  .token !=
+                                              null
+                                      ? ChooseCategoryScreen()
+                                      : LoginScreen()),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(space_15),
+                        child: Text(
+                          'Post Now',
+                          style: TextStyle(
+                            fontSize: space_18,
+                            fontFamily: "Montserrat",
+                            fontWeight: FontWeight.w700,
+                            color: CommonStyles.primaryColor,
+                            decoration: TextDecoration.underline,
+                            decorationStyle: TextDecorationStyle.solid,
+                            decorationColor: CommonStyles.primaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class ProgressWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

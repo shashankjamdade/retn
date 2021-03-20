@@ -234,7 +234,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                             width: space_200,
                             padding: EdgeInsets.all(space_15),
                             decoration: BoxDecoration(
-                                gradient: chatMsgGradient(),
+                                gradient:  msgList[pos].user_id == myUserId ? chatMsgGradient(): chatMsgGradient2(),
                                 borderRadius: BorderRadius.only(
                                   topLeft: msgList[pos].user_id == myId ? Radius
                                       .circular(space_30) : Radius.circular(0),

@@ -118,6 +118,11 @@ Gradient chatMsgGradient() =>   LinearGradient(
     end: Alignment.bottomRight,
     colors: [CommonStyles.grey.withOpacity(0.3), CommonStyles.lightGrey.withOpacity(0.6)]);
 
+Gradient chatMsgGradient2() =>   LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [CommonStyles.blue.withOpacity(0.3), CommonStyles.lightBlue.withOpacity(0.6)]);
+
 Gradient profileRatingBoxGradient() =>   LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,

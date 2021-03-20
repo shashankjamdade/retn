@@ -333,6 +333,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               Expanded(
                                 flex: 7,
                                 child: TextField(
+                                  readOnly: true,
                                   controller: emailController,
                                   style: TextStyle(color: Colors.black),
                                   keyboardType: TextInputType.emailAddress,

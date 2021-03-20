@@ -95,7 +95,7 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
 //      mSelectedPackageId = mBuypackageId;
 //    });
     mGetNotificationResponse.data.forEach((element){
-      if(element.user_package_id == mBuypackageId){
+      if(element.package_id == mBuypackageId){
         amt = element.package_price;
       }
     });
@@ -128,13 +128,13 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
   }
 
 
-  void openCheckout(String amt, String packageName, String packageId) async {
+  void openCheckout(String amt, String packageName, String userPackageId, String packageId) async {
     setState(() {
       mShowProgress = true;
     });
     var amtNum = int.parse(amt);
     var finalAmt = amtNum*100;
-    debugPrint("PAYYYY ${finalAmt} for $mBuypackageId");
+    debugPrint("PAYYYY ${finalAmt} for $packageId");
     var options = {
       'key': 'rzp_test_NNbwJ9tmM0fbxj',
       'amount': "${finalAmt}",
@@ -260,8 +260,8 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
                                           SizedBox(width: space_15,),
                                           GestureDetector(
                                             onTap: (){
-                                              mBuypackageId = adUnderPackageRes.data[index].user_package_id;
-                                              openCheckout(adUnderPackageRes.data[index].package_price, adUnderPackageRes.data[index].package_name, adUnderPackageRes.data[index].package_id);
+                                              mBuypackageId = adUnderPackageRes.data[index].package_id;
+                                              openCheckout(adUnderPackageRes.data[index].package_price, adUnderPackageRes.data[index].package_name, adUnderPackageRes.data[index].user_package_id, adUnderPackageRes.data[index].package_id);
                                             },
                                             child: Padding(
                                               padding: const EdgeInsets.all(space_8),
