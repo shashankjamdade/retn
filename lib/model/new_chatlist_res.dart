@@ -32,6 +32,7 @@ class NewChatlistRes {
 }
 
 class Data {
+  dynamic new_message;
   String inbox_id;
   String ad_id;
   String ad_image;
@@ -42,8 +43,9 @@ class Data {
   Chat_with chat_with;
 
   Data({
-      this.inbox_id, 
-      this.ad_id, 
+      this.new_message,
+      this.inbox_id,
+      this.ad_id,
       this.ad_image, 
       this.ad_title, 
       this.ad_slug, 
@@ -52,6 +54,7 @@ class Data {
       this.chat_with});
 
   Data.fromJson(dynamic json) {
+    new_message = json["new_message"];
     inbox_id = json["inbox_id"];
     ad_id = json["ad_id"];
     ad_image = json["ad_image"];
@@ -64,6 +67,7 @@ class Data {
 
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
+    map["new_message"] = new_message;
     map["inbox_id"] = inbox_id;
     map["ad_id"] = ad_id;
     map["ad_image"] = ad_image;

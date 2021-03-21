@@ -2483,9 +2483,10 @@ class BottomFloatingChatBtnsWidget extends StatelessWidget {
   String slug;
   String mobile;
   String sellerId;
+  String profile_setting;
 
   BottomFloatingChatBtnsWidget(
-      this.adId, this.slug, this.mobile, this.sellerId);
+      this.adId, this.slug, this.mobile, this.sellerId, this.profile_setting);
 
   @override
   Widget build(BuildContext context) {
@@ -2517,7 +2518,7 @@ class BottomFloatingChatBtnsWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              GestureDetector(
+              profile_setting!=null && profile_setting.isNotEmpty && profile_setting == "public"?GestureDetector(
                 onTap: () {
                   StateContainer.of(context).mLoginResponse != null &&
                           StateContainer.of(context)
@@ -2544,7 +2545,7 @@ class BottomFloatingChatBtnsWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
+              ):Container(height: space_0, width: space_0,),
               GestureDetector(
                 onTap: () {
                   StateContainer.of(context).mLoginResponse != null &&

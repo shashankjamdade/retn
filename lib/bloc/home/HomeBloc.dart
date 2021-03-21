@@ -78,7 +78,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is UserUpdateEvent) {
       yield ProgressState();
       yield* callUserUpdateApi(event.token, event.username, event.email,
-          event.contact, event.address, event.aboutus, event.image);
+          event.contact, event.address, event.aboutus, event.image, event.profile_setting);
     } else if (event is GetRentTypeEvent) {
       yield ProgressState();
       yield* callGetRentTypeApi(event.token);
@@ -284,7 +284,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           res: nearbySubChildCategoryListResponse);
     } catch (e, stacktrace) {
       debugPrint(
-          "Exception while nearbySubChildCategoryListResponse ${e.toString()}\n ${stacktrace.toString()}");
+          "Exception while nearbySubChildCategoryListResponse2 ${e.toString()}\n ${stacktrace.toString()}");
     }
   }
 
@@ -372,14 +372,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       String contact,
       String address,
       String aboutus,
-      File img) async* {
+      File img,
+      String profile_setting) async* {
     try {
       homeRepository =
           homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callUserUpdateApi ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
       final changePwdRes = await homeRepository.callUpdateUser(
-          token, username, aboutus, contact, email, address, img);
+          token, username, aboutus, contact, email, address, img, profile_setting);
       debugPrint("callUserUpdateApi RES ${jsonEncode(changePwdRes)}");
       yield ChangePwdResState(res: changePwdRes);
     } catch (e, stacktrace) {

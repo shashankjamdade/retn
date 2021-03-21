@@ -28,6 +28,7 @@ class UserProfileResponse {
 
 class UserProfileData {
   String id;
+  String profile_setting;
   String username;
   String firstname;
   String lastname;
@@ -54,7 +55,8 @@ class UserProfileData {
 
   UserProfileData({
       this.id, 
-      this.username, 
+      this.profile_setting,
+      this.username,
       this.firstname, 
       this.lastname, 
       this.email, 
@@ -80,6 +82,7 @@ class UserProfileData {
 
   UserProfileData.fromJson(dynamic json) {
     id = json["id"];
+    profile_setting = json["profile_setting"];
     username = json["username"];
     firstname = json["firstname"];
     lastname = json["lastname"];
@@ -108,6 +111,7 @@ class UserProfileData {
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
     map["id"] = id;
+    map["profile_setting"] = profile_setting;
     map["username"] = username;
     map["firstname"] = firstname;
     map["lastname"] = lastname;

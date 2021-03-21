@@ -31,6 +31,7 @@ import 'package:flutter_rentry_new/screens/postad/SelectLocationPostAdScreen.dar
 import 'package:flutter_rentry_new/screens/postad/PostAdsSubCategoryScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/UploadProductImgScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
+import 'package:flutter_rentry_new/utils/PushNotificationsManager.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
@@ -99,6 +100,70 @@ void main() async {
   ]).then((_) {
     runApp(StateContainer(child: MyApp()));
   });
+  setFirebase();
+}
+
+void setFirebase() {
+  var initializationSettingsAndroid =
+  new AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  var initializationSettingsIOS = new IOSInitializationSettings();
+
+  var initializationSettings = new InitializationSettings(
+      android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+
+  flutterLocalNotificationsPlugin
+      .initialize(initializationSettings,
+      onSelectNotification: onSelect);
+
+  final FirebaseMessaging _firebaseMessaging =
+  FirebaseMessaging();
+
+  _firebaseMessaging.configure(
+    onBackgroundMessage: Platform.isIOS ?
+    null : myBackgroundMessageHandler,
+    onMessage: (message) async {
+      print("onMessage: $message");
+    },
+    onLaunch: (message) async {
+      print("onLaunch: $message");
+    },
+    onResume: (message) async {
+      print("onResume: $message");
+    },
+  );
+
+  _firebaseMessaging.getToken()
+      .then((String token) {
+    print("Push Messaging token: $token");
+    // Push messaging to this token later
+  });
+
+}
+
+Future<String> onSelect(String data) async {
+  print("onSelectNotification $data");
+}
+//updated myBackgroundMessageHandler
+Future<dynamic> myBackgroundMessageHandler(Map<String,
+    dynamic> message) async {
+  print("myBackgroundMessageHandler message: $message");
+  int msgId = int.tryParse(message["data"]["msgId"]
+      .toString()) ?? 0;
+  print("msgId $msgId");
+  var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+      'channelid', 'flutterfcm', 'your channel description',
+      importance: Importance.max, priority: Priority.high);
+  var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+  var platformChannelSpecifics = new NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: iOSPlatformChannelSpecifics);
+  flutterLocalNotificationsPlugin
+      .show(msgId,
+      message["data"]["msgTitle"],
+      message["data"]["msgBody"], platformChannelSpecifics,
+      payload: message["data"]["data"]);
+  return Future<void>.value();
 }
 
 class MyHttpOverrides extends HttpOverrides {
@@ -110,8 +175,22 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   // This widget is the root of your application.
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  PushNotificationsManager Notification = PushNotificationsManager();
+
+  @override
+  void initState() {
+    super.initState();
+    Notification.init();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -144,6 +223,7 @@ class _ScreenOneState extends State<ScreenOne> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       new FlutterLocalNotificationsPlugin();
+
   String _message = '';
 
   _register() {
@@ -162,7 +242,6 @@ class _ScreenOneState extends State<ScreenOne> {
           print('FCM_PUSH_onresume $message');
           setState(() => _message = message["notification"]["title"]);
         },
-        onBackgroundMessage: fcmBackgroundMessageHandler,
         onLaunch: (Map<String, dynamic> message) async {
           print('FCM_PUSH_onLaunch $message');
           setState(() => _message = message["notification"]["title"]);
@@ -345,49 +424,5 @@ class _ScreenOneState extends State<ScreenOne> {
         ],
       ),
     );
-  }
-
-  static Future<dynamic> fcmBackgroundMessageHandler(
-      Map<String, dynamic> message)async {
-//    NotificationHandler()._saveNotificationToLocal(message);
-  debugPrint("MY_BACKGROUND_NOTIFICIATON");
-    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-        'channelid', 'flutterfcm', 'your channel description',
-        importance: Importance.max, priority: Priority.high);
-    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
-    var platformChannelSpecifics = new NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-        iOS: iOSPlatformChannelSpecifics);
-
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin2 =
-    new FlutterLocalNotificationsPlugin();
-
-    //
-    var initializationSettingsAndroid =
-    new AndroidInitializationSettings('@mipmap/ic_launcher');
-
-//    var initializationSettingsIOS = new IOSInitializationSettings(
-//        onDidReceiveLocalNotification: onDidRecieveLocalNotification);
-
-//    var initializationSettings = new InitializationSettings(
-//        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    //
-    await flutterLocalNotificationsPlugin2.show(
-      0,
-      message['data']['title'],
-      message['data']['message'],
-      platformChannelSpecifics,
-      payload: message['data']['notification_type'],
-    );
-    if (message.containsKey('data')) {
-      // Handle data message
-      final dynamic data = message['data'];
-      //handleNotification(message);
-    }
-
-    if (message.containsKey('notification')) {
-      // Handle notification message
-      final dynamic notification = message['notification'];
-    }
   }
 }

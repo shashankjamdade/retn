@@ -166,6 +166,7 @@ class UserUpdateEvent extends HomeEvent {
   final String contact;
   final String email;
   final String address;
+  final String profile_setting;
   final File image;
 
   UserUpdateEvent(
@@ -175,6 +176,7 @@ class UserUpdateEvent extends HomeEvent {
       @required this.contact,
       @required this.email,
       @required this.address,
+      @required this.profile_setting,
       @required this.image});
 
   @override

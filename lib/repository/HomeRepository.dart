@@ -227,6 +227,7 @@ class HomeRepository extends BaseRepository {
     print("PRINTING_REQ NearbySubChild --> ${"category_id " + categoryId + ",subcategory_id " + subCategoryId + ",radius" + radius + ",lat" + lat + ",lng" + lng + ""
         ", filter_subcategory_id ${filter_subcategory_id}, filter_custome_filed_id ${filter_custome_filed_id}, priceSort ${priceSort}, ads_title ${ads_title}"
         "filter_min ${filter_min}, filter_max ${filter_max}"}");
+    print("-------");
     var res = await http.post(BASE_URL + ADS_SEARCH_API, headers: {
       "Token": token
     }, body: {
@@ -241,7 +242,7 @@ class HomeRepository extends BaseRepository {
       "filter_min": filter_min,
       "filter_max": filter_max,
       "sort_by_price": priceSort,
-      "ads_title": ads_title,
+      "ads_title": ads_title!=null && ads_title.isNotEmpty? ads_title:"",
     });
     print("PRINTING NearbySubChild ${res.body}");
     code = res.statusCode;
@@ -402,9 +403,11 @@ class HomeRepository extends BaseRepository {
       String contact,
       String email,
       String address,
-      File imageFile) async {
+      File imageFile,
+      String profile_setting) async {
     bool status = false;
     CommonResponse response;
+    debugPrint("SETTINGS ${profile_setting}");
     address = "dummy";
     if (imageFile != null) {
       var stream =
@@ -422,6 +425,7 @@ class HomeRepository extends BaseRepository {
       request.fields['email'] = email;
       request.fields['contact'] = contact;
       request.fields['address'] = address;
+      request.fields['profile_setting'] = profile_setting;
       var res = await request.send();
       var resss = await http.Response.fromStream(res);
       debugPrint("PRRRR ${resss.body}");
@@ -436,7 +440,8 @@ class HomeRepository extends BaseRepository {
             "username": username,
             "email": email,
             "contact": contact,
-            "address": address
+            "address": address,
+            "profile_setting": profile_setting
           });
       print("PRINTING ${res.body}");
       if (res.statusCode == 200) {
@@ -1078,6 +1083,27 @@ class HomeRepository extends BaseRepository {
     Map<String, String> mainheader = {"token": token};
     var res =
         await http.post(BASE_URL + CHAT_DELETE,
+            headers: mainheader,
+            body: {"inbox_id": inbox_id});
+    print("PRINTING ${res.body}");
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      var status = data["status"];
+      print("PRINTING_STATUS ${status}");
+      response = CommonResponse.fromJson(data);
+      print("-----------${data}");
+    } else {
+      response = new CommonResponse();
+    }
+    return response;
+  }
+
+  Future<CommonResponse> callReadChat(String token,String inbox_id) async {
+    CommonResponse response;
+    print("UNDER callReadChat inbox_id ${inbox_id} , ${BASE_URL + READ_CHAT}");
+    Map<String, String> mainheader = {"token": token};
+    var res =
+        await http.post(BASE_URL + READ_CHAT,
             headers: mainheader,
             body: {"inbox_id": inbox_id});
     print("PRINTING ${res.body}");

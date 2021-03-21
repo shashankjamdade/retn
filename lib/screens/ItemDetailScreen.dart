@@ -592,7 +592,8 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                             itemDetailResponse.ad.seller_id != null &&
                                     itemDetailResponse.ad.seller_id.isNotEmpty
                                 ? itemDetailResponse.ad.seller_id
-                                : "")),
+                                : "",
+                            itemDetailResponse.ad.profile_setting!=null ? itemDetailResponse.ad.profile_setting:"")),
                   )
           ],
         ),

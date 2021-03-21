@@ -108,6 +108,7 @@ class Messages {
 }
 
 class Ad_and_user_details {
+  String profile_setting;
   String inbox_id;
   String ad_id;
   String ad_image;
@@ -118,8 +119,9 @@ class Ad_and_user_details {
   Chat_with chat_with;
 
   Ad_and_user_details({
-      this.inbox_id, 
-      this.ad_id, 
+      this.profile_setting,
+      this.inbox_id,
+      this.ad_id,
       this.ad_image, 
       this.ad_title, 
       this.ad_slug, 
@@ -128,6 +130,7 @@ class Ad_and_user_details {
       this.chat_with});
 
   Ad_and_user_details.fromJson(dynamic json) {
+    profile_setting = json["profile_setting"];
     inbox_id = json["inbox_id"];
     ad_id = json["ad_id"];
     ad_image = json["ad_image"];
@@ -140,6 +143,7 @@ class Ad_and_user_details {
 
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
+    map["profile_setting"] = profile_setting;
     map["inbox_id"] = inbox_id;
     map["ad_id"] = ad_id;
     map["ad_image"] = ad_image;

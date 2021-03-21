@@ -268,6 +268,7 @@ class Others {
 class Ad {
   List<Custome_field> custome_field;
   String id;
+  String profile_setting;
   String rent_type;
   bool is_wishlist;
   String title;
@@ -313,6 +314,7 @@ class Ad {
   Ad({
       this.custome_field,
       this.id,
+      this.profile_setting,
       this.rent_type,
       this.is_wishlist,
       this.title,
@@ -362,6 +364,7 @@ class Ad {
         custome_field.add(Custome_field.fromJson(v));
       });
     }
+    profile_setting = json["profile_setting"];
     id = json["id"];
     rent_type = json["rent_type"];
     is_wishlist = json["is_wishlist"];
@@ -411,6 +414,7 @@ class Ad {
     if (custome_field != null) {
       map["custome_field"] = custome_field.map((v) => v.toJson()).toList();
     }
+    map["profile_setting"] = profile_setting;
     map["id"] = id;
     map["rent_type"] = rent_type;
     map["is_wishlist"] = is_wishlist;

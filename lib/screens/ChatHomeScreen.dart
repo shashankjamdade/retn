@@ -13,7 +13,7 @@ import 'package:flutter_rentry_new/screens/ChatDetailScreen.dart';
 import 'package:flutter_rentry_new/screens/LoginScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
-import 'package:intl/intl.dart';  //for date format
+import 'package:intl/intl.dart'; //for date format
 
 class ChatHomeScreen extends StatefulWidget {
   @override
@@ -41,7 +41,7 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
     if (loginResponse != null) {
       token = loginResponse.data.token;
       debugPrint("ACCESSING_INHERITED ${token}");
-    }else{
+    } else {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => LoginScreen()),
@@ -62,9 +62,9 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
           },
           child: BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state) {
-              if(state is GetAllChatUserListResState){
+              if (state is GetAllChatUserListResState) {
                 return getScreenUI(state);
-              }else{
+              } else {
                 return getScreenProgressUI();
               }
             },
@@ -76,9 +76,9 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
     if (state is GetAllChatUserListResState) {
       mGetAllChatUserListResponse = state.res;
     }
-    if(mGetAllChatUserListResponse.data.length == 0){
+    if (mGetAllChatUserListResponse.data.length == 0) {
       return getScreenProgressUI(length: 0);
-    }else{
+    } else {
       return Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -98,7 +98,8 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
               }),
         ),
         body: Container(
-          margin: EdgeInsets.only(left: space_15, right: space_15, top: space_15),
+          margin:
+              EdgeInsets.only(left: space_15, right: space_15, top: space_15),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -111,32 +112,38 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
       );
     }
   }
+
   Widget getScreenProgressUI({int length = -1}) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        title: Text(
-          "Chat",
-          style: CommonStyles.getRalewayStyle(
-              space_15, FontWeight.w800, Colors.black),
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          title: Text(
+            "Chat",
+            style: CommonStyles.getRalewayStyle(
+                space_15, FontWeight.w800, Colors.black),
+          ),
+          leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.black87,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
         ),
-        leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.black87,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            }),
-      ),
-      body: Container(
-        color: Colors.white,
-        child: Center(
-          child: length != 0?CircularProgressIndicator():Text("No chat found",style: CommonStyles.getRalewayStyle(space_14, FontWeight.w600, Colors.black),),
-        ),
-      )
-    );
+        body: Container(
+          color: Colors.white,
+          child: Center(
+            child: length != 0
+                ? CircularProgressIndicator()
+                : Text(
+                    "No chat found",
+                    style: CommonStyles.getRalewayStyle(
+                        space_14, FontWeight.w600, Colors.black),
+                  ),
+          ),
+        ));
   }
 
   Widget getChatList() {
@@ -155,22 +162,40 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
 //            var currentDaterentTime = createDate.toString().split(" ")[1];
             return Dismissible(
               key: Key("Ss"),
-              background: Container(color: Colors.red, child: Center(child: Icon(Icons.delete, color: Colors.white,),),),
-              onDismissed: (direction){
+              background: Container(
+                color: Colors.red,
+                child: Center(
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              onDismissed: (direction) {
                 //API hit
-                new HomeRepository()
-                    .callChatDelete(token, mGetAllChatUserListResponse.data[pos].inbox_id);
+                new HomeRepository().callChatDelete(
+                    token, mGetAllChatUserListResponse.data[pos].inbox_id);
                 setState(() {
                   mGetAllChatUserListResponse.data.removeAt(pos);
                 });
               },
               child: InkWell(
                 onTap: () {
+//                  setState(() {
+//                    mGetAllChatUserListResponse.data[pos].new_message = 0;
+//                  });
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ChatDetailScreen(username:mGetAllChatUserListResponse.data[pos].chat_with.receiver_id, indexId:mGetAllChatUserListResponse.data[pos].inbox_id,
-                        slug: mGetAllChatUserListResponse.data[pos].ad_slug, adId:  mGetAllChatUserListResponse.data[pos].ad_id,
-                    )),
+                    MaterialPageRoute(
+                        builder: (context) => ChatDetailScreen(
+                              username: mGetAllChatUserListResponse
+                                  .data[pos].chat_with.receiver_id,
+                              indexId: mGetAllChatUserListResponse
+                                  .data[pos].inbox_id,
+                              slug:
+                                  mGetAllChatUserListResponse.data[pos].ad_slug,
+                              adId: mGetAllChatUserListResponse.data[pos].ad_id,
+                            )),
                   );
                 },
                 child: Container(
@@ -182,24 +207,32 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
                       decoration: BoxDecoration(
                           color: pos % 3 == 0
                               ? colors[0]
-                              : pos % 3 == 1 ? colors[1] : colors[2],
+                              : pos % 3 == 1
+                                  ? colors[1]
+                                  : colors[2],
                           shape: BoxShape.circle),
                       child: Center(
-                        child:  Container(
+                        child: Container(
                           height: space_50,
                           width: space_50,
                           child: ClipRRect(
-                            borderRadius:
-                            BorderRadius.circular(space_25),
+                            borderRadius: BorderRadius.circular(space_25),
                             child: FadeInImage.assetNetwork(
                               placeholder: "assets/images/app_img.png",
-                              image: (mGetAllChatUserListResponse.data[pos].ad_image!=null && mGetAllChatUserListResponse.data[pos].ad_image?.isNotEmpty)? mGetAllChatUserListResponse.data[pos].ad_image:"http://rentozo.com/assets/img/user.jpg",
+                              image: (mGetAllChatUserListResponse
+                                              .data[pos].ad_image !=
+                                          null &&
+                                      mGetAllChatUserListResponse
+                                          .data[pos].ad_image?.isNotEmpty)
+                                  ? mGetAllChatUserListResponse
+                                      .data[pos].ad_image
+                                  : "http://rentozo.com/assets/img/user.jpg",
                               fit: BoxFit.fill,
                               width: space_80,
                               height: space_60,
                             ),
                           ),
-                        ),/*Text(
+                        ), /*Text(
                           mGetAllChatUserListResponse.data[pos].chat_with!=null && mGetAllChatUserListResponse.data[pos].chat_with?.username.isNotEmpty?mGetAllChatUserListResponse.data[pos].chat_with?.username[0].toUpperCase():"-",
                           style: CommonStyles.getRalewayStyle(
                               space_15, FontWeight.w600, Colors.white),
@@ -208,8 +241,21 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
                     ),
                     title: Text(
                       mGetAllChatUserListResponse.data[pos].chat_with?.username,
-                      style: CommonStyles.getRalewayStyle(space_15,
-                          FontWeight.w600, Colors.black.withOpacity(0.8)),
+                      style: CommonStyles.getRalewayStyle(
+                          space_15,
+                          mGetAllChatUserListResponse.data[pos].new_message !=
+                                      null &&
+                                  mGetAllChatUserListResponse
+                                          .data[pos].new_message ==
+                                      1
+                              ? FontWeight.w800
+                              : FontWeight.w600,
+                          mGetAllChatUserListResponse.data[pos].new_message !=
+                                      null &&
+                                  mGetAllChatUserListResponse
+                                          .data[pos].new_message >0
+                              ? Colors.black
+                              : Colors.black.withOpacity(0.8)),
                     ),
                     subtitle: Text(
                       "${mGetAllChatUserListResponse.data[pos].ad_slug}",
@@ -218,11 +264,50 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    trailing: Text(
-                      dateTimeStr,
-                      textAlign: TextAlign.center,
-                      style: CommonStyles.getMontserratStyle(space_12,
-                          FontWeight.w500, Colors.black.withOpacity(0.8)),
+                    trailing: Container(
+                      height: space_50,
+                      width: space_90,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          mGetAllChatUserListResponse.data[pos].new_message !=
+                                      null &&
+                                  mGetAllChatUserListResponse
+                                          .data[pos].new_message >0
+                              ? Container(
+                                  width: space_25,
+                                  height: space_25,
+                                  decoration: BoxDecoration(
+                                    color: CommonStyles.primaryColor,
+                                    borderRadius:
+                                        BorderRadius.circular(space_15),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "${mGetAllChatUserListResponse.data[pos].new_message}",
+                                      style: CommonStyles.getMontserratStyle(
+                                          space_10,
+                                          FontWeight.w600,
+                                          Colors.white),
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  width: space_25,
+                                  height: space_25,
+                                ),
+                          Expanded(
+                            child: Text(
+                              dateTimeStr,
+                              textAlign: TextAlign.center,
+                              style: CommonStyles.getMontserratStyle(
+                                  space_12,
+                                  FontWeight.w500,
+                                  Colors.black.withOpacity(0.8)),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -252,7 +337,6 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
       ),
     );
   }
-
 
   Widget slideLeftBackground() {
     return Container(

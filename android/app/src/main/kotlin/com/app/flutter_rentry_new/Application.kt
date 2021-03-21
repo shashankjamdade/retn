@@ -4,9 +4,7 @@ package com.app.flutter_rentry_new
 import io.flutter.app.FlutterApplication
 import io.flutter.plugin.common.PluginRegistry
 import io.flutter.plugin.common.PluginRegistry.PluginRegistrantCallback
-import io.flutter.plugins.GeneratedPluginRegistrant
 import io.flutter.plugins.firebasemessaging.FlutterFirebaseMessagingService
-import io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin;
 
 class Application : FlutterApplication(), PluginRegistrantCallback {
     override fun onCreate() {
@@ -14,7 +12,7 @@ class Application : FlutterApplication(), PluginRegistrantCallback {
         FlutterFirebaseMessagingService.setPluginRegistrant(this)
     }
 
-    override fun registerWith(registry: PluginRegistry?) {
-        FirebaseMessagingPlugin.registerWith(registry?.registrarFor("io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin"))
+    override fun registerWith(registry: PluginRegistry) {
+        CustomPluginRegistrant.registerWith(registry)
     }
 }

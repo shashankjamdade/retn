@@ -9,6 +9,7 @@ import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/model/ChatMsgModel.dart';
 import 'package:flutter_rentry_new/model/new_inbox_chat_res.dart';
+import 'package:flutter_rentry_new/repository/HomeRepository.dart';
 import 'package:flutter_rentry_new/screens/ItemDetailScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
@@ -91,6 +92,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           listener: (context, state) {
             if (state is GetAllChatMsgResState) {
               mGetAllChatMsgRes = state.res;
+              new HomeRepository().callReadChat(
+                  StateContainer.of(context)
+                      .mLoginResponse
+                      .data
+                      .token,
+                  mGetAllChatMsgRes?.data?.ad_and_user_details?.inbox_id);
             }else if(state is SendMsgResState){
               if(msgList==null || msgList.length==0){
                 homeBloc..add(GetAllChatMsgEvent(token: token, indexId: widget.indexId, adId: widget.adId));
@@ -121,7 +128,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         elevation: 0.0,
         backgroundColor: CommonStyles.primaryColor,
         actions: [
-          InkWell(
+          mGetAllChatMsgRes.data.ad_and_user_details?.profile_setting!=null && mGetAllChatMsgRes.data.ad_and_user_details?.profile_setting?.isNotEmpty && mGetAllChatMsgRes.data.ad_and_user_details?.profile_setting == "public"? InkWell(
               onTap: () {
                 lauchDialer(mGetAllChatMsgRes.data.ad_and_user_details?.chat_with?.contact!=null && mGetAllChatMsgRes.data.ad_and_user_details?.chat_with?.contact?.isNotEmpty? mGetAllChatMsgRes.data.ad_and_user_details?.chat_with?.contact:"");
               },
@@ -131,7 +138,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   Icons.call,
                   color: Colors.white,
                 ),
-              )),
+              )):Container(height: space_0, width: space_0,),
         ],
         leading: InkWell(
             onTap: () {
