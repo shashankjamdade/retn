@@ -18,6 +18,8 @@ import 'package:flutter_rentry_new/widgets/CustomWidget.dart';
 import 'package:flutter_rentry_new/widgets/ListItemCardWidget.dart';
 import 'dart:ui' as ui;
 
+import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
+
 class NearByChildSubCategoryScreen extends StatefulWidget {
   String categoryId,
       subCategoryId,
@@ -72,6 +74,8 @@ class _NearByChildSubCategoryScreenState
   String filter_max = "";
   String priceSort = "";
   String ratingSort = "";
+  int page_number = 1;
+  bool isDataAvailable = true;
 
   @override
   void initState() {
@@ -135,7 +139,8 @@ class _NearByChildSubCategoryScreenState
             filter_max: filter_max,
             sort_by_price:
                 priceSort != null && priceSort.isNotEmpty ? priceSort : "",
-            ads_title: widget.ads_title != null ? widget.ads_title : "")),
+            ads_title: widget.ads_title != null ? widget.ads_title : "",
+            page_number: "${page_number}")),
       child: BlocListener(
         cubit: homeBloc,
         listener: (context, state) {},
@@ -157,63 +162,104 @@ class _NearByChildSubCategoryScreenState
     );
   }
 
+  loadMore(){
+    if(isDataAvailable){
+      page_number = page_number+1;
+      homeBloc
+        ..add(NearbySubChildCategoryListReqNoProgressEvent(
+            token: token,
+            categoryId: widget.categoryId,
+            subcategory_id: widget.subCategoryId,
+            radius: widget.radius,
+            lat: mLat,
+            lng: mLng,
+            filter_subcategory_id: filter_subcategory_id,
+            filter_custome_filed_id: filter_custome_filed_id,
+            filter_min: filter_min,
+            filter_max: filter_max,
+            sort_by_price:
+            priceSort != null && priceSort.isNotEmpty ? priceSort : "",
+            ads_title: widget.ads_title != null ? widget.ads_title : "",
+            page_number: "${page_number}"));
+    }
+  }
+
   Widget setDataToUI(NearbySubChildCategoryListResponse res) {
-    mNearbySubChildCategoryListResponse = res;
+    if(mNearbySubChildCategoryListResponse!=null){
+      if(res?.data?.ad_list!=null && res?.data?.ad_list?.length>0){
+//        res?.data?.ad_list?.forEach((element) {
+//          mNearbySubChildCategoryListResponse?.data?.ad_list?.add(element);
+//        });
+//        var newList = [..., ...res?.data?.ad_list].toSet().toList();
+        mNearbySubChildCategoryListResponse?.data?.ad_list?.addAll(res?.data?.ad_list);
+      }
+    }else{
+      mNearbySubChildCategoryListResponse = res;
+    }
+
+    if(res?.data!=null && res?.data?.ad_list!=null && res?.data?.ad_list?.length>0){
+      isDataAvailable = true;
+    }else{
+      isDataAvailable = false;
+    }
+
     return SafeArea(
       child: Scaffold(
-        body: Stack(
-          children: [
-            Container(
-                child: Column(
-              children: [
-                CommonAppbarWidget(app_name, skip_for_now, () {
-                  onSearchLocation(context);
-                }),
-                Container(
-                  margin: EdgeInsets.only(
-                      left: space_15,
-                      top: getProportionateScreenHeight(context, space_15)),
-                  child: Row(
-                    children: [
-                      widget.isFromNearBy
-                          ? Text(
-                              "BROWSE BY NEARME",
-                              style: CommonStyles.getRalewayStyle(
-                                  space_15, FontWeight.w800, Colors.black),
-                            )
-                          : Container(
-                              margin: EdgeInsets.only(
-                                  left: space_15,
-                                  top: getProportionateScreenHeight(
-                                      context, space_15)),
-                              child: widget.subCategoryName != null &&
-                                      widget.subCategoryName.isNotEmpty
-                                  ? Row(
-                                      children: [
-                                        Text(
-                                          widget.categoryName,
-                                          style: CommonStyles.getRalewayStyle(
-                                              space_15,
-                                              FontWeight.w800,
-                                              CommonStyles.red),
-                                        ),
-                                        SizedBox(
-                                          height: space_15,
-                                        ),
-                                        Container(
+        body: LazyLoadScrollView(
+          onEndOfPage: () => loadMore(),
+          child: Stack(
+            children: [
+              Container(
+                  child: Column(
+                children: [
+                  CommonAppbarWidget(app_name, skip_for_now, () {
+                    onSearchLocation(context);
+                  }),
+                  Container(
+                    margin: EdgeInsets.only(
+                        left: space_15,
+                        top: getProportionateScreenHeight(context, space_15)),
+                    child: Row(
+                      children: [
+                        widget.isFromNearBy
+                            ? Text(
+                                "BROWSE BY NEARME",
+                                style: CommonStyles.getRalewayStyle(
+                                    space_15, FontWeight.w800, Colors.black),
+                              )
+                            : Container(
+                                margin: EdgeInsets.only(
+                                    left: space_15,
+                                    top: getProportionateScreenHeight(
+                                        context, space_15)),
+                                child: widget.subCategoryName != null &&
+                                        widget.subCategoryName.isNotEmpty
+                                    ? Row(
+                                        children: [
+                                          Text(
+                                            widget.categoryName,
+                                            style: CommonStyles.getRalewayStyle(
+                                                space_15,
+                                                FontWeight.w800,
+                                                CommonStyles.red),
+                                          ),
+                                          SizedBox(
                                             height: space_15,
-                                            child: VerticalDivider(
-                                              thickness: space_2,
-                                              color: CommonStyles.grey,
-                                              indent: space_3,
-                                            )),
-                                        Text(
-                                          widget.subCategoryName,
-                                          style: CommonStyles.getRalewayStyle(
-                                              space_15,
-                                              FontWeight.w800,
-                                              CommonStyles.blue),
-                                        ),
+                                          ),
+                                          Container(
+                                              height: space_15,
+                                              child: VerticalDivider(
+                                                thickness: space_2,
+                                                color: CommonStyles.grey,
+                                                indent: space_3,
+                                              )),
+                                          Text(
+                                            widget.subCategoryName,
+                                            style: CommonStyles.getRalewayStyle(
+                                                space_15,
+                                                FontWeight.w800,
+                                                CommonStyles.blue),
+                                          ),
 //                                        Container(
 //                                            height: space_15,
 //                                            child: VerticalDivider(
@@ -223,50 +269,31 @@ class _NearByChildSubCategoryScreenState
 //                                            )),
 //                                        RichTextTitleWidget(
 //                                            "SUB", "CATEGORIES"),
-                                      ],
-                                    )
-                                  : widget.categoryName.isNotEmpty
-                                      ? Text(
-                                          widget.categoryName,
-                                          style: CommonStyles.getRalewayStyle(
-                                              space_15,
-                                              FontWeight.w800,
-                                              CommonStyles.red),
-                                        )
-                                      : Text(
-                                          widget.searchtitle,
-                                          style: CommonStyles.getRalewayStyle(
-                                              space_15,
-                                              FontWeight.w800,
-                                              CommonStyles.blue),
-                                        ),
-                            ),
-                    ],
+                                        ],
+                                      )
+                                    : widget.categoryName.isNotEmpty
+                                        ? Text(
+                                            widget.categoryName,
+                                            style: CommonStyles.getRalewayStyle(
+                                                space_15,
+                                                FontWeight.w800,
+                                                CommonStyles.red),
+                                          )
+                                        : Text(
+                                            widget.searchtitle,
+                                            style: CommonStyles.getRalewayStyle(
+                                                space_15,
+                                                FontWeight.w800,
+                                                CommonStyles.blue),
+                                          ),
+                              ),
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: space_15,
-                ),
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: () {
-                      homeBloc
-                        ..add(NearbySubChildCategoryListReqEvent(
-                            token: token,
-                            categoryId: widget.categoryId,
-                            subcategory_id: widget.subCategoryId,
-                            radius: widget.radius,
-                            lat: mLat,
-                            lng: mLng,
-                            filter_subcategory_id: filter_subcategory_id,
-                            filter_custome_filed_id: filter_custome_filed_id,
-                            filter_min: filter_min,
-                            filter_max: filter_max,
-                            sort_by_price:
-                                priceSort != null && priceSort.isNotEmpty
-                                    ? priceSort
-                                    : ""));
-                    },
+                  SizedBox(
+                    height: space_15,
+                  ),
+                  Expanded(
                     child: ListView(
                       children: [
                         Container(
@@ -280,13 +307,13 @@ class _NearByChildSubCategoryScreenState
                               crossAxisSpacing: 5.0,
                               mainAxisSpacing: 5.0,
                             ),
-                            itemCount: res.data.ad_list.length,
+                            itemCount: mNearbySubChildCategoryListResponse?.data?.ad_list.length,
                             itemBuilder: (context, index) {
                               return Container(
                                 height: space_280,
                                 width: space_230,
                                 child: ItemCardNoMarginWidget(
-                                    category_adslist: res.data.ad_list[index]),
+                                    category_adslist: mNearbySubChildCategoryListResponse?.data?.ad_list[index]),
                               );
                             },
                           ),
@@ -297,17 +324,17 @@ class _NearByChildSubCategoryScreenState
                       ],
                     ),
                   ),
-                ),
-              ],
-            )),
-            CommonBottomNavBarWidget(),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Container(
-                  child: BottomFloatingFilterBtnsWidget(
-                      res.data.filter, openFilterSheet, openSortFilterSheet)),
-            )
-          ],
+                ],
+              )),
+              CommonBottomNavBarWidget(),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Container(
+                    child: BottomFloatingFilterBtnsWidget(
+                        res.data.filter, openFilterSheet, openSortFilterSheet)),
+              )
+            ],
+          ),
         ),
       ),
     );

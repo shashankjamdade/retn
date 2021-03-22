@@ -90,6 +90,7 @@ class NearbySubChildCategoryListReqEvent extends HomeEvent {
   final String filter_max;
   final String sort_by_price;
   final String ads_title;
+  final String page_number;
 
   NearbySubChildCategoryListReqEvent(
       {@required this.token,
@@ -103,12 +104,49 @@ class NearbySubChildCategoryListReqEvent extends HomeEvent {
       @required this.filter_min,
       @required this.filter_max,
       @required this.sort_by_price,
-      @required this.ads_title
+      @required this.ads_title,
+      @required this.page_number
       });
 
   @override
   List<Object> get props =>
-      [token, categoryId, subcategory_id, radius, lat, lng, filter_subcategory_id, filter_custome_filed_id, filter_min, filter_max, sort_by_price, ads_title];
+      [token, categoryId, subcategory_id, radius, lat, lng, filter_subcategory_id, filter_custome_filed_id, filter_min, filter_max, sort_by_price, ads_title, page_number];
+}
+
+class NearbySubChildCategoryListReqNoProgressEvent extends HomeEvent {
+  final String token;
+  final String categoryId;
+  final String radius;
+  final String lat;
+  final String lng;
+  final String subcategory_id;
+  final String filter_subcategory_id;
+  final String filter_custome_filed_id;
+  final String filter_min;
+  final String filter_max;
+  final String sort_by_price;
+  final String ads_title;
+  final String page_number;
+
+  NearbySubChildCategoryListReqNoProgressEvent(
+      {@required this.token,
+      @required this.categoryId,
+      this.subcategory_id,
+      @required this.radius,
+      @required this.lat,
+      @required this.lng,
+      @required this.filter_subcategory_id,
+      @required this.filter_custome_filed_id,
+      @required this.filter_min,
+      @required this.filter_max,
+      @required this.sort_by_price,
+      @required this.ads_title,
+      @required this.page_number
+      });
+
+  @override
+  List<Object> get props =>
+      [token, categoryId, subcategory_id, radius, lat, lng, filter_subcategory_id, filter_custome_filed_id, filter_min, filter_max, sort_by_price, ads_title, page_number];
 }
 
 class GetCategoryListEvent extends HomeEvent {

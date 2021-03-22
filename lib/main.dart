@@ -149,8 +149,8 @@ Future<dynamic> myBackgroundMessageHandler(Map<String,
     dynamic> message) async {
   print("myBackgroundMessageHandler message: $message");
   int msgId = int.tryParse(message["data"]["msgId"]
-      .toString()) ?? 0;
-  print("msgId $msgId");
+      .toString()) ?? 1;
+  print("msgId ${message['data']['title']}, ${message['data']['message']}");
   var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
       'channelid', 'flutterfcm', 'your channel description',
       importance: Importance.max, priority: Priority.high);
@@ -160,8 +160,8 @@ Future<dynamic> myBackgroundMessageHandler(Map<String,
       iOS: iOSPlatformChannelSpecifics);
   flutterLocalNotificationsPlugin
       .show(msgId,
-      message["data"]["msgTitle"],
-      message["data"]["msgBody"], platformChannelSpecifics,
+      message['data']['title'],
+      message['data']['message'], platformChannelSpecifics,
       payload: message["data"]["data"]);
   return Future<void>.value();
 }
@@ -234,7 +234,7 @@ class _ScreenOneState extends State<ScreenOne> {
     _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
           print('FCM_PUSH_onmsg $message');
-          setState(() => _message = message["notification"]["title"]);
+//          setState(() => _message = message["notification"]["title"]);
           displayNotification(message);
           return;
         },
@@ -374,7 +374,7 @@ class _ScreenOneState extends State<ScreenOne> {
         android: androidPlatformChannelSpecifics,
         iOS: iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
-      0,
+      1,
       message['data']['title'],
       message['data']['message'],
       platformChannelSpecifics,

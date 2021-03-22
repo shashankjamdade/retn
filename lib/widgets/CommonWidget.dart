@@ -2504,7 +2504,7 @@ class BottomFloatingChatBtnsWidget extends StatelessWidget {
               bottomLeft: Radius.circular(space_30),
             )),
         child: Container(
-          height: space_120,
+          height: profile_setting!=null && profile_setting.isNotEmpty && profile_setting == "public"?space_120:space_60,
           width: space_60,
           padding: EdgeInsets.all(space_10),
           decoration: BoxDecoration(

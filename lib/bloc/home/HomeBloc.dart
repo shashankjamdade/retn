@@ -59,7 +59,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           event.filter_min,
           event.filter_max,
           event.sort_by_price,
-          event.ads_title);
+          event.ads_title,
+          event.page_number);
+    } else if (event is NearbySubChildCategoryListReqNoProgressEvent) {
+//      yield ProgressState();
+      yield* callNearbySubChildCategoryListApi(
+          event.token,
+          event.categoryId,
+          event.subcategory_id,
+          event.radius,
+          event.lat,
+          event.lng,
+          event.filter_subcategory_id,
+          event.filter_custome_filed_id,
+          event.filter_min,
+          event.filter_max,
+          event.sort_by_price,
+          event.ads_title,
+          event.page_number);
     } else if (event is GetCategoryListEvent) {
       yield ProgressState();
       yield* callGetCategoryApi(event.token);
@@ -77,8 +94,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       yield* callChangePwdApi(event.token, event.pwd, event.newpwd);
     } else if (event is UserUpdateEvent) {
       yield ProgressState();
-      yield* callUserUpdateApi(event.token, event.username, event.email,
-          event.contact, event.address, event.aboutus, event.image, event.profile_setting);
+      yield* callUserUpdateApi(
+          event.token,
+          event.username,
+          event.email,
+          event.contact,
+          event.address,
+          event.aboutus,
+          event.image,
+          event.profile_setting);
     } else if (event is GetRentTypeEvent) {
       yield ProgressState();
       yield* callGetRentTypeApi(event.token);
@@ -190,7 +214,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       debugPrint("ITEMDETAIL_API_CALL_RES ${jsonEncode(itemDetailResponse)}");
       yield ItemDetailResState(res: itemDetailResponse);
     } catch (e, stacktrace) {
-      debugPrint("Exception while itemDetail ${e.toString()}, ${stacktrace.toString()}");
+      debugPrint(
+          "Exception while itemDetail ${e.toString()}, ${stacktrace.toString()}");
     }
   }
 
@@ -258,6 +283,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     String filter_max,
     String priceSort,
     String ads_title,
+    String page_number,
   ) async* {
     try {
       homeRepository =
@@ -277,7 +303,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               filter_min,
               filter_max,
               priceSort,
-              ads_title);
+              ads_title,
+              page_number);
       debugPrint(
           "nearbySubChildCategoryListResponse ${jsonEncode(nearbySubChildCategoryListResponse)}");
       yield NearbySubChildCategoryListResState(
@@ -379,12 +406,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callUserUpdateApi ${token} ${homeRepository == null ? "NULL" : "NOTNULL"}");
-      final changePwdRes = await homeRepository.callUpdateUser(
-          token, username, aboutus, contact, email, address, img, profile_setting);
+      final changePwdRes = await homeRepository.callUpdateUser(token, username,
+          aboutus, contact, email, address, img, profile_setting);
       debugPrint("callUserUpdateApi RES ${jsonEncode(changePwdRes)}");
       yield ChangePwdResState(res: changePwdRes);
     } catch (e, stacktrace) {
-      debugPrint("Exception while callUserUpdateApi ${e.toString()}\n${stacktrace.toString()}");
+      debugPrint(
+          "Exception while callUserUpdateApi ${e.toString()}\n${stacktrace.toString()}");
     }
   }
 
@@ -581,7 +609,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       debugPrint("callPackagePayment ${jsonEncode(commonResponse)}");
       yield PackagePaymentState(res: commonResponse);
     } catch (e, stacktrace) {
-      debugPrint("Exception while callPackagePayment ${e.toString()}\n ${stacktrace.toString()}");
+      debugPrint(
+          "Exception while callPackagePayment ${e.toString()}\n ${stacktrace.toString()}");
     }
   }
 

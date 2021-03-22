@@ -216,7 +216,9 @@ class HomeRepository extends BaseRepository {
       String filter_min,
       String filter_max,
       String priceSort,
-      String ads_title) async {
+      String ads_title,
+      String page_number
+      ) async {
     bool status = false;
     NearbySubChildCategoryListResponse response;
     int code = 0;
@@ -225,7 +227,7 @@ class HomeRepository extends BaseRepository {
     print(
         "UNDER NearbySubChildCategoryListResponse ${categoryId} ${BASE_URL + ADS_SEARCH_API}");
     print("PRINTING_REQ NearbySubChild --> ${"category_id " + categoryId + ",subcategory_id " + subCategoryId + ",radius" + radius + ",lat" + lat + ",lng" + lng + ""
-        ", filter_subcategory_id ${filter_subcategory_id}, filter_custome_filed_id ${filter_custome_filed_id}, priceSort ${priceSort}, ads_title ${ads_title}"
+        ", filter_subcategory_id ${filter_subcategory_id}, filter_custome_filed_id ${filter_custome_filed_id}, priceSort ${priceSort}, ads_title ${ads_title}, page_number ${page_number}"
         "filter_min ${filter_min}, filter_max ${filter_max}"}");
     print("-------");
     var res = await http.post(BASE_URL + ADS_SEARCH_API, headers: {
@@ -243,6 +245,7 @@ class HomeRepository extends BaseRepository {
       "filter_max": filter_max,
       "sort_by_price": priceSort,
       "ads_title": ads_title!=null && ads_title.isNotEmpty? ads_title:"",
+      "page_number": page_number,
     });
     print("PRINTING NearbySubChild ${res.body}");
     code = res.statusCode;
