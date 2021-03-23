@@ -254,7 +254,7 @@ class HomeRepository extends BaseRepository {
       status = data["status"];
       print("PRINTING_STATUS ${status}");
       response = NearbySubChildCategoryListResponse.fromJson(data);
-      print("-----------${data}");
+      print("MYLIST----------${jsonEncode(response?.data?.ad_list)}");
     } else {
       response = new NearbySubChildCategoryListResponse(
           status: false, message: API_ERROR_MSG);

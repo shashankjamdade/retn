@@ -110,7 +110,7 @@ class _EditUploadProductImgScreenState
                                               BorderRadius.circular(space_10),
                                           child: FadeInImage.assetNetwork(
                                               placeholder:
-                                                  "assets/images/app_img.png",
+                                                  "assets/images/loader.jpg",
                                               image: img1 != null
                                                   ? img1
                                                   : "http://rentozo.com/assets/img/user.jpg",
@@ -205,13 +205,13 @@ class _EditUploadProductImgScreenState
                                           BorderRadius.circular(space_10)),
                                   child: (img2 != null &&
                                           img2.isNotEmpty &&
-                                          img1.contains("http"))
+                                          img2.contains("http"))
                                       ? ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(space_10),
                                           child: FadeInImage.assetNetwork(
                                               placeholder:
-                                                  "assets/images/app_img.png",
+                                                  "assets/images/loader.jpg",
                                               image: img2 != null
                                                   ? img2
                                                   : "http://rentozo.com/assets/img/user.jpg",
@@ -305,14 +305,14 @@ class _EditUploadProductImgScreenState
                                       borderRadius:
                                           BorderRadius.circular(space_10)),
                                   child: (img3 != null &&
-                                          img1.isNotEmpty &&
+                                      img3.isNotEmpty &&
                                           img3.contains("http"))
                                       ? ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(space_10),
                                           child: FadeInImage.assetNetwork(
                                               placeholder:
-                                                  "assets/images/app_img.png",
+                                                  "assets/images/loader.jpg",
                                               image: img3 != null
                                                   ? img3
                                                   : "http://rentozo.com/assets/img/user.jpg",

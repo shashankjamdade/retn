@@ -162,9 +162,9 @@ class _NearByChildSubCategoryScreenState
     );
   }
 
-  loadMore(){
-    if(isDataAvailable){
-      page_number = page_number+1;
+  loadMore() {
+    if (isDataAvailable) {
+      page_number = page_number + 1;
       homeBloc
         ..add(NearbySubChildCategoryListReqNoProgressEvent(
             token: token,
@@ -178,28 +178,36 @@ class _NearByChildSubCategoryScreenState
             filter_min: filter_min,
             filter_max: filter_max,
             sort_by_price:
-            priceSort != null && priceSort.isNotEmpty ? priceSort : "",
+                priceSort != null && priceSort.isNotEmpty ? priceSort : "",
             ads_title: widget.ads_title != null ? widget.ads_title : "",
             page_number: "${page_number}"));
     }
   }
 
   Widget setDataToUI(NearbySubChildCategoryListResponse res) {
-    if(mNearbySubChildCategoryListResponse!=null){
-      if(res?.data?.ad_list!=null && res?.data?.ad_list?.length>0){
+    if (mNearbySubChildCategoryListResponse != null) {
+      if (res?.data?.ad_list != null && res?.data?.ad_list?.length > 0) {
 //        res?.data?.ad_list?.forEach((element) {
 //          mNearbySubChildCategoryListResponse?.data?.ad_list?.add(element);
 //        });
 //        var newList = [..., ...res?.data?.ad_list].toSet().toList();
-        mNearbySubChildCategoryListResponse?.data?.ad_list?.addAll(res?.data?.ad_list);
+        if (page_number == 1) {
+          mNearbySubChildCategoryListResponse?.data?.ad_list =
+              res?.data?.ad_list;
+        } else {
+          mNearbySubChildCategoryListResponse?.data?.ad_list
+              ?.addAll(res?.data?.ad_list);
+        }
       }
-    }else{
+    } else {
       mNearbySubChildCategoryListResponse = res;
     }
 
-    if(res?.data!=null && res?.data?.ad_list!=null && res?.data?.ad_list?.length>0){
+    if (res?.data != null &&
+        res?.data?.ad_list != null &&
+        res?.data?.ad_list?.length > 0) {
       isDataAvailable = true;
-    }else{
+    } else {
       isDataAvailable = false;
     }
 
@@ -307,13 +315,16 @@ class _NearByChildSubCategoryScreenState
                               crossAxisSpacing: 5.0,
                               mainAxisSpacing: 5.0,
                             ),
-                            itemCount: mNearbySubChildCategoryListResponse?.data?.ad_list.length,
+                            itemCount: mNearbySubChildCategoryListResponse
+                                ?.data?.ad_list.length,
                             itemBuilder: (context, index) {
                               return Container(
                                 height: space_280,
                                 width: space_230,
                                 child: ItemCardNoMarginWidget(
-                                    category_adslist: mNearbySubChildCategoryListResponse?.data?.ad_list[index]),
+                                    category_adslist:
+                                        mNearbySubChildCategoryListResponse
+                                            ?.data?.ad_list[index]),
                               );
                             },
                           ),
@@ -426,6 +437,7 @@ class _NearByChildSubCategoryScreenState
 //    setState(() {
 //      mFilterRes = filterRes;
 //    });
+    page_number = 1;
     homeBloc
       ..add(NearbySubChildCategoryListReqEvent(
           token: token,
@@ -439,7 +451,9 @@ class _NearByChildSubCategoryScreenState
           filter_min: filter_min,
           filter_max: filter_max,
           sort_by_price:
-              priceSort != null && priceSort.isNotEmpty ? priceSort : ""));
+              priceSort != null && priceSort.isNotEmpty ? priceSort : "",
+          ads_title: widget.ads_title != null ? widget.ads_title : "",
+          page_number: "${page_number}"));
   }
 
   void showModalBottomsheet(FilterRes filterRes, String type) {
