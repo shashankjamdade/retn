@@ -256,6 +256,7 @@ class _EditUploadProductImgScreenState
                                             ),
                                 ),
                               ),
+
                               _image2 != null
                                   ? Positioned(
                                       left: 190.0,
