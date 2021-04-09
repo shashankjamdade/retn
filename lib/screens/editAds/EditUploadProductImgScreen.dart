@@ -593,8 +593,8 @@ class _EditUploadProductImgScreenState
 
   Future getImageCamera(String imgType) async {
     File _image;
-    final pickedFile = await picker.getImage(source: ImageSource.camera, imageQuality: 80,
-        maxHeight: 600, maxWidth: 600);
+    final pickedFile = await picker.getImage(source: ImageSource.camera, imageQuality: 75,
+        maxHeight: 500, maxWidth: 500);
     if (pickedFile != null && pickedFile.path != null) {
       File rotatedImage =
           await FlutterExifRotation.rotateImage(path: pickedFile.path);

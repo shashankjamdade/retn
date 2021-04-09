@@ -33,9 +33,10 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'MyAdsListScreen.dart';
 
 class AdUnderPackageListScreen extends StatefulWidget {
-
   AdPostReqModel adPostReqModel;
+
   AdUnderPackageListScreen(this.adPostReqModel);
+
   @override
   _AdUnderPackageListScreenState createState() =>
       _AdUnderPackageListScreenState();
@@ -94,15 +95,23 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
 //    setState(() {
 //      mSelectedPackageId = mBuypackageId;
 //    });
-    mGetNotificationResponse.data.forEach((element){
-      if(element.package_id == mBuypackageId){
+    mGetNotificationResponse.data.forEach((element) {
+      if (element.package_id == mBuypackageId) {
         amt = element.package_price;
       }
     });
     debugPrint("PAYMENT_SUCCESS ------- > ${jsonEncode(response.paymentId)}");
-    var mRazorpaySuccessRes = new RazorpaySuccessRes(paymentId: response.paymentId, orderId: response.orderId, signature: response.signature);
+    var mRazorpaySuccessRes = new RazorpaySuccessRes(
+        paymentId: response.paymentId,
+        orderId: response.orderId,
+        signature: response.signature);
     debugPrint("PG_RES ------- > ${jsonEncode(mRazorpaySuccessRes)}");
-    homeBloc..add(PackagePaymentEvent(token: token, packageId: mBuypackageId, amt: amt, pgRes: jsonEncode(mRazorpaySuccessRes)));
+    homeBloc
+      ..add(PackagePaymentEvent(
+          token: token,
+          packageId: mBuypackageId,
+          amt: amt,
+          pgRes: jsonEncode(mRazorpaySuccessRes)));
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
@@ -114,44 +123,48 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
-    debugPrint("PAYMENT_EXT_WALLET ------- > ${jsonEncode(response.walletName)}");
+    debugPrint(
+        "PAYMENT_EXT_WALLET ------- > ${jsonEncode(response.walletName)}");
     setState(() {
       mShowProgress = false;
     });
   }
 
-  redirectToWebView(String mWebLink, AdPostReqModel adPostReqModel)async{
+  redirectToWebView(String mWebLink, AdPostReqModel adPostReqModel) async {
     var res = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AppPage2("Rentozo", mWebLink, adPostReqModel)),
+      MaterialPageRoute(
+          builder: (context) => AppPage2("Rentozo", mWebLink, adPostReqModel)),
     );
   }
 
-
-  void openCheckout(String amt, String packageName, String userPackageId, String packageId) async {
+  void openCheckout(String amt, String packageName, String userPackageId,
+      String packageId) async {
     setState(() {
       mShowProgress = true;
     });
     var amtNum = int.parse(amt);
-    var finalAmt = amtNum*100;
+    var finalAmt = amtNum * 100;
     debugPrint("PAYYYY ${finalAmt} for $packageId");
     var options = {
       'key': 'rzp_test_NNbwJ9tmM0fbxj',
       'amount': "${finalAmt}",
       'name': packageName,
       'description': 'Buy new package',
-      'prefill': {'contact': '${loginResponse?.data?.contact}', 'email': '${loginResponse?.data?.email}'},
+      'prefill': {
+        'contact': '${loginResponse?.data?.contact}',
+        'email': '${loginResponse?.data?.email}'
+      },
       'external': {
-        'wallets' : ['paytm'],
+        'wallets': ['paytm'],
       }
     };
-    try{
+    try {
       _razorpay.open(options);
 //      var mWebLink =
 //      "https://rentozo.com/webviewpayment/view/${packageId}/${loginResponse?.data?.id}";
 //      redirectToWebView(mWebLink, widget.adPostReqModel);
-    }
-    catch(e) {
+    } catch (e) {
       debugPrint(e);
     }
   }
@@ -165,13 +178,13 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
           listener: (context, state) {
             if (state is AdUnderPackageState) {
               mGetNotificationResponse = state.res;
-            }else if (state is PackagePaymentState) {
-              if(state.res!=null){
+            } else if (state is PackagePaymentState) {
+              if (state.res != null) {
                 debugPrint("GOTRES_POSTADS ${state.res.status}");
-                if(state.res!=null && state.res.status == "success") {
+                if (state.res != null && state.res.status == "success") {
                   homeBloc..add(AdUnderPackageEvent(token: token));
                 }
-                if(state.res!=null && state.res.msg!=null) {
+                if (state.res != null && state.res.msg != null) {
                   Fluttertoast.showToast(
                       msg: state.res.msg,
                       toastLength: Toast.LENGTH_SHORT,
@@ -179,12 +192,11 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
                       timeInSecForIosWeb: 1,
                       backgroundColor: Colors.black,
                       textColor: Colors.white,
-                      fontSize: space_14
-                  );
+                      fontSize: space_14);
                 }
               }
-            }else if(state is PostAdsState){
-              if(state.res!=null && state.res.msg!=null){
+            } else if (state is PostAdsState) {
+              if (state.res != null && state.res.msg != null) {
 //                showSnakbar(_scaffoldKey, state.res.msg);
                 Fluttertoast.showToast(
                     msg: state.res.msg,
@@ -193,12 +205,16 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
                     timeInSecForIosWeb: 1,
                     backgroundColor: Colors.black,
                     textColor: Colors.white,
-                    fontSize: space_14
-                );
-                if(state.res.status!=null && (state.res.status == "success" || state.res.status == "true")){
+                    fontSize: space_14);
+                if (state.res.status != null &&
+                    (state.res.status == "success" ||
+                        state.res.status == "true")) {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => HomeScreen(isRedirectToMyAds: true,)),
+                    MaterialPageRoute(
+                        builder: (context) => HomeScreen(
+                              isRedirectToMyAds: true,
+                            )),
                   );
                 }
               }
@@ -229,7 +245,8 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
                   children: [
                     PostAdsCommonAppbar(title: "Select Package"),
                     Padding(
-                      padding: EdgeInsets.only(left: space_15, top: space_20, bottom: space_15),
+                      padding: EdgeInsets.only(
+                          left: space_15, top: space_20, bottom: space_15),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -241,47 +258,129 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
                     ),
                     Expanded(
                       child: Container(
-                            child: ListView.builder(
-                                itemCount: adUnderPackageRes.data.length,
-                                scrollDirection: Axis.vertical,
-                                primary: false,
-                                itemBuilder: (context, index) {
-                                  if(adUnderPackageRes.data[index].purchase_button == "show"){
-                                    return ListTile(
-                                      key: Key("${index}"),
+                        child: ListView.builder(
+                            itemCount: adUnderPackageRes.data.length,
+                            scrollDirection: Axis.vertical,
+                            primary: false,
+                            itemBuilder: (context, index) {
+                              if (adUnderPackageRes
+                                      .data[index].purchase_button ==
+                                  "show") {
+                                return ListTile(
+                                  key: Key("${index}"),
 //                                  leading: Icon(Icons.notification_important),
-                                      title: Row(
-                                        children: [
-                                          Text(
-                                            adUnderPackageRes.data[index].package_name + " (${adUnderPackageRes.data[index].package_price} for ${adUnderPackageRes.data[index].no_of_days} days)",
-                                            style: CommonStyles.getMontserratStyle(
-                                                space_15, FontWeight.w500, Colors.black),
+                                  title: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: CommonStyles.blue),
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft:
+                                                      Radius.circular(space_5),
+                                                  bottomLeft:
+                                                      Radius.circular(space_5),
+                                                  topRight:
+                                                      Radius.circular(space_0),
+                                                  bottomRight:
+                                                      Radius.circular(space_0)),
+                                              color: CommonStyles.primaryColor,
                                           ),
-                                          SizedBox(width: space_15,),
-                                          GestureDetector(
-                                            onTap: (){
-                                              mBuypackageId = adUnderPackageRes.data[index].package_id;
-                                              openCheckout(adUnderPackageRes.data[index].package_price, adUnderPackageRes.data[index].package_name, adUnderPackageRes.data[index].user_package_id, adUnderPackageRes.data[index].package_id);
-                                            },
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(space_8),
-                                              child: Text(
-                                                "Buy Now",
-                                                style: CommonStyles.getMontserratDecorationStyle(
-                                                    space_15, FontWeight.w600, Colors.redAccent, TextDecoration.underline),
-                                              ),
-                                            ),
+                                          padding:
+                                          const EdgeInsets.all(space_10),
+                                          child: Text(
+                                            adUnderPackageRes
+                                                    .data[index].package_name +
+                                                "   No. Post: ${adUnderPackageRes.data[index].no_of_posts}   Days: ${adUnderPackageRes.data[index].no_of_days}    ",
+                                            style:
+                                                CommonStyles.getMontserratStyle(
+                                                    space_15,
+                                                    FontWeight.w600,
+                                                    Colors.white),
                                           ),
-                                        ],
+                                        ),
                                       ),
-                                    );
-                                  }else{
-                                    return RadioListTile(
+                                      GestureDetector(
+                                        onTap: () {
+                                          mBuypackageId = adUnderPackageRes
+                                              .data[index].package_id;
+                                          openCheckout(
+                                              adUnderPackageRes
+                                                  .data[index].package_price,
+                                              adUnderPackageRes
+                                                  .data[index].package_name,
+                                              adUnderPackageRes
+                                                  .data[index].user_package_id,
+                                              adUnderPackageRes
+                                                  .data[index].package_id);
+                                        },
+                                        child: Container(
+                                          padding:
+                                              const EdgeInsets.all(space_10),
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: CommonStyles.darkAmber),
+                                              borderRadius:
+                                              BorderRadius.circular(space_5),
+                                          color: CommonStyles.blue),
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                "Buy Now",
+                                                style: CommonStyles
+                                                    .getMontserratStyle(
+                                                  space_15,
+                                                  FontWeight.w600,
+                                                  Colors.white,
+                                                ),
+                                              ),
+                                              SizedBox(height: space_8,),
+                                              Text(
+                                                "\u20B9 ${adUnderPackageRes
+                                                    .data[index].package_price}",
+                                                style: CommonStyles
+                                                    .getMontserratStyle(
+                                                        space_15,
+                                                        FontWeight.w600,
+                                                        Colors.white),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              } else {
+                                return Theme(
+                                  data: Theme.of(context).copyWith(
+                                      unselectedWidgetColor:
+                                          CommonStyles.darkAmber,
+                                      selectedRowColor:
+                                          CommonStyles.darkAmber,
+                                      disabledColor: CommonStyles.darkAmber),
+                                  child: Container(
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: space_15),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: CommonStyles.blue),
+                                        borderRadius:
+                                            BorderRadius.circular(space_15)),
+                                    child: RadioListTile(
                                       groupValue: mSelectedPackageName,
                                       title: Text(
-                                        adUnderPackageRes.data[index].package_name + " (${adUnderPackageRes.data[index].package_price} for ${adUnderPackageRes.data[index].no_of_days} days)",
+                                        adUnderPackageRes
+                                                .data[index].package_name +
+                                            " | ${adUnderPackageRes.data[index].no_of_posts} Post For ${adUnderPackageRes.data[index].no_of_days} Days",
+                                        style: CommonStyles.getMontserratStyle(
+                                            space_16,
+                                            FontWeight.w600,
+                                            CommonStyles.primaryColor),
                                       ),
-                                      value: adUnderPackageRes.data[index].user_package_id,
+                                      value: adUnderPackageRes
+                                          .data[index].user_package_id,
                                       onChanged: (val) {
                                         debugPrint("Selected_Package - ${val}");
                                         setState(() {
@@ -289,10 +388,12 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
                                           mSelectedPackageId = val;
                                         });
                                       },
-                                    );
-                                  }
-                                }),
-                          ),
+                                    ),
+                                  ),
+                                );
+                              }
+                            }),
+                      ),
                     ),
                     CheckboxListTile(
                       controlAffinity: ListTileControlAffinity.leading,
@@ -306,7 +407,11 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
                     ),
                     CheckboxListTile(
                       controlAffinity: ListTileControlAffinity.leading,
-                      title: Text("I Agree to Follow proper covid guidelines before delivering product & services", style: CommonStyles.getRalewayStyle(space_12, FontWeight.w400, Colors.black),),
+                      title: Text(
+                        "I Agree to Follow proper covid guidelines before delivering product & services",
+                        style: CommonStyles.getRalewayStyle(
+                            space_12, FontWeight.w400, Colors.black),
+                      ),
                       value: mCheckedCovidGuidelines,
                       onChanged: (bool value) {
                         setState(() {
@@ -342,7 +447,14 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
                     )
                   ],
                 )),
-                mShowProgress?Center(child: CircularProgressIndicator(),):Container(height: 0,width: 0,)
+                mShowProgress
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : Container(
+                        height: 0,
+                        width: 0,
+                      )
               ],
             ),
           ),
@@ -374,16 +486,18 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
   }
 
   void onSubmit() {
-    if(mSelectedPackageId.isEmpty){
+    if (mSelectedPackageId.isEmpty) {
       showSnakbar(_scaffoldKey, empty_package);
-    }else if(!mCheckedTnC){
+    } else if (!mCheckedTnC) {
       showSnakbar(_scaffoldKey, accept_tnc);
-    }else if(!mCheckedCovidGuidelines){
+    } else if (!mCheckedCovidGuidelines) {
       showSnakbar(_scaffoldKey, accept_covid_tnc);
-    }else {
+    } else {
       //api call
       widget.adPostReqModel.packageId = mSelectedPackageId;
-      homeBloc..add(PostAdsEvent(token: token, adPostReqModel: widget.adPostReqModel));
+      homeBloc
+        ..add(
+            PostAdsEvent(token: token, adPostReqModel: widget.adPostReqModel));
     }
   }
 
@@ -392,38 +506,42 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
       alignment: Alignment.center,
       padding: EdgeInsets.all(10),
       child: Center(
-          child: Text.rich(
-              TextSpan(
-                  text: 'By continuing, you agree to our ', style: CommonStyles.getRalewayStyle(space_12, FontWeight.w400, Colors.black),
-                  children: <TextSpan>[
-                    TextSpan(
-                        text: 'Terms and Conditions', style: CommonStyles.getMontserratDecorationStyle(space_12, FontWeight.w400, Colors.black, TextDecoration.underline),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launchURL("https://rentozo.com/home/page/terms-and-conditions");
-                          }
-                    ),
-                    TextSpan(
-                        text: ' and ', style: CommonStyles.getRalewayStyle(space_12, FontWeight.w400, Colors.black),
-                        children: <TextSpan>[
-                          TextSpan(
-                              text: 'Privacy Policy', style: CommonStyles.getMontserratDecorationStyle(space_12, FontWeight.w400, Colors.black, TextDecoration.underline),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  launchURL("https://rentozo.com/home/page/privacy-policy");
-                                }
-                          )
-                        ]
-                    )
-                  ]
-              )
-          )
-      ),
+          child: Text.rich(TextSpan(
+              text: 'By continuing, you agree to our ',
+              style: CommonStyles.getRalewayStyle(
+                  space_12, FontWeight.w400, Colors.black),
+              children: <TextSpan>[
+            TextSpan(
+                text: 'Terms and Conditions',
+                style: CommonStyles.getMontserratDecorationStyle(space_12,
+                    FontWeight.w400, Colors.black, TextDecoration.underline),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    launchURL(
+                        "https://rentozo.com/home/page/terms-and-conditions");
+                  }),
+            TextSpan(
+                text: ' and ',
+                style: CommonStyles.getRalewayStyle(
+                    space_12, FontWeight.w400, Colors.black),
+                children: <TextSpan>[
+                  TextSpan(
+                      text: 'Privacy Policy',
+                      style: CommonStyles.getMontserratDecorationStyle(
+                          space_12,
+                          FontWeight.w400,
+                          Colors.black,
+                          TextDecoration.underline),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          launchURL(
+                              "https://rentozo.com/home/page/privacy-policy");
+                        })
+                ])
+          ]))),
     );
   }
-
 }
-
 
 class AppPage2 extends StatefulWidget {
   final String _appTitle;
@@ -445,7 +563,7 @@ class _AppPage2State extends State<AppPage2> {
   bool shouldChangeStack = true;
   final _key = GlobalKey();
   final Completer<WebViewController> _controller =
-  Completer<WebViewController>();
+      Completer<WebViewController>();
 
   _AppPage2State(this._appTitle, this.connectionString);
 
@@ -491,27 +609,36 @@ class _AppPage2State extends State<AppPage2> {
                       builder: (context) {
                         return AlertDialog(
                             content: Container(
-                              height: double.infinity,
-                              width: double.infinity,
-                              child: WebView(
-                                javascriptMode: JavascriptMode.unrestricted,
-                                initialUrl: request.url,
-                                onPageStarted: (value) => {
-                                  if(value?.contains("success")){
-                                    debugPrint("URL2 -->> ${value}"),
-                                    Navigator.pop(context),
-                                    Navigator.of(context)
-                                        .pushReplacement(new MaterialPageRoute(builder: (context) => AdUnderPackageListScreen(widget.adPostReqModel))),
+                          height: double.infinity,
+                          width: double.infinity,
+                          child: WebView(
+                            javascriptMode: JavascriptMode.unrestricted,
+                            initialUrl: request.url,
+                            onPageStarted: (value) => {
+                              if (value?.contains("success"))
+                                {
+                                  debugPrint("URL2 -->> ${value}"),
+                                  Navigator.pop(context),
+                                  Navigator.of(context).pushReplacement(
+                                      new MaterialPageRoute(
+                                          builder: (context) =>
+                                              AdUnderPackageListScreen(
+                                                  widget.adPostReqModel))),
 //                            Navigator.pop(context, "success")
-                                  }else if(value?.contains("failure")){
-                                    debugPrint("URL2 -->> ${value}"),
-                                    Navigator.pop(context),
-                                    Navigator.of(context)
-                                        .pushReplacement(new MaterialPageRoute(builder: (context) => AdUnderPackageListScreen(widget.adPostReqModel))),
-                                  }
-                                },
-                              ),
-                            ));
+                                }
+                              else if (value?.contains("failure"))
+                                {
+                                  debugPrint("URL2 -->> ${value}"),
+                                  Navigator.pop(context),
+                                  Navigator.of(context).pushReplacement(
+                                      new MaterialPageRoute(
+                                          builder: (context) =>
+                                              AdUnderPackageListScreen(
+                                                  widget.adPostReqModel))),
+                                }
+                            },
+                          ),
+                        ));
                       });
                   return NavigationDecision.prevent;
 //                  } else {
@@ -535,4 +662,3 @@ class _AppPage2State extends State<AppPage2> {
     );
   }
 }
-

@@ -207,6 +207,56 @@ class _HomeScreenState extends State<HomeScreen> {
                     state.res is HomeResponse &&
                     state.res.status) {
                   return getHomeUI(state.res);
+                } else if (state is HomeResState &&
+                    state.res is HomeResponse &&
+                    !state.res.status && state?.res?.message!=null && state?.res?.message == API_ERROR_MSG_RETRY) {
+                  return Container(
+                    color: Colors.white,
+                    child: Column(
+                      children: [
+                        CommonAppbarWidget(app_name, skip_for_now, () {
+                          onSearchLocation(context);
+                        }),
+                        Expanded(
+                          child: Center(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Something went wrong!!',
+                                  style: CommonStyles.getRalewayStyle(
+                                      space_16, FontWeight.w500, Colors.black),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    homeBloc
+                                      ..add(
+                                          HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(space_15),
+                                    child: Text(
+                                      'RETRY',
+                                      style: TextStyle(
+                                        fontSize: space_18,
+                                        fontFamily: "Montserrat",
+                                        fontWeight: FontWeight.w700,
+                                        color: CommonStyles.primaryColor,
+                                        decoration: TextDecoration.underline,
+                                        decorationStyle: TextDecorationStyle.solid,
+                                        decorationColor: CommonStyles.primaryColor,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
                 } else {
                   return Container(
                     color: Colors.white,

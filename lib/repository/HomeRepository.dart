@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_rentry_new/model/AdPostReqModel.dart';
@@ -88,18 +89,26 @@ class HomeRepository extends BaseRepository {
     //http secure connection
     var http = makeHttpSecure();
     print("UNDER callHomeApi ${BASE_URL + HOMEPAGE_API}, body--> ${lat} ${lng}");
-    var res = await http.post(BASE_URL + HOMEPAGE_API,
-        headers: {"Token": token}, body: {"lat": lat, "lng": lng});
-    print("PRINTING ${res.body}");
-    code = res.statusCode;
-    if (res.statusCode == 200) {
-      var data = json.decode(res.body);
-      status = data["status"];
-      print("PRINTING_STATUS ${status}");
-      response = HomeResponse.fromJson(data);
-      print("-----------${data}");
-    } else {
-      response = new HomeResponse(status: false, message: API_ERROR_MSG);
+    try{
+      var res = await http.post(BASE_URL + HOMEPAGE_API,
+          headers: {"Token": token}, body: {"lat": lat, "lng": lng}).timeout(const Duration(seconds: 5));;
+      print("PRINTING ${res.body}");
+      code = res.statusCode;
+      if (res.statusCode == 200) {
+        var data = json.decode(res.body);
+        status = data["status"];
+        print("PRINTING_STATUS ${status}");
+        response = HomeResponse.fromJson(data);
+        print("-----------${data}");
+      } else {
+        response = new HomeResponse(status: false, message: API_ERROR_MSG);
+      }
+    }on TimeoutException catch (_) {
+      response = new HomeResponse(status: false, message: API_ERROR_MSG_RETRY);
+      return response;
+    } on SocketException catch (_) {
+      response = new HomeResponse(status: false, message: API_ERROR_MSG_RETRY);
+      return response;
     }
     return response;
   }
@@ -230,34 +239,44 @@ class HomeRepository extends BaseRepository {
         ", filter_subcategory_id ${filter_subcategory_id}, filter_custome_filed_id ${filter_custome_filed_id}, priceSort ${priceSort}, ads_title ${ads_title}, page_number ${page_number}"
         "filter_min ${filter_min}, filter_max ${filter_max}"}");
     print("-------");
-    var res = await http.post(BASE_URL + ADS_SEARCH_API, headers: {
-      "Token": token
-    }, body: {
-      "category_id": categoryId,
-      "subcategory_id":
-          ads_title != null && ads_title.isNotEmpty ? "" : subCategoryId,
+    try{
+      var res = await http.post(BASE_URL + ADS_SEARCH_API, headers: {
+        "Token": token
+      }, body: {
+        "category_id": categoryId,
+        "subcategory_id":
+        ads_title != null && ads_title.isNotEmpty ? "" : subCategoryId,
 //      "radius": radius,
-      "lat": lat,
-      "lng": lng,
-      "filter_subcategory_id": filter_subcategory_id,
-      "filter_custome_filed_id": filter_custome_filed_id,
-      "filter_min": filter_min,
-      "filter_max": filter_max,
-      "sort_by_price": priceSort,
-      "ads_title": ads_title!=null && ads_title.isNotEmpty? ads_title:"",
-      "page_number": page_number,
-    });
-    print("PRINTING NearbySubChild ${res.body}");
-    code = res.statusCode;
-    if (res.statusCode == 200) {
-      var data = json.decode(res.body);
-      status = data["status"];
-      print("PRINTING_STATUS ${status}");
-      response = NearbySubChildCategoryListResponse.fromJson(data);
-      print("MYLIST----------${jsonEncode(response?.data?.ad_list)}");
-    } else {
+        "lat": lat,
+        "lng": lng,
+        "filter_subcategory_id": filter_subcategory_id,
+        "filter_custome_filed_id": filter_custome_filed_id,
+        "filter_min": filter_min,
+        "filter_max": filter_max,
+        "sort_by_price": priceSort,
+        "ads_title": ads_title!=null && ads_title.isNotEmpty? ads_title:"",
+        "page_number": page_number,
+      }).timeout(const Duration(seconds: 5));
+      print("PRINTING NearbySubChild ${res.body}");
+      code = res.statusCode;
+      if (res.statusCode == 200) {
+        var data = json.decode(res.body);
+        status = data["status"];
+        print("PRINTING_STATUS ${status}");
+        response = NearbySubChildCategoryListResponse.fromJson(data);
+        print("MYLIST----------${jsonEncode(response?.data?.ad_list)}");
+      } else {
+        response = new NearbySubChildCategoryListResponse(
+            status: false, message: API_ERROR_MSG);
+      }
+    }on TimeoutException catch (_) {
       response = new NearbySubChildCategoryListResponse(
           status: false, message: API_ERROR_MSG);
+      return response;
+    } on SocketException catch (_) {
+      response = new NearbySubChildCategoryListResponse(
+          status: false, message: API_ERROR_MSG);
+      return response;
     }
     return response;
   }

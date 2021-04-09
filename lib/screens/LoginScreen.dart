@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,6 +55,29 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (err) {
       print("EXCEPTION ${err}");
     }
+  }
+
+  Widget privacyPolicyLinkAndTermsOfService() {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.all(10),
+      child: Center(
+          child: Text.rich(
+              TextSpan(
+                  text: 'If you continue, you are accepting\n', style: CommonStyles.getRalewayStyle(space_12, FontWeight.w400, Colors.black),
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: 'Rentozo Terms and Conditions', style: CommonStyles.getMontserratDecorationStyle(space_12, FontWeight.w400, Colors.black, TextDecoration.underline),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            launchURL("https://rentozo.com/home/page/terms-and-conditions");
+                          }
+                    )
+                  ]
+              )
+          )
+      ),
+    );
   }
 
   _register() {
@@ -280,6 +304,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                     }
                                   }, TextInputType.emailAddress),
                                   SizedBox(
+                                    height: getProportionateScreenHeight(
+                                        context, space_20),
+                                  ),
+                                  privacyPolicyLinkAndTermsOfService(),
+                                   SizedBox(
                                     height: getProportionateScreenHeight(
                                         context, space_20),
                                   ),

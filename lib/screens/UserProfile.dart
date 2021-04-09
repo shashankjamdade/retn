@@ -91,10 +91,12 @@ class _UserProfileState extends State<UserProfile> {
                           height: space_20,
                         ),
                         InkWell(
-                          onTap: (){
+                          onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => EditProfileScreen(mUserprofileRes)),
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      EditProfileScreen(mUserprofileRes)),
                             );
                           },
                           child: Row(
@@ -107,10 +109,14 @@ class _UserProfileState extends State<UserProfile> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(space_35),
                                   child: Container(
-                                    decoration: BoxDecoration(shape: BoxShape.circle),
+                                    decoration:
+                                        BoxDecoration(shape: BoxShape.circle),
                                     child: FadeInImage.assetNetwork(
                                       placeholder: "assets/images/userlogo.png",
-                                      image: mUserprofileRes.data!=null && mUserprofileRes.data.profile_picture != null
+                                      image: mUserprofileRes.data != null &&
+                                              mUserprofileRes
+                                                      .data.profile_picture !=
+                                                  null
                                           ? mUserprofileRes.data.profile_picture
                                           : "http://rentozo.com/assets/img/user.jpg",
                                       fit: BoxFit.fill,
@@ -130,18 +136,21 @@ class _UserProfileState extends State<UserProfile> {
                                           ? mUserprofileRes.data.username
                                           : "",
                                       style: CommonStyles.getMontserratStyle(
-                                          space_18, FontWeight.w600, Colors.black),
+                                          space_18,
+                                          FontWeight.w600,
+                                          Colors.black),
                                     ),
                                     SizedBox(
                                       height: space_15,
                                     ),
                                     Text(
                                       "View and edit profile",
-                                      style: CommonStyles.getMontserratDecorationStyle(
-                                          space_15,
-                                          FontWeight.w600,
-                                          CommonStyles.primaryColor,
-                                          TextDecoration.underline),
+                                      style: CommonStyles
+                                          .getMontserratDecorationStyle(
+                                              space_15,
+                                              FontWeight.w600,
+                                              CommonStyles.primaryColor,
+                                              TextDecoration.underline),
                                     )
                                   ],
                                 ),
@@ -160,55 +169,213 @@ class _UserProfileState extends State<UserProfile> {
                                   onTap: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => CouponListScreen()),
-                                    );
-                                  }, child: ProfileRowWidget("Offers", "assets/images/nearbyoffers.png")),
-                             InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => MyPackageListScreen()),
-                                    );
-                                  }, child: ProfileRowWidget("My Package", "assets/images/mypackage.png")),
-                              InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => PackageScreen()),
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              CouponListScreen()),
                                     );
                                   },
-                                  child: ProfileRowWidget("Upgrade Package", "assets/images/upgradepackage.png")),
-                             InkWell(
+                                  child: ProfileRowWidget("Offers",
+                                      "assets/images/nearbyoffers.png")),
+                              InkWell(
                                   onTap: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => MyAdsListScreen()),
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              MyPackageListScreen()),
                                     );
                                   },
-                                  child: ProfileRowWidget("My Ads", "assets/images/myads.png")),
+                                  child: ProfileRowWidget("My Package",
+                                      "assets/images/mypackage.png")),
                               InkWell(
                                   onTap: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => MyFavScreen()),
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PackageScreen()),
                                     );
-                                  }, child: ProfileRowWidget("My Favourites", "assets/images/myfavourites.png")),
+                                  },
+                                  child: ProfileRowWidget("Upgrade Package",
+                                      "assets/images/upgradepackage.png")),
                               InkWell(
                                   onTap: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => NotificationListScreen()),
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              MyAdsListScreen()),
                                     );
-                                  }, child: ProfileRowWidget("Notification", "assets/images/notification.png")),
-                           InkWell(
+                                  },
+                                  child: ProfileRowWidget(
+                                      "My Ads", "assets/images/myads.png")),
+                              InkWell(
                                   onTap: () {
-                                    StateContainer.of(context).mLoginResponse = null;
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => MyFavScreen()),
+                                    );
+                                  },
+                                  child: ProfileRowWidget("My Favourites",
+                                      "assets/images/myfavourites.png")),
+                              InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              NotificationListScreen()),
+                                    );
+                                  },
+                                  child: ProfileRowWidget("Notification",
+                                      "assets/images/notification.png")),
+                              InkWell(
+                                  onTap: () {
+                                    StateContainer.of(context).mLoginResponse =
+                                        null;
                                     Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => ScreenOne(true)),
-                                        ModalRoute.withName("/Home")
-                                    );
-                                  }, child: ProfileRowWidget("Logout", "assets/images/logout.png")),
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ScreenOne(true)),
+                                        ModalRoute.withName("/Home"));
+                                  },
+                                  child: ProfileRowWidget(
+                                      "Logout", "assets/images/logout.png")),
+                              SizedBox(
+                                height: space_15,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  launchURL(
+                                      "https://rentozo.com/home/page/about-us");
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(space_15),
+                                  child: Text(
+                                    'About us',
+                                    style: TextStyle(
+                                      fontSize: space_16,
+                                      fontFamily: "Montserrat",
+                                      fontWeight: FontWeight.w700,
+                                      color: CommonStyles.primaryColor,
+                                      decoration: TextDecoration.underline,
+                                      decorationStyle:
+                                          TextDecorationStyle.solid,
+                                      decorationColor:
+                                          CommonStyles.primaryColor,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: space_5,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  launchURL(
+                                      "https://rentozo.com/home/page/tips-of-security");
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(space_15),
+                                  child: Text(
+                                    'Tips Of Security',
+                                    style: TextStyle(
+                                      fontSize: space_16,
+                                      fontFamily: "Montserrat",
+                                      fontWeight: FontWeight.w700,
+                                      color: CommonStyles.primaryColor,
+                                      decoration: TextDecoration.underline,
+                                      decorationStyle:
+                                          TextDecorationStyle.solid,
+                                      decorationColor:
+                                          CommonStyles.primaryColor,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: space_5,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  launchURL(
+                                      "https://rentozo.com/home/page/terms-and-conditions");
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(space_15),
+                                  child: Text(
+                                    'Terms & Conditions',
+                                    style: TextStyle(
+                                      fontSize: space_16,
+                                      fontFamily: "Montserrat",
+                                      fontWeight: FontWeight.w700,
+                                      color: CommonStyles.primaryColor,
+                                      decoration: TextDecoration.underline,
+                                      decorationStyle:
+                                          TextDecorationStyle.solid,
+                                      decorationColor:
+                                          CommonStyles.primaryColor,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: space_5,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  launchURL(
+                                      "https://rentozo.com/home/page/privacy-policy");
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(space_15),
+                                  child: Text(
+                                    'Privacy Policy',
+                                    style: TextStyle(
+                                      fontSize: space_16,
+                                      fontFamily: "Montserrat",
+                                      fontWeight: FontWeight.w700,
+                                      color: CommonStyles.primaryColor,
+                                      decoration: TextDecoration.underline,
+                                      decorationStyle:
+                                          TextDecorationStyle.solid,
+                                      decorationColor:
+                                          CommonStyles.primaryColor,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: space_5,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  launchURL(
+                                      "https://rentozo.com/contact");
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(space_15),
+                                  child: Text(
+                                    'Contact us',
+                                    style: TextStyle(
+                                      fontSize: space_16,
+                                      fontFamily: "Montserrat",
+                                      fontWeight: FontWeight.w700,
+                                      color: CommonStyles.primaryColor,
+                                      decoration: TextDecoration.underline,
+                                      decorationStyle:
+                                          TextDecorationStyle.solid,
+                                      decorationColor:
+                                          CommonStyles.primaryColor,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: space_90,
+                              )
                             ],
                           ),
                         )
@@ -224,6 +391,7 @@ class _UserProfileState extends State<UserProfile> {
       ),
     );
   }
+
   Widget getProgressUI() {
     return SafeArea(
       child: Scaffold(
@@ -252,5 +420,4 @@ class _UserProfileState extends State<UserProfile> {
       ),
     );
   }
-
 }

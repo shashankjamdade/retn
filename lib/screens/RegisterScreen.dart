@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -48,6 +49,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String mName = "";
   String mEmail = "";
   String mOTP = "";
+  var mCheckedTnC = false;
   String mVerifiedMobile = "";
   String mFcmToken = "";
   bool _obscureText = true;
@@ -108,6 +110,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _onLoginUserNameFocusChange() {
     //Force updated once if focus changed
     setState(() {});
+  }
+
+  Widget privacyPolicyLinkAndTermsOfService() {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.all(10),
+      child: Center(
+          child: Text.rich(
+              TextSpan(
+                  text: 'I have read and agree to the ', style: CommonStyles.getRalewayStyle(space_12, FontWeight.w400, Colors.black),
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: 'Terms and Conditions', style: CommonStyles.getMontserratDecorationStyle(space_12, FontWeight.w400, Colors.black, TextDecoration.underline),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            launchURL("https://rentozo.com/home/page/terms-and-conditions");
+                          }
+                    )
+                  ]
+              )
+          )
+      ),
+    );
   }
 
   @override
@@ -230,6 +255,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 child: Text("Next", style: CommonStyles.getMontserratStyle(space_14, FontWeight.w600, Colors.white),))),
                           ),
                           SizedBox(height: getProportionateScreenHeight(context, space_20),),
+                          CheckboxListTile(
+                            controlAffinity: ListTileControlAffinity.leading,
+                            title: privacyPolicyLinkAndTermsOfService(),
+                            value: mCheckedTnC,
+                            onChanged: (bool value) {
+                              setState(() {
+                                mCheckedTnC = value;
+                              });
+                            },
+                          ),
+                          SizedBox(height: getProportionateScreenHeight(context, space_20),),
                           Align(
                               alignment: Alignment.center,
                               child: Text("OR", style: CommonStyles.getRalewayStyle(space_18, FontWeight.w600, CommonStyles.primaryColor),)),
@@ -316,6 +352,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
      showSnakbar(_scaffoldKey, empty_full_name);
     }else if(emailController.text.trim().isEmpty){
      showSnakbar(_scaffoldKey, empty_email);
+    }else if(!mCheckedTnC){
+     showSnakbar(_scaffoldKey, accept_tnc);
     }else if(mFcmToken==null || mFcmToken.isEmpty){
      showSnakbar(_scaffoldKey, fcm_token_missing);
     }else{

@@ -146,8 +146,71 @@ class _NearByChildSubCategoryScreenState
         listener: (context, state) {},
         child: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {
-            if (state is NearbySubChildCategoryListResState) {
-              return setDataToUI(state.res);
+            if (state is NearbySubChildCategoryListResState && state?.res is NearbySubChildCategoryListResponse) {
+              if(state?.res?.status){
+                return setDataToUI(state.res);
+              }else{
+                return Container(
+                  color: Colors.white,
+                  child: Column(
+                    children: [
+                      CommonAppbarWidget(app_name, skip_for_now, () {
+                        onSearchLocation(context);
+                      }),
+                      Expanded(
+                        child: Center(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Something went wrong!!',
+                                style: CommonStyles.getRalewayStyle(
+                                    space_16, FontWeight.w500, Colors.black),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  homeBloc
+                                    ..add(NearbySubChildCategoryListReqEvent(
+                                        token: token,
+                                        categoryId: widget.categoryId,
+                                        subcategory_id: widget.subCategoryId,
+                                        radius: widget.radius,
+                                        lat: mLat,
+                                        lng: mLng,
+                                        filter_subcategory_id: filter_subcategory_id,
+                                        filter_custome_filed_id: filter_custome_filed_id,
+                                        filter_min: filter_min,
+                                        filter_max: filter_max,
+                                        sort_by_price:
+                                        priceSort != null && priceSort.isNotEmpty ? priceSort : "",
+                                        ads_title: widget.ads_title != null ? widget.ads_title : "",
+                                        page_number: "${page_number}"));
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(space_15),
+                                  child: Text(
+                                    'RETRY',
+                                    style: TextStyle(
+                                      fontSize: space_18,
+                                      fontFamily: "Montserrat",
+                                      fontWeight: FontWeight.w700,
+                                      color: CommonStyles.primaryColor,
+                                      decoration: TextDecoration.underline,
+                                      decorationStyle: TextDecorationStyle.solid,
+                                      decorationColor: CommonStyles.primaryColor,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
             } else {
               return Container(
                 color: Colors.white,

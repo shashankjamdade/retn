@@ -252,6 +252,7 @@ const String CUSTOMFIELD_MULTI_RADIO = "multiple_radio";
 const String LOGGEDIN_ERROR = "LOGGEDIN_ERROR";
 const String LOGGEDIN_CANCELLED = "LOGGEDIN_CANCELLED";
 const String API_ERROR_MSG = "Something went wrong, Please try again later!";
+const String API_ERROR_MSG_RETRY = "Something went wrong, Please try again!";
 //const String GOOGLE_API_KEY = "AIzaSyA-7MnlahCeTpKE5mOD5XQf-8ixgbdtDSs";
 //const String GOOGLE_API_KEY = "AIzaSyDocGjBHvdLuYdOmdBA2oR6Vt6qlCMR8FI";
 const String GOOGLE_API_KEY = "AIzaSyD3tR0ziIBVRteQ_t7Rd1rIrQoqr08Iv4Q";
