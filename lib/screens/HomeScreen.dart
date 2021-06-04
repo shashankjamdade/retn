@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -27,12 +28,13 @@ import 'package:geocoder/geocoder.dart';
 import 'package:geocoder/model.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class HomeScreen extends StatefulWidget {
   var isRedirectToMyAds = false;
   var isRedirectToChat = false;
-
-  HomeScreen({this.isRedirectToMyAds, this.isRedirectToChat});
+  var shouldShowShowcase = false;
+  HomeScreen({this.isRedirectToMyAds, this.isRedirectToChat, this.shouldShowShowcase});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -47,11 +49,17 @@ class _HomeScreenState extends State<HomeScreen> {
   var mLat = "";
   var mLng = "";
   CouponRes mCouponRes;
+  var isNeedToShowRetry = false;
+  GlobalKey postAdKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    debugPrint("ENTRY_HOME_SCREEN---------");
+    if(widget.shouldShowShowcase!=null && (!widget.shouldShowShowcase)){
+      debugPrint("ENTRY_HOME_SCREEN--------- ${widget.shouldShowShowcase}");
+      WidgetsBinding.instance.addPostFrameCallback((_) =>
+          ShowCaseWidget.of(context).startShowCase([postAdKey]));
+    }
   }
 
   @override
@@ -127,11 +135,11 @@ class _HomeScreenState extends State<HomeScreen> {
             "PREFS_STORED_LOGIN-----> ${prefs.getString(USER_LOCATION_ADDRESS)}");
         mLat = position.latitude.toString();
         mLng = position.longitude.toString();
-//        if (mHomeResponse == null) {
-//          homeBloc
-//            ..add(
-//                HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
-//        }
+       // if (mHomeResponse == null && isNeedToShowRetry) {
+       //   homeBloc
+       //     ..add(
+       //         HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+       // }
       } else {
         //Show dialog for location permission
       }
@@ -143,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
   resetUiAgain(CouponRes couponRes) {
     mCouponRes = couponRes;
     if (mHomeResponse != null) {
-      getHomeUI(mHomeResponse);
+      getHomeUI(mHomeResponse, context);
     }
   }
 
@@ -175,6 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
 //                  textColor: Colors.white,
 //                  fontSize: space_14);
                 if (state.res.status) {
+                  isNeedToShowRetry = false;
                   mHomeResponse = state.res;
                   if (widget.isRedirectToMyAds != null &&
                       widget.isRedirectToMyAds) {
@@ -193,10 +202,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }
                 }else{
-                  if (mHomeResponse == null) {
+                  if (state.res.message!=null && state.res.message != API_ERROR_MSG_RETRY) {
+                    isNeedToShowRetry = false;
                     homeBloc
                       ..add(
                           HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+                  }else{
+                    isNeedToShowRetry = true;
                   }
                 }
               }
@@ -204,59 +216,58 @@ class _HomeScreenState extends State<HomeScreen> {
             child: BlocBuilder<HomeBloc, HomeState>(
               builder: (context, state) {
                 if (state is HomeResState &&
-                    state.res is HomeResponse &&
-                    state.res.status) {
-                  return getHomeUI(state.res);
-                } else if (state is HomeResState &&
-                    state.res is HomeResponse &&
-                    !state.res.status && state?.res?.message!=null && state?.res?.message == API_ERROR_MSG_RETRY) {
-                  return Container(
-                    color: Colors.white,
-                    child: Column(
-                      children: [
-                        CommonAppbarWidget(app_name, skip_for_now, () {
-                          onSearchLocation(context);
-                        }),
-                        Expanded(
-                          child: Center(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Something went wrong!!',
-                                  style: CommonStyles.getRalewayStyle(
-                                      space_16, FontWeight.w500, Colors.black),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    homeBloc
-                                      ..add(
-                                          HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(space_15),
-                                    child: Text(
-                                      'RETRY',
-                                      style: TextStyle(
-                                        fontSize: space_18,
-                                        fontFamily: "Montserrat",
-                                        fontWeight: FontWeight.w700,
-                                        color: CommonStyles.primaryColor,
-                                        decoration: TextDecoration.underline,
-                                        decorationStyle: TextDecorationStyle.solid,
-                                        decorationColor: CommonStyles.primaryColor,
+                    state.res is HomeResponse) {
+                  if(state.res.status){
+                    return getHomeUI(state.res, context);
+                  }else{
+                    return Container(
+                      color: Colors.white,
+                      child: Column(
+                        children: [
+                          CommonAppbarWidget(app_name, skip_for_now, () {
+                            onSearchLocation(context);
+                          }),
+                          Expanded(
+                            child: Center(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Something went wrong!!',
+                                    style: CommonStyles.getRalewayStyle(
+                                        space_16, FontWeight.w500, Colors.black),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      homeBloc
+                                        ..add(
+                                            HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(space_15),
+                                      child: Text(
+                                        'RETRY',
+                                        style: TextStyle(
+                                          fontSize: space_18,
+                                          fontFamily: "Montserrat",
+                                          fontWeight: FontWeight.w700,
+                                          color: CommonStyles.primaryColor,
+                                          decoration: TextDecoration.underline,
+                                          decorationStyle: TextDecorationStyle.solid,
+                                          decorationColor: CommonStyles.primaryColor,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
+                        ],
+                      ),
+                    );
+                  }
                 } else {
                   return Container(
                     color: Colors.white,
@@ -273,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget getHomeUI(HomeResponse homeResponse) {
+  Widget getHomeUI(HomeResponse homeResponse, BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -401,7 +412,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 )
               ],
             )),
-            CommonBottomNavBarWidget(),
+            CommonBottomNavBarHomeWidget(postKey: postAdKey,),
           ],
         ),
       ),

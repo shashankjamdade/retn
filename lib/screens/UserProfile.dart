@@ -62,8 +62,12 @@ class _UserProfileState extends State<UserProfile> {
           },
           child: BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state) {
-              if (state is GetUserProfileResState) {
-                return getScreenUi(state);
+              if (state is GetUserProfileResState && state.res is UserProfileResponse) {
+                if(state.res.status){
+                  return getScreenUi(state);
+                }else{
+                  return getErrorUI();
+                }
               } else {
                 return getProgressUI();
               }
@@ -92,12 +96,7 @@ class _UserProfileState extends State<UserProfile> {
                         ),
                         InkWell(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      EditProfileScreen(mUserprofileRes)),
-                            );
+                            redirectToEditScreen();
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -352,8 +351,7 @@ class _UserProfileState extends State<UserProfile> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  launchURL(
-                                      "https://rentozo.com/contact");
+                                  launchURL("https://rentozo.com/contact");
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(space_15),
@@ -420,4 +418,72 @@ class _UserProfileState extends State<UserProfile> {
       ),
     );
   }
+
+  Widget getErrorUI() {
+    return SafeArea(
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                CommonAppbarWidget(app_name, skip_for_now, () {
+                  onSearchLocation(context);
+                }),
+                Expanded(
+                  child: Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Something went wrong!!',
+                          style: CommonStyles.getRalewayStyle(
+                              space_16, FontWeight.w500, Colors.black),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            homeBloc
+                              ..add(GetUserProfileDataEvent(token: token));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(space_15),
+                            child: Text(
+                              'RETRY',
+                              style: TextStyle(
+                                fontSize: space_18,
+                                fontFamily: "Montserrat",
+                                fontWeight: FontWeight.w700,
+                                color: CommonStyles.primaryColor,
+                                decoration: TextDecoration.underline,
+                                decorationStyle: TextDecorationStyle.solid,
+                                decorationColor: CommonStyles.primaryColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            CommonBottomNavBarWidget(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  redirectToEditScreen() async {
+    var res = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+              EditProfileScreen(mUserprofileRes)),
+    );
+    if(res!=null && res == "true"){
+      homeBloc..add(GetUserProfileDataEvent(token: token));
+    }
+  }
+
 }

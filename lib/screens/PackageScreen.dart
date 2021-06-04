@@ -128,7 +128,7 @@ class _PackageScreenState extends State<PackageScreen> {
     mSelectedPackageName = title;
     mSelectedPackageAmt = amt;
     var options = {
-      'key': 'rzp_test_NNbwJ9tmM0fbxj',
+      'key': RAZORPAY_KEY,
       'amount': "${amtNum*100}",
       'name': 'Rentozo',
       'description': 'Buy new package',

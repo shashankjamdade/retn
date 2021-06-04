@@ -147,7 +147,7 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
     var finalAmt = amtNum * 100;
     debugPrint("PAYYYY ${finalAmt} for $packageId");
     var options = {
-      'key': 'rzp_test_NNbwJ9tmM0fbxj',
+      'key': RAZORPAY_KEY,
       'amount': "${finalAmt}",
       'name': packageName,
       'description': 'Buy new package',

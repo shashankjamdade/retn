@@ -187,6 +187,8 @@ const String USER_LOCATION_PINCODE = "USER_LOCATION_PINCODE";
 const String USER_LOCATION_LAT = "USER_LOCATION_LAT";
 const String USER_LOCATION_LONG = "USER_LOCATION_LONG";
 const String USER_NAME = "USER_NAME";
+const String IS_SHOWCASE_VIEWED = "IS_SHOWCASE_VIEWED";
+const String IS_INTRO_VIEWED = "IS_INTRO_VIEWED";
 const String USER_EMAIL = "USER_EMAIL";
 const String USER_MOBILE = "USER_MOBILE";
 const String IS_LOGGEDIN = "IS_LOGGEDIN";
@@ -256,6 +258,7 @@ const String API_ERROR_MSG_RETRY = "Something went wrong, Please try again!";
 //const String GOOGLE_API_KEY = "AIzaSyA-7MnlahCeTpKE5mOD5XQf-8ixgbdtDSs";
 //const String GOOGLE_API_KEY = "AIzaSyDocGjBHvdLuYdOmdBA2oR6Vt6qlCMR8FI";
 const String GOOGLE_API_KEY = "AIzaSyD3tR0ziIBVRteQ_t7Rd1rIrQoqr08Iv4Q";
+const String RAZORPAY_KEY = "rzp_live_XrLN5GHuHInUOx";
 
 //https://maps.googleapis.com/maps/api/place/autocomplete/json?input=mahatashtr&types=geocode&language=fr&sensor=true&key=AIzaSyA-7MnlahCeTpKE5mOD5XQf-8ixgbdtDSs
 

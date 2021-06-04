@@ -207,7 +207,7 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
                       Align(
                         alignment: Alignment.topLeft,
                         child: Text(
-                          "Please provide detail accordingly to create account",
+                          "Please provide details to create an account",
                           style: CommonStyles.getRalewayStyle(
                               space_15, FontWeight.w500, CommonStyles.blue),
                         ),
@@ -379,18 +379,18 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
                       SizedBox(
                         height: getProportionateScreenHeight(context, space_50),
                       ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          rent_pe_tagline,
-                          style: TextStyle(
-                              fontSize: space_15,
-                              fontFamily: CommonStyles.FONT_RALEWAY,
-                              fontWeight: FontWeight.w400,
-                              color: CommonStyles.primaryColor,
-                              decoration: TextDecoration.none),
-                        ),
-                      ),
+                      // Align(
+                      //   alignment: Alignment.center,
+                      //   child: Text(
+                      //     rent_pe_tagline,
+                      //     style: TextStyle(
+                      //         fontSize: space_15,
+                      //         fontFamily: CommonStyles.FONT_RALEWAY,
+                      //         fontWeight: FontWeight.w400,
+                      //         color: CommonStyles.primaryColor,
+                      //         decoration: TextDecoration.none),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

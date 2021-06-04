@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_rentry_new/model/UserLocationSelected.dart';
 import 'package:flutter_rentry_new/model/ad_delete_res.dart';
 import 'package:flutter_rentry_new/model/ad_under_package_res.dart';
 import 'package:flutter_rentry_new/model/common_response.dart';
@@ -58,6 +59,15 @@ class FailedState extends HomeState {
 
   @override
   List<Object> get props => [obj];
+}
+
+class UserCurrLocationState extends HomeState {
+  final obj;
+
+  UserCurrLocationState({@required this.obj});
+
+  @override
+  List<UserLocationSelected> get props => [obj];
 }
 
 class HomeResState extends HomeState {

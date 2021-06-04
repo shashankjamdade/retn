@@ -85,37 +85,42 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return  BlocProvider(
-        create: (context) => homeBloc..add(GetAllChatMsgEvent(token: token, indexId: widget.indexId, adId: widget.adId)),
-        child: BlocListener(
-          cubit: homeBloc,
-          listener: (context, state) {
-            if (state is GetAllChatMsgResState) {
-              mGetAllChatMsgRes = state.res;
-              new HomeRepository().callReadChat(
-                  StateContainer.of(context)
-                      .mLoginResponse
-                      .data
-                      .token,
-                  mGetAllChatMsgRes?.data?.ad_and_user_details?.inbox_id);
-            }else if(state is SendMsgResState){
-              if(msgList==null || msgList.length==0){
-                homeBloc..add(GetAllChatMsgEvent(token: token, indexId: widget.indexId, adId: widget.adId));
-              }
-            }
-          },
-          child: BlocBuilder<HomeBloc, HomeState>(
-            builder: (context, state) {
-              if(state is GetAllChatMsgResState){
-                return getScreenUI(state);
-              }if(state is SendMsgResState){
-                return getScreenUI(state);
-              }else{
-                return getProgressScreenUI(-1);
+    return  WillPopScope(
+      onWillPop: (){
+        Navigator.pop(context, "true");
+      },
+      child: BlocProvider(
+          create: (context) => homeBloc..add(GetAllChatMsgEvent(token: token, indexId: widget.indexId, adId: widget.adId)),
+          child: BlocListener(
+            cubit: homeBloc,
+            listener: (context, state) {
+              if (state is GetAllChatMsgResState) {
+                mGetAllChatMsgRes = state.res;
+                new HomeRepository().callReadChat(
+                    StateContainer.of(context)
+                        .mLoginResponse
+                        .data
+                        .token,
+                    mGetAllChatMsgRes?.data?.ad_and_user_details?.inbox_id);
+              }else if(state is SendMsgResState){
+                if(msgList==null || msgList.length==0){
+                  homeBloc..add(GetAllChatMsgEvent(token: token, indexId: widget.indexId, adId: widget.adId));
+                }
               }
             },
-          ),
-        ));
+            child: BlocBuilder<HomeBloc, HomeState>(
+              builder: (context, state) {
+                if(state is GetAllChatMsgResState){
+                  return getScreenUI(state);
+                }if(state is SendMsgResState){
+                  return getScreenUI(state);
+                }else{
+                  return getProgressScreenUI(-1);
+                }
+              },
+            ),
+          )),
+    );
   }
 
   Widget getScreenUI(HomeState state){

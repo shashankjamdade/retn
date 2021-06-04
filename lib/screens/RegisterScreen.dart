@@ -49,7 +49,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String mName = "";
   String mEmail = "";
   String mOTP = "";
-  var mCheckedTnC = false;
+  var mCheckedTnC = true;
   String mVerifiedMobile = "";
   String mFcmToken = "";
   bool _obscureText = true;
@@ -216,7 +216,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             child: Align(
                               alignment: Alignment.topLeft,
                               child: Text(
-                                "Please provide detail accordingly to create account",
+                                "Please provide details to create an account",
                                 style: CommonStyles.getRalewayStyle(
                                     space_15, FontWeight.w500, CommonStyles.blue),
                               ),
@@ -243,6 +243,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             }
                           }, TextInputType.emailAddress),
                           SizedBox(height: getProportionateScreenHeight(context, space_20),),
+                          CheckboxListTile(
+                            controlAffinity: ListTileControlAffinity.leading,
+                            title: privacyPolicyLinkAndTermsOfService(),
+                            activeColor: CommonStyles.primaryColor,
+                            value: mCheckedTnC,
+                            onChanged: (bool value) {
+                              setState(() {
+                                mCheckedTnC = value;
+                              });
+                            },
+                          ),
+                          SizedBox(height: getProportionateScreenHeight(context, space_20),),
                           InkWell(
                             onTap: (){
                               onSignup();
@@ -250,20 +262,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             child: Center(child: Container(
                                 padding: EdgeInsets.symmetric(vertical: space_10, horizontal: space_15),
                                 decoration: BoxDecoration(
-                                  color: CommonStyles.primaryColor
+                                    color: CommonStyles.primaryColor
                                 ),
                                 child: Text("Next", style: CommonStyles.getMontserratStyle(space_14, FontWeight.w600, Colors.white),))),
-                          ),
-                          SizedBox(height: getProportionateScreenHeight(context, space_20),),
-                          CheckboxListTile(
-                            controlAffinity: ListTileControlAffinity.leading,
-                            title: privacyPolicyLinkAndTermsOfService(),
-                            value: mCheckedTnC,
-                            onChanged: (bool value) {
-                              setState(() {
-                                mCheckedTnC = value;
-                              });
-                            },
                           ),
                           SizedBox(height: getProportionateScreenHeight(context, space_20),),
                           Align(
@@ -305,18 +306,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ),
                           SizedBox(height: getProportionateScreenHeight(context, space_50),),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              rent_pe_tagline,
-                              style: TextStyle(
-                                  fontSize: space_15,
-                                  fontFamily: CommonStyles.FONT_RALEWAY,
-                                  fontWeight: FontWeight.w400,
-                                  color: CommonStyles.primaryColor,
-                                  decoration: TextDecoration.none),
-                            ),
-                          ),
+                          // Align(
+                          //   alignment: Alignment.center,
+                          //   child: Text(
+                          //     rent_pe_tagline,
+                          //     style: TextStyle(
+                          //         fontSize: space_15,
+                          //         fontFamily: CommonStyles.FONT_RALEWAY,
+                          //         fontWeight: FontWeight.w400,
+                          //         color: CommonStyles.primaryColor,
+                          //         decoration: TextDecoration.none),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),

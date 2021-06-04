@@ -96,23 +96,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => homeBloc..add(InitialEvent()),
-      child: BlocListener(
-          cubit: homeBloc,
-          listener: (context, state) {
-            if ((state is ChangePwdResState || state is UserUpdateResState) &&
-                state.res is CommonResponse) {
-              if (state.res.msg != null) {
-                showSnakbar(_scaffoldKey, state.res.msg);
+    return WillPopScope(
+      onWillPop: (){
+        Navigator.pop(context, "true");
+      },
+      child: BlocProvider(
+        create: (context) => homeBloc..add(InitialEvent()),
+        child: BlocListener(
+            cubit: homeBloc,
+            listener: (context, state) {
+              if ((state is ChangePwdResState || state is UserUpdateResState) &&
+                  state.res is CommonResponse) {
+                if (state.res.msg != null) {
+                  showSnakbar(_scaffoldKey, state.res.msg);
+                }
               }
-            }
-          },
-          child: BlocBuilder<HomeBloc, HomeState>(
-            builder: (context, state) {
-              return getScreenUI(state);
             },
-          )),
+            child: BlocBuilder<HomeBloc, HomeState>(
+              builder: (context, state) {
+                return getScreenUI(state);
+              },
+            )),
+      ),
     );
   }
 

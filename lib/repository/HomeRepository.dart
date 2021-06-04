@@ -103,14 +103,16 @@ class HomeRepository extends BaseRepository {
       } else {
         response = new HomeResponse(status: false, message: API_ERROR_MSG);
       }
+      return response;
     }on TimeoutException catch (_) {
+      debugPrint("TIMEOUT_HOME");
       response = new HomeResponse(status: false, message: API_ERROR_MSG_RETRY);
       return response;
     } on SocketException catch (_) {
+      debugPrint("SOCKET_TIMEOUT_HOME");
       response = new HomeResponse(status: false, message: API_ERROR_MSG_RETRY);
       return response;
     }
-    return response;
   }
 
   Future<ItemDetailResponse> callItemDetailApi(
@@ -288,18 +290,26 @@ class HomeRepository extends BaseRepository {
     //http secure connection
     var http = makeHttpSecure();
     print("UNDER callGetCategoryListApi ${token}, ${BASE_URL + CATEGORY_API}");
-    var res =
-        await http.get(BASE_URL + CATEGORY_API, headers: {'Token': token});
-    print("PRINTING ${res.body}");
+    try{
+      var res =
+      await http.get(BASE_URL + CATEGORY_API, headers: {'Token': token}).timeout(const Duration(seconds: 5));
+      print("PRINTING ${res.body}");
 //    code = res.statusCode;
-    if (res.statusCode == 200) {
-      var data = json.decode(res.body);
-      status = data["status"];
-      print("PRINTING_STATUS ${status}");
-      response = GetCategoryResponse.fromJson(data);
-      print("-----------${data}");
-    } else {
+      if (res.statusCode == 200) {
+        var data = json.decode(res.body);
+        status = data["status"];
+        print("PRINTING_STATUS ${status}");
+        response = GetCategoryResponse.fromJson(data);
+        print("-----------${data}");
+      } else {
+        response = new GetCategoryResponse(message: API_ERROR_MSG, status: false);
+      }
+    }on TimeoutException catch (_) {
       response = new GetCategoryResponse(message: API_ERROR_MSG, status: false);
+      return response;
+    } on SocketException catch (_) {
+      response = new GetCategoryResponse(message: API_ERROR_MSG, status: false);
+      return response;
     }
     return response;
   }
@@ -367,20 +377,30 @@ class HomeRepository extends BaseRepository {
     var http = makeHttpSecure();
     print("UNDER callUserProfileApi ${token}");
     Map<String, String> mainheader = {"token": token};
-    var res = await http.get(
-      BASE_URL + GET_USER_DATA,
-      headers: mainheader,
-    );
-    print("PRINTING ${res.body}");
-    if (res.statusCode == 200) {
-      var data = json.decode(res.body);
-      status = data["status"];
-      print("PRINTING_STATUS ${status}");
-      response = UserProfileResponse.fromJson(data);
-      print("-----------${data}");
-    } else {
+    try{
+      var res = await http.get(
+        BASE_URL + GET_USER_DATA,
+        headers: mainheader,
+      ).timeout(const Duration(seconds: 5));
+      print("PRINTING ${res.body}");
+      if (res.statusCode == 200) {
+        var data = json.decode(res.body);
+        status = data["status"];
+        print("PRINTING_STATUS ${status}");
+        response = UserProfileResponse.fromJson(data);
+        print("-----------${data}");
+      } else {
+        response = new UserProfileResponse(
+            message: API_ERROR_MSG, status: false, data: null);
+      }
+    }on TimeoutException catch (_) {
       response = new UserProfileResponse(
           message: API_ERROR_MSG, status: false, data: null);
+      return response;
+    } on SocketException catch (_) {
+      response = new UserProfileResponse(
+          message: API_ERROR_MSG, status: false, data: null);
+      return response;
     }
     return response;
   }
@@ -569,18 +589,28 @@ class HomeRepository extends BaseRepository {
     NewChatlistRes response;
     print("UNDER NewChatlistRes ${token} ");
     Map<String, String> mainheader = {"token": token};
-    var res = await http.get(
-      BASE_URL + GET_NEW_CHAT_LIST /*+ GET_CHAT_LIST*/,
-      headers: mainheader,
-    );
-    print("PRINTING ${res.body}");
-    if (res.statusCode == 200) {
-      var data = json.decode(res.body);
-      response = NewChatlistRes.fromJson(data);
-      print("-----------${data}");
-    } else {
+    try{
+      var res = await http.get(
+        BASE_URL + GET_NEW_CHAT_LIST /*+ GET_CHAT_LIST*/,
+        headers: mainheader,
+      ).timeout(const Duration(seconds: 5));
+      print("PRINTING ${res.body}");
+      if (res.statusCode == 200) {
+        var data = json.decode(res.body);
+        response = NewChatlistRes.fromJson(data);
+        print("-----------${data}");
+      } else {
+        response =
+        new NewChatlistRes(msg: API_ERROR_MSG, status: "false", data: null);
+      }
+    }on TimeoutException catch (_) {
       response =
-          new NewChatlistRes(msg: API_ERROR_MSG, status: "false", data: null);
+      new NewChatlistRes(msg: API_ERROR_MSG, status: "false", data: null);
+      return response;
+    } on SocketException catch (_) {
+      response =
+      new NewChatlistRes(msg: API_ERROR_MSG, status: "false", data: null);
+      return response;
     }
     return response;
   }

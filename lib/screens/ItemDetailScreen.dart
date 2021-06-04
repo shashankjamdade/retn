@@ -498,7 +498,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                       ? onViewAllClick(
                                           context,
                                           SIMILAR_PRODUCT,
-                                          itemDetailResponse.similar_ads[0].id,
+                                          itemDetailResponse.similar_ads[0].category,
                                           itemDetailResponse
                                               .similar_ads[0].category_name)
                                       : doNothing();
@@ -539,7 +539,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                       ? onViewAllClick(
                                           context,
                                           SIMILAR_PRODUCT,
-                                          itemDetailResponse.seller_all_product[0].id,
+                                          itemDetailResponse.seller_all_product[0].category,
                                           itemDetailResponse
                                               .seller_all_product[0].category_name)
                                       : doNothing();

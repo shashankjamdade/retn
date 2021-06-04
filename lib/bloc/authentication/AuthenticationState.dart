@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_rentry_new/model/GoogleFbLoginResponse.dart';
+import 'package:flutter_rentry_new/model/UserStatusObj.dart';
 import 'package:flutter_rentry_new/model/common_response.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/model/register_response.dart';
@@ -25,7 +26,7 @@ class CheckLoggedInState extends AuthenticationState {
   final obj;
   CheckLoggedInState({@required this.obj});
   @override
-  List<LoginResponse> get props => [obj];
+  List<UserStatusObj> get props => [obj];
 }
 
 class FailedAuthenticationState extends AuthenticationState {

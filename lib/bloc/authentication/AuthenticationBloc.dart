@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/model/RegisterReq.dart';
+import 'package:flutter_rentry_new/model/UserStatusObj.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/repository/AuthenticationRepository.dart';
 import 'package:flutter_rentry_new/repository/HomeRepository.dart';
@@ -43,12 +43,19 @@ class AuthenticationBloc
       yield* makeSocialLogin(event.emailOrMobile, event.deviceToken);
     } else if (event is RegisterReqAuthenticationEvent) {
       yield ProgressAuthenticationState();
-      yield* makeRegister(RegisterReq(event.name, event.mobile, event.email,
-          event.password, event.loginType, event.otp, event.deviceToken, event.reffCode));
+      yield* makeRegister(RegisterReq(
+          event.name,
+          event.mobile,
+          event.email,
+          event.password,
+          event.loginType,
+          event.otp,
+          event.deviceToken,
+          event.reffCode));
     } else if (event is LoginInViaFacebookEvent) {
       yield ProgressAuthenticationState();
       yield* makeFbLogin();
-    }else if (event is SendOtpAuthEvent) {
+    } else if (event is SendOtpAuthEvent) {
       yield ProgressAuthenticationState();
       yield* callSendOtp(event.contact, event.otpType);
     }
@@ -61,13 +68,29 @@ class AuthenticationBloc
               prefs.getString(USER_NAME).isNotEmpty)
           ? true
           : false;
+      bool isStartIntroViewed = (prefs.getString(IS_INTRO_VIEWED) != null &&
+              prefs.getString(IS_INTRO_VIEWED).isNotEmpty)
+          ? true
+          : false;
+      bool isShowCaseViewed = (prefs.getString(IS_SHOWCASE_VIEWED) != null &&
+              prefs.getString(IS_SHOWCASE_VIEWED).isNotEmpty)
+          ? true
+          : false;
       if (isLoggedIn) {
         debugPrint("PREFS_READ -- ${prefs.getString(USER_NAME)}");
-        var response =
+        var loginresponse =
             LoginResponse.fromJson(jsonDecode(prefs.getString(USER_LOGIN_RES)));
+        var response = UserStatusObj(
+            loginResponse: loginresponse,
+            isStartupIntroViewed: isStartIntroViewed,
+            isShowCaseViewed: isShowCaseViewed);
         yield CheckLoggedInState(obj: response);
       } else {
-        yield CheckLoggedInState(obj: null);
+        var response = UserStatusObj(
+            loginResponse: null,
+            isStartupIntroViewed: isStartIntroViewed,
+            isShowCaseViewed: isShowCaseViewed);
+        yield CheckLoggedInState(obj: response);
       }
     } catch (e) {
       debugPrint("Exception while checkLoggedIn ${e.toString()}");
@@ -87,21 +110,24 @@ class AuthenticationBloc
   Stream<AuthenticationState> makeLogin(
       String emailOrMobile, String password, String token) async* {
     try {
-      final loginResponse =
-          await _authenticationService.callLogin(emailOrMobile, password, token);
+      final loginResponse = await _authenticationService.callLogin(
+          emailOrMobile, password, token);
       yield LoginResAuthenticationState(res: loginResponse);
     } catch (e, stacktrace) {
       debugPrint("Exception while nativeLogin ${e.toString()}\n ${stacktrace}");
     }
   }
 
-  Stream<AuthenticationState> makeSocialLogin(String email, String deviceToken) async* {
+  Stream<AuthenticationState> makeSocialLogin(
+      String email, String deviceToken) async* {
     try {
       debugPrint("FB_EMAIL2-->> ${email}");
-      final loginResponse = await _authenticationService.callSocialLogin(email, deviceToken);
+      final loginResponse =
+          await _authenticationService.callSocialLogin(email, deviceToken);
       yield LoginResAuthenticationState(res: loginResponse);
     } catch (e, stacktrace) {
-      debugPrint("Exception while nativeLogin ${e.toString()} \n ${stacktrace.toString()}");
+      debugPrint(
+          "Exception while nativeLogin ${e.toString()} \n ${stacktrace.toString()}");
     }
   }
 
@@ -111,7 +137,8 @@ class AuthenticationBloc
           await _authenticationService.callRegister(registerReq);
       yield RegisterResAuthenticationState(res: registerResponse);
     } catch (e, stacktrace) {
-      debugPrint("Exception while nativeLogin ${e.toString()} \n ${stacktrace.toString()}");
+      debugPrint(
+          "Exception while nativeLogin ${e.toString()} \n ${stacktrace.toString()}");
     }
   }
 
@@ -126,14 +153,14 @@ class AuthenticationBloc
     }
   }
 
-  Stream<AuthenticationState> callSendOtp(String contact, String otpType) async* {
+  Stream<AuthenticationState> callSendOtp(
+      String contact, String otpType) async* {
     try {
       homeRepository =
-     homeRepository != null ? homeRepository : HomeRepository();
+          homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callSendOtp ${contact} ${homeRepository == null ? "NULL" : "NOTNULL"}");
-      final commonResponse =
-      await homeRepository.callSendOtp(contact, otpType);
+      final commonResponse = await homeRepository.callSendOtp(contact, otpType);
       debugPrint("callSendOtp ${jsonEncode(commonResponse)}");
       yield SendOtpAuthState(res: commonResponse);
     } catch (e) {

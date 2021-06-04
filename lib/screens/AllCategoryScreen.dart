@@ -38,13 +38,23 @@ class _AllCategoryScreenState extends State<AllCategoryScreen> {
         cubit: homeBloc,
         listener: (context, state) {
           if (state is GetAllCategoryListResState) {
-            mGetCategoryResponse = state.res;
+            if (state.res != null && state.res is GetCategoryResponse) {
+              if (state.res.status) {
+                mGetCategoryResponse = state.res;
+              }
+            }
           }
         },
         child: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {
-            if (state is GetAllCategoryListResState) {
-              return getScreenUI(state.res);
+            if (state is GetAllCategoryListResState &&
+                state.res != null &&
+                state.res is GetCategoryResponse) {
+              if (state.res.status) {
+                return getScreenUI(state.res);
+              } else {
+                return getErrorScreenUI();
+              }
             } else {
               return Container(
                 color: Colors.white,
@@ -85,6 +95,65 @@ class _AllCategoryScreenState extends State<AllCategoryScreen> {
                   ],
                 ),
               )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  getErrorScreenUI() {
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              PostAdsCommonAppbar(title: "Categories"),
+              Padding(
+                padding: EdgeInsets.only(
+                    left: space_15, top: space_20, bottom: space_20),
+                child: Text(
+                  "CHOOSE CATEGORY",
+                  style: CommonStyles.getMontserratStyle(
+                      space_14, FontWeight.w800, CommonStyles.blue),
+                ),
+              ),
+              Expanded(
+                child: Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Something went wrong!!',
+                        style: CommonStyles.getRalewayStyle(
+                            space_16, FontWeight.w500, Colors.black),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          homeBloc..add(GetCategoryListEvent(token: token));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(space_15),
+                          child: Text(
+                            'RETRY',
+                            style: TextStyle(
+                              fontSize: space_18,
+                              fontFamily: "Montserrat",
+                              fontWeight: FontWeight.w700,
+                              color: CommonStyles.primaryColor,
+                              decoration: TextDecoration.underline,
+                              decorationStyle: TextDecorationStyle.solid,
+                              decorationColor: CommonStyles.primaryColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),

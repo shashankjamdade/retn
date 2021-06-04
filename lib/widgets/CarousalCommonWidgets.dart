@@ -3,10 +3,12 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rentry_new/model/coupon_res.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
+import 'package:flutter_rentry_new/screens/SplashScreen.dart';
 import 'package:flutter_rentry_new/screens/SubCategoryScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 //Carousal
 class BannerImgCarousalWidget extends StatefulWidget {
@@ -51,24 +53,51 @@ class _BannerImgCorousalWidgetState extends State<BannerImgCarousalWidget> {
                         items: widget.homeResponse.data.banner
                             .map((item) => GestureDetector(
                                   onTap: () {
-                                    (widget.homeResponse.data
-                                        .banner[_current].redirect_type!=null && widget.homeResponse.data
-                                        .banner[_current].redirect_type?.isNotEmpty && widget.homeResponse.data
-                                        .banner[_current].redirect_type == "category" && widget.homeResponse.data
-                                        .banner[_current].category_id!=null && widget.homeResponse.data
-                                        .banner[_current].category_id?.isNotEmpty)?
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => SubCategoryScreen(
-                                              categoryId: widget.homeResponse.data
-                                                  .banner[_current].category_id,
-                                              categoryName:widget.homeResponse.data
-                                                  .banner[_current].category)),
-                                    )
-                                        :
-                                    launchURL(widget.homeResponse.data
-                                        .banner[_current].slug);
+                                    (widget.homeResponse.data.banner[_current]
+                                                    .redirect_type !=
+                                                null &&
+                                            widget
+                                                .homeResponse
+                                                .data
+                                                .banner[_current]
+                                                .redirect_type
+                                                ?.isNotEmpty &&
+                                            widget
+                                                    .homeResponse
+                                                    .data
+                                                    .banner[_current]
+                                                    .redirect_type ==
+                                                "category" &&
+                                            widget
+                                                    .homeResponse
+                                                    .data
+                                                    .banner[_current]
+                                                    .category_id !=
+                                                null &&
+                                            widget
+                                                .homeResponse
+                                                .data
+                                                .banner[_current]
+                                                .category_id
+                                                ?.isNotEmpty)
+                                        ? Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SubCategoryScreen(
+                                                        categoryId: widget
+                                                            .homeResponse
+                                                            .data
+                                                            .banner[_current]
+                                                            .category_id,
+                                                        categoryName: widget
+                                                            .homeResponse
+                                                            .data
+                                                            .banner[_current]
+                                                            .category)),
+                                          )
+                                        : launchURL(widget.homeResponse.data
+                                            .banner[_current].slug);
                                   },
                                   child: Stack(
                                     children: [
@@ -194,6 +223,171 @@ class _BannerImgCorousalWidgetState extends State<BannerImgCarousalWidget> {
   }
 }
 
+//Carousal - startup Intro
+class IntroImgCarousalWidget extends StatefulWidget {
+  List<String> mList;
+  SharedPreferences prefs;
+  IntroImgCarousalWidget(this.mList, this.prefs);
+
+  @override
+  _IntroImgCorousalWidgetState createState() => _IntroImgCorousalWidgetState();
+}
+
+class _IntroImgCorousalWidgetState extends State<IntroImgCarousalWidget>
+    with SingleTickerProviderStateMixin {
+  final CarouselController _controller = CarouselController();
+  int _current = 0;
+  AnimationController controller;
+  Animation<Offset> offset;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    debugPrint("LIST_IMG--> ${widget.mList[_current]}");
+    controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 1000));
+    offset = Tween<Offset>(begin: Offset.zero, end: Offset(0.0, 1.0))
+        .animate(controller);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: Stack(
+      children: [
+        Column(
+          children: [
+            CarouselSlider(
+              options: CarouselOptions(
+                  height: getFullScreenHeight(context),
+                  viewportFraction: 1.0,
+                  enlargeCenterPage: false,
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                      _current = index;
+                    });
+                    if(index == 3){
+                      controller.reverse();
+                    }else{
+                      controller.forward();
+                    }
+                    // switch (controller.status) {
+                    //   case AnimationStatus.completed:
+                    //     controller.reverse();
+                    //     break;
+                    //   case AnimationStatus.dismissed:
+                    //     controller.forward();
+                    //     break;
+                    //   default:
+                    // }
+                  }),
+              carouselController: _controller,
+              items: widget.mList
+                  .map((item) => GestureDetector(
+                        onTap: () {},
+                        child: Stack(
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(),
+                              height: double.infinity,
+                              child: Image.asset(
+                                widget.mList[_current],
+                                fit: BoxFit.fill,
+                                height: double.infinity,
+                                width: double.infinity,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ))
+                  .toList(),
+            ),
+          ],
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: _current == 3
+              ? SlideTransition(
+                  position: offset,
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: space_10, left: space_15, right: space_15),
+                    child: GestureDetector(
+                      onTap: (){
+                        if(widget.prefs!=null){
+                          widget.prefs.setString(IS_INTRO_VIEWED, "true");
+                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SplashScreen()),
+                        );
+                      },
+                      child: Card(
+                        color: CommonStyles.blue,
+                        elevation: space_3,
+                        child: Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(space_15),
+                                child: Text(
+                                  "GET STARTED !",
+                                  style: CommonStyles.getMontserratStyle(
+                                      space_14, FontWeight.w600, Colors.white),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              : Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: widget.mList.map((url) {
+                      int index = widget.mList.indexOf(url);
+                      return _current == index
+                          ? Container(
+                              width: space_12,
+                              height: space_12,
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.white),
+                                  shape: BoxShape.circle),
+                              child: Center(
+                                child: Container(
+                                  width: space_5,
+                                  height: space_5,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      shape: BoxShape.circle),
+                                ),
+                              ),
+                            )
+                          : Container(
+                              width: 8.0,
+                              height: 8.0,
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 2.0),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                              ),
+                            );
+                    }).toList(),
+                  ),
+                ),
+        )
+      ],
+    ));
+  }
+}
+
 //2
 class BannersCarousalWidget extends StatefulWidget {
   CouponRes mCouponres;
@@ -262,8 +456,7 @@ class _BannersCorousalWidgetState extends State<BannersCarousalWidget> {
                                 height: getProportionateScreenHeight(
                                     context, space_200),
                                 child: FadeInImage.assetNetwork(
-                                  placeholder:
-                                      "assets/images/loader.jpg",
+                                  placeholder: "assets/images/loader.jpg",
                                   image: list[index].image,
                                   fit: BoxFit.fill,
                                 ),
@@ -462,8 +655,7 @@ class _ItemDetailBannerImgCorousalWidgetState
                                       height: getProportionateScreenHeight(
                                           context, space_250),
                                       child: FadeInImage.assetNetwork(
-                                        placeholder:
-                                            "assets/images/loader.jpg",
+                                        placeholder: "assets/images/loader.jpg",
                                         image: widget.bannerList[_current],
                                         fit: BoxFit.contain,
                                       ),

@@ -247,7 +247,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   Align(
                                     alignment: Alignment.topLeft,
                                     child: Text(
-                                      "Please provide your login information",
+                                      "Login and Start renting to save and earn",
                                       style: CommonStyles.getRalewayStyle(
                                           space_15,
                                           FontWeight.w500,
@@ -396,21 +396,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                     ),
                                   ),
-                                  Container(
-                                    margin: EdgeInsets.only(top: space_70),
-                                    child: Center(
-                                      child: Text(
-                                        rent_pe_tagline,
-                                        style: TextStyle(
-                                            fontSize: space_15,
-                                            fontFamily:
-                                                CommonStyles.FONT_RALEWAY,
-                                            fontWeight: FontWeight.w400,
-                                            color: CommonStyles.primaryColor,
-                                            decoration: TextDecoration.none),
-                                      ),
-                                    ),
-                                  )
+                                  // Container(
+                                  //   margin: EdgeInsets.only(top: space_70),
+                                  //   child: Center(
+                                  //     child: Text(
+                                  //       rent_pe_tagline,
+                                  //       style: TextStyle(
+                                  //           fontSize: space_15,
+                                  //           fontFamily:
+                                  //               CommonStyles.FONT_RALEWAY,
+                                  //           fontWeight: FontWeight.w400,
+                                  //           color: CommonStyles.primaryColor,
+                                  //           decoration: TextDecoration.none),
+                                  //     ),
+                                  //   ),
+                                  // )
                                 ],
                               ),
                             ),

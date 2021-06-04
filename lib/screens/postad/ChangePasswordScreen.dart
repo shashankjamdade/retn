@@ -53,7 +53,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             if (state is ChangePwdResState) {
               commonResponse = state.res;
               showSnakbar(_scaffoldKey, commonResponse.msg);
-              Navigator.of(context).pop();
+              if(state.res.status == "true"){
+                Navigator.of(context).pop();
+              }
             }
           },
           child: BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {

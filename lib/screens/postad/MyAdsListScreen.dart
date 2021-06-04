@@ -149,12 +149,16 @@ class _MyAdsListScreenState extends State<MyAdsListScreen> {
   Widget getMyitemCardNoMarginWidget(Category_adslist mCategory_adslist) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  ItemDetailScreen(categoryName: mCategory_adslist.slug)),
-        );
+        if(mCategory_adslist?.is_status == "1"){
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ItemDetailScreen(categoryName: mCategory_adslist.slug)),
+          );
+        }else{
+
+        }
       },
       child: Container(
         height: space_250,

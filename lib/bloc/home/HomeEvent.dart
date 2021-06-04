@@ -14,6 +14,7 @@ class InitialEvent extends HomeEvent {}
 class ProgressEvent extends HomeEvent {}
 
 class NonProgressEvent extends HomeEvent {}
+class FetchCurrLocation extends HomeEvent {}
 
 class HomeReqAuthenticationEvent extends HomeEvent {
   final String token;

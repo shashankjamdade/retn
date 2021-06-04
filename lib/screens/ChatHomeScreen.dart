@@ -62,8 +62,12 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
           },
           child: BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state) {
-              if (state is GetAllChatUserListResState) {
-                return getScreenUI(state);
+              if (state is GetAllChatUserListResState && state.res is NewChatlistRes) {
+                if(state.res.status != "false"){
+                  return getScreenUI(state);
+                }else{
+                  return getErrorUI();
+                }
               } else {
                 return getScreenProgressUI();
               }
@@ -146,6 +150,66 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
         ));
   }
 
+  Widget getErrorUI() {
+    return Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          title: Text(
+            "Chat",
+            style: CommonStyles.getRalewayStyle(
+                space_15, FontWeight.w800, Colors.black),
+          ),
+          leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.black87,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
+        ),
+        body: Column(
+         children: [
+           Expanded(
+             child: Center(
+               child: Column(
+                 crossAxisAlignment: CrossAxisAlignment.center,
+                 mainAxisAlignment: MainAxisAlignment.center,
+                 children: [
+                   Text(
+                     'Something went wrong!!',
+                     style: CommonStyles.getRalewayStyle(
+                         space_16, FontWeight.w500, Colors.black),
+                   ),
+                   GestureDetector(
+                     onTap: () {
+                       homeBloc..add(GetAllChatUserEvent(token: token));
+                     },
+                     child: Padding(
+                       padding: const EdgeInsets.all(space_15),
+                       child: Text(
+                         'RETRY',
+                         style: TextStyle(
+                           fontSize: space_18,
+                           fontFamily: "Montserrat",
+                           fontWeight: FontWeight.w700,
+                           color: CommonStyles.primaryColor,
+                           decoration: TextDecoration.underline,
+                           decorationStyle: TextDecorationStyle.solid,
+                           decorationColor: CommonStyles.primaryColor,
+                         ),
+                       ),
+                     ),
+                   ),
+                 ],
+               ),
+             ),
+           )
+         ],
+        ));
+  }
+
   Widget getChatList() {
     return Container(
       child: ListView.builder(
@@ -184,19 +248,7 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
 //                  setState(() {
 //                    mGetAllChatUserListResponse.data[pos].new_message = 0;
 //                  });
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ChatDetailScreen(
-                              username: mGetAllChatUserListResponse
-                                  .data[pos].chat_with.receiver_id,
-                              indexId: mGetAllChatUserListResponse
-                                  .data[pos].inbox_id,
-                              slug:
-                                  mGetAllChatUserListResponse.data[pos].ad_slug,
-                              adId: mGetAllChatUserListResponse.data[pos].ad_id,
-                            )),
-                  );
+                  redirectToChatMsgScreen(pos);
                 },
                 child: Container(
                   child: ListTile(
@@ -357,5 +409,24 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
         alignment: Alignment.centerRight,
       ),
     );
+  }
+
+  redirectToChatMsgScreen(int pos) async{
+    var res = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => ChatDetailScreen(
+            username: mGetAllChatUserListResponse
+                .data[pos].chat_with.receiver_id,
+            indexId: mGetAllChatUserListResponse
+                .data[pos].inbox_id,
+            slug:
+            mGetAllChatUserListResponse.data[pos].ad_slug,
+            adId: mGetAllChatUserListResponse.data[pos].ad_id,
+          )),
+    );
+    if(res!=null && res == "true"){
+      homeBloc..add(GetAllChatUserEvent(token: token));
+    }
   }
 }

@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:carousel_slider/carousel_controller.dart';
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,12 +13,15 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_rentry_new/bloc/authentication/AuthenticationBloc.dart';
 import 'package:flutter_rentry_new/bloc/authentication/AuthenticationState.dart';
 import 'package:flutter_rentry_new/bloc/authentication/AuthenticationEvent.dart';
+import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/model/UserLocationSelected.dart';
+import 'package:flutter_rentry_new/model/UserStatusObj.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/repository/HomeRepository.dart';
 import 'package:flutter_rentry_new/screens/CouponListScreen.dart';
 import 'package:flutter_rentry_new/screens/EditProfileScreen.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
+import 'package:flutter_rentry_new/screens/LoginScreen.dart';
 import 'package:flutter_rentry_new/screens/MyFavScreen.dart';
 import 'package:flutter_rentry_new/screens/NotificationListScreen.dart';
 import 'package:flutter_rentry_new/screens/OtpVerificationScreen.dart';
@@ -33,12 +39,14 @@ import 'package:flutter_rentry_new/screens/postad/UploadProductImgScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/PushNotificationsManager.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
+import 'package:flutter_rentry_new/widgets/CarousalCommonWidgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 
 //import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'bloc/authentication/AuthenticationBloc.dart';
@@ -89,8 +97,7 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
 
 /// Initialize the [FlutterLocalNotificationsPlugin] package.
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
-
+    FlutterLocalNotificationsPlugin();
 
 void main() async {
   HttpOverrides.global = new MyHttpOverrides();
@@ -105,23 +112,20 @@ void main() async {
 
 void setFirebase() {
   var initializationSettingsAndroid =
-  new AndroidInitializationSettings('@mipmap/ic_launcher');
+      new AndroidInitializationSettings('@mipmap/ic_launcher');
 
   var initializationSettingsIOS = new IOSInitializationSettings();
 
   var initializationSettings = new InitializationSettings(
       android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
 
-  flutterLocalNotificationsPlugin
-      .initialize(initializationSettings,
+  flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: onSelect);
 
-  final FirebaseMessaging _firebaseMessaging =
-  FirebaseMessaging();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   _firebaseMessaging.configure(
-    onBackgroundMessage: Platform.isIOS ?
-    null : myBackgroundMessageHandler,
+    onBackgroundMessage: Platform.isIOS ? null : myBackgroundMessageHandler,
     onMessage: (message) async {
       print("onMessage: $message");
     },
@@ -133,23 +137,20 @@ void setFirebase() {
     },
   );
 
-  _firebaseMessaging.getToken()
-      .then((String token) {
+  _firebaseMessaging.getToken().then((String token) {
     print("Push Messaging token: $token");
     // Push messaging to this token later
   });
-
 }
 
 Future<String> onSelect(String data) async {
   print("onSelectNotification $data");
 }
+
 //updated myBackgroundMessageHandler
-Future<dynamic> myBackgroundMessageHandler(Map<String,
-    dynamic> message) async {
+Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
   print("myBackgroundMessageHandler message: $message");
-  int msgId = int.tryParse(message["data"]["msgId"]
-      .toString()) ?? 1;
+  int msgId = int.tryParse(message["data"]["msgId"].toString()) ?? 1;
   print("msgId ${message['data']['title']}, ${message['data']['message']}");
   var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
       'channelid', 'flutterfcm', 'your channel description',
@@ -158,9 +159,7 @@ Future<dynamic> myBackgroundMessageHandler(Map<String,
   var platformChannelSpecifics = new NotificationDetails(
       android: androidPlatformChannelSpecifics,
       iOS: iOSPlatformChannelSpecifics);
-  flutterLocalNotificationsPlugin
-      .show(msgId,
-      message['data']['title'],
+  flutterLocalNotificationsPlugin.show(msgId, message['data']['title'],
       message['data']['message'], platformChannelSpecifics,
       payload: message["data"]["data"]);
   return Future<void>.value();
@@ -182,7 +181,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   PushNotificationsManager Notification = PushNotificationsManager();
 
   @override
@@ -223,7 +221,7 @@ class _ScreenOneState extends State<ScreenOne> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       new FlutterLocalNotificationsPlugin();
-
+  SharedPreferences prefs;
   String _message = '';
 
   _register() {
@@ -233,19 +231,17 @@ class _ScreenOneState extends State<ScreenOne> {
   void getMessage() {
     _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
-          print('FCM_PUSH_onmsg $message');
+      print('FCM_PUSH_onmsg $message');
 //          setState(() => _message = message["notification"]["title"]);
-          displayNotification(message);
-          return;
-        },
-        onResume: (Map<String, dynamic> message) async {
-          print('FCM_PUSH_onresume $message');
-          setState(() => _message = message["notification"]["title"]);
-        },
-        onLaunch: (Map<String, dynamic> message) async {
-          print('FCM_PUSH_onLaunch $message');
-          setState(() => _message = message["notification"]["title"]);
-        });
+      displayNotification(message);
+      return;
+    }, onResume: (Map<String, dynamic> message) async {
+      print('FCM_PUSH_onresume $message');
+      setState(() => _message = message["notification"]["title"]);
+    }, onLaunch: (Map<String, dynamic> message) async {
+      print('FCM_PUSH_onLaunch $message');
+      setState(() => _message = message["notification"]["title"]);
+    });
   }
 
   @override
@@ -272,7 +268,7 @@ class _ScreenOneState extends State<ScreenOne> {
     debugPrint("LOCATION_FOUND accesssing ");
     Position position =
         await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     prefs.setString(USER_LOCATION_LAT, "${position.latitude}");
     prefs.setString(USER_LOCATION_LONG, "${position.longitude}");
     debugPrint("LOCATION_FOUND ${position.latitude}, ${position.longitude}");
@@ -308,8 +304,11 @@ class _ScreenOneState extends State<ScreenOne> {
       child: BlocListener(
         cubit: authenticationBloc,
         listener: (context, state) {
-          if (state.obj != null && state.obj is LoginResponse) {
-            StateContainer.of(context).updateUserInfo(state.obj);
+          if (state.obj != null &&
+              state.obj is UserStatusObj &&
+              state.obj.loginResponse != null) {
+            debugPrint('SHOWCASE_STATUS: ${state.obj.isShowCaseViewed}');
+            StateContainer.of(context).updateUserInfo(state.obj.loginResponse);
           }
         },
         child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
@@ -317,8 +316,37 @@ class _ScreenOneState extends State<ScreenOne> {
           if (state is LogoutAuthentucateState) {
             return SplashScreen();
           } else if (state is CheckLoggedInState) {
-            if (state.obj != null && state.obj is LoginResponse) {
-              return HomeScreen();
+            if (state.obj != null && state.obj is UserStatusObj) {
+              if (state.obj.isStartupIntroViewed) {
+                if (state.obj.loginResponse != null) {
+                  return ShowCaseWidget(
+                    onStart: (index, key) {
+                      debugPrint('onStart: $index, $key');
+                    },
+                    onComplete: (index, key) {
+                      debugPrint('onComplete1: $index, $key');
+                      if (prefs != null) {
+                        debugPrint('onComplete1: SAVED');
+                        prefs.setString(IS_SHOWCASE_VIEWED, "true");
+                      }
+                    },
+                    builder: Builder(
+                        builder: (context) => HomeScreen(
+                              shouldShowShowcase: state.obj.isShowCaseViewed,
+                            )),
+                    autoPlay: false,
+                    autoPlayDelay: Duration(seconds: 3),
+                    autoPlayLockEnable: false,
+                  );
+                } else {
+                  return SplashScreen();
+                }
+              } else {
+                //Startup intro
+                return StartupIntroScreen(
+                  prefs: prefs,
+                );
+              }
             } else {
               return SplashScreen();
             }
@@ -426,3 +454,193 @@ class _ScreenOneState extends State<ScreenOne> {
     );
   }
 }
+
+class sd extends StatefulWidget {
+  const sd({Key key}) : super(key: key);
+
+  @override
+  _sdState createState() => _sdState();
+}
+
+class _sdState extends State<sd> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+class StartupIntroScreen extends StatefulWidget {
+  SharedPreferences prefs;
+
+  StartupIntroScreen({Key key, this.prefs}) : super(key: key);
+
+  @override
+  _StartupIntroScreenState createState() => _StartupIntroScreenState();
+}
+
+class _StartupIntroScreenState extends State<StartupIntroScreen>  with SingleTickerProviderStateMixin {
+  List<String> mList = List();
+  AuthenticationBloc authenticationBloc = new AuthenticationBloc();
+  final CarouselController _controller = CarouselController();
+  int _current = 0;
+  AnimationController controller;
+  Animation<Offset> offset;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 1000));
+    offset = Tween<Offset>(begin: Offset.zero, end: Offset(0.0, 1.0))
+        .animate(controller);
+    mList.add("assets/images/splash1.png");
+    mList.add("assets/images/splash2.png");
+    mList.add("assets/images/splash3.png");
+    mList.add("assets/images/splash4.png");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  CarouselSlider(
+                    options: CarouselOptions(
+                        height: getFullScreenHeight(context),
+                        viewportFraction: 1.0,
+                        enlargeCenterPage: false,
+                        onPageChanged: (index, reason) {
+                          setState(() {
+                            _current = index;
+                          });
+                          if(index == 3){
+                            controller.reverse();
+                          }else{
+                            controller.forward();
+                          }
+                          // switch (controller.status) {
+                          //   case AnimationStatus.completed:
+                          //     controller.reverse();
+                          //     break;
+                          //   case AnimationStatus.dismissed:
+                          //     controller.forward();
+                          //     break;
+                          //   default:
+                          // }
+                        }),
+                    carouselController: _controller,
+                    items: mList
+                        .map((item) => GestureDetector(
+                      onTap: () {},
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(),
+                            height: double.infinity,
+                            child: Image.asset(
+                              mList[_current],
+                              fit: BoxFit.fill,
+                              height: double.infinity,
+                              width: double.infinity,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ))
+                        .toList(),
+                  ),
+                ],
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: _current == 3
+                    ? SlideTransition(
+                  position: offset,
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: space_10, left: space_15, right: space_15),
+                    child: GestureDetector(
+                      onTap: (){
+                        if(widget.prefs!=null){
+                          widget.prefs.setString(IS_INTRO_VIEWED, "true");
+                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginScreen()),
+                        );
+                      },
+                      child: Card(
+                        color: CommonStyles.blue,
+                        elevation: space_3,
+                        child: Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(space_15),
+                                child: Text(
+                                  "GET STARTED !",
+                                  style: CommonStyles.getMontserratStyle(
+                                      space_14, FontWeight.w600, Colors.white),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+                    : Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: mList.map((url) {
+                      int index = mList.indexOf(url);
+                      return _current == index
+                          ? Container(
+                        width: space_12,
+                        height: space_12,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white),
+                            shape: BoxShape.circle),
+                        child: Center(
+                          child: Container(
+                            width: space_5,
+                            height: space_5,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle),
+                          ),
+                        ),
+                      )
+                          : Container(
+                        width: 8.0,
+                        height: 8.0,
+                        margin: EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 2.0),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              )
+            ],
+          )),
+    );
+    // return Scaffold(body: IntroImgCarousalWidget(mList, widget.prefs));
+    // return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+    //     builder: (context, state) {
+    //       return Scaffold(body: IntroImgCarousalWidget(mList, widget.prefs));
+    //     });
+  }
+}
+// IntroImgCarousalWidget(mList, widget.prefs);
