@@ -319,24 +319,8 @@ class _ScreenOneState extends State<ScreenOne> {
             if (state.obj != null && state.obj is UserStatusObj) {
               if (state.obj.isStartupIntroViewed) {
                 if (state.obj.loginResponse != null) {
-                  return ShowCaseWidget(
-                    onStart: (index, key) {
-                      debugPrint('onStart: $index, $key');
-                    },
-                    onComplete: (index, key) {
-                      debugPrint('onComplete1: $index, $key');
-                      if (prefs != null) {
-                        debugPrint('onComplete1: SAVED');
-                        prefs.setString(IS_SHOWCASE_VIEWED, "true");
-                      }
-                    },
-                    builder: Builder(
-                        builder: (context) => HomeScreen(
-                              shouldShowShowcase: state.obj.isShowCaseViewed,
-                            )),
-                    autoPlay: false,
-                    autoPlayDelay: Duration(seconds: 3),
-                    autoPlayLockEnable: false,
+                  return HomeScreen(
+                    shouldShowShowcase: state.obj.isShowCaseViewed,
                   );
                 } else {
                   return SplashScreen();
@@ -547,6 +531,7 @@ class _StartupIntroScreenState extends State<StartupIntroScreen>  with SingleTic
                               fit: BoxFit.fill,
                               height: double.infinity,
                               width: double.infinity,
+                                gaplessPlayback: true
                             ),
                           ),
                         ],

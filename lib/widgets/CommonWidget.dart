@@ -2187,6 +2187,7 @@ class CommonBottomNavBarHomeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("COMMONBOTTOMCHECK--> NOOOO");
     return Container(
       child: Container(
         child: Column(
@@ -2334,66 +2335,68 @@ class CommonBottomNavBarHomeWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-                Align(
+                Align (
                   alignment: Alignment.bottomCenter,
                   child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                StateContainer.of(context).mLoginResponse !=
-                                            null &&
-                                        StateContainer.of(context)
-                                                .mLoginResponse
-                                                .data
-                                                .token !=
-                                            null
-                                    ? ChooseCategoryScreen()
-                                    : LoginScreen()),
-                      );
-                    },
-                    child: (shouldShowShowcase!=null && (!shouldShowShowcase))
-                        ? Container(
-                            child: Column(
-                              children: [
-                                Container(
-                                  height: space_70,
-                                  width: space_70,
-                                  margin: EdgeInsets.only(top: space_40),
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: CommonStyles.lightGrey),
-                                  child: Center(
-                                    child: ImageIcon(
-                                      AssetImage(
-                                        "assets/images/bottom_nav_post_rent.png",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  StateContainer.of(context).mLoginResponse !=
+                                              null &&
+                                          StateContainer.of(context)
+                                                  .mLoginResponse
+                                                  .data
+                                                  .token !=
+                                              null
+                                      ? ChooseCategoryScreen()
+                                      : LoginScreen()),
+                        );
+                      },
+                      child: /*(shouldShowShowcase != null &&
+                              (!shouldShowShowcase))
+                          ? Showcase(
+                              key: postKey,
+                              title: 'Post Ads',
+                              description: 'Click here to post your ads',
+                              shapeBorder: CircleBorder(),
+                              showArrow: true,
+                              child: Container(
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: space_70,
+                                      width: space_70,
+                                      margin: EdgeInsets.only(top: space_40),
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: CommonStyles.lightGrey),
+                                      child: Center(
+                                        child: ImageIcon(
+                                          AssetImage(
+                                            "assets/images/bottom_nav_post_rent.png",
+                                          ),
+                                          color: CommonStyles.primaryColor,
+                                        ),
                                       ),
-                                      color: CommonStyles.primaryColor,
                                     ),
-                                  ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          top: space_10, bottom: space_5),
+                                      child: Text(
+                                        "POST RENT",
+                                        style: CommonStyles.getRalewayStyle(
+                                            space_10,
+                                            FontWeight.w400,
+                                            Colors.white),
+                                      ),
+                                    )
+                                  ],
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: space_10, bottom: space_5),
-                                  child: Text(
-                                    "POST RENT",
-                                    style: CommonStyles.getRalewayStyle(
-                                        space_10,
-                                        FontWeight.w400,
-                                        Colors.white),
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        : Showcase(
-                            key: postKey,
-                            title: 'Post Ads',
-                            description: 'Click here to post your ads',
-                            shapeBorder: CircleBorder(),
-                            showArrow: true,
-                            child: Container(
+                              ),
+                            )
+                          :*/ Container(
                               child: Column(
                                 children: [
                                   Container(
@@ -2425,9 +2428,7 @@ class CommonBottomNavBarHomeWidget extends StatelessWidget {
                                   )
                                 ],
                               ),
-                            ),
-                          ),
-                  ),
+                            )),
                 ),
               ],
             )
@@ -2437,8 +2438,232 @@ class CommonBottomNavBarHomeWidget extends StatelessWidget {
     );
   }
 }
-class CommonBottomNavBarWidget extends StatelessWidget {
+class CommonBottomNavBarHomeShowCaseWidget extends StatelessWidget {
+  GlobalKey postKey;
+  bool shouldShowShowcase;
 
+  CommonBottomNavBarHomeShowCaseWidget({this.postKey, this.shouldShowShowcase});
+
+  @override
+  Widget build(BuildContext context) {
+    debugPrint("COMMONBOTTOMCHECK--> ${shouldShowShowcase} ${postKey}");
+    return Container(
+      child: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Stack(
+              children: [
+                Container(
+                  height: space_150,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        height: space_80,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            image: DecorationImage(
+                                image:
+                                    AssetImage("assets/images/bottom_back.png"),
+                                fit: BoxFit.fitWidth)),
+                        child: Container(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Expanded(
+                                  child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  HomeScreen()),
+                                        );
+                                      },
+                                      child: BottomBarItemWidget(
+                                        "HOME",
+                                        "assets/images/nav_home_icon.png",
+                                        isVisible: true,
+                                      ))),
+                              Expanded(
+                                  child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => StateContainer
+                                                                  .of(context)
+                                                              .mLoginResponse !=
+                                                          null &&
+                                                      StateContainer.of(context)
+                                                              .mLoginResponse
+                                                              .data
+                                                              .token !=
+                                                          null
+                                                  ? ChatHomeScreen()
+                                                  : LoginScreen()),
+                                        );
+                                      },
+                                      child: BottomBarItemWidget("CHAT",
+                                          "assets/images/bottom_nav_chat.png",
+                                          isVisible: true))),
+                              Expanded(
+                                  child: BottomBarItemWidget(
+                                "",
+                                "assets/images/bottom_nav_nearby.png",
+                                isVisible: false,
+                              )),
+                              Expanded(
+                                  child: GestureDetector(
+                                      onTap: () {
+                                        var currentLoc = StateContainer.of(
+                                                        context)
+                                                    .mUserLocationSelected !=
+                                                null
+                                            ? StateContainer.of(context)
+                                                .mUserLocationSelected
+                                            : null;
+                                        if (currentLoc != null) {
+                                          StateContainer.of(context)
+                                                  .mUserLocNameSelected =
+                                              UserLocNameSelected(
+                                                  address: currentLoc.city,
+                                                  mlat: currentLoc.mlat,
+                                                  mlng: currentLoc.mlng);
+                                        }
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  NearByChildSubCategoryScreen(
+                                                    isFromNearBy: true,
+                                                    lat: StateContainer.of(
+                                                                    context)
+                                                                .mUserLocationSelected !=
+                                                            null
+                                                        ? StateContainer.of(
+                                                                context)
+                                                            .mUserLocationSelected
+                                                            .mlat
+                                                        : "",
+                                                    lng: StateContainer.of(
+                                                                    context)
+                                                                .mUserLocationSelected !=
+                                                            null
+                                                        ? StateContainer.of(
+                                                                context)
+                                                            .mUserLocationSelected
+                                                            .mlng
+                                                        : "",
+                                                    radius: LOCATION_RADIUS,
+                                                  )),
+                                        );
+                                      },
+                                      child: BottomBarItemWidget("NEARBY",
+                                          "assets/images/bottom_nav_nearby.png",
+                                          isVisible: true))),
+                              Expanded(
+                                  child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => StateContainer
+                                                                  .of(context)
+                                                              .mLoginResponse !=
+                                                          null &&
+                                                      StateContainer.of(context)
+                                                              .mLoginResponse
+                                                              .data
+                                                              .token !=
+                                                          null
+                                                  ? UserProfile()
+                                                  : LoginScreen()),
+                                        );
+                                      },
+                                      child: BottomBarItemWidget("PROFILE",
+                                          "assets/images/bottom_nav_login.png",
+                                          isVisible: true))),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Align (
+                  alignment: Alignment.bottomCenter,
+                  child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  StateContainer.of(context).mLoginResponse !=
+                                              null &&
+                                          StateContainer.of(context)
+                                                  .mLoginResponse
+                                                  .data
+                                                  .token !=
+                                              null
+                                      ? ChooseCategoryScreen()
+                                      : LoginScreen()),
+                        );
+                      },
+                      child: Showcase(
+                              key: postKey,
+                              title: 'Post Ads',
+                              description: 'Click here to post your ads',
+                              shapeBorder: CircleBorder(),
+                              showArrow: true,
+                              child: Container(
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: space_70,
+                                      width: space_70,
+                                      margin: EdgeInsets.only(top: space_40),
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: CommonStyles.lightGrey),
+                                      child: Center(
+                                        child: ImageIcon(
+                                          AssetImage(
+                                            "assets/images/bottom_nav_post_rent.png",
+                                          ),
+                                          color: CommonStyles.primaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          top: space_10, bottom: space_5),
+                                      child: Text(
+                                        "POST RENT",
+                                        style: CommonStyles.getRalewayStyle(
+                                            space_10,
+                                            FontWeight.w400,
+                                            Colors.white),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            )),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CommonBottomNavBarWidget extends StatelessWidget {
   CommonBottomNavBarWidget();
 
   @override
@@ -2593,56 +2818,53 @@ class CommonBottomNavBarWidget extends StatelessWidget {
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                StateContainer.of(context).mLoginResponse !=
-                                            null &&
-                                        StateContainer.of(context)
-                                                .mLoginResponse
-                                                .data
-                                                .token !=
-                                            null
-                                    ? ChooseCategoryScreen()
-                                    : LoginScreen()),
-                      );
-                    },
-                    child:  Container(
-                      child: Column(
-                        children: [
-                          Container(
-                            height: space_70,
-                            width: space_70,
-                            margin: EdgeInsets.only(top: space_40),
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: CommonStyles.lightGrey),
-                            child: Center(
-                              child: ImageIcon(
-                                AssetImage(
-                                  "assets/images/bottom_nav_post_rent.png",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  StateContainer.of(context).mLoginResponse !=
+                                              null &&
+                                          StateContainer.of(context)
+                                                  .mLoginResponse
+                                                  .data
+                                                  .token !=
+                                              null
+                                      ? ChooseCategoryScreen()
+                                      : LoginScreen()),
+                        );
+                      },
+                      child: Container(
+                        child: Column(
+                          children: [
+                            Container(
+                              height: space_70,
+                              width: space_70,
+                              margin: EdgeInsets.only(top: space_40),
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: CommonStyles.lightGrey),
+                              child: Center(
+                                child: ImageIcon(
+                                  AssetImage(
+                                    "assets/images/bottom_nav_post_rent.png",
+                                  ),
+                                  color: CommonStyles.primaryColor,
                                 ),
-                                color: CommonStyles.primaryColor,
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                top: space_10, bottom: space_5),
-                            child: Text(
-                              "POST RENT",
-                              style: CommonStyles.getRalewayStyle(
-                                  space_10,
-                                  FontWeight.w400,
-                                  Colors.white),
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                  ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  top: space_10, bottom: space_5),
+                              child: Text(
+                                "POST RENT",
+                                style: CommonStyles.getRalewayStyle(
+                                    space_10, FontWeight.w400, Colors.white),
+                              ),
+                            )
+                          ],
+                        ),
+                      )),
                 ),
               ],
             )

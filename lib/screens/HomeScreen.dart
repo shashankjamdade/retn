@@ -50,15 +50,31 @@ class _HomeScreenState extends State<HomeScreen> {
   var mLng = "";
   CouponRes mCouponRes;
   var isNeedToShowRetry = false;
-  GlobalKey postAdKey = GlobalKey();
+  GlobalKey postAdKey;
+  var shouldShowShowcase = true;
+  SharedPreferences prefs;
 
   @override
   void initState() {
     super.initState();
-    if(widget.shouldShowShowcase!=null && (!widget.shouldShowShowcase)){
-      debugPrint("ENTRY_HOME_SCREEN--------- ${widget.shouldShowShowcase}");
-      WidgetsBinding.instance.addPostFrameCallback((_) =>
-          ShowCaseWidget.of(context).startShowCase([postAdKey]));
+    postAdKey = GlobalKey();
+    debugPrint("ENTRY_HOME_SCREEN---------");
+    checkShowcaseShowOrNot(context);
+  }
+
+  void checkShowcaseShowOrNot(BuildContext context) async {
+    try {
+      prefs = await SharedPreferences.getInstance();
+      bool isShowCaseViewed = (prefs.getString(IS_SHOWCASE_VIEWED) != null &&
+          prefs.getString(IS_SHOWCASE_VIEWED).isNotEmpty)
+          ? true
+          : false;
+      debugPrint("CHECKINGFORSHOWCASE --> ${isShowCaseViewed}");
+      setState(() {
+        shouldShowShowcase = isShowCaseViewed;
+      });
+    } catch (e) {
+      debugPrint("EXCEPTION in Homescreen in checkShowcaseShowOrNot ${e.toString()}");
     }
   }
 
@@ -151,7 +167,25 @@ class _HomeScreenState extends State<HomeScreen> {
   resetUiAgain(CouponRes couponRes) {
     mCouponRes = couponRes;
     if (mHomeResponse != null) {
-      getHomeUI(mHomeResponse, context);
+      return ((shouldShowShowcase == false)?
+      ShowCaseWidget(
+        onStart: (index, key) {
+          debugPrint('onStart: $index, $key');
+        },
+        onComplete: (index, key) {
+          debugPrint('onComplete1: $index, $key');
+          if (prefs != null) {
+            debugPrint('onComplete1: SAVED');
+            prefs.setString(IS_SHOWCASE_VIEWED, "true");
+          }
+        },
+        builder: Builder(
+            builder: (context) => getHomeShowcaseUI(mHomeResponse, context)),
+        autoPlay: false,
+        autoPlayDelay: Duration(seconds: 3),
+        autoPlayLockEnable: false,
+      ):
+      getHomeUI(mHomeResponse, context));
     }
   }
 
@@ -218,7 +252,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (state is HomeResState &&
                     state.res is HomeResponse) {
                   if(state.res.status){
-                    return getHomeUI(state.res, context);
+                    return ((shouldShowShowcase == false)?
+                    ShowCaseWidget(
+                      onStart: (index, key) {
+                        debugPrint('onStart: $index, $key');
+                      },
+                      onComplete: (index, key) {
+                        debugPrint('onComplete1: $index, $key');
+                        if (prefs != null) {
+                          debugPrint('onComplete1: SAVED');
+                          prefs.setString(IS_SHOWCASE_VIEWED, "true");
+                        }
+                      },
+                      builder: Builder(
+                          builder: (context) => getHomeShowcaseUI(state.res, context)),
+                      autoPlay: false,
+                      autoPlayDelay: Duration(seconds: 3),
+                      autoPlayLockEnable: false,
+                    ):
+                     getHomeUI(state.res, context));
                   }else{
                     return Container(
                       color: Colors.white,
@@ -412,7 +464,146 @@ class _HomeScreenState extends State<HomeScreen> {
                 )
               ],
             )),
-            CommonBottomNavBarHomeWidget(postKey: postAdKey,),
+            CommonBottomNavBarHomeWidget(postKey: postAdKey, shouldShowShowcase: shouldShowShowcase),
+          ],
+        ),
+      ),
+    );
+  }
+  Widget getHomeShowcaseUI(HomeResponse homeResponse, BuildContext context) {
+    if(!shouldShowShowcase){
+      debugPrint("ENTRY_HOME_SCREEN--------- ${shouldShowShowcase}");
+      WidgetsBinding.instance.addPostFrameCallback((_) =>
+          ShowCaseWidget.of(context).startShowCase([postAdKey]));
+    }
+    return Scaffold(
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Container(
+                child: Column(
+              children: [
+                CommonAppbarWidget(app_name, skip_for_now, () {
+                  onSearchLocation(context);
+                }),
+                Expanded(
+                  child: Container(
+                      child: RefreshIndicator(
+                    onRefresh: () {
+                      homeBloc
+                        ..add(HomeReqAuthenticationEvent(
+                            token: token, lat: mLat, lng: mLng));
+                    },
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: [
+                        BannerImgCarousalWidget(homeResponse),
+                        Container(
+                            child:
+                                RichTextTitleBtnWidget("TOP", "CATEGORIES", () {
+                          redirectToCategoryList(context);
+                        })),
+                        SizedBox(
+                          height: space_15,
+                        ),
+                        CategoryGridWidget(homeResponse),
+                        SizedBox(
+                          height: space_25,
+                        ),
+//                        Container(
+//                            child: RichTextTitleBtnWidget("TOP", "OFFERS", () {
+//                          redirectToOfferList(context);
+//                        })),
+//                        SizedBox(
+//                          height: space_15,
+//                        ),
+//                        mCouponRes != null
+//                            ? Align(
+//                                alignment: Alignment.topLeft,
+//                                child: BannersCarousalWidget(mCouponRes))
+//                            : Container(
+//                                height: 0,
+//                                width: 0,
+//                              ),
+//                        SizedBox(
+//                          height: mCouponRes != null ? space_15 : 0,
+//                        ),
+                        ListView.builder(
+                            shrinkWrap: true,
+                            primary: false,
+                            itemCount: homeResponse.data.category_ads != null
+                                ? homeResponse.data.category_ads.length
+                                : 0,
+                            itemBuilder: (context, parentPos) {
+                              return Column(
+                                children: [
+                                  Container(
+                                    height: space_370,
+                                    color: CommonStyles.blue.withOpacity(0.1),
+                                    child: Column(
+                                      children: [
+                                        RichTextTitleBtnWidget(
+                                            "TOP",
+                                            homeResponse
+                                                .data
+                                                .category_ads[parentPos]
+                                                .category_name, () {
+                                          onViewAllClick(
+                                              context,
+                                              TYPE_FURNITURE,
+                                              homeResponse
+                                                  .data
+                                                  .category_ads[parentPos]
+                                                  .category_adslist[0]
+                                                  .category,
+                                              homeResponse
+                                                  .data
+                                                  .category_ads[parentPos]
+                                                  .category_name);
+                                        }),
+                                        Container(
+                                          height: space_280,
+                                          child: ListView.builder(
+                                              scrollDirection: Axis.horizontal,
+                                              itemCount: homeResponse
+                                                  .data
+                                                  .category_ads[parentPos]
+                                                  .category_adslist
+                                                  .length,
+                                              itemBuilder: (context, childPos) {
+                                                return Container(
+                                                    height: space_300,
+                                                    child: ItemCardWidget(
+                                                        category_adslist: homeResponse
+                                                                .data
+                                                                .category_ads[
+                                                                    parentPos]
+                                                                .category_adslist[
+                                                            childPos]));
+                                              }),
+                                        ),
+                                        SizedBox(
+                                          height: space_20,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: space_20,
+                                  ),
+                                ],
+                              );
+                            }),
+                        SizedBox(
+                          height: space_90,
+                        ),
+                      ],
+                    ),
+                  )),
+                )
+              ],
+            )),
+            CommonBottomNavBarHomeShowCaseWidget(postKey: postAdKey, shouldShowShowcase: shouldShowShowcase)
           ],
         ),
       ),
