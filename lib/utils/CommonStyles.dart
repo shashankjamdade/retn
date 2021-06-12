@@ -154,6 +154,7 @@ const String empty_mobile = "Please enter mobile no";
 const String empty_email = "Please enter email ID";
 const String empty_conf_password = "Please enter confirm password";
 const String pwd_no_match = "Password didn't match";
+const String empty_refer_code = "Please enter referral code";
 const String verify_mobile = "Please verify your mobile no";
 const String fcm_token_missing = "Token missing";
 const String empty_type = "Please enter type";

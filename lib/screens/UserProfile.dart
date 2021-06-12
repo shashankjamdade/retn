@@ -118,7 +118,7 @@ class _UserProfileState extends State<UserProfile> {
                                                   null
                                           ? mUserprofileRes.data.profile_picture
                                           : "http://rentozo.com/assets/img/user.jpg",
-                                      fit: BoxFit.fill,
+                                      fit: BoxFit.contain,
                                       width: space_70,
                                       height: space_70,
                                     ),

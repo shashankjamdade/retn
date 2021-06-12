@@ -58,14 +58,14 @@ class AuthPageHeaderWidget extends StatelessWidget {
               height: getProportionateScreenHeight(context, space_100),
             ),
           ),
-          GestureDetector(
-            onTap: skipFun,
-            child: Text(
-              text2,
-              style: CommonStyles.getRalewayStyle(
-                  space_15, FontWeight.w500, CommonStyles.primaryColor),
-            ),
-          ),
+          // GestureDetector(
+          //   onTap: skipFun,
+          //   child: Text(
+          //     text2,
+          //     style: CommonStyles.getRalewayStyle(
+          //         space_15, FontWeight.w500, CommonStyles.primaryColor),
+          //   ),
+          // ),
         ],
       ),
     );

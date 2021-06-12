@@ -136,7 +136,7 @@ class _BannerImgCorousalWidgetState extends State<BannerImgCarousalWidget> {
                       ),
                     ],
                   ),
-                  Align(
+                  /*Align(
                     alignment: Alignment.center,
                     child: Container(
                       margin: EdgeInsets.symmetric(horizontal: space_15),
@@ -181,7 +181,7 @@ class _BannerImgCorousalWidgetState extends State<BannerImgCarousalWidget> {
                         ],
                       ),
                     ),
-                  )
+                  )*/
                 ],
               )),
           Row(

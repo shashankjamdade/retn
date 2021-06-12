@@ -126,7 +126,7 @@ packages:
       name: eventify
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.4"
+    version: "1.0.0"
   fake_async:
     dependency: transitive
     description:
@@ -561,7 +561,7 @@ packages:
       name: razorpay_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0"
+    version: "1.2.6"
   rxdart:
     dependency: transitive
     description:
@@ -741,7 +741,7 @@ packages:
       name: webview_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.24"
+    version: "2.0.8"
   win32:
     dependency: transitive
     description:
@@ -765,4 +765,4 @@ packages:
     version: "4.5.1"
 sdks:
   dart: ">=2.12.0 <3.0.0"
-  flutter: ">=1.22.0"
+  flutter: ">=2.0.0"

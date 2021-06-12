@@ -375,7 +375,7 @@ class HomeRepository extends BaseRepository {
     UserProfileResponse response;
     //http secure connection
     var http = makeHttpSecure();
-    print("UNDER callUserProfileApi ${token}");
+    print("UNDER callUserProfileApi ${BASE_URL + GET_USER_DATA} ${token}");
     Map<String, String> mainheader = {"token": token};
     try{
       var res = await http.get(
@@ -412,7 +412,7 @@ class HomeRepository extends BaseRepository {
     int code = 0;
     //http secure connection
     var http = makeHttpSecure();
-    print("UNDER callChangePwd ${token}");
+    print("UNDER callChangePwd ${pwd}, ${newpwd} ${token}");
     Map<String, String> mainheader = {
 //      "Content-type": "application/json",
       "token": token
@@ -452,6 +452,7 @@ class HomeRepository extends BaseRepository {
     debugPrint("SETTINGS ${profile_setting}");
     address = "dummy";
     if (imageFile != null) {
+      debugPrint("ACCESSING-WITHIMG");
       var stream =
           new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
       var length = await imageFile.length(); //imageFile is your image file
@@ -474,6 +475,7 @@ class HomeRepository extends BaseRepository {
       response =  CommonResponse.fromJson(json.decode(resss.body));
     } else {
       //http secure connection
+      debugPrint("ACCESSING-WITHOUT-IMG");
       var http = makeHttpSecure();
       Map<String, String> mainheader = {"token": token};
       var res = await http.post(BASE_URL + GET_USER_DATA,

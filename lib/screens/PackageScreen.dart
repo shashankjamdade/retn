@@ -23,10 +23,10 @@ import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
+// import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-//import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart'; //for date format
 
 class PackageScreen extends StatefulWidget {
@@ -39,9 +39,9 @@ class _PackageScreenState extends State<PackageScreen> {
   GetAllPackageListResponse mGetAllPackageListResponse;
   LoginResponse loginResponse;
   var token = "";
-  var _razorpay = Razorpay();
+  // var _razorpay = Razorpay();
 
-//  var _razorpay = Razorpay();
+ var _razorpay = Razorpay();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   var mSelectedPackageName = "";
   var mSelectedPackageId = "";
@@ -142,12 +142,12 @@ class _PackageScreenState extends State<PackageScreen> {
       mSelectedPackageName = title;
       mSelectedPackageAmt = amt;
       _razorpay.open(options);
-//      setState(() {
-//        isWebviewLaunch = true;
-//        mWebLink =
-//            "https://rentozo.com/webviewpayment/view/${mSelectedPackageId}/${loginResponse?.data?.id}";
-//      });
-//      redirectToWebView(mWebLink);
+     // setState(() {
+     //   isWebviewLaunch = true;
+     //   mWebLink =
+     //       "https://rentozo.com/webviewpayment/view/${mSelectedPackageId}/${loginResponse?.data?.id}";
+     // });
+     // redirectToWebView(mWebLink);
     } catch (e) {
       debugPrint(e);
     }
@@ -663,32 +663,38 @@ class _AppPageState extends State<AppPage> {
 //                    if (await canLaunch(request.url)) {
 //                      await launch(request.url);
 //                    }
-                  return showDialog(
+                  showModalBottomSheet(
+                      isScrollControlled: true,
                       context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                            content: Container(
-                              height: double.infinity,
-                              width: double.infinity,
-                          child: WebView(
-                            javascriptMode: JavascriptMode.unrestricted,
-                            initialUrl: request.url,
-                            onPageStarted: (value) => {
-                              if(value?.contains("success")){
-                                debugPrint("URL2 -->> ${value}"),
-                                Navigator.pop(context),
-                                Navigator.of(context)
-                                .pushReplacement(new MaterialPageRoute(builder: (context) => PackageScreen())),
+                      builder: (builder) {
+                        return Container(
+                          height: double.infinity,
+                          width: double.infinity,
+                          padding: EdgeInsets.only(top: space_40),
+                          child: Center(
+                            child: WebView(
+                              javascriptMode: JavascriptMode.unrestricted,
+                              initialUrl: request.url,
+                              onPageStarted: (value) => {
+                                if (value?.contains("success"))
+                                  {
+                                    debugPrint("URL2 -->> ${value}"),
+                                    Navigator.pop(context),
+                                    Navigator.of(context)
+                                        .pushReplacement(new MaterialPageRoute(builder: (context) => PackageScreen())),
 //                            Navigator.pop(context, "success")
-                              }else if(value?.contains("failure")){
-                                debugPrint("URL2 -->> ${value}"),
-                                Navigator.pop(context),
-                                Navigator.of(context)
-                                    .pushReplacement(new MaterialPageRoute(builder: (context) => PackageScreen())),
-                              }
-                            },
+                                  }
+                                else if (value?.contains("failure"))
+                                  {
+                                    debugPrint("URL2 -->> ${value}"),
+                                    Navigator.pop(context),
+                                    Navigator.of(context)
+                                        .pushReplacement(new MaterialPageRoute(builder: (context) => PackageScreen())),
+                                  }
+                              },
+                            ),
                           ),
-                        ));
+                        );
                       });
                   return NavigationDecision.prevent;
 //                  } else {

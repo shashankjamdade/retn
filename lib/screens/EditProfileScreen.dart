@@ -214,7 +214,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     ? widget.mUserprofileRes
                                     .data.profile_picture
                                     : "http://rentozo.com/assets/img/user.jpg",
-                                fit: BoxFit.cover,
+                                fit: BoxFit.contain,
                                 width: space_80,
                                 height: space_80,
                               ),

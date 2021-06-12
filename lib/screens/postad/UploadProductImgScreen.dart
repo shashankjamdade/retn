@@ -522,8 +522,8 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
   Future getImageCamera(String imgType) async {
     File _image;
     try{
-      final pickedFile = await picker.getImage(source: ImageSource.camera, imageQuality: 75,
-      maxHeight: 500, maxWidth: 500);
+      final pickedFile = await picker.getImage(source: ImageSource.camera, imageQuality: 70,
+      maxHeight: 400, maxWidth: 400);
       if (pickedFile != null && pickedFile.path != null) {
         File rotatedImage = await FlutterExifRotation.rotateImage(path: pickedFile.path);
         if (pickedFile != null) {

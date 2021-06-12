@@ -27,6 +27,7 @@ import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:flutter_rentry_new/widgets/ListItemCardWidget.dart';
 import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -55,6 +56,7 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
   var mSelectedPackageId = "";
   var mBuypackageId = "";
   var mSelectedPackageAmt = "";
+
   var _razorpay = Razorpay();
   var mShowProgress = false;
   var mCheckedTnC = false;
@@ -140,9 +142,9 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
 
   void openCheckout(String amt, String packageName, String userPackageId,
       String packageId) async {
-    setState(() {
-      mShowProgress = true;
-    });
+    // setState(() {
+    //   mShowProgress = true;
+    // });
     var amtNum = int.parse(amt);
     var finalAmt = amtNum * 100;
     debugPrint("PAYYYY ${finalAmt} for $packageId");
@@ -161,9 +163,9 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
     };
     try {
       _razorpay.open(options);
-//      var mWebLink =
-//      "https://rentozo.com/webviewpayment/view/${packageId}/${loginResponse?.data?.id}";
-//      redirectToWebView(mWebLink, widget.adPostReqModel);
+      // var mWebLink =
+      //     "https://rentozo.com/webviewpayment/view/${packageId}/${loginResponse?.data?.id}";
+      // redirectToWebView(mWebLink, widget.adPostReqModel);
     } catch (e) {
       debugPrint(e);
     }
@@ -233,6 +235,18 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
   }
 
   Widget getScreenUI(AdUnderPackageRes adUnderPackageRes) {
+    List<AdUnderPackageData> purchesedPackages = List();
+    List<AdUnderPackageData> remainingPackages = List();
+    adUnderPackageRes.data.forEach((obj){
+      if(obj?.purchase_button !=
+          "show"){
+        purchesedPackages?.add(obj);
+      }else{
+        remainingPackages?.add(obj);
+      }
+    });
+    debugPrint("TOTAL_LIST-> ${adUnderPackageRes.data.length}, PURCHASED->${purchesedPackages.length}, REMAINING->${remainingPackages.length}");
+
     if (adUnderPackageRes.status) {
       if (adUnderPackageRes.data.length > 0) {
         return SafeArea(
@@ -258,141 +272,288 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
                     ),
                     Expanded(
                       child: Container(
-                        child: ListView.builder(
-                            itemCount: adUnderPackageRes.data.length,
-                            scrollDirection: Axis.vertical,
-                            primary: false,
-                            itemBuilder: (context, index) {
-                              if (adUnderPackageRes
-                                      .data[index].purchase_button ==
-                                  "show") {
-                                return ListTile(
-                                  key: Key("${index}"),
+                        child: Column(
+                          children: [
+                            Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: space_15, bottom: space_5),
+                                  child: Text("Active Packages", style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.black),),
+                                )),
+                            SizedBox(height: space_5,),
+                            ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: purchesedPackages.length,
+                                scrollDirection: Axis.vertical,
+                                primary: false,
+                                itemBuilder: (context, index) {
+                                  if (purchesedPackages[index].purchase_button ==
+                                      "show") {
+                                    return Container(
+                                      margin: EdgeInsets.only(bottom: space_10),
+                                      child: ListTile(
+                                        key: Key("${index}"),
 //                                  leading: Icon(Icons.notification_important),
-                                  title: Row(
-                                    children: [
-                                      Expanded(
+                                        title: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: CommonStyles.blue),
+                                                  borderRadius: BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(space_5),
+                                                      bottomLeft:
+                                                          Radius.circular(space_5),
+                                                      topRight:
+                                                          Radius.circular(space_0),
+                                                      bottomRight:
+                                                          Radius.circular(space_0)),
+                                                  color: CommonStyles.primaryColor,
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.all(space_10),
+                                                child: Text(
+                                                  purchesedPackages[index].package_name +
+                                                      "   No. Post: ${purchesedPackages[index].no_of_posts}   Days: ${purchesedPackages[index].no_of_days}    ",
+                                                  style:
+                                                      CommonStyles.getMontserratStyle(
+                                                          space_15,
+                                                          FontWeight.w600,
+                                                          Colors.white),
+                                                ),
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                mBuypackageId = purchesedPackages[index].package_id;
+                                                openCheckout(
+                                                    purchesedPackages[index].package_price,
+                                                    purchesedPackages[index].package_name,
+                                                    purchesedPackages[index].user_package_id,
+                                                    purchesedPackages[index].package_id);
+                                              },
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.all(space_10),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color:
+                                                            CommonStyles.darkAmber),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            space_5),
+                                                    color: CommonStyles.blue),
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                      "Buy Now",
+                                                      style: CommonStyles
+                                                          .getMontserratStyle(
+                                                        space_15,
+                                                        FontWeight.w600,
+                                                        Colors.white,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: space_8,
+                                                    ),
+                                                    Text(
+                                                      "\u20B9 ${purchesedPackages[index].package_price}",
+                                                      style: CommonStyles
+                                                          .getMontserratStyle(
+                                                              space_15,
+                                                              FontWeight.w600,
+                                                              Colors.white),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    return Theme(
+                                      data: Theme.of(context).copyWith(
+                                          unselectedWidgetColor:
+                                              CommonStyles.darkAmber,
+                                          selectedRowColor: CommonStyles.darkAmber,
+                                          disabledColor: CommonStyles.darkAmber),
+                                      child: Container(
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: space_15,vertical: space_5),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: CommonStyles.blue),
+                                            borderRadius:
+                                                BorderRadius.circular(space_15)),
+                                        child: RadioListTile(
+                                          groupValue: mSelectedPackageName,
+                                          title: Text(
+                                            purchesedPackages[index].package_name +
+                                                " | ${purchesedPackages[index].no_of_posts} Post For ${purchesedPackages[index].no_of_days} Days",
+                                            style: CommonStyles.getMontserratStyle(
+                                                space_16,
+                                                FontWeight.w600,
+                                                CommonStyles.primaryColor),
+                                          ),
+                                          value: purchesedPackages[index].user_package_id,
+                                          onChanged: (val) {
+                                            debugPrint("Selected_Package - ${val}");
+                                            setState(() {
+                                              mSelectedPackageName = val;
+                                              mSelectedPackageId = val;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }),
+                            SizedBox(height: space_20,),
+                            Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: space_15, bottom: space_5),
+                                  child: Text("Buy Packages", style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.black),),
+                                )),
+                            SizedBox(height: space_5,),
+                            Expanded(
+                              child: ListView.builder(
+                                  itemCount: remainingPackages?.length,
+                                  scrollDirection: Axis.vertical,
+                                  primary: false,
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index) {
+                                    if (remainingPackages[index].purchase_button ==
+                                        "show") {
+                                      return ListTile(
+                                        key: Key("${index}"),
+//                                  leading: Icon(Icons.notification_important),
+                                        title: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: CommonStyles.blue),
+                                                  borderRadius: BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(space_5),
+                                                      bottomLeft:
+                                                          Radius.circular(space_5),
+                                                      topRight:
+                                                          Radius.circular(space_0),
+                                                      bottomRight:
+                                                          Radius.circular(space_0)),
+                                                  color: CommonStyles.primaryColor,
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.all(space_10),
+                                                child: Text(
+                                                  remainingPackages[index].package_name +
+                                                      "   No. Post: ${remainingPackages[index].no_of_posts}   Days: ${remainingPackages[index].no_of_days}    ",
+                                                  style:
+                                                      CommonStyles.getMontserratStyle(
+                                                          space_15,
+                                                          FontWeight.w600,
+                                                          Colors.white),
+                                                ),
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                mBuypackageId = remainingPackages[index].package_id;
+                                                openCheckout(
+                                                    remainingPackages[index].package_price,
+                                                    remainingPackages[index].package_name,
+                                                    remainingPackages[index].user_package_id,
+                                                    remainingPackages[index].package_id);
+                                              },
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.all(space_10),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color:
+                                                            CommonStyles.darkAmber),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            space_5),
+                                                    color: CommonStyles.blue),
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                      "Buy Now",
+                                                      style: CommonStyles
+                                                          .getMontserratStyle(
+                                                        space_15,
+                                                        FontWeight.w600,
+                                                        Colors.white,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: space_8,
+                                                    ),
+                                                    Text(
+                                                      "\u20B9 ${remainingPackages[index].package_price}",
+                                                      style: CommonStyles
+                                                          .getMontserratStyle(
+                                                              space_15,
+                                                              FontWeight.w600,
+                                                              Colors.white),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    } else {
+                                      return Theme(
+                                        data: Theme.of(context).copyWith(
+                                            unselectedWidgetColor:
+                                                CommonStyles.darkAmber,
+                                            selectedRowColor: CommonStyles.darkAmber,
+                                            disabledColor: CommonStyles.darkAmber),
                                         child: Container(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: space_15),
                                           decoration: BoxDecoration(
                                               border: Border.all(
                                                   color: CommonStyles.blue),
-                                              borderRadius: BorderRadius.only(
-                                                  topLeft:
-                                                      Radius.circular(space_5),
-                                                  bottomLeft:
-                                                      Radius.circular(space_5),
-                                                  topRight:
-                                                      Radius.circular(space_0),
-                                                  bottomRight:
-                                                      Radius.circular(space_0)),
-                                              color: CommonStyles.primaryColor,
-                                          ),
-                                          padding:
-                                          const EdgeInsets.all(space_10),
-                                          child: Text(
-                                            adUnderPackageRes
-                                                    .data[index].package_name +
-                                                "   No. Post: ${adUnderPackageRes.data[index].no_of_posts}   Days: ${adUnderPackageRes.data[index].no_of_days}    ",
-                                            style:
-                                                CommonStyles.getMontserratStyle(
-                                                    space_15,
-                                                    FontWeight.w600,
-                                                    Colors.white),
-                                          ),
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          mBuypackageId = adUnderPackageRes
-                                              .data[index].package_id;
-                                          openCheckout(
-                                              adUnderPackageRes
-                                                  .data[index].package_price,
-                                              adUnderPackageRes
-                                                  .data[index].package_name,
-                                              adUnderPackageRes
-                                                  .data[index].user_package_id,
-                                              adUnderPackageRes
-                                                  .data[index].package_id);
-                                        },
-                                        child: Container(
-                                          padding:
-                                              const EdgeInsets.all(space_10),
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: CommonStyles.darkAmber),
                                               borderRadius:
-                                              BorderRadius.circular(space_5),
-                                          color: CommonStyles.blue),
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                "Buy Now",
-                                                style: CommonStyles
-                                                    .getMontserratStyle(
-                                                  space_15,
+                                                  BorderRadius.circular(space_15)),
+                                          child: RadioListTile(
+                                            groupValue: mSelectedPackageName,
+                                            title: Text(
+                                              remainingPackages[index].package_name +
+                                                  " | ${remainingPackages[index].no_of_posts} Post For ${remainingPackages[index].no_of_days} Days",
+                                              style: CommonStyles.getMontserratStyle(
+                                                  space_16,
                                                   FontWeight.w600,
-                                                  Colors.white,
-                                                ),
-                                              ),
-                                              SizedBox(height: space_8,),
-                                              Text(
-                                                "\u20B9 ${adUnderPackageRes
-                                                    .data[index].package_price}",
-                                                style: CommonStyles
-                                                    .getMontserratStyle(
-                                                        space_15,
-                                                        FontWeight.w600,
-                                                        Colors.white),
-                                              ),
-                                            ],
+                                                  CommonStyles.primaryColor),
+                                            ),
+                                            value: remainingPackages[index].user_package_id,
+                                            onChanged: (val) {
+                                              debugPrint("Selected_Package - ${val}");
+                                              setState(() {
+                                                mSelectedPackageName = val;
+                                                mSelectedPackageId = val;
+                                              });
+                                            },
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              } else {
-                                return Theme(
-                                  data: Theme.of(context).copyWith(
-                                      unselectedWidgetColor:
-                                          CommonStyles.darkAmber,
-                                      selectedRowColor:
-                                          CommonStyles.darkAmber,
-                                      disabledColor: CommonStyles.darkAmber),
-                                  child: Container(
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: space_15),
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: CommonStyles.blue),
-                                        borderRadius:
-                                            BorderRadius.circular(space_15)),
-                                    child: RadioListTile(
-                                      groupValue: mSelectedPackageName,
-                                      title: Text(
-                                        adUnderPackageRes
-                                                .data[index].package_name +
-                                            " | ${adUnderPackageRes.data[index].no_of_posts} Post For ${adUnderPackageRes.data[index].no_of_days} Days",
-                                        style: CommonStyles.getMontserratStyle(
-                                            space_16,
-                                            FontWeight.w600,
-                                            CommonStyles.primaryColor),
-                                      ),
-                                      value: adUnderPackageRes
-                                          .data[index].user_package_id,
-                                      onChanged: (val) {
-                                        debugPrint("Selected_Package - ${val}");
-                                        setState(() {
-                                          mSelectedPackageName = val;
-                                          mSelectedPackageId = val;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                );
-                              }
-                            }),
+                                      );
+                                    }
+                                  }),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     CheckboxListTile(
@@ -512,6 +673,15 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
                   space_12, FontWeight.w400, Colors.black),
               children: <TextSpan>[
             TextSpan(
+                text: 'Tips & Security ',
+                style: CommonStyles.getMontserratDecorationStyle(space_12,
+                    FontWeight.w800, Colors.black, TextDecoration.underline),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    launchURL(
+                        "https://rentozo.com/home/page/tips-of-security");
+                  }),
+            TextSpan(
                 text: 'Terms and Conditions',
                 style: CommonStyles.getMontserratDecorationStyle(space_12,
                     FontWeight.w400, Colors.black, TextDecoration.underline),
@@ -604,7 +774,46 @@ class _AppPage2State extends State<AppPage2> {
 //                    if (await canLaunch(request.url)) {
 //                      await launch(request.url);
 //                    }
-                  return showDialog(
+                  showModalBottomSheet(
+                      isScrollControlled: true,
+                      context: context,
+                      builder: (builder) {
+                        return Container(
+                          height: double.infinity,
+                          width: double.infinity,
+                          padding: EdgeInsets.only(top: space_40),
+                          child: Center(
+                            child: WebView(
+                              javascriptMode: JavascriptMode.unrestricted,
+                              initialUrl: request.url,
+                              onPageStarted: (value) => {
+                                if (value?.contains("success"))
+                                  {
+                                    debugPrint("URL2 -->> ${value}"),
+                                    Navigator.pop(context),
+                                    Navigator.of(context).pushReplacement(
+                                        new MaterialPageRoute(
+                                            builder: (context) =>
+                                                AdUnderPackageListScreen(
+                                                    widget.adPostReqModel))),
+//                            Navigator.pop(context, "success")
+                                  }
+                                else if (value?.contains("failure"))
+                                  {
+                                    debugPrint("URL2 -->> ${value}"),
+                                    Navigator.pop(context),
+                                    Navigator.of(context).pushReplacement(
+                                        new MaterialPageRoute(
+                                            builder: (context) =>
+                                                AdUnderPackageListScreen(
+                                                    widget.adPostReqModel))),
+                                  }
+                              },
+                            ),
+                          ),
+                        );
+                      });
+                  /* return showDialog(
                       context: context,
                       builder: (context) {
                         return AlertDialog(
@@ -639,7 +848,7 @@ class _AppPage2State extends State<AppPage2> {
                             },
                           ),
                         ));
-                      });
+                      });*/
                   return NavigationDecision.prevent;
 //                  } else {
 //                    setState(() {

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
@@ -15,7 +16,6 @@ import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
 import 'package:place_picker/place_picker.dart';
-
 
 class RentalPriceScreen extends StatefulWidget {
   AdPostReqModel adPostReqModel;
@@ -108,7 +108,7 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
                         shrinkWrap: true,
                         children: [
                           Padding(
-                            padding: EdgeInsets.only( top: space_20),
+                            padding: EdgeInsets.only(top: space_20),
                             child: Text(
                               "PRODUCT INFO",
                               style: CommonStyles.getMontserratStyle(
@@ -174,45 +174,194 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
                           SizedBox(
                             height: space_15,
                           ),
-                          Padding(
-                            padding: EdgeInsets.only( top: space_20),
-                            child: Text(
-                              "PRICE",
-                              style: CommonStyles.getMontserratStyle(
-                                  space_14, FontWeight.w700, Colors.black),
-                            ),
-                          ),
-                          SizedBox(
-                            height: space_10,
-                          ),
+                          //START
                           Container(
-                            height: getProportionateScreenHeight(context, space_40),
                             child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Flexible(
-                                  child: TextFormField(
-                                    validator: (String value) {
-                                      if (value.isEmpty) {
-                                        return "";
-                                      }
-                                    },
-                                    obscureText: false,
-                                    controller: priceController,
-                                    keyboardType: TextInputType.number,
-                                    decoration: InputDecoration(
-                                      hintText: "₹ Enter price",
-                                      fillColor: Colors.transparent,
-                                    ),
+                                Expanded(child: Column(
+                                 children: [
+                                   Align(
+                                   alignment : Alignment.centerLeft,
+                                     child: Padding(
+                                       padding: EdgeInsets.only(top: 0),
+                                       child: Text(
+                                         "PRICE",
+                                         style: CommonStyles.getMontserratStyle(
+                                             space_14, FontWeight.w700, Colors.black),
+                                       ),
+                                     ),
+                                   ),
+                                   SizedBox(
+                                     height: space_10,
+                                   ),
+                                   Container(
+                                     height:
+                                     getProportionateScreenHeight(context, space_40),
+                                     child: Row(
+                                       crossAxisAlignment: CrossAxisAlignment.stretch,
+                                       children: [
+                                         Flexible(
+                                           child: TextFormField(
+                                             validator: (String value) {
+                                               if (value.isEmpty) {
+                                                 return "";
+                                               }
+                                             },
+                                             obscureText: false,
+                                             controller: priceController,
+                                             keyboardType: TextInputType.number,
+                                             decoration: InputDecoration(
+                                               hintText: "₹ Enter price",
+                                               fillColor: Colors.transparent,
+                                             ),
+                                           ),
+                                         ),
+                                       ],
+                                     ),
+                                   ),
+                                 ],
+                                )),
+                                Expanded(child: Column(
+                                  children: [
+                                    Align(
+                                  alignment : Alignment.centerLeft,
+                                      child: Padding(
+                                        padding: EdgeInsets.only(top: space_5),
+                                      child: Text(
+                                        "DURATION",
+                                        style: CommonStyles.getMontserratStyle(
+                                            space_14, FontWeight.w700, Colors.black),
+                                      ),
                                   ),
-                                ),
+                                    ),
+                                    SizedBox(
+                                      height: space_5,
+                                    ),
+                                    Container(
+                                        child: DropdownButton(
+                                          hint: mSelectedDurationType == null ||
+                                              mSelectedDurationType.isEmpty
+                                              ? Text(
+                                            'Select type',
+                                            style: CommonStyles
+                                                .getRalewayStyle(
+                                                space_12,
+                                                FontWeight.w500,
+                                                Colors.black),
+                                          )
+                                              : Text(
+                                            mSelectedDurationType,
+                                            style: CommonStyles
+                                                .getRalewayStyle(
+                                                space_12,
+                                                FontWeight.w500,
+                                                Colors.black),
+                                          ),
+                                          isExpanded: true,
+                                          iconSize: 30.0,
+                                          style: TextStyle(color: Colors.blue),
+                                          items: mGetRentTypeResponse.data.map(
+                                                (val) {
+                                              return DropdownMenuItem<
+                                                  RentTypeData>(
+                                                value: val,
+                                                child: Text(val.rent_type),
+                                              );
+                                            },
+                                          ).toList(),
+                                          onChanged: (value) {
+                                            setState(
+                                                  () {
+                                                if (value is RentTypeData) {
+                                                  mSelectedDurationType =
+                                                      value.rent_type;
+                                                  mSelectedDurationTypeId =
+                                                      value.ads_rent_type_id;
+                                                  debugPrint(
+                                                      "SELECTED_VALUE ${value}-->> ${mSelectedDurationType}");
+                                                }
+                                              },
+                                            );
+                                          },
+                                        )),
+                                    /*Container(
+                                      height: space_100,
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                flex: 3,
+                                                child: Container(
+                                                    child: DropdownButton(
+                                                      hint: mSelectedDurationType == null ||
+                                                          mSelectedDurationType.isEmpty
+                                                          ? Text(
+                                                        'Select type',
+                                                        style: CommonStyles
+                                                            .getRalewayStyle(
+                                                            space_12,
+                                                            FontWeight.w500,
+                                                            Colors.black),
+                                                      )
+                                                          : Text(
+                                                        mSelectedDurationType,
+                                                        style: CommonStyles
+                                                            .getRalewayStyle(
+                                                            space_12,
+                                                            FontWeight.w500,
+                                                            Colors.black),
+                                                      ),
+                                                      isExpanded: true,
+                                                      iconSize: 30.0,
+                                                      style: TextStyle(color: Colors.blue),
+                                                      items: mGetRentTypeResponse.data.map(
+                                                            (val) {
+                                                          return DropdownMenuItem<
+                                                              RentTypeData>(
+                                                            value: val,
+                                                            child: Text(val.rent_type),
+                                                          );
+                                                        },
+                                                      ).toList(),
+                                                      onChanged: (value) {
+                                                        setState(
+                                                              () {
+                                                            if (value is RentTypeData) {
+                                                              mSelectedDurationType =
+                                                                  value.rent_type;
+                                                              mSelectedDurationTypeId =
+                                                                  value.ads_rent_type_id;
+                                                              debugPrint(
+                                                                  "SELECTED_VALUE ${value}-->> ${mSelectedDurationType}");
+                                                            }
+                                                          },
+                                                        );
+                                                      },
+                                                    )),
+                                              ),
+                                            ],
+                                          ),
+                                          Divider(
+                                            height: space_1,
+                                            thickness: space_1,
+                                            color: Colors.black,
+                                          ),
+                                        ],
+                                      ),
+                                    ),*/
+                                  ],
+                                )),
                               ],
                             ),
                           ),
+                          //END
                           SizedBox(
                             height: space_20,
                           ),
-                          Container(
+                          /*Container(
                             height: space_100,
                             child: Column(
                               children: [
@@ -287,9 +436,9 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
                                 ),
                               ],
                             ),
-                          ),
+                          ),*/
                           Padding(
-                            padding: EdgeInsets.only( top: space_0),
+                            padding: EdgeInsets.only(top: space_0),
                             child: Text(
                               "SELECT LOCATION",
                               style: CommonStyles.getMontserratStyle(
@@ -297,18 +446,26 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: (){
+                            onTap: () {
                               showPlacePicker();
                             },
                             child: Container(
                               height: space_50,
                               width: double.infinity,
                               margin: EdgeInsets.symmetric(vertical: space_15),
-                              decoration: BoxDecoration(color: CommonStyles.primaryColor.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(space_15)
-                              ),
+                              decoration: BoxDecoration(
+                                  color: CommonStyles.primaryColor
+                                      .withOpacity(0.2),
+                                  borderRadius:
+                                      BorderRadius.circular(space_15)),
                               child: Center(
-                                child: Text(mSelctedLocation.isNotEmpty?mSelctedLocation:"Select Location", style: CommonStyles.getRalewayStyle(space_15,FontWeight.w500, Colors.black),),
+                                child: Text(
+                                  mSelctedLocation.isNotEmpty
+                                      ? mSelctedLocation
+                                      : "Select Location",
+                                  style: CommonStyles.getRalewayStyle(
+                                      space_15, FontWeight.w500, Colors.black),
+                                ),
                               ),
                             ),
                           )
@@ -356,7 +513,7 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
       showSnakbar(_scaffoldKey, empty_title);
     } else if (descController.text.trim().isEmpty) {
       showSnakbar(_scaffoldKey, empty_desc);
-    } else if (descController.text.trim().length <20) {
+    } else if (descController.text.trim().length < 20) {
       showSnakbar(_scaffoldKey, short_desc);
     } else if (priceController.text.trim().isEmpty) {
       showSnakbar(_scaffoldKey, empty_price);
@@ -372,7 +529,9 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
       widget.adPostReqModel.price = priceController.text.trim();
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => AdUnderPackageListScreen(widget.adPostReqModel)),
+        MaterialPageRoute(
+            builder: (context) =>
+                AdUnderPackageListScreen(widget.adPostReqModel)),
       );
       //API hit
 //      authenticationBloc.dispatch(LoginEvent(loginInfoModel: testLogin));
@@ -381,10 +540,8 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
   }
 
   void showPlacePicker() async {
-    LocationResult result = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            PlacePicker(GOOGLE_API_KEY
-            )));
+    LocationResult result = await Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => PlacePicker(GOOGLE_API_KEY)));
     // Handle the result in your way
     print("LOCATION_SEELCTED ${result.latLng.latitude}");
     widget.adPostReqModel.address = result.name;
@@ -394,5 +551,4 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
       mSelctedLocation = result.name;
     });
   }
-
 }

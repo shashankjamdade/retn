@@ -61,6 +61,7 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
   String mFcmToken = "";
   bool _obscureText = true;
   bool _obscureText2 = true;
+  bool mHavReferalCode = false;
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String _message = '';
@@ -73,6 +74,11 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
   void _togglePasswordStatus() {
     setState(() {
       _obscureText = !_obscureText;
+    });
+  }
+  void _togglePasswordStatus2() {
+    setState(() {
+      _obscureText2 = !_obscureText2;
     });
   }
 
@@ -268,15 +274,6 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
                       SizedBox(
                         height: getProportionateScreenHeight(context, space_10),
                       ),
-                      TextInputWidget(referralCodeController,
-                          "Referral code (Optional)", false, (String value) {
-                        if (value.isEmpty) {
-                          return "Please enter valid referral code";
-                        }
-                      }, TextInputType.text),
-                      SizedBox(
-                        height: getProportionateScreenHeight(context, space_20),
-                      ),
                       Container(
                         height: getProportionateScreenHeight(context, space_40),
                         child: Row(
@@ -294,7 +291,7 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
                                 keyboardType: TextInputType.text,
                                 decoration: InputDecoration(
                                   floatingLabelBehavior:
-                                      FloatingLabelBehavior.always,
+                                  FloatingLabelBehavior.always,
                                   labelText: "Password",
                                   suffixIcon: IconButton(
                                     icon: Icon(
@@ -319,15 +316,95 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
                           ],
                         ),
                       ),
-//                          TextInputWidget(passwordController, "Password", false, (String value) {
-//                            if (value.isEmpty) {
-//                              return "Please enter valid password";
-//                            }
-//                          }, TextInputType.text),
                       SizedBox(
                         height: getProportionateScreenHeight(context, space_20),
                       ),
-                      BtnTextInputWidget(
+                      Container(
+                        height: getProportionateScreenHeight(context, space_40),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Flexible(
+                              child: TextFormField(
+                                validator: (String value) {
+                                  if (value.isEmpty) {
+                                    return "Please enter valid password";
+                                  }
+                                },
+                                obscureText: _obscureText2,
+                                controller: confPasswordController,
+                                keyboardType: TextInputType.text,
+                                decoration: InputDecoration(
+                                  floatingLabelBehavior:
+                                  FloatingLabelBehavior.always,
+                                  labelText: "Confirm Password",
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _obscureText2
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                    ),
+                                    onPressed: _togglePasswordStatus2,
+                                    color: CommonStyles.primaryColor,
+                                  ),
+                                  contentPadding: EdgeInsets.all(space_8),
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.grey,
+                                      ),
+                                      borderRadius: BorderRadius.circular(0.0)),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // SizedBox(
+                      //   height: getProportionateScreenHeight(context, space_20),
+                      // ),
+                      CheckboxListTile(
+                        contentPadding: EdgeInsets.only(left: 0, top: space_15, bottom: 0, right: 0),
+                        controlAffinity: ListTileControlAffinity.leading,
+                        title: Text(
+                          "I have a referral code",
+                          style: CommonStyles.getMontserratStyle(
+                              space_14, FontWeight.w400, Colors.black),
+                        ),
+                        activeColor: CommonStyles.primaryColor,
+                        value: mHavReferalCode,
+                        onChanged: (bool value) {
+                          setState(() {
+                            mHavReferalCode = value;
+                          });
+                        },
+                      ),
+                      mHavReferalCode
+                          ? TextInputWidget(
+                              referralCodeController,
+                              "Referral code",
+                              false, (String value) {
+                              if (value.isEmpty) {
+                                return "Please enter valid referral code";
+                              }
+                            }, TextInputType.text)
+                          : Container(height: 0, width: 0,),
+                      SizedBox(
+                        height: getProportionateScreenHeight(context, space_25),
+                      ),
+                      InkWell(
+                        onTap: (){
+                          onSignup();
+                        },
+                        child: Center(child: Container(
+                            padding: EdgeInsets.symmetric(vertical: space_10, horizontal: space_25),
+                            decoration: BoxDecoration(
+                                color: CommonStyles.primaryColor
+                            ),
+                            child: Text("Sign Up", style: CommonStyles.getMontserratStyle(space_14, FontWeight.w600, Colors.white),))),
+                      ),
+                     /* BtnTextInputWidget(
                           confPasswordController,
                           "Confirm Password",
                           "Sign Up",
@@ -336,7 +413,7 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
                         if (value.isEmpty) {
                           return "Please enter valid confirm password";
                         }
-                      }, TextInputType.emailAddress),
+                      }, TextInputType.emailAddress),*/
                       SizedBox(
                         height: getProportionateScreenHeight(context, space_20),
                       ),
@@ -463,6 +540,8 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
     } else if (passwordController.text.trim() !=
         confPasswordController.text.trim()) {
       showSnakbar(_scaffoldKey, pwd_no_match);
+    } else if (referralCodeController.text.trim().isEmpty && mHavReferalCode) {
+      showSnakbar(_scaffoldKey, empty_refer_code);
     } else if (mFcmToken == null || mFcmToken.isEmpty) {
       showSnakbar(_scaffoldKey, fcm_token_missing);
     } else {
@@ -477,8 +556,10 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
             loginType: mLoginType,
             otp: otpController.text.trim(),
             deviceToken: mFcmToken,
-          reffCode: referralCodeController.text.toString() !=null && referralCodeController.text.toString()?.isNotEmpty? referralCodeController.text.toString().trim():""
-        ));
+            reffCode: referralCodeController.text.toString() != null &&
+                    referralCodeController.text.toString()?.isNotEmpty
+                ? referralCodeController.text.toString().trim()
+                : ""));
     }
   }
 

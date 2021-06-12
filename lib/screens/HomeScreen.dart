@@ -177,6 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (prefs != null) {
             debugPrint('onComplete1: SAVED');
             prefs.setString(IS_SHOWCASE_VIEWED, "true");
+            shouldShowShowcase = true;
           }
         },
         builder: Builder(
@@ -262,6 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (prefs != null) {
                           debugPrint('onComplete1: SAVED');
                           prefs.setString(IS_SHOWCASE_VIEWED, "true");
+                          shouldShowShowcase = true;
                         }
                       },
                       builder: Builder(
