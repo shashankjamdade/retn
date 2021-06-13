@@ -222,7 +222,20 @@ class ItemDetailResponse {
 //  }
 //
 //}
+class Rating{
+  dynamic avg_rating;
+  Rating({this.avg_rating});
 
+  Rating.fromJson(dynamic json) {
+    avg_rating = json["avg_rating"];
+  }
+
+  Map<String, dynamic> toJson() {
+    var map = <String, dynamic>{};
+    map["avg_rating"] = avg_rating;
+    return map;
+  }
+}
 class Others {
   String id;
   String slug;
@@ -268,6 +281,8 @@ class Others {
 class Ad {
   List<Custome_field> custome_field;
   String id;
+  Rating rating;
+  String username;
   String profile_setting;
   String rent_type;
   bool is_wishlist;
@@ -314,6 +329,8 @@ class Ad {
   Ad({
       this.custome_field,
       this.id,
+      this.rating,
+      this.username,
       this.profile_setting,
       this.rent_type,
       this.is_wishlist,
@@ -366,6 +383,8 @@ class Ad {
     }
     profile_setting = json["profile_setting"];
     id = json["id"];
+    rating = json["rating"] != null ? Rating.fromJson(json["rating"]) : null;
+    username = json["username"];
     rent_type = json["rent_type"];
     is_wishlist = json["is_wishlist"];
     title = json["title"];
@@ -414,6 +433,10 @@ class Ad {
     if (custome_field != null) {
       map["custome_field"] = custome_field.map((v) => v.toJson()).toList();
     }
+    if (rating != null) {
+      map["rating"] = rating.toJson();
+    }
+    map["username"] = username;
     map["profile_setting"] = profile_setting;
     map["id"] = id;
     map["rent_type"] = rent_type;

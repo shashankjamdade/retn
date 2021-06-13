@@ -261,6 +261,11 @@ const String API_ERROR_MSG_RETRY = "Something went wrong, Please try again!";
 const String GOOGLE_API_KEY = "AIzaSyD3tR0ziIBVRteQ_t7Rd1rIrQoqr08Iv4Q";
 const String RAZORPAY_KEY = "rzp_live_XrLN5GHuHInUOx";
 
+const String PERMISSION_CONSENT_MSG1 = "Rentozo is rental segment business where user can post their item under our various categories i.e. vehicle, furniture, clothes, property etc on rent. So when a user post the items on rent ";
+const String PERMISSION_CONSENT_MSG2 = "we need user's consent to access the camera, photo and location";
+const String PERMISSION_CONSENT_MSG3 = " because the user will have to post the picture of their goods and they can post it from their gallery or by directly clicking from camera. The location access consent is needed because our app work is based on location, when user's post their data they also locate as to where it is available and then post it on rent and it also helps us to notify the users about the product available in their location.";
+const String PERMISSION_CONSENT_SUBMSG = "We strongly believe in user's privacy that's why we never collect user's private data in our panel expect what has been provided by them and we respect user's privacy.";
+
 //https://maps.googleapis.com/maps/api/place/autocomplete/json?input=mahatashtr&types=geocode&language=fr&sensor=true&key=AIzaSyA-7MnlahCeTpKE5mOD5XQf-8ixgbdtDSs
 
 

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_options.dart';
@@ -37,12 +38,14 @@ import 'package:flutter_rentry_new/screens/postad/SelectLocationPostAdScreen.dar
 import 'package:flutter_rentry_new/screens/postad/PostAdsSubCategoryScreen.dart';
 import 'package:flutter_rentry_new/screens/postad/UploadProductImgScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
+import 'package:flutter_rentry_new/utils/PermissionService.dart';
 import 'package:flutter_rentry_new/utils/PushNotificationsManager.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CarousalCommonWidgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 //import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -228,6 +231,22 @@ class _ScreenOneState extends State<ScreenOne> {
     });
   }
 
+  _showLocationPermissionDialog(BuildContext context) {
+    VoidCallback continueCallBack = () => {
+      Navigator.of(context).pop(),
+      prefs?.setString("loc", "showed"),
+      getMyCurrentLocation()
+    };
+    BlurryLocationInfoDialog alert = BlurryLocationInfoDialog(
+        "USER CONSENT", "", continueCallBack);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -250,34 +269,43 @@ class _ScreenOneState extends State<ScreenOne> {
 
   getMyCurrentLocation() async {
     debugPrint("LOCATION_FOUND accesssing ");
-    Position position =
-        await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     prefs = await SharedPreferences.getInstance();
-    prefs.setString(USER_LOCATION_LAT, "${position.latitude}");
-    prefs.setString(USER_LOCATION_LONG, "${position.longitude}");
-    debugPrint("LOCATION_FOUND ${position.latitude}, ${position.longitude}");
-    //access address from lat lng
-    final coordinates = new Coordinates(position.latitude, position.longitude);
-    var addresses =
-        await Geocoder.local.findAddressesFromCoordinates(coordinates);
-    var first = addresses.first;
-    UserLocationSelected userLocationSelected = new UserLocationSelected(
-        address: first.addressLine,
-        city: first.locality,
-        state: first.adminArea,
-        coutry: first.countryName,
-        mlat: position.latitude.toString(),
-        mlng: position.longitude.toString());
-    StateContainer.of(context).updateUserLocation(userLocationSelected);
-    prefs.setString(USER_LOCATION_ADDRESS, "${first.addressLine}");
-    prefs.setString(USER_LOCATION_CITY, "${first.locality}");
-    prefs.setString(USER_LOCATION_STATE, "${first.adminArea}");
-    prefs.setString(USER_LOCATION_PINCODE, "${first.postalCode}");
-    print("@@@@-------${first} ${first.addressLine} : ${first.adminArea}");
-    setState(() {
-      isLocationAccess = true;
-      isLogin = true;
-    });
+    if(prefs?.getString("loc") !=null && prefs?.getString("loc")?.isNotEmpty){
+      PermissionService().requestPermission(
+          onPermissionDenied: () {
+        // prefs?.setString("loc", "");
+        // openAppSettings();
+      });
+      Position position =
+      await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      prefs.setString(USER_LOCATION_LAT, "${position.latitude}");
+      prefs.setString(USER_LOCATION_LONG, "${position.longitude}");
+      debugPrint("LOCATION_FOUND ${position.latitude}, ${position.longitude}");
+      //access address from lat lng
+      final coordinates = new Coordinates(position.latitude, position.longitude);
+      var addresses =
+      await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      var first = addresses.first;
+      UserLocationSelected userLocationSelected = new UserLocationSelected(
+          address: first.addressLine,
+          city: first.locality,
+          state: first.adminArea,
+          coutry: first.countryName,
+          mlat: position.latitude.toString(),
+          mlng: position.longitude.toString());
+      StateContainer.of(context).updateUserLocation(userLocationSelected);
+      prefs.setString(USER_LOCATION_ADDRESS, "${first.addressLine}");
+      prefs.setString(USER_LOCATION_CITY, "${first.locality}");
+      prefs.setString(USER_LOCATION_STATE, "${first.adminArea}");
+      prefs.setString(USER_LOCATION_PINCODE, "${first.postalCode}");
+      print("@@@@-------${first} ${first.addressLine} : ${first.adminArea}");
+      setState(() {
+        isLocationAccess = true;
+        isLogin = true;
+      });
+    }else{
+      _showLocationPermissionDialog(context);
+    }
   }
 
   @override
@@ -420,20 +448,6 @@ class _ScreenOneState extends State<ScreenOne> {
         ],
       ),
     );
-  }
-}
-
-class sd extends StatefulWidget {
-  const sd({Key key}) : super(key: key);
-
-  @override
-  _sdState createState() => _sdState();
-}
-
-class _sdState extends State<sd> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
   }
 }
 
@@ -614,3 +628,67 @@ class _StartupIntroScreenState extends State<StartupIntroScreen>  with SingleTic
   }
 }
 // IntroImgCarousalWidget(mList, widget.prefs);
+
+class BlurryLocationInfoDialog extends StatelessWidget {
+  String title;
+  String content;
+  VoidCallback continueCallBack;
+
+  BlurryLocationInfoDialog(this.title, this.content, this.continueCallBack);
+
+  TextStyle textStyle = TextStyle(color: Colors.black);
+
+  @override
+  Widget build(BuildContext context) {
+    return BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+        child: AlertDialog(
+          title: new Text(
+            title,
+            style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),
+          ),
+          content: ListView(
+            shrinkWrap: true,
+            children: [
+              SizedBox(height: space_15,),
+              RichText(
+                text: new TextSpan(
+                  text: PERMISSION_CONSENT_MSG1,
+                  style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.black),
+                  children: <TextSpan>[
+                    new TextSpan(
+                      text: PERMISSION_CONSENT_MSG2,
+                      style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),
+                    ),
+                    new TextSpan(
+                      text: PERMISSION_CONSENT_MSG3,
+                      style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.black),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: space_15,),
+              new Text(
+                PERMISSION_CONSENT_SUBMSG,
+                style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),
+              ),
+              SizedBox(height: space_15,),
+            ],
+          ),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Allow"),
+              onPressed: () {
+                continueCallBack();
+              },
+            ),
+            new FlatButton(
+              child: Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ));
+  }
+}

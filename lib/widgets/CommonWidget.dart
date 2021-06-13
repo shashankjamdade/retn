@@ -1800,7 +1800,7 @@ class OwnerInfo extends StatelessWidget {
   String profilePath;
   String username;
   String createdDate;
-  String rating;
+  double rating;
   String sinceDate;
 
   OwnerInfo({
@@ -1808,7 +1808,7 @@ class OwnerInfo extends StatelessWidget {
     this.profilePath = "",
     this.username = "",
     this.createdDate = "",
-    this.rating = "",
+    this.rating = 0,
   });
 
   @override
@@ -1849,51 +1849,7 @@ class OwnerInfo extends StatelessWidget {
                   space_12, FontWeight.w500, Colors.black.withOpacity(0.5)),
             ),
             Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: space_3),
-                    child: Icon(
-                      Icons.star,
-                      color: Colors.amber,
-                      size: space_12,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: space_3),
-                    child: Icon(
-                      Icons.star,
-                      color: Colors.amber,
-                      size: space_12,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: space_3),
-                    child: Icon(
-                      Icons.star,
-                      color: Colors.amber,
-                      size: space_12,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: space_3),
-                    child: Icon(
-                      Icons.star,
-                      color: Colors.amber,
-                      size: space_12,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: space_3),
-                    child: Icon(
-                      Icons.star_half,
-                      color: Colors.amber,
-                      size: space_12,
-                    ),
-                  ),
-                ],
-              ),
+              child:  RatingBarByRatingWidget(rating),
             )
           ],
         ),
@@ -3117,8 +3073,9 @@ class PackageCardWidget extends StatelessWidget {
           ),
           Text(
             "${getAllPackageData.title}",
+            maxLines: 2,
             style: CommonStyles.getMontserratStyle(
-                space_30, FontWeight.w900, Colors.white),
+                space_25, FontWeight.w900, Colors.white),
           ),
           Text(
             "PACK",
@@ -3147,7 +3104,7 @@ class PackageCardWidget extends StatelessWidget {
                           Text(
                             "${getAllPackageData.price}",
                             style: CommonStyles.getMontserratStyle(
-                                space_35, FontWeight.w900, Colors.white),
+                                space_30, FontWeight.w900, Colors.white),
                           ),
                         ],
                       ),

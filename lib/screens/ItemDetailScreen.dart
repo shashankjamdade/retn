@@ -468,6 +468,9 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                             height: space_15,
                           ),
                           OwnerInfo(
+                            rating: itemDetailResponse.ad.rating != null
+                                ? double.parse(itemDetailResponse.ad.rating.avg_rating)
+                                : 0,
                             sellerId: itemDetailResponse.ad.seller != null
                                 ? itemDetailResponse.ad.seller
                                 : "",
@@ -475,8 +478,8 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                 itemDetailResponse.ad.profile_picture != null
                                     ? itemDetailResponse?.ad?.profile_picture
                                     : "",
-                            username: itemDetailResponse.ad.firstname != null
-                                ? itemDetailResponse?.ad?.firstname
+                            username: itemDetailResponse.ad.username != null
+                                ? itemDetailResponse?.ad?.username
                                 : "",
                             createdDate: itemDetailResponse.ad.since != null
                                 ? itemDetailResponse?.ad?.since

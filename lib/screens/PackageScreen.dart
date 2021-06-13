@@ -301,7 +301,7 @@ class _PackageScreenState extends State<PackageScreen> {
                                             "${currentPackage.title}",
                                             style:
                                                 CommonStyles.getMontserratStyle(
-                                                    space_25,
+                                                    space_20,
                                                     FontWeight.w900,
                                                     Colors.white),
                                           ),
