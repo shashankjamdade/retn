@@ -243,17 +243,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             }
                           }, TextInputType.emailAddress),
                           SizedBox(height: getProportionateScreenHeight(context, space_20),),
-                          CheckboxListTile(
-                            controlAffinity: ListTileControlAffinity.leading,
-                            title: privacyPolicyLinkAndTermsOfService(),
-                            activeColor: CommonStyles.primaryColor,
-                            value: mCheckedTnC,
-                            onChanged: (bool value) {
-                              setState(() {
-                                mCheckedTnC = value;
-                              });
-                            },
+                          Padding(
+                            padding: EdgeInsets.only(right: space_15),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                Checkbox(
+                                  value: mCheckedTnC,
+                                  activeColor: CommonStyles.primaryColor,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      mCheckedTnC = value;
+                                    });
+                                  },
+                                ),
+                                Expanded(child: privacyPolicyLinkAndTermsOfService())
+                              ],
+                            ),
                           ),
+                          // CheckboxListTile(
+                          //   contentPadding: EdgeInsets.all(0),
+                          //   controlAffinity: ListTileControlAffinity.leading,
+                          //   title: privacyPolicyLinkAndTermsOfService(),
+                          //   activeColor: CommonStyles.primaryColor,
+                          //   value: mCheckedTnC,
+                          //   onChanged: (bool value) {
+                          //     setState(() {
+                          //       mCheckedTnC = value;
+                          //     });
+                          //   },
+                          // ),
                           SizedBox(height: getProportionateScreenHeight(context, space_20),),
                           InkWell(
                             onTap: (){

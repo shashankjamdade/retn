@@ -3049,8 +3049,9 @@ class BottomFloatingChatBtnsWidget extends StatelessWidget {
 
 class PackageCardWidget extends StatelessWidget {
   GetAllPackageData getAllPackageData;
+  Function paynow;
 
-  PackageCardWidget(this.getAllPackageData);
+  PackageCardWidget(this.getAllPackageData, this.paynow);
 
   @override
   Widget build(BuildContext context) {
@@ -3124,7 +3125,7 @@ class PackageCardWidget extends StatelessWidget {
             ),
           ),
           GestureDetector(
-            onTap: () {},
+            onTap: paynow,
             child: Container(
               padding:
                   EdgeInsets.symmetric(horizontal: space_15, vertical: space_8),

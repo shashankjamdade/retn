@@ -33,6 +33,7 @@ class _MyAdsListScreenState extends State<MyAdsListScreen> {
   HomeBloc homeBloc = new HomeBloc();
   var loginResponse;
   var token = "";
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -92,6 +93,7 @@ class _MyAdsListScreenState extends State<MyAdsListScreen> {
     if(res?.data!=null && res?.data?.length>0){
       return SafeArea(
         child: Scaffold(
+          key: _scaffoldKey,
           body: Stack(
             children: [
               Container(
@@ -157,7 +159,7 @@ class _MyAdsListScreenState extends State<MyAdsListScreen> {
                     ItemDetailScreen(categoryName: mCategory_adslist.slug)),
           );
         }else{
-
+          showSnakbar(_scaffoldKey, "Your ad is under review, please wait");
         }
       },
       child: Container(

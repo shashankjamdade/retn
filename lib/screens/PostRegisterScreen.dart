@@ -364,22 +364,45 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
                       // SizedBox(
                       //   height: getProportionateScreenHeight(context, space_20),
                       // ),
-                      CheckboxListTile(
-                        contentPadding: EdgeInsets.only(left: 0, top: space_15, bottom: 0, right: 0),
-                        controlAffinity: ListTileControlAffinity.leading,
-                        title: Text(
-                          "I have a referral code",
-                          style: CommonStyles.getMontserratStyle(
-                              space_14, FontWeight.w400, Colors.black),
+                      SizedBox(height: space_10,),
+                      Padding(
+                        padding: EdgeInsets.only(right: space_15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Checkbox(
+                              value: mHavReferalCode,
+                              activeColor: CommonStyles.primaryColor,
+                              onChanged: (value) {
+                                setState(() {
+                                  mHavReferalCode = value;
+                                });
+                              },
+                            ),
+                            Expanded(child: Text(
+                              "I have a referral code",
+                              style: CommonStyles.getMontserratStyle(
+                                  space_14, FontWeight.w400, Colors.black),
+                            ))
+                          ],
                         ),
-                        activeColor: CommonStyles.primaryColor,
-                        value: mHavReferalCode,
-                        onChanged: (bool value) {
-                          setState(() {
-                            mHavReferalCode = value;
-                          });
-                        },
                       ),
+                      // CheckboxListTile(
+                      //   contentPadding: EdgeInsets.only(left: 0, top: space_15, bottom: 0, right: 0),
+                      //   controlAffinity: ListTileControlAffinity.leading,
+                      //   title: Text(
+                      //     "I have a referral code",
+                      //     style: CommonStyles.getMontserratStyle(
+                      //         space_14, FontWeight.w400, Colors.black),
+                      //   ),
+                      //   activeColor: CommonStyles.primaryColor,
+                      //   value: mHavReferalCode,
+                      //   onChanged: (bool value) {
+                      //     setState(() {
+                      //       mHavReferalCode = value;
+                      //     });
+                      //   },
+                      // ),
                       mHavReferalCode
                           ? TextInputWidget(
                               referralCodeController,

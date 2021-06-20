@@ -148,7 +148,7 @@ Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
       iOS: iOSPlatformChannelSpecifics);
   flutterLocalNotificationsPlugin.show(msgId, message['data']['title'],
       message['data']['message'], platformChannelSpecifics,
-      payload: message["data"]["data"]);
+      payload: message["data"]["notification_type:"]);
   return Future<void>.value();
 }
 
@@ -409,7 +409,16 @@ class _ScreenOneState extends State<ScreenOne> {
   Future onSelectNotification(String payload) async {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
-      redirectToChatScreen();
+      if(payload == "chat"){
+        redirectToChatScreen();
+      }else{
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => HomeScreen()),
+              (route) => false,
+        );
+      }
     }
     /*Navigator.push(
       context,

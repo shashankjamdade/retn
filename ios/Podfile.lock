@@ -133,8 +133,14 @@ PODS:
   - nanopb/encode (1.30906.0)
   - package_info (0.0.1):
     - Flutter
+  - permission_handler (3.3.0):
+    - Flutter
   - PromisesObjC (1.2.11)
   - Protobuf (3.14.0)
+  - razorpay-pod (1.1.7)
+  - razorpay_flutter (1.1.10):
+    - Flutter
+    - razorpay-pod
   - shared_preferences (0.0.1):
     - Flutter
   - Toast (4.0.0)
@@ -160,6 +166,8 @@ DEPENDENCIES:
   - location (from `.symlinks/plugins/location/ios`)
   - multi_image_picker (from `.symlinks/plugins/multi_image_picker/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
+  - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
+  - razorpay_flutter (from `.symlinks/plugins/razorpay_flutter/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
   - webview_flutter (from `.symlinks/plugins/webview_flutter/ios`)
@@ -187,6 +195,7 @@ SPEC REPOS:
     - nanopb
     - PromisesObjC
     - Protobuf
+    - razorpay-pod
     - Toast
 
 EXTERNAL SOURCES:
@@ -222,6 +231,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/multi_image_picker/ios"
   package_info:
     :path: ".symlinks/plugins/package_info/ios"
+  permission_handler:
+    :path: ".symlinks/plugins/permission_handler/ios"
+  razorpay_flutter:
+    :path: ".symlinks/plugins/razorpay_flutter/ios"
   shared_preferences:
     :path: ".symlinks/plugins/shared_preferences/ios"
   url_launcher:
@@ -265,13 +278,16 @@ SPEC CHECKSUMS:
   multi_image_picker: 6dfd22d7e6441a1cb06f6876fe8cc5f32f7f6610
   nanopb: 59317e09cf1f1a0af72f12af412d54edf52603fc
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
+  permission_handler: 67637977b227d62d46bfbf524f335f8568de5a73
   PromisesObjC: 8c196f5a328c2cba3e74624585467a557dcb482f
   Protobuf: 0cde852566359049847168e51bd1c690e0f70056
+  razorpay-pod: 6ee0c8c7afad8eead9524d5eb516bc35ac1604ef
+  razorpay_flutter: 84b3bfd206ae9c9c2a9ba585524a1b3d8102b6c1
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
   webview_flutter: 9f491a9b5a66f2573946a389b2677987b0ff8c0b
 
-PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+PODFILE CHECKSUM: 3dffd8c48b531d21ec0ec153c22dc8e3a6223bc9
 
 COCOAPODS: 1.10.1

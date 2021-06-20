@@ -34,6 +34,12 @@
 	<key>FacebookDisplayName</key>
 	<string>Rentrozo</string>
 	<key>LSApplicationQueriesSchemes</key>
+    <array>
+    	<string>tez</string>
+        <string>phonepe</string>
+        <string>paytmmp</string>
+    </array>
+	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
 		<string>fb-messenger-share-api</string>

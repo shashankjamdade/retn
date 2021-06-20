@@ -40,6 +40,7 @@ class _BannerImgCorousalWidgetState extends State<BannerImgCarousalWidget> {
                     children: [
                       CarouselSlider(
                         options: CarouselOptions(
+                          autoPlay: true,
                             height: getProportionateScreenHeight(
                                 context, space_115),
                             viewportFraction: 1.0,

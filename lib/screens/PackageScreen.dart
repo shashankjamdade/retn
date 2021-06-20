@@ -501,7 +501,12 @@ class _PackageScreenState extends State<PackageScreen> {
                                           packageList[index].title);
                                     },
                                     child:
-                                        PackageCardWidget(packageList[index]));
+                                        PackageCardWidget(packageList[index], (){
+                                          openCheckout(
+                                              packageList[index].price,
+                                              packageList[index].id,
+                                              packageList[index].title);
+                                        }));
                               })),
                       SizedBox(
                         height: space_15,
