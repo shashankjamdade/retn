@@ -37,6 +37,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
   var mSelectedLongitude = "0.0";
   var mCurrentSearching = "category";
   UserLocationSelected userLocationSelected;
+  var mShowLoader = false;
 
   @override
   void initState() {
@@ -73,16 +74,16 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    var userLocationSelected = StateContainer.of(context).mUserLocationSelected;
+    var userLocNameSelected = StateContainer.of(context).mUserLocNameSelected;
     var loginResponse = StateContainer.of(context).mLoginResponse;
     if (loginResponse != null) {
       token = loginResponse.data.token;
       debugPrint("ACCESSING_INHERITED ${token}");
     }
-    if (userLocationSelected != null && mLocationSelected.isEmpty) {
-      mLocationSelected = userLocationSelected.city;
-      mSelectedLattitude = userLocationSelected.mlat;
-      mSelectedLongitude = userLocationSelected.mlng;
+    if (userLocNameSelected != null && mLocationSelected.isEmpty) {
+      mLocationSelected = userLocNameSelected.address;
+      mSelectedLattitude = userLocNameSelected.mlat;
+      mSelectedLongitude = userLocNameSelected.mlng;
       locationController.text = mLocationSelected;
       debugPrint("ACCESSING_INHERITED ${mLocationSelected}");
     }
@@ -264,7 +265,23 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                       padding: EdgeInsets.symmetric(
                           vertical: space_25, horizontal: space_15),
                       child: FlatButton.icon(
-                          onPressed: () {},
+                          onPressed: () {
+                            debugPrint(
+                                "Locl --> ${StateContainer.of(context).mUserLocationSelected?.mlat}");
+                            setState(() {
+                              mSelectedLattitude =
+                                  StateContainer.of(context)
+                                      .mUserLocationSelected
+                                      ?.mlat;
+                              mSelectedLongitude =
+                                  StateContainer.of(context)
+                                      .mUserLocationSelected
+                                      ?.mlng;
+                              mLocationSelected = StateContainer.of(context)
+                                  .mUserLocationSelected
+                                  ?.city;
+                            });
+                          },
                           icon: ImageIcon(
                             AssetImage("assets/images/bottom_nav_nearby.png"),
                             color: CommonStyles.blue,
@@ -526,20 +543,15 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                           child: FlatButton.icon(
                               onPressed: () {
                                 debugPrint(
-                                    "Locl --> ${StateContainer.of(context).mUserLocationSelected?.city}");
-                                setState(() {
-                                  mSelectedLattitude =
-                                      StateContainer.of(context)
-                                          .mUserLocationSelected
-                                          ?.mlat;
-                                  mSelectedLongitude =
-                                      StateContainer.of(context)
-                                          .mUserLocationSelected
-                                          ?.mlng;
-                                  mLocationSelected = StateContainer.of(context)
-                                      .mUserLocationSelected
-                                      ?.city;
-                                });
+                                    "Locl --> ${StateContainer.of(context).mUserLocationSelected?.mlng}");
+                                onLocationSelected(StateContainer.of(context)
+                                    .mUserLocationSelected
+                                    ?.mlat, StateContainer.of(context)
+                                    .mUserLocationSelected
+                                    ?.mlng,
+                                    StateContainer.of(context)
+                                        .mUserLocationSelected
+                                        ?.city);
                               },
                               icon: ImageIcon(
                                 AssetImage(
@@ -566,7 +578,10 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                           ),
                         ),
                       ),
-                      Expanded(
+                      mShowLoader? Container(
+                        child: Center(
+                        child: CircularProgressIndicator(),
+                      ),):Expanded(
                         flex: 1,
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: space_25),
@@ -629,7 +644,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                     : Container(
                         height: space_0,
                         width: space_0,
-                      )
+                      ),
               ],
             ),
           ),
@@ -666,6 +681,9 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
 
   onLocationSelectedFromGoogle(Predictions prediction) {
     debugPrint("PLACE_ID--> ${prediction.place_id}");
+    setState(() {
+      mShowLoader = true;
+    });
     displayPrediction(prediction);
   }
 
@@ -734,6 +752,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
         mSelectedLattitude = lat.toString();
         mSelectedLongitude = lng.toString();
         mLocationSelected = p?.structured_formatting?.main_text;
+        mShowLoader = false;
       });
       var mUserLocNameSelected = new UserLocNameSelected(
           address: p?.structured_formatting?.main_text,

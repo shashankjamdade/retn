@@ -121,7 +121,7 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
       mShowProgress = false;
     });
     debugPrint("PAYMENT_ERROR ------- > ${response.message}");
-    showSnakbar(_scaffoldKey, response.message);
+    showSnakbar(_scaffoldKey, "Something went wrong, Please try again");
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
@@ -274,12 +274,12 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
                       child: Container(
                         child: Column(
                           children: [
-                            Align(
+                            (purchesedPackages?.length > 0)?Align(
                                 alignment: Alignment.centerLeft,
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: space_15, bottom: space_5),
                                   child: Text("Active Packages", style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.black),),
-                                )),
+                                )):Container(height: 0, width: 0,),
                             SizedBox(height: space_5,),
                             ListView.builder(
                                 shrinkWrap: true,

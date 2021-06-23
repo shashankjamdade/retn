@@ -91,34 +91,43 @@ class _MyPackageListScreenState extends State<MyPackageListScreen> {
                           onSearchLocation(context);
                         }),
                         Expanded(
-                          child: Container(
-                            margin: EdgeInsets.only(bottom: space_60),
-                            child: ListView.builder(
-                                itemCount: getMyPackageListRes.data.length,
-                                scrollDirection: Axis.vertical,
-                                itemBuilder: (context, index){
-                                  DateFormat dateFormatter = new DateFormat('dd MMM yyyy');
-                                  var startDate = dateFormatter.format(DateTime.parse(getMyPackageListRes.data[index].package_start_date));
-                                  var expiryDate = dateFormatter.format(DateTime.parse(getMyPackageListRes.data[index].package_expiry_date));
-                                  return Container(
-                                    padding: EdgeInsets.all(space_15),
-                                    margin: EdgeInsets.only(top: space_10, bottom: space_5, left: space_15, right: space_15),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(space_15),
-                                      boxShadow: [
-                                        BoxShadow(color: Colors.grey,)
-                                      ]
-                                    ),
-                                    child: Text(
-                                      "${getMyPackageListRes.data[index].title} \n"
-                                      "${startDate} to ${expiryDate}\n"
-                                        "No of Post: ${getMyPackageListRes.data[index].no_of_posts}\n"
-                                        "Used: ${getMyPackageListRes.data[index].used}\n"
-                                        "Due: ${getMyPackageListRes.data[index].due}\n"
-                                        "Amount: ${getMyPackageListRes.data[index].amount}", style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.black),),
-                                  );
-                                }),
+                          child: ListView(
+                            shrinkWrap: true,
+                            primary: true,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(bottom: space_60),
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    primary: false,
+                                    itemCount: getMyPackageListRes.data.length,
+                                    scrollDirection: Axis.vertical,
+                                    itemBuilder: (context, index){
+                                      DateFormat dateFormatter = new DateFormat('dd MMM yyyy');
+                                      var startDate = dateFormatter.format(DateTime.parse(getMyPackageListRes.data[index].package_start_date));
+                                      var expiryDate = dateFormatter.format(DateTime.parse(getMyPackageListRes.data[index].package_expiry_date));
+                                      return Container(
+                                        padding: EdgeInsets.all(space_15),
+                                        margin: EdgeInsets.only(top: space_10, bottom: space_5, left: space_15, right: space_15),
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(space_15),
+                                            boxShadow: [
+                                              BoxShadow(color: Colors.grey,)
+                                            ]
+                                        ),
+                                        child: Text(
+                                          "${getMyPackageListRes.data[index].title} \n"
+                                              "${startDate} to ${expiryDate}\n"
+                                              "No of Post: ${getMyPackageListRes.data[index].no_of_posts}\n"
+                                              "Used: ${getMyPackageListRes.data[index].used}\n"
+                                              "Due: ${getMyPackageListRes.data[index].due}\n"
+                                              "Amount: ${getMyPackageListRes.data[index].amount}", style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.black),),
+                                      );
+                                    }),
+                              ),
+                              SizedBox(height: space_80,)
+                            ],
                           ),
                         ),
                       ],

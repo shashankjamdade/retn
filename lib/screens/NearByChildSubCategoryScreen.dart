@@ -8,6 +8,7 @@ import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/model/filter_res.dart';
 import 'package:flutter_rentry_new/model/nearby_item_list_response.dart';
+import 'package:flutter_rentry_new/screens/HomeScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/my_flutter_app_icons.dart';
@@ -89,6 +90,72 @@ class _NearByChildSubCategoryScreenState
     //Edu
     ratingList.add("Low to High");
     ratingList.add("High to Low");
+  }
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    debugPrint("LISTENING_HOME_CHANGE ------");
+    if (state == AppLifecycleState.resumed) {}
+  }
+
+  @override
+  void didUpdateWidget(covariant NearByChildSubCategoryScreen oldWidget) {
+    debugPrint("LISTENING_HOME_CHANGE_UPDATE_NEW");
+    if (mNearbySubChildCategoryListResponse != null) {
+      var selectedCurrentLoc = StateContainer
+          .of(context)
+          .mUserLocationSelected;
+      var selectedLoc = StateContainer
+          .of(context)
+          .mUserLocNameSelected;
+      if (selectedLoc != null) {
+        setState(() {
+          mLat = selectedLoc.mlat;
+          mLng = selectedLoc.mlng;
+        });
+        debugPrint("ACCESSING_INHERITED_LOCATION_calling ${mLat}, ${mLng} ------");
+        if (homeBloc != null) {
+          homeBloc
+            ..add(NearbySubChildCategoryListReqEvent(
+                token: token,
+                categoryId: widget.categoryId,
+                subcategory_id: widget.subCategoryId,
+                radius: widget.radius,
+                lat: mLat,
+                lng: mLng,
+                filter_subcategory_id: filter_subcategory_id,
+                filter_custome_filed_id: filter_custome_filed_id,
+                filter_min: filter_min,
+                filter_max: filter_max,
+                sort_by_price:
+                priceSort != null && priceSort.isNotEmpty ? priceSort : "",
+                ads_title: widget.ads_title != null ? widget.ads_title : "",
+                page_number: "${page_number}"));
+        }
+      } else if (selectedCurrentLoc != null) {
+        mLat = selectedCurrentLoc.mlat;
+        mLng = selectedCurrentLoc.mlng;
+        debugPrint("ACCESSING_INHERITED_LOCATION_calling ${mLat}, ${mLng} ------");
+        if (homeBloc != null) {
+          homeBloc
+            ..add(NearbySubChildCategoryListReqEvent(
+                token: token,
+                categoryId: widget.categoryId,
+                subcategory_id: widget.subCategoryId,
+                radius: widget.radius,
+                lat: mLat,
+                lng: mLng,
+                filter_subcategory_id: filter_subcategory_id,
+                filter_custome_filed_id: filter_custome_filed_id,
+                filter_min: filter_min,
+                filter_max: filter_max,
+                sort_by_price:
+                priceSort != null && priceSort.isNotEmpty ? priceSort : "",
+                ads_title: widget.ads_title != null ? widget.ads_title : "",
+                page_number: "${page_number}"));
+        }
+      }
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -261,11 +328,17 @@ class _NearByChildSubCategoryScreenState
           mNearbySubChildCategoryListResponse?.data?.ad_list
               ?.addAll(res?.data?.ad_list);
         }
+      }else{
+        //Filter apply
+        if (page_number == 1) {
+          mNearbySubChildCategoryListResponse?.data?.ad_list =
+              res?.data?.ad_list;
+        }
       }
     } else {
       mNearbySubChildCategoryListResponse = res;
     }
-
+    debugPrint("DATA_FETCHED_LIST -- > ${mNearbySubChildCategoryListResponse?.data?.ad_list?.length}");
     if (res?.data != null &&
         res?.data?.ad_list != null &&
         res?.data?.ad_list?.length > 0) {
@@ -1269,6 +1342,7 @@ class _NearByChildSubCategoryScreenState
                                                                       "${selectedSubCategory.isNotEmpty ? "," : ""}" +
                                                                       element
                                                                           .sub_id;
+                                                              debugPrint("SUBCATEGORY_SELECTED --> ${selectedSubCategory}");
                                                             }
                                                           });
                                                         }

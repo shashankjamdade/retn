@@ -159,7 +159,7 @@ class _MyAdsListScreenState extends State<MyAdsListScreen> {
                     ItemDetailScreen(categoryName: mCategory_adslist.slug)),
           );
         }else{
-          showSnakbar(_scaffoldKey, "Your ad is under review, please wait");
+          showSnakbar(_scaffoldKey, "Dear customer, thank you for posting the ad, your post has been received & it is under process, it will be seen on our application once it gets approved.");
         }
       },
       child: Container(

@@ -156,7 +156,7 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
                           SizedBox(
                             height: space_15,
                           ),
-                          TextFormField(
+                          /*TextFormField(
                             validator: (String value) {
                               if (value.isEmpty) {
                                 return "";
@@ -173,7 +173,7 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
                           ),
                           SizedBox(
                             height: space_15,
-                          ),
+                          ),*/
                           //START
                           Container(
                             child: Row(
@@ -211,9 +211,16 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
                                              },
                                              obscureText: false,
                                              controller: priceController,
+                                             maxLength: 6,
                                              keyboardType: TextInputType.number,
                                              decoration: InputDecoration(
+                                               border: InputBorder.none,
+                                               focusedBorder: InputBorder.none,
+                                               enabledBorder: InputBorder.none,
+                                               errorBorder: InputBorder.none,
+                                               disabledBorder: InputBorder.none,
                                                hintText: "₹ Enter price",
+                                               counterText: "",
                                                fillColor: Colors.transparent,
                                              ),
                                            ),
@@ -241,7 +248,7 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
                                     ),
                                     Container(
                                         child: DropdownButton(
-                                          hint: mSelectedDurationType == null ||
+                                          underline: Container(color: Colors.transparent),                                          hint: mSelectedDurationType == null ||
                                               mSelectedDurationType.isEmpty
                                               ? Text(
                                             'Select type',
@@ -356,6 +363,11 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
                                 )),
                               ],
                             ),
+                          ),
+                          Divider(
+                            height: space_1,
+                            thickness: space_1,
+                            color: Colors.black,
                           ),
                           //END
                           SizedBox(

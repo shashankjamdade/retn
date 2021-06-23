@@ -88,18 +88,27 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                           onSearchLocation(context);
                         }),
                         Expanded(
-                          child: Container(
-                            margin: EdgeInsets.only(bottom: space_60),
-                            child: ListView.builder(
-                                itemCount: getNotificationResponse.data.length,
-                                scrollDirection: Axis.vertical,
-                                itemBuilder: (context, index){
-                                  return ListTile(
-                                    key: Key("${index}"),
-                                    leading: Icon(Icons.notification_important),
-                                    title: Text(getNotificationResponse.data[index].content, style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.black),),
-                                  );
-                                }),
+                          child: ListView(
+                            shrinkWrap: true,
+                            primary: true,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(bottom: space_60),
+                                child: ListView.builder(
+                                  primary: false,
+                                    shrinkWrap: true,
+                                    itemCount: getNotificationResponse.data.length,
+                                    scrollDirection: Axis.vertical,
+                                    itemBuilder: (context, index){
+                                      return ListTile(
+                                        key: Key("${index}"),
+                                        leading: Icon(Icons.notification_important),
+                                        title: Text(getNotificationResponse.data[index].content, style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.black),),
+                                      );
+                                    }),
+                              ),
+                              SizedBox(height: space_80,)
+                            ],
                           ),
                         ),
                       ],

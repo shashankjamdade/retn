@@ -3056,8 +3056,8 @@ class PackageCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: space_200,
-      width: space_160,
+      height: space_240,
+      width: space_180,
       margin: EdgeInsets.only(left: space_10, right: space_5),
       padding: EdgeInsets.all(space_15),
       decoration: BoxDecoration(
@@ -3075,8 +3075,9 @@ class PackageCardWidget extends StatelessWidget {
           Text(
             "${getAllPackageData.title}",
             maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: CommonStyles.getMontserratStyle(
-                space_25, FontWeight.w900, Colors.white),
+                space_22, FontWeight.w900, Colors.white),
           ),
           Text(
             "PACK",
@@ -3091,27 +3092,25 @@ class PackageCardWidget extends StatelessWidget {
               child: Container(
                 child: Column(
                   children: [
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "\u20B9",
-                            style: CommonStyles.getRalewayStyle(
-                                space_15,
-                                FontWeight.w600,
-                                CommonStyles.softYellow.withOpacity(0.7)),
-                          ),
-                          Text(
-                            "${getAllPackageData.price}",
-                            style: CommonStyles.getMontserratStyle(
-                                space_30, FontWeight.w900, Colors.white),
-                          ),
-                        ],
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "\u20B9",
+                          style: CommonStyles.getRalewayStyle(
+                              space_15,
+                              FontWeight.w600,
+                              CommonStyles.softYellow.withOpacity(0.7)),
+                        ),
+                        Text(
+                          "${getAllPackageData.price}",
+                          style: CommonStyles.getMontserratStyle(
+                              space_30, FontWeight.w900, Colors.white),
+                        ),
+                      ],
                     ),
                     Align(
-                        alignment: Alignment.center,
+                        alignment: Alignment.topCenter,
                         child: Text(
                           "month",
                           style: CommonStyles.getRalewayStyle(
@@ -3119,6 +3118,12 @@ class PackageCardWidget extends StatelessWidget {
                               FontWeight.w500,
                               CommonStyles.softYellow.withOpacity(0.7)),
                         )),
+                    Text(
+                      "For ${getAllPackageData.no_of_days} days\n${getAllPackageData.no_of_posts} Posts",
+                      textAlign: TextAlign.center,
+                      style: CommonStyles.getMontserratStyle(
+                          space_14, FontWeight.w500, Colors.white),
+                    ),
                   ],
                 ),
               ),

@@ -566,7 +566,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                             ),
                           ):Container(height: 0, width: 0,),
                           SizedBox(
-                            height: space_95,
+                            height: space_180,
                           ),
                         ],
                       ))),

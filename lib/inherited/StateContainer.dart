@@ -25,6 +25,10 @@ class StateContainer extends StatefulWidget {
 //            as _InheritedStateContainer)
 //        .data;
 //  }
+  @override
+  bool updateShouldNotify(covariant StateContainer oldWidget) {
+    return (userLocationSelected != oldWidget.userLocationSelected || userLocNameSelected != oldWidget.userLocNameSelected);
+  }
 
   static StateContainerState of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<_InheritedStateContainer>().data;
@@ -62,6 +66,11 @@ class StateContainerState extends State<StateContainer> {
     } else {
       setState(() {
         mUserLocationSelected = userLocationSelected;
+      });
+      //NEWLY added
+      mUserLocNameSelected = UserLocNameSelected(address: userLocationSelected?.city, mlat: userLocationSelected?.mlat, mlng: userLocationSelected?.mlng);
+      setState(() {
+        mUserLocNameSelected = UserLocNameSelected(address: userLocationSelected?.city, mlat: userLocationSelected?.mlat, mlng: userLocationSelected?.mlng);
       });
     }
   }

@@ -99,7 +99,7 @@ void main() async {
 
 void setFirebase() {
   var initializationSettingsAndroid =
-      new AndroidInitializationSettings('@mipmap/ic_launcher');
+      new AndroidInitializationSettings('@drawable/ic_appicon');
 
   var initializationSettingsIOS = new IOSInitializationSettings();
 
@@ -140,7 +140,8 @@ Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
   int msgId = int.tryParse(message["data"]["msgId"].toString()) ?? 1;
   print("msgId ${message['data']['title']}, ${message['data']['message']}");
   var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-      'channelid', 'flutterfcm', 'your channel description',
+      'channelid', 'flutterfcm', 'your channel description',ticker: 'ticker',
+      playSound: true, enableLights: true, enableVibration: true,
       importance: Importance.max, priority: Priority.high);
   var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
   var platformChannelSpecifics = new NotificationDetails(
@@ -253,7 +254,7 @@ class _ScreenOneState extends State<ScreenOne> {
 //    checkUserLoggedInOrNot(context);
     getMyCurrentLocation();
     var initializationSettingsAndroid =
-        new AndroidInitializationSettings('@mipmap/ic_launcher');
+        new AndroidInitializationSettings('@drawable/ic_appicon');
 
     var initializationSettingsIOS = new IOSInitializationSettings(
         onDidReceiveLocalNotification: onDidRecieveLocalNotification);
@@ -391,7 +392,8 @@ class _ScreenOneState extends State<ScreenOne> {
 
   Future displayNotification(Map<String, dynamic> message) async {
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-        'channelid', 'flutterfcm', 'your channel description',
+        'channelid', 'flutterfcm', 'your channel description',ticker: 'ticker',
+        playSound: true,enableLights: true, enableVibration: true,
         importance: Importance.max, priority: Priority.high);
     var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
     var platformChannelSpecifics = new NotificationDetails(

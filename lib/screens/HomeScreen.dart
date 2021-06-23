@@ -34,7 +34,9 @@ class HomeScreen extends StatefulWidget {
   var isRedirectToMyAds = false;
   var isRedirectToChat = false;
   var shouldShowShowcase = false;
-  HomeScreen({this.isRedirectToMyAds, this.isRedirectToChat, this.shouldShowShowcase});
+
+  HomeScreen(
+      {this.isRedirectToMyAds, this.isRedirectToChat, this.shouldShowShowcase});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -66,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       prefs = await SharedPreferences.getInstance();
       bool isShowCaseViewed = (prefs.getString(IS_SHOWCASE_VIEWED) != null &&
-          prefs.getString(IS_SHOWCASE_VIEWED).isNotEmpty)
+              prefs.getString(IS_SHOWCASE_VIEWED).isNotEmpty)
           ? true
           : false;
       debugPrint("CHECKINGFORSHOWCASE --> ${isShowCaseViewed}");
@@ -74,8 +76,50 @@ class _HomeScreenState extends State<HomeScreen> {
         shouldShowShowcase = isShowCaseViewed;
       });
     } catch (e) {
-      debugPrint("EXCEPTION in Homescreen in checkShowcaseShowOrNot ${e.toString()}");
+      debugPrint(
+          "EXCEPTION in Homescreen in checkShowcaseShowOrNot ${e.toString()}");
     }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    debugPrint("LISTENING_HOME_CHANGE ------");
+    if (state == AppLifecycleState.resumed) {}
+  }
+
+  @override
+  void didUpdateWidget(covariant HomeScreen oldWidget) {
+    debugPrint("LISTENING_HOME_CHANGE UPDATE");
+    if (mHomeResponse != null) {
+      var selectedCurrentLoc = StateContainer
+          .of(context)
+          .mUserLocationSelected;
+      var selectedLoc = StateContainer
+          .of(context)
+          .mUserLocNameSelected;
+      if (selectedLoc != null) {
+        setState(() {
+          mLat = selectedLoc.mlat;
+          mLng = selectedLoc.mlng;
+        });
+        debugPrint("ACCESSING_INHERITED_LOCATION1 ${mLat}, ${mLng} ------");
+        if (homeBloc != null) {
+          homeBloc
+            ..add(
+                HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+        }
+      } else if (selectedCurrentLoc != null) {
+        mLat = selectedCurrentLoc.mlat;
+        mLng = selectedCurrentLoc.mlng;
+        debugPrint("ACCESSING_INHERITED_LOCATION2 ${mLat}, ${mLng} ------");
+        if (homeBloc != null) {
+          homeBloc
+            ..add(
+                HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+        }
+      }
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -84,17 +128,20 @@ class _HomeScreenState extends State<HomeScreen> {
     loginResponse = StateContainer.of(context).mLoginResponse;
     if (loginResponse != null) {
       token = loginResponse.data.token;
-      debugPrint("ACCESSING_INHERITED ${token}");
+      debugPrint("ACCESSING_INHERITED_HOME ${token}");
     }
-//    var selectedLoc = StateContainer.of(context).mUserLocNameSelected;
-    /*if (selectedLoc != null) {
+    var selectedLoc = StateContainer.of(context).mUserLocNameSelected;
+    if (selectedLoc != null) {
       setState(() {
         mLat = selectedLoc.mlat;
         mLng = selectedLoc.mlng;
       });
       debugPrint("ACCESSING_INHERITED_LOCATION1 ${mLat}, ${mLng} ------");
-    } else*/
-    if (selectedCurrentLoc != null) {
+      if (homeBloc != null) {
+        homeBloc
+          ..add(HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+      }
+    } else if (selectedCurrentLoc != null) {
       mLat = selectedCurrentLoc.mlat;
       mLng = selectedCurrentLoc.mlng;
       debugPrint("ACCESSING_INHERITED_LOCATION2 ${mLat}, ${mLng} ------");
@@ -151,11 +198,11 @@ class _HomeScreenState extends State<HomeScreen> {
             "PREFS_STORED_LOGIN-----> ${prefs.getString(USER_LOCATION_ADDRESS)}");
         mLat = position.latitude.toString();
         mLng = position.longitude.toString();
-       // if (mHomeResponse == null && isNeedToShowRetry) {
-       //   homeBloc
-       //     ..add(
-       //         HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
-       // }
+        // if (mHomeResponse == null && isNeedToShowRetry) {
+        //   homeBloc
+        //     ..add(
+        //         HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+        // }
       } else {
         //Show dialog for location permission
       }
@@ -167,26 +214,27 @@ class _HomeScreenState extends State<HomeScreen> {
   resetUiAgain(CouponRes couponRes) {
     mCouponRes = couponRes;
     if (mHomeResponse != null) {
-      return ((shouldShowShowcase == false)?
-      ShowCaseWidget(
-        onStart: (index, key) {
-          debugPrint('onStart: $index, $key');
-        },
-        onComplete: (index, key) {
-          debugPrint('onComplete1: $index, $key');
-          if (prefs != null) {
-            debugPrint('onComplete1: SAVED');
-            prefs.setString(IS_SHOWCASE_VIEWED, "true");
-            shouldShowShowcase = true;
-          }
-        },
-        builder: Builder(
-            builder: (context) => getHomeShowcaseUI(mHomeResponse, context)),
-        autoPlay: false,
-        autoPlayDelay: Duration(seconds: 3),
-        autoPlayLockEnable: false,
-      ):
-      getHomeUI(mHomeResponse, context));
+      return ((shouldShowShowcase == false)
+          ? ShowCaseWidget(
+              onStart: (index, key) {
+                debugPrint('onStart: $index, $key');
+              },
+              onComplete: (index, key) {
+                debugPrint('onComplete1: $index, $key');
+                if (prefs != null) {
+                  debugPrint('onComplete1: SAVED');
+                  prefs.setString(IS_SHOWCASE_VIEWED, "true");
+                  shouldShowShowcase = true;
+                }
+              },
+              builder: Builder(
+                  builder: (context) =>
+                      getHomeShowcaseUI(mHomeResponse, context)),
+              autoPlay: false,
+              autoPlayDelay: Duration(seconds: 3),
+              autoPlayLockEnable: false,
+            )
+          : getHomeUI(mHomeResponse, context));
     }
   }
 
@@ -236,13 +284,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       MaterialPageRoute(builder: (context) => ChatHomeScreen()),
                     );
                   }
-                }else{
-                  if (state.res.message!=null && state.res.message != API_ERROR_MSG_RETRY) {
+                } else {
+                  if (state.res.message != null &&
+                      state.res.message != API_ERROR_MSG_RETRY) {
                     isNeedToShowRetry = false;
                     homeBloc
-                      ..add(
-                          HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
-                  }else{
+                      ..add(HomeReqAuthenticationEvent(
+                          token: token, lat: mLat, lng: mLng));
+                  } else {
                     isNeedToShowRetry = true;
                   }
                 }
@@ -250,30 +299,30 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             child: BlocBuilder<HomeBloc, HomeState>(
               builder: (context, state) {
-                if (state is HomeResState &&
-                    state.res is HomeResponse) {
-                  if(state.res.status){
-                    return ((shouldShowShowcase == false)?
-                    ShowCaseWidget(
-                      onStart: (index, key) {
-                        debugPrint('onStart: $index, $key');
-                      },
-                      onComplete: (index, key) {
-                        debugPrint('onComplete1: $index, $key');
-                        if (prefs != null) {
-                          debugPrint('onComplete1: SAVED');
-                          prefs.setString(IS_SHOWCASE_VIEWED, "true");
-                          shouldShowShowcase = true;
-                        }
-                      },
-                      builder: Builder(
-                          builder: (context) => getHomeShowcaseUI(state.res, context)),
-                      autoPlay: false,
-                      autoPlayDelay: Duration(seconds: 3),
-                      autoPlayLockEnable: false,
-                    ):
-                     getHomeUI(state.res, context));
-                  }else{
+                if (state is HomeResState && state.res is HomeResponse) {
+                  if (state.res.status) {
+                    return ((shouldShowShowcase == false)
+                        ? ShowCaseWidget(
+                            onStart: (index, key) {
+                              debugPrint('onStart: $index, $key');
+                            },
+                            onComplete: (index, key) {
+                              debugPrint('onComplete1: $index, $key');
+                              if (prefs != null) {
+                                debugPrint('onComplete1: SAVED');
+                                prefs.setString(IS_SHOWCASE_VIEWED, "true");
+                                shouldShowShowcase = true;
+                              }
+                            },
+                            builder: Builder(
+                                builder: (context) =>
+                                    getHomeShowcaseUI(state.res, context)),
+                            autoPlay: false,
+                            autoPlayDelay: Duration(seconds: 3),
+                            autoPlayLockEnable: false,
+                          )
+                        : getHomeUI(state.res, context));
+                  } else {
                     return Container(
                       color: Colors.white,
                       child: Column(
@@ -290,13 +339,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Text(
                                     'Something went wrong!!',
                                     style: CommonStyles.getRalewayStyle(
-                                        space_16, FontWeight.w500, Colors.black),
+                                        space_16,
+                                        FontWeight.w500,
+                                        Colors.black),
                                   ),
                                   GestureDetector(
                                     onTap: () {
                                       homeBloc
-                                        ..add(
-                                            HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+                                        ..add(HomeReqAuthenticationEvent(
+                                            token: token,
+                                            lat: mLat,
+                                            lng: mLng));
                                     },
                                     child: Padding(
                                       padding: const EdgeInsets.all(space_15),
@@ -308,8 +361,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                           fontWeight: FontWeight.w700,
                                           color: CommonStyles.primaryColor,
                                           decoration: TextDecoration.underline,
-                                          decorationStyle: TextDecorationStyle.solid,
-                                          decorationColor: CommonStyles.primaryColor,
+                                          decorationStyle:
+                                              TextDecorationStyle.solid,
+                                          decorationColor:
+                                              CommonStyles.primaryColor,
                                         ),
                                       ),
                                     ),
@@ -466,17 +521,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 )
               ],
             )),
-            CommonBottomNavBarHomeWidget(postKey: postAdKey, shouldShowShowcase: shouldShowShowcase),
+            CommonBottomNavBarHomeWidget(
+                postKey: postAdKey, shouldShowShowcase: shouldShowShowcase),
           ],
         ),
       ),
     );
   }
+
   Widget getHomeShowcaseUI(HomeResponse homeResponse, BuildContext context) {
-    if(!shouldShowShowcase){
+    if (!shouldShowShowcase) {
       debugPrint("ENTRY_HOME_SCREEN--------- ${shouldShowShowcase}");
-      WidgetsBinding.instance.addPostFrameCallback((_) =>
-          ShowCaseWidget.of(context).startShowCase([postAdKey]));
+      WidgetsBinding.instance.addPostFrameCallback(
+          (_) => ShowCaseWidget.of(context).startShowCase([postAdKey]));
     }
     return Scaffold(
       body: SafeArea(
@@ -605,7 +662,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 )
               ],
             )),
-            CommonBottomNavBarHomeShowCaseWidget(postKey: postAdKey, shouldShowShowcase: shouldShowShowcase)
+            CommonBottomNavBarHomeShowCaseWidget(
+                postKey: postAdKey, shouldShowShowcase: shouldShowShowcase)
           ],
         ),
       ),

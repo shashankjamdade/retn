@@ -113,7 +113,7 @@ class _PackageScreenState extends State<PackageScreen> {
 
   void _handlePaymentError(PaymentFailureResponse response) {
     debugPrint("PAYMENT_ERROR ------- > ${response.message}");
-    showSnakbar(_scaffoldKey, response.message);
+    showSnakbar(_scaffoldKey, "Something went wrong, Please try again");
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
@@ -205,9 +205,11 @@ class _PackageScreenState extends State<PackageScreen> {
   getScreenUI(GetAllPackageListResponse getAllPackageListResponse) {
     var packageList = new List<GetAllPackageData>();
     var currentPackage = new GetAllPackageData();
+    var isCurrPackageAdded = false;
     getAllPackageListResponse.data.forEach((element) {
-      if (element.sort_order == "0") {
+      if (!isCurrPackageAdded/*element.sort_order == "0"*/) {
         currentPackage = element;
+        isCurrPackageAdded = true;
       } else {
         packageList.add(element);
       }
@@ -319,7 +321,7 @@ class _PackageScreenState extends State<PackageScreen> {
                                           Align(
                                               child: Text(
                                             "\u20B9",
-                                            style: CommonStyles.getRalewayStyle(
+                                            style: CommonStyles.getMontserratStyle(
                                                 space_30,
                                                 FontWeight.w400,
                                                 CommonStyles.primaryColor),
@@ -363,7 +365,15 @@ class _PackageScreenState extends State<PackageScreen> {
                                   SizedBox(
                                     height: space_10,
                                   ),
-                                  Row(
+                                  Text(
+                                    "${currentPackage?.no_of_posts} ${currentPackage?.no_of_posts.length==1?"Post":"Posts"} for ${currentPackage?.no_of_days} ${currentPackage?.no_of_days.length==1?"Day":"Days"}",
+                                    style: CommonStyles
+                                        .getMontserratStyle(
+                                        space_15,
+                                        FontWeight.w600,
+                                        Colors.white),
+                                  ),
+                                 /* Row(
                                     children: [
                                       Expanded(
                                         child: RichText(
@@ -410,7 +420,7 @@ class _PackageScreenState extends State<PackageScreen> {
                                         ),
                                       ),
                                     ],
-                                  )
+                                  )*/
                                 ],
                               ),
                             ),
@@ -467,7 +477,7 @@ class _PackageScreenState extends State<PackageScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             RichTextTitleWidget("UPGRADE", "AND SAVE MORE"),
-                            GestureDetector(
+                            /*GestureDetector(
                               onTap: () {},
                               child: Padding(
                                 padding: const EdgeInsets.only(
@@ -475,12 +485,12 @@ class _PackageScreenState extends State<PackageScreen> {
                                     bottom: space_5,
                                     left: space_10),
                                 child: Text(
-                                  "SHOW MORE",
+                                  "",
                                   style: CommonStyles.getRalewayStyle(space_13,
                                       FontWeight.w500, CommonStyles.blue),
                                 ),
                               ),
-                            ),
+                            ),*/
                           ],
                         ),
                       ),
@@ -488,7 +498,7 @@ class _PackageScreenState extends State<PackageScreen> {
                         height: space_5,
                       ),
                       Container(
-                          height: space_220,
+                          height: space_250,
                           child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               itemCount: packageList.length,
