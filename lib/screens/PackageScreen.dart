@@ -348,7 +348,7 @@ class _PackageScreenState extends State<PackageScreen> {
                                                             .primaryColor),
                                               ),
                                               Text(
-                                                "month",
+                                                "",
                                                 style: CommonStyles
                                                     .getRalewayStyle(
                                                         space_15,

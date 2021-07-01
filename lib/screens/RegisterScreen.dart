@@ -370,7 +370,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void onSignup(){
     if(fullnameController.text.trim().isEmpty){
      showSnakbar(_scaffoldKey, empty_full_name);
+    }else if(fullnameController.text.trim().length < 5){
+     showSnakbar(_scaffoldKey, "Username should be atleast of 5 characters");
     }else if(emailController.text.trim().isEmpty){
+     showSnakbar(_scaffoldKey, empty_email);
+    }else if(!emailController.text.trim().contains("@")){
      showSnakbar(_scaffoldKey, empty_email);
     }else if(!mCheckedTnC){
      showSnakbar(_scaffoldKey, accept_tnc);

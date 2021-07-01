@@ -9,6 +9,7 @@ import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/model/SingletonClass.dart';
 import 'package:flutter_rentry_new/model/UserLocationSelected.dart';
 import 'package:flutter_rentry_new/model/coupon_res.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
@@ -55,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
   GlobalKey postAdKey;
   var shouldShowShowcase = true;
   SharedPreferences prefs;
+  var isRedirectToChatLocal = false;
 
   @override
   void initState() {
@@ -62,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
     postAdKey = GlobalKey();
     debugPrint("ENTRY_HOME_SCREEN---------");
     checkShowcaseShowOrNot(context);
+    isRedirectToChatLocal = widget.isRedirectToChat;
   }
 
   void checkShowcaseShowOrNot(BuildContext context) async {
@@ -266,6 +269,9 @@ class _HomeScreenState extends State<HomeScreen> {
 //                  textColor: Colors.white,
 //                  fontSize: space_14);
                 if (state.res.status) {
+                  //Set true for homepage loaded
+                  SingletonClass().setIsHomeLoaded("true");
+                  // StateContainer.of(context).updateHomePageLoaded("true");
                   isNeedToShowRetry = false;
                   mHomeResponse = state.res;
                   if (widget.isRedirectToMyAds != null &&
@@ -276,9 +282,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       MaterialPageRoute(
                           builder: (context) => MyAdsListScreen()),
                     );
-                  } else if (widget.isRedirectToChat != null &&
-                      widget.isRedirectToChat) {
-                    widget.isRedirectToChat = false;
+                  } else if (isRedirectToChatLocal != null &&
+                      isRedirectToChatLocal) {
+                    debugPrint("REDIRECTING...to chat");
+                    isRedirectToChatLocal = false;
+                    isRedirectToChatLocal = null;
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => ChatHomeScreen()),

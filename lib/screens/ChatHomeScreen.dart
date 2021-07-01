@@ -6,6 +6,7 @@ import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
+import 'package:flutter_rentry_new/model/SingletonClass.dart';
 import 'package:flutter_rentry_new/model/get_all_chat_user_list_response.dart';
 import 'package:flutter_rentry_new/model/new_chatlist_res.dart';
 import 'package:flutter_rentry_new/repository/HomeRepository.dart';
@@ -32,12 +33,15 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
   void initState() {
     super.initState();
     debugPrint("ENTRY_CHATHOME_SCREEN---------");
+    SingletonClass().setIsChatLoaded("true");
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    debugPrint("111111111111111111");
     loginResponse = StateContainer.of(context).mLoginResponse;
+    debugPrint("11111111111111111122222");
     if (loginResponse != null) {
       token = loginResponse.data.token;
       debugPrint("ACCESSING_INHERITED ${token}");

@@ -101,6 +101,9 @@ class AuthenticationBloc
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.clear();
+      prefs?.setString(IS_SHOWCASE_VIEWED, "true");
+      prefs?.setString(IS_INTRO_VIEWED, "true");
+      prefs?.setString("loc", "true");
       yield LogoutAuthentucateState();
     } catch (e) {
       debugPrint("Exception while makeLogout ${e.toString()}");

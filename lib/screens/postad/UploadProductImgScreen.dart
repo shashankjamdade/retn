@@ -107,11 +107,11 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
                                                         space_10)),
                                             child: Center(
                                               child: Text(
-                                                "Upload image",
+                                                "Primary image",
                                                 style: CommonStyles
                                                     .getMontserratStyle(
                                                         space_14,
-                                                        FontWeight.w500,
+                                                        FontWeight.w600,
                                                         Colors.black),
                                               ),
                                             ),
@@ -193,11 +193,11 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
                                                         space_10)),
                                             child: Center(
                                               child: Text(
-                                                "Upload image",
+                                                "Primary image",
                                                 style: CommonStyles
                                                     .getMontserratStyle(
                                                         space_14,
-                                                        FontWeight.w500,
+                                                        FontWeight.w600,
                                                         Colors.black),
                                               ),
                                             ),
@@ -279,11 +279,11 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
                                                         space_10)),
                                             child: Center(
                                               child: Text(
-                                                "Upload image",
+                                                "Primary image",
                                                 style: CommonStyles
                                                     .getMontserratStyle(
                                                         space_14,
-                                                        FontWeight.w500,
+                                                        FontWeight.w600,
                                                         Colors.black),
                                               ),
                                             ),

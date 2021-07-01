@@ -27,11 +27,14 @@ class StateContainer extends StatefulWidget {
 //  }
   @override
   bool updateShouldNotify(covariant StateContainer oldWidget) {
-    return (userLocationSelected != oldWidget.userLocationSelected || userLocNameSelected != oldWidget.userLocNameSelected);
+    return (userLocationSelected != oldWidget.userLocationSelected ||
+        userLocNameSelected != oldWidget.userLocNameSelected);
   }
 
   static StateContainerState of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<_InheritedStateContainer>().data;
+    return context
+        .dependOnInheritedWidgetOfExactType<_InheritedStateContainer>()
+        .data;
   }
 
   @override
@@ -68,12 +71,19 @@ class StateContainerState extends State<StateContainer> {
         mUserLocationSelected = userLocationSelected;
       });
       //NEWLY added
-      mUserLocNameSelected = UserLocNameSelected(address: userLocationSelected?.city, mlat: userLocationSelected?.mlat, mlng: userLocationSelected?.mlng);
+      mUserLocNameSelected = UserLocNameSelected(
+          address: userLocationSelected?.city,
+          mlat: userLocationSelected?.mlat,
+          mlng: userLocationSelected?.mlng);
       setState(() {
-        mUserLocNameSelected = UserLocNameSelected(address: userLocationSelected?.city, mlat: userLocationSelected?.mlat, mlng: userLocationSelected?.mlng);
+        mUserLocNameSelected = UserLocNameSelected(
+            address: userLocationSelected?.city,
+            mlat: userLocationSelected?.mlat,
+            mlng: userLocationSelected?.mlng);
       });
     }
   }
+
   void updateUserSelectedLocation(UserLocNameSelected userLocNameSelected) {
     if (userLocNameSelected == null) {
       mUserLocNameSelected = userLocNameSelected;

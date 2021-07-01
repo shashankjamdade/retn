@@ -369,7 +369,7 @@ class _BtnTextInputWidgetState extends State<BtnTextInputWidget>
                     opacity: animation,
                     child: Container(
                       padding: EdgeInsets.all(space_8),
-                      width: 70.0,
+                      width: 90.0,
                       child: Center(
                           child: Text(
                         widget.btnText,
@@ -3112,7 +3112,7 @@ class PackageCardWidget extends StatelessWidget {
                     Align(
                         alignment: Alignment.topCenter,
                         child: Text(
-                          "month",
+                          "",
                           style: CommonStyles.getRalewayStyle(
                               space_15,
                               FontWeight.w500,

@@ -19,6 +19,7 @@ import 'package:flutter_rentry_new/model/UserLocationSelected.dart';
 import 'package:flutter_rentry_new/model/UserStatusObj.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/repository/HomeRepository.dart';
+import 'package:flutter_rentry_new/screens/ChatHomeScreen.dart';
 import 'package:flutter_rentry_new/screens/CouponListScreen.dart';
 import 'package:flutter_rentry_new/screens/EditProfileScreen.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
@@ -73,6 +74,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
+import 'model/SingletonClass.dart';
 
 /// Create a [AndroidNotificationChannel] for heads up notifications
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -138,9 +141,9 @@ Future<String> onSelect(String data) async {
 Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
   print("myBackgroundMessageHandler message: $message");
   int msgId = int.tryParse(message["data"]["msgId"].toString()) ?? 1;
-  print("msgId ${message['data']['title']}, ${message['data']['message']}");
+  print("msgId ${message['data']['title']}, ${message['data']['message']}, PAYLOAD-> ${message["data"]["notification_type"]}");
   var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-      'channelid', 'flutterfcm', 'your channel description',ticker: 'ticker',
+      'channelid', 'flutterfcm', 'your channel description',ticker: 'ticker', icon: "",
       playSound: true, enableLights: true, enableVibration: true,
       importance: Importance.max, priority: Priority.high);
   var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
@@ -149,7 +152,7 @@ Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
       iOS: iOSPlatformChannelSpecifics);
   flutterLocalNotificationsPlugin.show(msgId, message['data']['title'],
       message['data']['message'], platformChannelSpecifics,
-      payload: message["data"]["notification_type:"]);
+      payload: message["data"]["notification_type"]);
   return Future<void>.value();
 }
 
@@ -409,11 +412,38 @@ class _ScreenOneState extends State<ScreenOne> {
   }
 
   Future onSelectNotification(String payload) async {
+    debugPrint("......INSIDE NOTIFICATION_SELECT method....... ${payload}");
     if (payload != null) {
-      debugPrint('notification payload: ' + payload);
+      debugPrint('notification payload: ${ payload == "chat"} ' + payload);
       if(payload == "chat"){
-        redirectToChatScreen();
+        try{
+          debugPrint("REDIRECTING TO DIRECT CHAT");
+          if(SingletonClass().isHomePageLoaded!=null && SingletonClass().isHomePageLoaded?.isNotEmpty){
+            debugPrint("REDIRECTING TO DIRECT CHAT222222");
+            if(SingletonClass().isChatPageLoaded!=null && SingletonClass().isChatPageLoaded?.isNotEmpty){
+              // redirectToChatScreen();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => HomeScreen(
+                      isRedirectToChat: true,
+                    ))
+              );
+            }else{
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChatHomeScreen())
+              );
+            }
+          } else {
+            redirectToChatScreen();
+          }
+        }on Exception catch (_){
+          debugPrint("REDIRECTING EXXXXXX");
+        }
       }else{
+        debugPrint("REDIRECTING TO ONLY HOME");
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -421,6 +451,8 @@ class _ScreenOneState extends State<ScreenOne> {
               (route) => false,
         );
       }
+    }else{
+      debugPrint("......OUTSIDE_ELSE NOTIFICATION_SELECT method....... ${payload}");
     }
     /*Navigator.push(
       context,
@@ -429,14 +461,22 @@ class _ScreenOneState extends State<ScreenOne> {
   }
 
   redirectToChatScreen() {
-    Navigator.pushAndRemoveUntil(
+    debugPrint("REDIRECTING thorugh HOME to CHAT");
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => HomeScreen(
+              isRedirectToChat: true,
+            ))
+    );
+    /*Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
           builder: (context) => HomeScreen(
                 isRedirectToChat: true,
               )),
       (route) => false,
-    );
+    );*/
   }
 
   Future onDidRecieveLocalNotification(
@@ -658,33 +698,35 @@ class BlurryLocationInfoDialog extends StatelessWidget {
             title,
             style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),
           ),
-          content: ListView(
-            shrinkWrap: true,
-            children: [
-              SizedBox(height: space_15,),
-              RichText(
-                text: new TextSpan(
-                  text: PERMISSION_CONSENT_MSG1,
-                  style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.black),
-                  children: <TextSpan>[
-                    new TextSpan(
-                      text: PERMISSION_CONSENT_MSG2,
-                      style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),
-                    ),
-                    new TextSpan(
-                      text: PERMISSION_CONSENT_MSG3,
-                      style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.black),
-                    ),
-                  ],
+          content: Container(
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                SizedBox(height: space_15,),
+                RichText(
+                  text: new TextSpan(
+                    text: PERMISSION_CONSENT_MSG1,
+                    style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.black),
+                    children: <TextSpan>[
+                      new TextSpan(
+                        text: PERMISSION_CONSENT_MSG2,
+                        style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),
+                      ),
+                      new TextSpan(
+                        text: PERMISSION_CONSENT_MSG3,
+                        style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.black),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: space_15,),
-              new Text(
-                PERMISSION_CONSENT_SUBMSG,
-                style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),
-              ),
-              SizedBox(height: space_15,),
-            ],
+                SizedBox(height: space_15,),
+                new Text(
+                  PERMISSION_CONSENT_SUBMSG,
+                  style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),
+                ),
+                SizedBox(height: space_15,),
+              ],
+            ),
           ),
           actions: <Widget>[
             new FlatButton(
