@@ -142,7 +142,9 @@ getWidthToHeightRatio(BuildContext context) {
   debugPrint("SCREEN_HEIGHT--> ${screenHeight}");
   var ratio = (getProportionateScreenWidth(context, space_230) /
       (Platform.isIOS
-          ? getProportionateScreenHeight(context, space_300)
+          ? (screenHeight <= 712
+          ? getProportionateScreenHeight(context, space_370)
+          : getProportionateScreenHeight(context, space_320))
           : screenHeight <= 712
               ? getProportionateScreenHeight(context, space_370)
               : getProportionateScreenHeight(context, space_320)));

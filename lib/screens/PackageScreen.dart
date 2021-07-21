@@ -265,163 +265,168 @@ class _PackageScreenState extends State<PackageScreen> {
                       ),
                       Stack(
                         children: [
-                          Container(
-                            margin: EdgeInsets.only(
-                                left: space_15,
-                                right: space_15,
-                                bottom: space_15),
-                            height: space_200,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(space_15),
-                                image: DecorationImage(
-                                    image: AssetImage(
-                                      "assets/images/current_package_back.png",
-                                    ),
-                                    fit: BoxFit.fill)),
+                          GestureDetector(
+                            onTap: () {
+                              openCheckout(currentPackage.price,
+                                  currentPackage.id, currentPackage.title);
+                            },
                             child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: space_25, vertical: space_15),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "STATER",
-                                            style: CommonStyles.getRalewayStyle(
-                                                space_15,
-                                                FontWeight.w600,
-                                                Colors.white),
-                                          ),
-                                          Text(
-                                            "${currentPackage.title}",
-                                            style:
-                                                CommonStyles.getMontserratStyle(
-                                                    space_20,
-                                                    FontWeight.w900,
-                                                    Colors.white),
-                                          ),
-                                          Text(
-                                            "PACK",
-                                            style: CommonStyles.getRalewayStyle(
-                                                space_15,
-                                                FontWeight.w500,
-                                                Colors.white),
-                                          ),
-                                        ],
+                              margin: EdgeInsets.only(
+                                  left: space_15,
+                                  right: space_15,
+                                  bottom: space_15),
+                              height: space_200,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(space_15),
+                                  image: DecorationImage(
+                                      image: AssetImage(
+                                        "assets/images/package_back.png",//"assets/images/current_package_back.png",
                                       ),
-                                      Row(
-                                        children: [
-                                          Align(
-                                              child: Text(
-                                            "\u20B9",
-                                            style: CommonStyles.getMontserratStyle(
-                                                space_30,
-                                                FontWeight.w400,
-                                                CommonStyles.primaryColor),
-                                          )),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                "",
-                                                style: CommonStyles
-                                                    .getRalewayStyle(
-                                                        space_15,
-                                                        FontWeight.w600,
-                                                        Colors.white),
-                                              ),
-                                              Text(
-                                                "${currentPackage.price}",
-                                                style: CommonStyles
-                                                    .getMontserratStyle(
-                                                        space_25,
-                                                        FontWeight.w900,
-                                                        CommonStyles
-                                                            .primaryColor),
-                                              ),
-                                              Text(
-                                                "",
-                                                style: CommonStyles
-                                                    .getRalewayStyle(
-                                                        space_15,
-                                                        FontWeight.w500,
-                                                        CommonStyles
-                                                            .primaryColor),
-                                              ),
-                                            ],
-                                          )
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: space_10,
-                                  ),
-                                  Text(
-                                    "${currentPackage?.no_of_posts} ${currentPackage?.no_of_posts.length==1?"Post":"Posts"} for ${currentPackage?.no_of_days} ${currentPackage?.no_of_days.length==1?"Day":"Days"}",
-                                    style: CommonStyles
-                                        .getMontserratStyle(
-                                        space_15,
-                                        FontWeight.w600,
-                                        Colors.white),
-                                  ),
-                                 /* Row(
-                                    children: [
-                                      Expanded(
-                                        child: RichText(
-                                          text: new TextSpan(
-                                            text: "Valid from",
-                                            style: CommonStyles.getRalewayStyle(
-                                                space_13,
-                                                FontWeight.w500,
-                                                CommonStyles.primaryColor),
-                                            children: <TextSpan>[
-                                              new TextSpan(
-                                                  text:
-                                                      '\n${currentPackFromDateStr}',
+                                      fit: BoxFit.fill)),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: space_25, vertical: space_15),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "STATER",
+                                              style: CommonStyles.getRalewayStyle(
+                                                  space_15,
+                                                  FontWeight.w600,
+                                                  Colors.white),
+                                            ),
+                                            Text(
+                                              "${currentPackage.title}",
+                                              style:
+                                                  CommonStyles.getMontserratStyle(
+                                                      space_20,
+                                                      FontWeight.w900,
+                                                      Colors.white),
+                                            ),
+                                            Text(
+                                              "PACK",
+                                              style: CommonStyles.getRalewayStyle(
+                                                  space_15,
+                                                  FontWeight.w500,
+                                                  Colors.white),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            Align(
+                                                child: Text(
+                                              "\u20B9",
+                                              style: CommonStyles.getMontserratStyle(
+                                                  space_30,
+                                                  FontWeight.w400,
+                                                  Colors.white),
+                                            )),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  "",
+                                                  style: CommonStyles
+                                                      .getRalewayStyle(
+                                                          space_15,
+                                                          FontWeight.w600,
+                                                          Colors.white),
+                                                ),
+                                                Text(
+                                                  "${currentPackage.price}",
                                                   style: CommonStyles
                                                       .getMontserratStyle(
-                                                          space_13,
-                                                          FontWeight.w800,
-                                                          CommonStyles
-                                                              .primaryColor)),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: RichText(
-                                          text: new TextSpan(
-                                            text: "Valid till",
-                                            style: CommonStyles.getRalewayStyle(
-                                                space_13,
-                                                FontWeight.w500,
-                                                CommonStyles.primaryColor),
-                                            children: <TextSpan>[
-                                              new TextSpan(
-                                                  text:
-                                                      '\n${currentPackToDateStr}',
+                                                          space_25,
+                                                          FontWeight.w900,
+                                                      Colors.white),
+                                                ),
+                                                Text(
+                                                  "",
                                                   style: CommonStyles
-                                                      .getMontserratStyle(
-                                                          space_13,
-                                                          FontWeight.w800,
+                                                      .getRalewayStyle(
+                                                          space_15,
+                                                          FontWeight.w500,
                                                           CommonStyles
-                                                              .primaryColor)),
-                                            ],
+                                                              .primaryColor),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: space_10,
+                                    ),
+                                    Text(
+                                      "${currentPackage?.no_of_posts} ${currentPackage?.no_of_posts.length==1?"Post":"Posts"} for ${currentPackage?.no_of_days} ${currentPackage?.no_of_days.length==1?"Day":"Days"}",
+                                      style: CommonStyles
+                                          .getMontserratStyle(
+                                          space_15,
+                                          FontWeight.w600,
+                                          Colors.white),
+                                    ),
+                                   /* Row(
+                                      children: [
+                                        Expanded(
+                                          child: RichText(
+                                            text: new TextSpan(
+                                              text: "Valid from",
+                                              style: CommonStyles.getRalewayStyle(
+                                                  space_13,
+                                                  FontWeight.w500,
+                                                  CommonStyles.primaryColor),
+                                              children: <TextSpan>[
+                                                new TextSpan(
+                                                    text:
+                                                        '\n${currentPackFromDateStr}',
+                                                    style: CommonStyles
+                                                        .getMontserratStyle(
+                                                            space_13,
+                                                            FontWeight.w800,
+                                                            CommonStyles
+                                                                .primaryColor)),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  )*/
-                                ],
+                                        Expanded(
+                                          child: RichText(
+                                            text: new TextSpan(
+                                              text: "Valid till",
+                                              style: CommonStyles.getRalewayStyle(
+                                                  space_13,
+                                                  FontWeight.w500,
+                                                  CommonStyles.primaryColor),
+                                              children: <TextSpan>[
+                                                new TextSpan(
+                                                    text:
+                                                        '\n${currentPackToDateStr}',
+                                                    style: CommonStyles
+                                                        .getMontserratStyle(
+                                                            space_13,
+                                                            FontWeight.w800,
+                                                            CommonStyles
+                                                                .primaryColor)),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )*/
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -451,7 +456,7 @@ class _PackageScreenState extends State<PackageScreen> {
                                                 BorderRadius.circular(space_5)),
                                         child: Center(
                                           child: Text(
-                                            "Upgrade",
+                                            "CLAIM NOW",
                                             style: CommonStyles.getRalewayStyle(
                                                 space_14,
                                                 FontWeight.w400,

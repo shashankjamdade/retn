@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:apple_sign_in/apple_sign_in_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +17,7 @@ import 'package:flutter_rentry_new/model/OtpObj.dart';
 import 'package:flutter_rentry_new/model/UserLocationSelected.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/model/register_response.dart';
+import 'package:flutter_rentry_new/repository/AuthenticationRepository.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
 import 'package:flutter_rentry_new/screens/OtpVerificationScreen.dart';
 import 'package:flutter_rentry_new/screens/PostRegisterScreen.dart';
@@ -59,7 +63,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String _message = '';
 
   _register() {
-    _firebaseMessaging.getToken().then((token) => mFcmToken = token);
+    _firebaseMessaging.getToken().then((token){
+      if(token!=null && token?.isNotEmpty) {
+        mFcmToken = token;
+        debugPrint("FCM_TOKEN GETTOKEN -> ${mFcmToken}");
+      }
+    });
+    _firebaseMessaging.onTokenRefresh.listen((token) {
+      if(token!=null && token?.isNotEmpty) {
+        mFcmToken = token;
+        debugPrint("FCM_TOKEN REFRESH -> ${mFcmToken}");
+      }
+    });
   }
 
   // Toggles the password show status
@@ -76,11 +91,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       debugPrint("GOOGLE_SIGNIN_INFO ${googleUsr.email}");
       debugPrint("GOOGLE_SIGNIN_INFO ${googleUsr.displayName}");
       setState(() {
-        mLoginType  = LOGINTYPE_GOOGLE;
-        mName  = googleUsr.displayName;
-        mEmail  = googleUsr.email;
+        mLoginType = LOGINTYPE_GOOGLE;
+        mName = googleUsr.displayName;
+        mEmail = googleUsr.email;
         fullnameController = TextEditingController(text: mName);
-        emailController = TextEditingController(text:mEmail);
+        emailController = TextEditingController(text: mEmail);
       });
       onSignup();
     } catch (err) {
@@ -95,7 +110,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     //Add Listener to know when is updated focus
     _focusNode.addListener(_onLoginUserNameFocusChange);
     fullnameController = TextEditingController(text: mName);
-    emailController = TextEditingController(text:mEmail);
+    emailController = TextEditingController(text: mEmail);
     _register();
   }
 
@@ -119,13 +134,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: Center(
           child: Text.rich(
               TextSpan(
-                  text: 'I have read and agree to the ', style: CommonStyles.getRalewayStyle(space_12, FontWeight.w400, Colors.black),
+                  text: 'I have read and agree to the ',
+                  style: CommonStyles.getRalewayStyle(
+                      space_12, FontWeight.w400, Colors.black),
                   children: <TextSpan>[
                     TextSpan(
-                        text: 'Terms and Conditions', style: CommonStyles.getMontserratDecorationStyle(space_12, FontWeight.w400, Colors.black, TextDecoration.underline),
+                        text: 'Terms and Conditions',
+                        style: CommonStyles.getMontserratDecorationStyle(
+                            space_12, FontWeight.w400, Colors.black,
+                            TextDecoration.underline),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            launchURL("https://rentozo.com/home/page/terms-and-conditions");
+                            launchURL(
+                                "https://rentozo.com/home/page/terms-and-conditions");
                           }
                     )
                   ]
@@ -139,211 +160,277 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     _context = context;
     return BlocProvider(
-      create: (context) => authenticationBloc..add(InitialAuthenticationEvent()),
-      child: BlocListener(
-        cubit: authenticationBloc,
-        listener: (context, state){
-        if(state is GoogleFbLoginResAuthenticationState){
-          debugPrint("GOT_STATE-- "+state.res.loginStatus);
-          if (state.res.loginStatus == LOGGEDIN_SUCCESS) {
-            //Hit social Login API
-            if(state.res.map['email']!=null) {
-              setState(() {
-                mLoginType  = LOGINTYPE_FB;
-                mName = state.res.map['name'];
-                mEmail = state.res.map['email'];
-                fullnameController = TextEditingController(text: mName);
-                emailController = TextEditingController(text:mEmail);
-              });
-              onSignup();
+        create: (context) =>
+        authenticationBloc
+          ..add(InitialAuthenticationEvent()),
+        child: BlocListener(
+          cubit: authenticationBloc,
+          listener: (context, state) {
+            if (state is GoogleFbLoginResAuthenticationState) {
+              debugPrint("GOT_STATE-- " + state.res.loginStatus);
+              if (state.res.loginStatus == LOGGEDIN_SUCCESS) {
+                //Hit social Login API
+                if (state.res.map['email'] != null) {
+                  setState(() {
+                    mLoginType = LOGINTYPE_FB;
+                    mName = state.res.map['name'];
+                    mEmail = state.res.map['email'];
+                    fullnameController = TextEditingController(text: mName);
+                    emailController = TextEditingController(text: mEmail);
+                  });
+                  onSignup();
 //              showSnakbar(_scaffoldKey, "Please fill all required information");
-            }else{
-              showSnakbar(_scaffoldKey, "No email found against your profile, please try again with another account");
-            }
-          }
-        }else if(state is RegisterResAuthenticationState){
-            showSnakbar(_scaffoldKey, state.res.message);
-            debugPrint("MSG_GOT_REGISTER ${state.res.message}");
-            Fluttertoast.showToast(
-                msg: state.res.message,
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                timeInSecForIosWeb: 1,
-                backgroundColor: Colors.black,
-                textColor: Colors.white,
-                fontSize: space_14
-            );
-            if(state.res.status){
-              storeResInPrefs(context, state.res);
-            }
-          }
-        },
-        child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-          builder: (context, state){
-            if(state is RegisterResAuthenticationState){
-              return getSignupForm();
-            } else if(state is ProgressAuthenticationState){
-              return getSignupForm(showProgress: true);
-            } else{
-              return getSignupForm();
+                } else {
+                  showSnakbar(_scaffoldKey,
+                      "No email found against your profile, please try again with another account");
+                }
+              }
+            } else if (state is RegisterResAuthenticationState) {
+              showSnakbar(_scaffoldKey, state.res.message);
+              debugPrint("MSG_GOT_REGISTER ${state.res.message}");
+              Fluttertoast.showToast(
+                  msg: state.res.message,
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                  fontSize: space_14
+              );
+              if (state.res.status) {
+                storeResInPrefs(context, state.res);
+              }
             }
           },
-        ),
-      ));
+          child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            builder: (context, state) {
+              if (state is RegisterResAuthenticationState) {
+                return getSignupForm();
+              } else if (state is ProgressAuthenticationState) {
+                return getSignupForm(showProgress: true);
+              } else {
+                return getSignupForm();
+              }
+            },
+          ),
+        ));
   }
 
-  Widget getSignupForm({bool showProgress = false}){
+  Widget getSignupForm({bool showProgress = false}) {
     return Scaffold(
       key: _scaffoldKey,
       body: SafeArea(
         child: Container(
-            child: Stack(
-              children: [
-                AuthPageHeaderWidget(app_name, skip_for_now, skipFun),
-                Container(
+          child: Stack(
+            children: [
+              AuthPageHeaderWidget(app_name, skip_for_now, skipFun),
+              Container(
                   margin: EdgeInsets.symmetric(horizontal: space_15),
                   child: Form(
-                    key: formKey,
-                    child: Container(
-                      margin: EdgeInsets.only(top: getProportionateScreenHeight(context, space_100)),
-                      height: double.infinity,
-                      child: ListView(
-                        shrinkWrap: true,
-                        physics: BouncingScrollPhysics(),
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(top: space_40),
-                            child: Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                "Please provide details to create an account",
-                                style: CommonStyles.getRalewayStyle(
-                                    space_15, FontWeight.w500, CommonStyles.blue),
-                              ),
-                            ),
+                      key: formKey,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            top: getProportionateScreenHeight(
+                                context, space_100)),
+                        height: double.infinity,
+                        child: ListView(
+                            shrinkWrap: true,
+                            physics: BouncingScrollPhysics(),
+                            children: [
+                        Container(
+                        margin: EdgeInsets.only(top: space_40),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "Please provide details to create an account",
+                            style: CommonStyles.getRalewayStyle(
+                                space_15, FontWeight.w500, CommonStyles.blue),
                           ),
-                          SizedBox(
-                            height: space_20,
-                          ),
-                          TextInputWidget(fullnameController, "Full name", false, (String value) {
-                            if (value.isEmpty) {
-                              return "Please enter valid name";
-                            }
-                          }, TextInputType.text),
-                          SizedBox(height: getProportionateScreenHeight(context, space_20),),
+                        ),
+                      ),
+                      SizedBox(
+                        height: space_20,
+                      ),
+                      TextInputWidget(fullnameController, "Full name", false, (
+                          String value) {
+                        if (value.isEmpty) {
+                          return "Please enter valid name";
+                        }
+                      }, TextInputType.text),
+                      SizedBox(height: getProportionateScreenHeight(
+                          context, space_20),),
 //                          TextInputWidget(mobileController, "Mobile No.", false, (String value) {
 //                            if (value.isEmpty) {
 //                              return "Please enter valid mobile no.";
 //                            }
 //                          }, TextInputType.number),
 //                          SizedBox(height: getProportionateScreenHeight(context, space_20),),
-                          TextInputWidget(emailController, "Email ID", false, (String value) {
-                            if (value.isEmpty) {
-                              return "Please enter valid email ID";
-                            }
-                          }, TextInputType.emailAddress),
-                          SizedBox(height: getProportionateScreenHeight(context, space_20),),
-                          Padding(
-                            padding: EdgeInsets.only(right: space_15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                Checkbox(
-                                  value: mCheckedTnC,
-                                  activeColor: CommonStyles.primaryColor,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      mCheckedTnC = value;
-                                    });
-                                  },
-                                ),
-                                Expanded(child: privacyPolicyLinkAndTermsOfService())
-                              ],
+                      TextInputWidget(
+                          emailController, "Email ID", false, (String value) {
+                        if (value.isEmpty) {
+                          return "Please enter valid email ID";
+                        }
+                      }, TextInputType.emailAddress),
+                      SizedBox(height: getProportionateScreenHeight(
+                          context, space_20),),
+                      Padding(
+                        padding: EdgeInsets.only(right: space_15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Checkbox(
+                              value: mCheckedTnC,
+                              activeColor: CommonStyles.primaryColor,
+                              onChanged: (value) {
+                                setState(() {
+                                  mCheckedTnC = value;
+                                });
+                              },
                             ),
-                          ),
-                          // CheckboxListTile(
-                          //   contentPadding: EdgeInsets.all(0),
-                          //   controlAffinity: ListTileControlAffinity.leading,
-                          //   title: privacyPolicyLinkAndTermsOfService(),
-                          //   activeColor: CommonStyles.primaryColor,
-                          //   value: mCheckedTnC,
-                          //   onChanged: (bool value) {
-                          //     setState(() {
-                          //       mCheckedTnC = value;
-                          //     });
-                          //   },
-                          // ),
-                          SizedBox(height: getProportionateScreenHeight(context, space_20),),
-                          InkWell(
-                            onTap: (){
-                              onSignup();
-                            },
-                            child: Center(child: Container(
-                                padding: EdgeInsets.symmetric(vertical: space_10, horizontal: space_15),
-                                decoration: BoxDecoration(
-                                    color: CommonStyles.primaryColor
-                                ),
-                                child: Text("Next", style: CommonStyles.getMontserratStyle(space_14, FontWeight.w600, Colors.white),))),
-                          ),
-                          SizedBox(height: getProportionateScreenHeight(context, space_20),),
-                          Align(
-                              alignment: Alignment.center,
-                              child: Text("OR", style: CommonStyles.getRalewayStyle(space_18, FontWeight.w600, CommonStyles.primaryColor),)),
-                          SizedBox(height: getProportionateScreenHeight(context, space_20),),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Expanded(child: IconButtonWidget("Signup with facebook", "assets/images/facebook.png", CommonStyles.blue ,onSocialLogin)),
-                              Expanded(child: IconButtonWidget("Signup with Google", "assets/images/google.png", CommonStyles.darkAmber ,onSocialGoogleLogin)),
-                            ],
-                          ),
-                          SizedBox(height: getProportionateScreenHeight(context, space_25),),
-                          GestureDetector(
-                            onTap: redirectToLogin,
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: RichText(
-                                text: new TextSpan(
-                                  text: 'Already have an account? ',
-                                  style: TextStyle(
-                                      fontSize: space_12,
-                                      fontFamily: CommonStyles.FONT_RALEWAY,
-                                      fontWeight: FontWeight.w400,
-                                      color: CommonStyles.primaryColor),
-                                  children: <TextSpan>[
-                                    new TextSpan(
-                                      text: ' Login',
-                                      style: TextStyle(
-                                          fontSize: space_15,
-                                          fontFamily: CommonStyles.FONT_RALEWAY,
-                                          fontWeight: FontWeight.w600,
-                                          color: CommonStyles.primaryColor),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            Expanded(
+                                child: privacyPolicyLinkAndTermsOfService())
+                          ],
+                        ),
+                      ),
+                      // CheckboxListTile(
+                      //   contentPadding: EdgeInsets.all(0),
+                      //   controlAffinity: ListTileControlAffinity.leading,
+                      //   title: privacyPolicyLinkAndTermsOfService(),
+                      //   activeColor: CommonStyles.primaryColor,
+                      //   value: mCheckedTnC,
+                      //   onChanged: (bool value) {
+                      //     setState(() {
+                      //       mCheckedTnC = value;
+                      //     });
+                      //   },
+                      // ),
+                      SizedBox(height: getProportionateScreenHeight(
+                          context, space_20),),
+                      InkWell(
+                        onTap: () {
+                          onSignup();
+                        },
+                        child: Center(child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: space_10, horizontal: space_15),
+                            decoration: BoxDecoration(
+                                color: CommonStyles.primaryColor
                             ),
-                          ),
-                          SizedBox(height: getProportionateScreenHeight(context, space_50),),
-                          // Align(
-                          //   alignment: Alignment.center,
-                          //   child: Text(
-                          //     rent_pe_tagline,
-                          //     style: TextStyle(
-                          //         fontSize: space_15,
-                          //         fontFamily: CommonStyles.FONT_RALEWAY,
-                          //         fontWeight: FontWeight.w400,
-                          //         color: CommonStyles.primaryColor,
-                          //         decoration: TextDecoration.none),
-                          //   ),
-                          // ),
+                            child: Text("Next", style: CommonStyles
+                                .getMontserratStyle(
+                                space_14, FontWeight.w600, Colors.white),))),
+                      ),
+                      SizedBox(height: getProportionateScreenHeight(
+                          context, space_20),),
+                      Align(
+                          alignment: Alignment.center,
+                          child: Text("OR", style: CommonStyles.getRalewayStyle(
+                              space_18, FontWeight.w600,
+                              CommonStyles.primaryColor),)),
+                      SizedBox(height: getProportionateScreenHeight(
+                          context, space_20),),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(child: IconButtonWidget(
+                              "Signup with fb", "assets/images/facebook.png",
+                              CommonStyles.blue, onSocialLogin)),
+                          Expanded(child: IconButtonWidget(
+                              "Signup with Google", "assets/images/google.png",
+                              CommonStyles.darkAmber, onSocialGoogleLogin)),
                         ],
                       ),
+                      Platform.isIOS ? SizedBox(
+                        height: getProportionateScreenHeight(
+                            context, space_25),
+                      ) : Container(height: 0, width: 0,),
+                      Platform.isIOS?AppleSignInButton(
+                      type: ButtonType.continueButton,
+                      onPressed: () async {
+              // onSocialLogin("apple", context);
+              /*final credential = await SignInWithApple.getAppleIDCredential(
+                                              scopes: [
+                                                AppleIDAuthorizationScopes.email,
+                                                AppleIDAuthorizationScopes.fullName,
+                                              ],
+                                            );
+                                            print(credential);*/
+              bool isAvailable = true;
+              var flag = AuthenticationRepository()
+                  .appleSignInAvailable
+                  .then((value) {
+              debugPrint("NOT CAPABLE ${value}");
+              });
+
+              if (isAvailable) {
+                User user =
+              await AuthenticationRepository()
+                  .appleSignIn();
+              if(user!=null && user?.email!=null && authenticationBloc!=null){
+              setState(() {
+              mLoginType = LOGINTYPE_GOOGLE;
+              mName = user.displayName;
+              mEmail = user.email;
+              fullnameController = TextEditingController(text: mName);
+              emailController = TextEditingController(text:mEmail);
+              });
+              onSignup();
+              }else{
+              showSnakbar(_scaffoldKey, "Email ID missing");
+              }
+              }else {
+              showSnakbar(_scaffoldKey, "Something went wrong, please try again!");
+              }
+              }): Container(height: 0, width: 0,),
+              SizedBox(
+                height: getProportionateScreenHeight(context, space_25),),
+              GestureDetector(
+                onTap: redirectToLogin,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: RichText(
+                    text: new TextSpan(
+                      text: 'Already have an account? ',
+                      style: TextStyle(
+                          fontSize: space_12,
+                          fontFamily: CommonStyles.FONT_RALEWAY,
+                          fontWeight: FontWeight.w400,
+                          color: CommonStyles.primaryColor),
+                      children: <TextSpan>[
+                        new TextSpan(
+                          text: ' Login',
+                          style: TextStyle(
+                              fontSize: space_15,
+                              fontFamily: CommonStyles.FONT_RALEWAY,
+                              fontWeight: FontWeight.w600,
+                              color: CommonStyles.primaryColor),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                showProgress?Center(child:
-                  CircularProgressIndicator(),):Container(height: space_0, width: space_0,)
+              ),
+              SizedBox(
+                height: getProportionateScreenHeight(context, space_50),),
+              // Align(
+              //   alignment: Alignment.center,
+              //   child: Text(
+              //     rent_pe_tagline,
+              //     style: TextStyle(
+              //         fontSize: space_15,
+              //         fontFamily: CommonStyles.FONT_RALEWAY,
+              //         fontWeight: FontWeight.w400,
+              //         color: CommonStyles.primaryColor,
+              //         decoration: TextDecoration.none),
+              //   ),
+              // ),
+            ],
+          ),
+        ),
+      ),
+    ),
+    showProgress?Center(child:
+    CircularProgressIndicator(),):Container(height: space_0, width: space_0,)
 //            Column(
 //              crossAxisAlignment: CrossAxisAlignment.center,
 //              mainAxisAlignment: MainAxisAlignment.end,
@@ -357,35 +444,43 @@ class _RegisterScreenState extends State<RegisterScreen> {
 //              ],
 //            )
 
-              ],
-            )),
-      ),
+    ],
+    )),
+    ),
     );
   }
 
-  onVerifyClick() async{
+  onVerifyClick() async {
 
   }
-  
-  void onSignup(){
-    if(fullnameController.text.trim().isEmpty){
-     showSnakbar(_scaffoldKey, empty_full_name);
-    }else if(fullnameController.text.trim().length < 5){
-     showSnakbar(_scaffoldKey, "Username should be atleast of 5 characters");
-    }else if(emailController.text.trim().isEmpty){
-     showSnakbar(_scaffoldKey, empty_email);
-    }else if(!emailController.text.trim().contains("@")){
-     showSnakbar(_scaffoldKey, empty_email);
-    }else if(!mCheckedTnC){
-     showSnakbar(_scaffoldKey, accept_tnc);
-    }else if(mFcmToken==null || mFcmToken.isEmpty){
-     showSnakbar(_scaffoldKey, fcm_token_missing);
-    }else{
+
+  void onSignup() {
+    if (fullnameController.text
+        .trim()
+        .isEmpty) {
+      showSnakbar(_scaffoldKey, empty_full_name);
+    } else if (fullnameController.text
+        .trim()
+        .length < 5) {
+      showSnakbar(_scaffoldKey, "Username should be atleast of 5 characters");
+    } else if (emailController.text
+        .trim()
+        .isEmpty) {
+      showSnakbar(_scaffoldKey, empty_email);
+    } else if (!emailController.text.trim().contains("@")) {
+      showSnakbar(_scaffoldKey, empty_email);
+    } else if (!mCheckedTnC) {
+      showSnakbar(_scaffoldKey, accept_tnc);
+    } else if (mFcmToken == null || mFcmToken.isEmpty) {
+      _register();
+      showSnakbar(_scaffoldKey, fcm_token_missing);
+    } else {
       //API hit
       debugPrint("OTP -- > ${mOTP}");
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => PostRegisterScreen(fullnameController.text.trim(), emailController.text.trim())),
+        MaterialPageRoute(builder: (context) => PostRegisterScreen(
+            fullnameController.text.trim(), emailController.text.trim())),
       );
 //      authenticationBloc..add(RegisterReqAuthenticationEvent(name: fullnameController.text.trim(),
 //      email: emailController.text.trim(), mobile: mobileController.text.trim(), password: passwordController.text.trim(), loginType: mLoginType, otp: mOTP
@@ -393,17 +488,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  void redirectToLogin(){
+  void redirectToLogin() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => LoginScreen()),
     );
   }
 
-  void onSocialLogin(){
+  void onSocialLogin() {
     authenticationBloc..add(LoginInViaFacebookEvent());
   }
-  void onSocialGoogleLogin(){
+
+  void onSocialGoogleLogin() {
     logininViaGoogle();
   }
 
@@ -452,7 +548,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         prefs.setString(USER_EMAIL, res.data.email);
         prefs.setBool(IS_LOGGEDIN, true);
         debugPrint(
-            "PREFS_STORED_LOGIN-----> ${prefs.getString(USER_LOCATION_ADDRESS)}");
+            "PREFS_STORED_LOGIN-----> ${prefs.getString(
+                USER_LOCATION_ADDRESS)}");
         StateContainer.of(context).updateUserInfo(res);
         Navigator.push(
           context,

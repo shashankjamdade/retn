@@ -272,7 +272,8 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
                     ),
                     Expanded(
                       child: Container(
-                        child: Column(
+                        child: ListView(
+                          shrinkWrap: true,
                           children: [
                             (purchesedPackages?.length > 0)?Align(
                                 alignment: Alignment.centerLeft,
@@ -421,164 +422,162 @@ class _AdUnderPackageListScreenState extends State<AdUnderPackageListScreen> {
                                   child: Text("Buy Packages", style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.black),),
                                 )),
                             SizedBox(height: space_5,),
-                            Expanded(
-                              child: ListView.builder(
-                                  itemCount: remainingPackages?.length,
-                                  scrollDirection: Axis.vertical,
-                                  primary: false,
-                                  shrinkWrap: true,
-                                  itemBuilder: (context, index) {
-                                    if (remainingPackages[index].purchase_button ==
-                                        "show") {
-                                      return ListTile(
-                                        key: Key("${index}"),
+                            ListView.builder(
+                                itemCount: remainingPackages?.length,
+                                scrollDirection: Axis.vertical,
+                                primary: false,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  if (remainingPackages[index].purchase_button ==
+                                      "show") {
+                                    return ListTile(
+                                      key: Key("${index}"),
 //                                  leading: Icon(Icons.notification_important),
-                                        title: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: CommonStyles.blue),
-                                                  borderRadius: BorderRadius.only(
-                                                      topLeft:
-                                                          Radius.circular(space_5),
-                                                      bottomLeft:
-                                                          Radius.circular(space_5),
-                                                      topRight:
-                                                          Radius.circular(space_0),
-                                                      bottomRight:
-                                                          Radius.circular(space_0)),
-                                                  color: CommonStyles.primaryColor,
-                                                ),
-                                                padding:
-                                                    const EdgeInsets.all(space_10),
-                                                child: Text(
-                                                  remainingPackages[index].package_name +
-                                                      "   No. Post: ${remainingPackages[index].no_of_posts}   Days: ${remainingPackages[index].no_of_days}    ",
-                                                  style:
-                                                      CommonStyles.getMontserratStyle(
-                                                          space_15,
-                                                          FontWeight.w600,
-                                                          Colors.white),
-                                                ),
-                                              ),
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                mBuypackageId = remainingPackages[index].package_id;
-                                                openCheckout(
-                                                    remainingPackages[index].package_price,
-                                                    remainingPackages[index].package_name,
-                                                    remainingPackages[index].user_package_id,
-                                                    remainingPackages[index].package_id);
-                                              },
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.all(space_10),
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color:
-                                                            CommonStyles.darkAmber),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            space_5),
+                                      title: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
                                                     color: CommonStyles.blue),
-                                                child: Column(
-                                                  children: [
-                                                    Text(
-                                                      "Buy Now",
-                                                      style: CommonStyles
-                                                          .getMontserratStyle(
+                                                borderRadius: BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(space_5),
+                                                    bottomLeft:
+                                                        Radius.circular(space_5),
+                                                    topRight:
+                                                        Radius.circular(space_0),
+                                                    bottomRight:
+                                                        Radius.circular(space_0)),
+                                                color: CommonStyles.primaryColor,
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.all(space_10),
+                                              child: Text(
+                                                remainingPackages[index].package_name +
+                                                    "   No. Post: ${remainingPackages[index].no_of_posts}   Days: ${remainingPackages[index].no_of_days}    ",
+                                                style:
+                                                    CommonStyles.getMontserratStyle(
                                                         space_15,
                                                         FontWeight.w600,
-                                                        Colors.white,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: space_8,
-                                                    ),
-                                                    Text(
-                                                      "\u20B9 ${remainingPackages[index].package_price}",
-                                                      style: CommonStyles
-                                                          .getMontserratStyle(
-                                                              space_15,
-                                                              FontWeight.w600,
-                                                              Colors.white),
-                                                    ),
-                                                  ],
-                                                ),
+                                                        Colors.white),
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      );
-                                    } else {
-                                      return Theme(
-                                        data: Theme.of(context).copyWith(
-                                            unselectedWidgetColor:
-                                                CommonStyles.darkAmber,
-                                            selectedRowColor: CommonStyles.darkAmber,
-                                            disabledColor: CommonStyles.darkAmber),
-                                        child: Container(
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: space_15),
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: CommonStyles.blue),
-                                              borderRadius:
-                                                  BorderRadius.circular(space_15)),
-                                          child: RadioListTile(
-                                            groupValue: mSelectedPackageName,
-                                            title: Text(
-                                              remainingPackages[index].package_name +
-                                                  " | ${remainingPackages[index].no_of_posts} Post For ${remainingPackages[index].no_of_days} Days",
-                                              style: CommonStyles.getMontserratStyle(
-                                                  space_16,
-                                                  FontWeight.w600,
-                                                  CommonStyles.primaryColor),
-                                            ),
-                                            value: remainingPackages[index].user_package_id,
-                                            onChanged: (val) {
-                                              debugPrint("Selected_Package - ${val}");
-                                              setState(() {
-                                                mSelectedPackageName = val;
-                                                mSelectedPackageId = val;
-                                              });
-                                            },
                                           ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              mBuypackageId = remainingPackages[index].package_id;
+                                              openCheckout(
+                                                  remainingPackages[index].package_price,
+                                                  remainingPackages[index].package_name,
+                                                  remainingPackages[index].user_package_id,
+                                                  remainingPackages[index].package_id);
+                                            },
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.all(space_10),
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color:
+                                                          CommonStyles.darkAmber),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          space_5),
+                                                  color: CommonStyles.blue),
+                                              child: Column(
+                                                children: [
+                                                  Text(
+                                                    "Buy Now",
+                                                    style: CommonStyles
+                                                        .getMontserratStyle(
+                                                      space_15,
+                                                      FontWeight.w600,
+                                                      Colors.white,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: space_8,
+                                                  ),
+                                                  Text(
+                                                    "\u20B9 ${remainingPackages[index].package_price}",
+                                                    style: CommonStyles
+                                                        .getMontserratStyle(
+                                                            space_15,
+                                                            FontWeight.w600,
+                                                            Colors.white),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  } else {
+                                    return Theme(
+                                      data: Theme.of(context).copyWith(
+                                          unselectedWidgetColor:
+                                              CommonStyles.darkAmber,
+                                          selectedRowColor: CommonStyles.darkAmber,
+                                          disabledColor: CommonStyles.darkAmber),
+                                      child: Container(
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: space_15),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: CommonStyles.blue),
+                                            borderRadius:
+                                                BorderRadius.circular(space_15)),
+                                        child: RadioListTile(
+                                          groupValue: mSelectedPackageName,
+                                          title: Text(
+                                            remainingPackages[index].package_name +
+                                                " | ${remainingPackages[index].no_of_posts} Post For ${remainingPackages[index].no_of_days} Days",
+                                            style: CommonStyles.getMontserratStyle(
+                                                space_16,
+                                                FontWeight.w600,
+                                                CommonStyles.primaryColor),
+                                          ),
+                                          value: remainingPackages[index].user_package_id,
+                                          onChanged: (val) {
+                                            debugPrint("Selected_Package - ${val}");
+                                            setState(() {
+                                              mSelectedPackageName = val;
+                                              mSelectedPackageId = val;
+                                            });
+                                          },
                                         ),
-                                      );
-                                    }
-                                  }),
+                                      ),
+                                    );
+                                  }
+                                }),
+                            CheckboxListTile(
+                              controlAffinity: ListTileControlAffinity.leading,
+                              title: privacyPolicyLinkAndTermsOfService(),
+                              value: mCheckedTnC,
+                              onChanged: (bool value) {
+                                setState(() {
+                                  mCheckedTnC = value;
+                                });
+                              },
+                            ),
+                            CheckboxListTile(
+                              controlAffinity: ListTileControlAffinity.leading,
+                              title: Text(
+                                "I Agree to Follow proper covid guidelines before delivering product & services",
+                                style: CommonStyles.getRalewayStyle(
+                                    space_12, FontWeight.w400, Colors.black),
+                              ),
+                              value: mCheckedCovidGuidelines,
+                              onChanged: (bool value) {
+                                setState(() {
+                                  mCheckedCovidGuidelines = value;
+                                });
+                              },
                             ),
                           ],
                         ),
                       ),
-                    ),
-                    CheckboxListTile(
-                      controlAffinity: ListTileControlAffinity.leading,
-                      title: privacyPolicyLinkAndTermsOfService(),
-                      value: mCheckedTnC,
-                      onChanged: (bool value) {
-                        setState(() {
-                          mCheckedTnC = value;
-                        });
-                      },
-                    ),
-                    CheckboxListTile(
-                      controlAffinity: ListTileControlAffinity.leading,
-                      title: Text(
-                        "I Agree to Follow proper covid guidelines before delivering product & services",
-                        style: CommonStyles.getRalewayStyle(
-                            space_12, FontWeight.w400, Colors.black),
-                      ),
-                      value: mCheckedCovidGuidelines,
-                      onChanged: (bool value) {
-                        setState(() {
-                          mCheckedCovidGuidelines = value;
-                        });
-                      },
                     ),
                     GestureDetector(
                       onTap: () {

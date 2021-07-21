@@ -398,7 +398,7 @@ class _MyAdsListScreenState extends State<MyAdsListScreen> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              "month",
+                              mCategory_adslist?.rent_type,
                               style: CommonStyles.getRalewayStyle(
                                   space_12, FontWeight.w400, Colors.white),
                               maxLines: 1,

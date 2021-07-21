@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
@@ -408,21 +409,45 @@ class IconButtonWidget extends StatelessWidget {
         child: Container(
           height: getProportionateScreenHeight(context, space_60),
           padding: EdgeInsets.symmetric(vertical: space_8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Image.asset(
-                icon,
-                width: getProportionateScreenWidth(context, space_25),
-                height: getProportionateScreenHeight(context, space_25),
+          child:
+          /*FlatButton.icon(
+            color: Colors.transparent,
+            icon: ImageIcon(AssetImage(icon,),),
+            label: Text(
+            btnText,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: CommonStyles.getRalewayStyle(
+                space_12, FontWeight.w500, textColor),
+          ),
+          )*/
+
+          Container(
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    flex:2,
+                    child: Image.asset(
+                      icon,
+                      height: getProportionateScreenHeight(context, space_25),
+                    ),
+                  ),
+                  Expanded(
+                    flex:7,
+                    child: Text(
+                      btnText,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: CommonStyles.getRalewayStyle(
+                          space_12, FontWeight.w500, textColor),
+                    ),
+                  )
+                ],
               ),
-              Text(
-                btnText,
-                style: CommonStyles.getRalewayStyle(
-                    space_12, FontWeight.w500, textColor),
-              )
-            ],
+            ),
           ),
         ),
       ),
@@ -592,7 +617,10 @@ class CategoryGridWidget extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                homeResponse.data.category[index].name.trim(),
+                              (MediaQuery.of(context).size.width <380.0)?
+                                (homeResponse.data.category[index].name.trim().length > 8 ? homeResponse.data.category[index].name.trim().substring(0, 8)+'...' : homeResponse.data.category[index].name.trim()):
+                              homeResponse.data.category[index].name.trim(),
+                                maxLines: 1,
                                 style: CommonStyles.getRalewayStyle(space_12,
                                     FontWeight.w500, CommonStyles.primaryColor),
                               ),

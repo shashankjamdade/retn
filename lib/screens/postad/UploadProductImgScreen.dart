@@ -193,7 +193,7 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
                                                         space_10)),
                                             child: Center(
                                               child: Text(
-                                                "Primary image",
+                                                "Upload image",
                                                 style: CommonStyles
                                                     .getMontserratStyle(
                                                         space_14,
@@ -279,7 +279,7 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
                                                         space_10)),
                                             child: Center(
                                               child: Text(
-                                                "Primary image",
+                                                "Upload image",
                                                 style: CommonStyles
                                                     .getMontserratStyle(
                                                         space_14,

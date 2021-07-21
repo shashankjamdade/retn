@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionService{
-  final PermissionHandler _permissionHandler = PermissionHandler();
+ /* final PermissionHandler _permissionHandler = PermissionHandler();
 
   Future<bool> _requestPermission() async {
     var result = await _permissionHandler.requestPermissions([PermissionGroup.location,PermissionGroup.storage,PermissionGroup.camera]);
@@ -29,5 +30,5 @@ class PermissionService{
     var permissionStatus =
     await _permissionHandler.checkPermissionStatus(permission);
     return permissionStatus == PermissionStatus.granted;
-  }
+  }*/
 }

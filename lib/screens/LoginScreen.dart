@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:apple_sign_in/apple_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +14,7 @@ import 'package:flutter_rentry_new/bloc/authentication/AuthenticationState.dart'
 import 'package:flutter_rentry_new/inherited/StateContainer.dart';
 import 'package:flutter_rentry_new/model/UserLocationSelected.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
+import 'package:flutter_rentry_new/repository/AuthenticationRepository.dart';
 import 'package:flutter_rentry_new/screens/ForgotPwdScreen.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
 import 'package:flutter_rentry_new/screens/RegisterScreen.dart';
@@ -18,10 +22,12 @@ import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['profile', 'email']);
 
@@ -62,26 +68,37 @@ class _LoginScreenState extends State<LoginScreen> {
       alignment: Alignment.center,
       padding: EdgeInsets.all(10),
       child: Center(
-          child: Text.rich(
-              TextSpan(
-                  text: 'If you continue, you are accepting\n', style: CommonStyles.getRalewayStyle(space_12, FontWeight.w400, Colors.black),
-                  children: <TextSpan>[
-                    TextSpan(
-                        text: 'Rentozo Terms and Conditions', style: CommonStyles.getMontserratDecorationStyle(space_12, FontWeight.w400, Colors.black, TextDecoration.underline),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launchURL("https://rentozo.com/home/page/terms-and-conditions");
-                          }
-                    )
-                  ]
-              )
-          )
-      ),
+          child: Text.rich(TextSpan(
+              text: 'If you continue, you are accepting\n',
+              style: CommonStyles.getRalewayStyle(
+                  space_12, FontWeight.w400, Colors.black),
+              children: <TextSpan>[
+            TextSpan(
+                text: 'Rentozo Terms and Conditions',
+                style: CommonStyles.getMontserratDecorationStyle(space_12,
+                    FontWeight.w400, Colors.black, TextDecoration.underline),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    launchURL(
+                        "https://rentozo.com/home/page/terms-and-conditions");
+                  })
+          ]))),
     );
   }
 
   _register() {
-    _firebaseMessaging.getToken().then((token) => mFcmToken = token);
+    _firebaseMessaging.getToken().then((token){
+      if(token!=null && token?.isNotEmpty) {
+        mFcmToken = token;
+        debugPrint("FCM_TOKEN GETTOKEN -> ${mFcmToken}");
+      }
+    });
+    _firebaseMessaging.onTokenRefresh.listen((token) {
+      if(token!=null && token?.isNotEmpty) {
+        mFcmToken = token;
+        debugPrint("FCM_TOKEN REFRESH -> ${mFcmToken}");
+      }
+    });
   }
 
   @override
@@ -91,6 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _focusNode.addListener(_onLoginUserNameFocusChange);
     mobileEmailController = TextEditingController();
     passwordController = TextEditingController();
+    storeResInPrefs(context, null, false);
     _register();
   }
 
@@ -116,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
         listener: (context, state) {
           if (state is LoginResAuthenticationState) {
             if (state.res.status) {
-              storeResInPrefs(context, state.res);
+              storeResInPrefs(context, state.res, true);
             }
             showSnakbar(_scaffoldKey, state.res.message);
           } else if (state is InitialAuthenticationState) {
@@ -146,7 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void storeResInPrefs(BuildContext context, LoginResponse res) async {
+  void storeResInPrefs(BuildContext context, LoginResponse res, bool isPostLogin) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       Position position =
@@ -154,7 +172,6 @@ class _LoginScreenState extends State<LoginScreen> {
       LocationPermission permission = await checkPermission();
       if (permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse) {
-        prefs.setString(USER_LOGIN_RES, jsonEncode(res));
         prefs.setString(USER_LOCATION_LAT, "${position.latitude}");
         prefs.setString(USER_LOCATION_LONG, "${position.longitude}");
         debugPrint(
@@ -179,19 +196,31 @@ class _LoginScreenState extends State<LoginScreen> {
         prefs.setString(USER_LOCATION_PINCODE, "${first.postalCode}");
         print("@@@@-------${first} ${first.addressLine} : ${first.adminArea}");
 
-        prefs.setString(USER_NAME, res.data.username);
-        prefs.setString(USER_MOBILE, res.data.contact);
-        prefs.setString(USER_EMAIL, res.data.email);
-        prefs.setBool(IS_LOGGEDIN, true);
-        debugPrint(
-            "PREFS_STORED_LOGIN-----> ${prefs.getString(USER_LOCATION_ADDRESS)}");
-        StateContainer.of(context).updateUserInfo(res);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
-        );
+        if(isPostLogin){
+          prefs.setString(USER_NAME, res.data.username);
+          prefs.setString(USER_MOBILE, res.data.contact);
+          prefs.setString(USER_EMAIL, res.data.email);
+          prefs.setBool(IS_LOGGEDIN, true);
+          debugPrint(
+              "PREFS_STORED_LOGIN-----> ${prefs.getString(USER_LOCATION_ADDRESS)}");
+          prefs.setString(USER_LOGIN_RES, jsonEncode(res));
+          StateContainer.of(context).updateUserInfo(res);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+          );
+        }
       } else {
         //Show dialog for location permission
+        Fluttertoast.showToast(
+            msg: "Please enable location permission to continue...",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: space_14);
+        openAppSettings();
       }
     } catch (e) {
       debugPrint("EXCEPTION in Loginscreen in storeResInPrefs ${e.toString()}");
@@ -308,7 +337,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         context, space_20),
                                   ),
                                   privacyPolicyLinkAndTermsOfService(),
-                                   SizedBox(
+                                  SizedBox(
                                     height: getProportionateScreenHeight(
                                         context, space_20),
                                   ),
@@ -352,7 +381,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     children: [
                                       Expanded(
                                           child: IconButtonWidget(
-                                              "Login with facebook",
+                                              "Login with fb",
                                               "assets/images/facebook.png",
                                               CommonStyles.blue, () {
                                         onSocialLogin("fb", context);
@@ -366,6 +395,55 @@ class _LoginScreenState extends State<LoginScreen> {
                                       })),
                                     ],
                                   ),
+                                  Platform.isIOS ? SizedBox(
+                                    height: getProportionateScreenHeight(
+                                        context, space_25),
+                                  ): Container(height: 0, width: 0,),
+                                  Platform.isIOS ? AppleSignInButton(
+                                      onPressed: () async {
+                                        // onSocialLogin("apple", context);
+                                         /*final credential = await SignInWithApple.getAppleIDCredential(
+                                              scopes: [
+                                                AppleIDAuthorizationScopes.email,
+                                                AppleIDAuthorizationScopes.fullName,
+                                              ],
+                                            );
+                                            print(credential);*/
+                                        bool isAvailable = true;
+                                        var flag = AuthenticationRepository()
+                                            .appleSignInAvailable
+                                            .then((value) {
+                                          debugPrint("NOT CAPABLE ${value}");
+                                        });
+
+                                        if (isAvailable) {
+                                          User user =
+                                          await AuthenticationRepository()
+                                              .appleSignIn();
+                                          if(user!=null && user?.email!=null && authenticationBloc!=null){
+                                            authenticationBloc
+                                              ..add(SocialLoginReqAuthenticationEvent(
+                                                  emailOrMobile: user?.email, deviceToken: mFcmToken));
+                                          }else{
+                                            showSnakbar(_scaffoldKey, "Email ID missing");
+                                          }
+                                        }else {
+                                          showSnakbar(_scaffoldKey, "Something went wrong, please try again!");
+                                        }
+                                        /*final appleIdCredential = await SignInWithApple.getAppleIDCredential(
+                                              scopes: [
+                                                AppleIDAuthorizationScopes.email,
+                                                AppleIDAuthorizationScopes.fullName,
+                                              ],
+                                            );
+                                            final oAuthProvider = OAuthProvider('apple.com');
+                                            final credential = oAuthProvider.getCredential(
+                                              idToken: appleIdCredential.identityToken,
+                                              accessToken: appleIdCredential.authorizationCode,
+                                            );
+                                            await FirebaseAuth.instance.signInWithCredential(credential);
+                                            print(credential);*/
+                                      }): Container(height: 0, width: 0,),
                                   SizedBox(
                                     height: getProportionateScreenHeight(
                                         context, space_25),
@@ -444,12 +522,12 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             showProgress
                 ? Center(
-              child: CircularProgressIndicator(),
-            )
+                    child: CircularProgressIndicator(),
+                  )
                 : Container(
-              height: space_0,
-              width: space_0,
-            )
+                    height: space_0,
+                    width: space_0,
+                  )
           ],
         )),
       ),
@@ -477,6 +555,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else if (passwordController.text.trim().isEmpty) {
       showSnakbar(_scaffoldKey, empty_password);
     } else if (mFcmToken == null || mFcmToken.trim().isEmpty) {
+      _register();
       showSnakbar(_scaffoldKey, fcm_token_missing);
     } else {
       //API hit

@@ -21,24 +21,36 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb422644849121300</string>
+				<string>com.app.rentozo</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.994818634451-9use9uoaopknug766ioardfh63m8lde6</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.994818634451-9use9uoaopknug766ioardfh63m8lde6</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>FacebookAppID</key>
 	<string>422644849121300</string>
 	<key>FacebookDisplayName</key>
 	<string>Rentrozo</string>
-	<key>LSApplicationQueriesSchemes</key>
-    <array>
-    	<string>tez</string>
-        <string>phonepe</string>
-        <string>paytmmp</string>
-    </array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
@@ -48,18 +60,28 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>no usage</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>no usage</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow access to camera to capture photos</string>
+	<string>Need to access your camera to capture a photo add and update user's ads.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>no usage</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open and in the background.</string>
+	<string>Need to show ads to user on basis of user current location.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app needs access to location when in the background.</string>
+	<string>No use</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open.</string>
+	<string>Need to show ads to user on basis of user current location.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow access to microphone</string>
+	<key>NSMotionUsageDescription</key>
+	<string>no usage</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Allow access to photo library</string>
+	<string>Need to access your photo library to select a photo add and update profile picture and user ads</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>no usage</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_rentry_new/model/GoogleFbLoginResponse.dart';
@@ -9,9 +10,12 @@ import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/model/register_response.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:http/io_client.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import 'base_repository.dart';
 import 'package:http/http.dart' as http;
+import 'package:apple_sign_in/apple_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthenticationRepository extends BaseRepository {
   final http.Client _httpClient;
@@ -148,6 +152,40 @@ class AuthenticationRepository extends BaseRepository {
     }
 
     return fbLoginResponse;
+  }
+
+  // Determine if Apple SignIn is available
+  Future<bool> get appleSignInAvailable => AppleSignIn.isAvailable();
+
+  /// Sign in with Apple
+  Future<User> appleSignIn() async {
+    try {
+      FirebaseAuth.instance.signOut();
+      final AuthorizationResult appleResult = await AppleSignIn.performRequests([
+        AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
+      ]);
+
+      if (appleResult.error != null) {
+        debugPrint("Firebase_APPLE_LOGIN_ERROR ${appleResult.error}");
+      }
+
+      final AuthCredential credential = OAuthProvider('apple.com').getCredential(
+        accessToken: String.fromCharCodes(appleResult.credential.authorizationCode),
+        idToken: String.fromCharCodes(appleResult.credential.identityToken),
+      );
+
+      var firebaseResult = await FirebaseAuth.instance.signInWithCredential(credential);
+      User user = firebaseResult.user;
+
+      // Optional, Update user data in Firestore
+      // updateUserData(user);
+      debugPrint("Firebase_APPLE_LOGIN ${user?.email}");
+      debugPrint("Firebase_APPLE_LOGIN_name ${user?.displayName}");
+      return user;
+    } catch (error) {
+      print(error);
+      return null;
+    }
   }
 
   @override

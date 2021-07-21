@@ -67,7 +67,18 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
   String _message = '';
 
   _register() {
-    _firebaseMessaging.getToken().then((token) => mFcmToken = token);
+    _firebaseMessaging.getToken().then((token){
+      if(token!=null && token?.isNotEmpty) {
+        mFcmToken = token;
+        debugPrint("FCM_TOKEN GETTOKEN -> ${mFcmToken}");
+      }
+    });
+    _firebaseMessaging.onTokenRefresh.listen((token) {
+      if(token!=null && token?.isNotEmpty) {
+        mFcmToken = token;
+        debugPrint("FCM_TOKEN REFRESH -> ${mFcmToken}");
+      }
+    });
   }
 
   // Toggles the password show status
@@ -566,6 +577,7 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
     } else if (referralCodeController.text.trim().isEmpty && mHavReferalCode) {
       showSnakbar(_scaffoldKey, empty_refer_code);
     } else if (mFcmToken == null || mFcmToken.isEmpty) {
+      _register();
       showSnakbar(_scaffoldKey, fcm_token_missing);
     } else {
       //API hit

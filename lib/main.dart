@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -92,6 +93,8 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 void main() async {
   HttpOverrides.global = new MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  // final appleSignInAvailable = await AppleSignInAvailable.check();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]).then((_) {
@@ -143,10 +146,10 @@ Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
   int msgId = int.tryParse(message["data"]["msgId"].toString()) ?? 1;
   print("msgId ${message['data']['title']}, ${message['data']['message']}, PAYLOAD-> ${message["data"]["notification_type"]}");
   var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-      'channelid', 'flutterfcm', 'your channel description',ticker: 'ticker', icon: "",
+      'channelid', 'flutterfcm', 'your channel description',ticker: 'ticker', icon: "ic_notification_icon",
       playSound: true, enableLights: true, enableVibration: true,
       importance: Importance.max, priority: Priority.high);
-  var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+  var iOSPlatformChannelSpecifics = new IOSNotificationDetails(presentSound: true, presentAlert: true);
   var platformChannelSpecifics = new NotificationDetails(
       android: androidPlatformChannelSpecifics,
       iOS: iOSPlatformChannelSpecifics);
@@ -177,6 +180,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    FirebaseMessaging().deleteInstanceID();
     Notification.init();
   }
 
@@ -216,23 +220,56 @@ class _ScreenOneState extends State<ScreenOne> {
   String _message = '';
 
   _register() {
-    _firebaseMessaging.getToken().then((token) => print("TOKEN--> ${token}"));
+    _firebaseMessaging.getToken().then((token){
+      if(token!=null && token?.isNotEmpty){
+        var mFcmToken = token;
+        debugPrint("FCM_TOKEN GETTOKEN -> ${mFcmToken}");
+      }
+    });
+    _firebaseMessaging.onTokenRefresh.listen((token) {
+      if(token!=null && token?.isNotEmpty) {
+        var mFcmToken = token;
+        debugPrint("FCM_TOKEN REFRESH -> ${mFcmToken}");
+      }
+    });
+  }
+
+  Map modifyNotificationJson(Map<String,dynamic> msg){
+    msg['data'] = Map.from(msg ?? {});
+    msg['notification'] = msg['aps']['alert'];
+    return msg;
   }
 
   void getMessage() {
     _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
       print('FCM_PUSH_onmsg $message');
-//          setState(() => _message = message["notification"]["title"]);
+      if(Platform.isIOS){
+        message = modifyNotificationJson(message);
+      }
       displayNotification(message);
       return;
     }, onResume: (Map<String, dynamic> message) async {
       print('FCM_PUSH_onresume $message');
-      setState(() => _message = message["notification"]["title"]);
+      if(Platform.isIOS){
+        message = modifyNotificationJson(message);
+      }
+      setState(() => _message = message["notification"]["title"] );
     }, onLaunch: (Map<String, dynamic> message) async {
       print('FCM_PUSH_onLaunch $message');
       setState(() => _message = message["notification"]["title"]);
     });
+    if(Platform.isIOS){
+      _firebaseMessaging.requestNotificationPermissions(IosNotificationSettings(
+        sound: true,
+        badge: true,
+        alert: true,
+      ));
+      _firebaseMessaging.onIosSettingsRegistered
+          .listen((IosNotificationSettings settings) {
+        print('Hello');
+      });
+    }
   }
 
   _showLocationPermissionDialog(BuildContext context) {
@@ -275,11 +312,20 @@ class _ScreenOneState extends State<ScreenOne> {
     debugPrint("LOCATION_FOUND accesssing ");
     prefs = await SharedPreferences.getInstance();
     if(prefs?.getString("loc") !=null && prefs?.getString("loc")?.isNotEmpty){
-      PermissionService().requestPermission(
+      /*PermissionService().requestPermission(
           onPermissionDenied: () {
         // prefs?.setString("loc", "");
         // openAppSettings();
-      });
+      });*/
+      if (await Permission.location.request().isGranted) {
+        // Either the permission was already granted before or the user just granted it.
+      }
+      if (await Permission.camera.request().isGranted) {
+        // Either the permission was already granted before or the user just granted it.
+      }
+      if (await Permission.storage.request().isGranted) {
+        // Either the permission was already granted before or the user just granted it.
+      }
       Position position =
       await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       prefs.setString(USER_LOCATION_LAT, "${position.latitude}");
@@ -396,9 +442,9 @@ class _ScreenOneState extends State<ScreenOne> {
   Future displayNotification(Map<String, dynamic> message) async {
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
         'channelid', 'flutterfcm', 'your channel description',ticker: 'ticker',
-        playSound: true,enableLights: true, enableVibration: true,
+        playSound: true,enableLights: true, enableVibration: true, icon: "ic_notification_icon",
         importance: Importance.max, priority: Priority.high);
-    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails(presentSound: true, presentAlert: true);
     var platformChannelSpecifics = new NotificationDetails(
         android: androidPlatformChannelSpecifics,
         iOS: iOSPlatformChannelSpecifics);
@@ -691,14 +737,91 @@ class BlurryLocationInfoDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-        child: AlertDialog(
+    return Scaffold(
+      body:Container(
+
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: space_15, vertical: space_15),
+                  child: Text(
+                    title,
+                    style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),
+                  ),
+                ),
+                IconButton(icon: Icon(Icons.close, color: Colors.black,), onPressed: (){
+                  Navigator.of(context).pop();
+                })
+              ],
+            ),
+            SizedBox(height: space_15,),
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: space_15),
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    RichText(
+                      text: new TextSpan(
+                        text: PERMISSION_CONSENT_MSG1,
+                        style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.black),
+                        children: <TextSpan>[
+                          new TextSpan(
+                            text: PERMISSION_CONSENT_MSG2,
+                            style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),
+                          ),
+                          new TextSpan(
+                            text: PERMISSION_CONSENT_MSG3,
+                            style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.black),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: space_15,),
+                    new Text(
+                      PERMISSION_CONSENT_SUBMSG,
+                      style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),
+                    ),
+                    SizedBox(height: space_15,),
+                  ],
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  InkWell(
+                    onTap: (){
+                      continueCallBack();
+                    },
+                    child: Center(child: Container(
+                      margin: EdgeInsets.symmetric(vertical: 25),
+                        padding: EdgeInsets.symmetric(vertical: space_10, horizontal: space_15),
+                        decoration: BoxDecoration(
+                            color: CommonStyles.primaryColor
+                        ),
+                        child: Text("Allow access", style: CommonStyles.getMontserratStyle(space_14, FontWeight.w600, Colors.white),))),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      )
+    );
+  }
+/*AlertDialog(
           title: new Text(
             title,
             style: CommonStyles.getMontserratStyle(space_15, FontWeight.w600, Colors.black),
           ),
           content: Container(
+            height: 400,
             child: ListView(
               shrinkWrap: true,
               children: [
@@ -742,6 +865,5 @@ class BlurryLocationInfoDialog extends StatelessWidget {
               },
             ),
           ],
-        ));
-  }
+        )*/
 }

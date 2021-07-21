@@ -7,6 +7,8 @@ import 'package:flutter_rentry_new/widgets/CustomWidget.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'dart:ui' as ui;
 
+import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
+
 class FilterScreen extends StatefulWidget {
   FilterRes filterRes;
 
@@ -49,9 +51,10 @@ class _FilterScreenState extends State<FilterScreen> {
           children: [
             Column(
               children: [
-                CommonAppbarWidget(app_name, skip_for_now, () {
-                  onSearchLocation(context);
-                }),
+                // CommonAppbarWidget(app_name, skip_for_now, () {
+                //   onSearchLocation(context);
+                // }),
+                PostAdsCommonAppbar(title: "Filter"),
                 Container(
                   margin: EdgeInsets.only(top: space_15),
                   child: Row(

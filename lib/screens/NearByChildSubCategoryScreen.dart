@@ -17,6 +17,7 @@ import 'package:flutter_rentry_new/widgets/CarousalCommonWidgets.dart';
 import 'package:flutter_rentry_new/widgets/CommonWidget.dart';
 import 'package:flutter_rentry_new/widgets/CustomWidget.dart';
 import 'package:flutter_rentry_new/widgets/ListItemCardWidget.dart';
+import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
 import 'dart:ui' as ui;
 
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
@@ -616,7 +617,7 @@ class _NearByChildSubCategoryScreenState
         context: context,
         builder: (builder) {
           return Container(
-            height: MediaQuery.of(context).size.height,
+            height: (MediaQuery.of(context).size.height) - 20.0,
             color: Colors.transparent,
             child: StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
@@ -627,9 +628,10 @@ class _NearByChildSubCategoryScreenState
                       children: [
                         Column(
                           children: [
-                            CommonAppbarWidget(app_name, skip_for_now, () {
-                              onSearchLocation(context);
-                            }),
+                            PostAdsCommonAppbar(title: "Filter"),
+                            // CommonAppbarWidget(app_name, skip_for_now, () {
+                            //   onSearchLocation(context);
+                            // }),
                             Container(
                               margin: EdgeInsets.only(top: space_15),
                               child: Row(
