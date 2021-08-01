@@ -19,7 +19,6 @@ import 'package:flutter_rentry_new/screens/ForgotPwdScreen.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
 import 'package:flutter_rentry_new/screens/OLDPostRegisterScreen.dart';
 import 'package:flutter_rentry_new/screens/PostRegisterScreen.dart';
-import 'package:flutter_rentry_new/screens/PostSocialLoginScreen.dart';
 import 'package:flutter_rentry_new/screens/RegisterScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
@@ -32,14 +31,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['profile', 'email']);
 
-class LoginScreen extends StatefulWidget {
+class PostSocialLoginScreen extends StatefulWidget {
+  String name;
+  String email;
+  String socialId;
+  String fcmToken;
+
+  PostSocialLoginScreen(
+      { this.name,
+        this.email,
+        this.socialId,
+        this.fcmToken});
+
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _PostSocialLoginScreenState createState() => _PostSocialLoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _PostSocialLoginScreenState extends State<PostSocialLoginScreen> {
   final formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   FocusNode _focusNode = new FocusNode();
@@ -116,7 +125,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     //Add Listener to know when is updated focus
-    debugPrint("LOGIN_SCREEN_STARTED ");
     _focusNode.addListener(_onLoginUserNameFocusChange);
     mobileEmailController = TextEditingController();
     passwordController = TextEditingController();
@@ -157,6 +165,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 context,
                 MaterialPageRoute(builder: (context) =>
                     PostRegisterScreen(
+                      name: widget.name,
+                      email: widget.email,
+                      socialId: widget.socialId,
                       mobile: mobileEmailController.text.trim(),
                       fcmToken: mFcmToken,
                       isRegistered: state.res.data.is_registered,)),
@@ -169,10 +180,10 @@ class _LoginScreenState extends State<LoginScreen> {
               /**
                * GO TO CLONE LOGIN SCREEN passing email,name,id
                */
-              Navigator.push(
+              /*Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => PostSocialLoginScreen(name: mName, email: mEmail, socialId: mSocialId,)),
-              );
+                MaterialPageRoute(builder: (context) => PostRegisterScreen("")),
+              );*/
             }
             showSnakbar(_scaffoldKey, state.res.message);
           } else if (state is InitialAuthenticationState) {
@@ -272,10 +283,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget getWidgetByState(BuildContext context, AuthenticationState state) {
-    debugPrint("STATEis-login----> ${state}");
+    debugPrint("STATEis-----> ${state}");
     if (state is SendOtpAuthState) {
-      return getLoginForm(context, showProgress: false);
-    } else if (state is InitialAuthenticationState) {
       return getLoginForm(context, showProgress: false);
     } else if (state is InitialAuthenticationState) {
       return getLoginForm(context, showProgress: false);
@@ -294,8 +303,6 @@ class _LoginScreenState extends State<LoginScreen> {
             _scaffoldKey, "Something went wrong, please try again later");
         return getLoginForm(context, showProgress: false);
       }
-    }else{
-      return getLoginForm(context, showProgress: false);
     }
   }
 
@@ -370,7 +377,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                             ),
                                             Align(
                                               alignment: Alignment.centerLeft,
-                                              child: privacyPolicyLinkAndTermsOfService(),
+                                              child: Expanded(
+                                                  child: privacyPolicyLinkAndTermsOfService()),
                                             )
                                           ],
                                         ),
@@ -395,69 +403,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 space_14, FontWeight.w600,
                                                 Colors.white),))),
                                       ),
-                                      SizedBox(
-                                        height: getProportionateScreenHeight(
-                                            context, space_20),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Expanded(
-                                              child: IconButtonWidget(
-                                                  "Login with fb",
-                                                  "assets/images/facebook.png",
-                                                  CommonStyles.blue, () {
-                                                onSocialLogin("fb", context);
-                                              })),
-                                          Expanded(
-                                              child: IconButtonWidget(
-                                                  "Login with Google",
-                                                  "assets/images/google.png",
-                                                  CommonStyles.darkAmber, () {
-                                                onSocialLogin(
-                                                    "google", context);
-                                              })),
-                                        ],
-                                      ),
-                                      Platform.isIOS ? SizedBox(
-                                        height: getProportionateScreenHeight(
-                                            context, space_25),
-                                      ) : Container(height: 0, width: 0,),
-                                      Platform.isIOS ? AppleSignInButton(
-                                          onPressed: () async {
-                                            bool isAvailable = true;
-                                            var flag = AuthenticationRepository()
-                                                .appleSignInAvailable
-                                                .then((value) {
-                                              debugPrint(
-                                                  "NOT CAPABLE ${value}");
-                                            });
-
-                                            if (isAvailable) {
-                                              User user =
-                                              await AuthenticationRepository()
-                                                  .appleSignIn();
-                                              if (user != null &&
-                                                  user?.email != null &&
-                                                  authenticationBloc != null) {
-                                                authenticationBloc
-                                                  ..add(
-                                                      SocialLoginReqAuthenticationEvent(
-                                                          social_id: user
-                                                              ?.tenantId,
-                                                          emailOrMobile: user
-                                                              ?.email,
-                                                          deviceToken: mFcmToken));
-                                              } else {
-                                                showSnakbar(_scaffoldKey,
-                                                    "Email ID missing");
-                                              }
-                                            } else {
-                                              showSnakbar(_scaffoldKey,
-                                                  "Something went wrong, please try again!");
-                                            }
-                                          }) : Container(height: 0, width: 0,),
                                       SizedBox(
                                         height: getProportionateScreenHeight(
                                             context, space_25),

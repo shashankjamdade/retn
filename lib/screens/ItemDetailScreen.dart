@@ -434,19 +434,13 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                   EdgeInsets.symmetric(horizontal: space_15),
                               height: getProportionateScreenHeight(
                                   context, space_180),
-                              child: Card(
-                                elevation: space_3,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(space_15)),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(space_10),
-                                  child: FadeInImage.assetNetwork(
-                                    placeholder: "assets/images/loader.jpg",
-                                    image: mapUrl,
-                                    //"https://picsum.photos/250?image=9",
-                                    fit: BoxFit.contain,
-                                  ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(space_15),
+                                child: FadeInImage.assetNetwork(
+                                  placeholder: "assets/images/loader.jpg",
+                                  image: mapUrl,
+                                  //"https://picsum.photos/250?image=9",
+                                  fit: BoxFit.contain,
                                 ),
                               ),
                             ),

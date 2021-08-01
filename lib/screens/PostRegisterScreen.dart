@@ -32,10 +32,20 @@ import 'DashboardScreen.dart';
 import 'LoginScreen.dart';
 
 class PostRegisterScreen extends StatefulWidget {
+  String mobile;
   String name;
   String email;
+  String socialId;
+  String fcmToken;
+  bool isRegistered;
 
-  PostRegisterScreen(this.name, this.email);
+  PostRegisterScreen(
+      {this.mobile,
+      this.name,
+      this.email,
+      this.socialId,
+      this.fcmToken,
+      this.isRegistered});
 
   @override
   _PostRegisterScreenState createState() => _PostRegisterScreenState();
@@ -45,11 +55,10 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
   final formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   FocusNode _focusNode = new FocusNode();
-  TextEditingController mobileController;
   TextEditingController otpController;
   TextEditingController referralCodeController;
-  TextEditingController passwordController;
-  TextEditingController confPasswordController;
+  TextEditingController fullnameController;
+  TextEditingController emailController;
   AuthenticationBloc authenticationBloc = new AuthenticationBloc();
   BuildContext _context;
   final GoogleSignIn googleSignIn = new GoogleSignIn(scopes: ['email']);
@@ -62,6 +71,7 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
   bool _obscureText = true;
   bool _obscureText2 = true;
   bool mHavReferalCode = false;
+  bool mIsAlreadyRegisted = true;
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String _message = '';
@@ -81,35 +91,6 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
     });
   }
 
-  // Toggles the password show status
-  void _togglePasswordStatus() {
-    setState(() {
-      _obscureText = !_obscureText;
-    });
-  }
-  void _togglePasswordStatus2() {
-    setState(() {
-      _obscureText2 = !_obscureText2;
-    });
-  }
-
-  logininViaGoogle() async {
-    try {
-      googleSignIn.signOut();
-      GoogleSignInAccount googleUsr = await googleSignIn.signIn();
-      debugPrint("GOOGLE_SIGNIN_INFO ${googleUsr.email}");
-      debugPrint("GOOGLE_SIGNIN_INFO ${googleUsr.displayName}");
-      setState(() {
-        mLoginType = LOGINTYPE_GOOGLE;
-        mName = googleUsr.displayName;
-        mEmail = googleUsr.email;
-      });
-    } catch (err) {
-      print("EXCEPTION ${err}");
-    }
-    showSnakbar(_scaffoldKey, "Please fill all required information");
-  }
-
   @override
   void initState() {
     super.initState();
@@ -117,9 +98,9 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
     _focusNode.addListener(_onLoginUserNameFocusChange);
     referralCodeController = TextEditingController();
     otpController = TextEditingController();
-    mobileController = TextEditingController();
-    passwordController = TextEditingController();
-    confPasswordController = TextEditingController();
+    fullnameController = TextEditingController(text: widget.name);
+    emailController = TextEditingController(text: widget.email);
+    mIsAlreadyRegisted = widget.isRegistered;
     _register();
   }
 
@@ -127,8 +108,6 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
   void dispose() {
     //Dispose Listener to know when is updated focus
     _focusNode.addListener(_onLoginUserNameFocusChange);
-    mobileController.dispose();
-
     super.dispose();
   }
 
@@ -142,7 +121,8 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
     _context = context;
     return BlocProvider(
         create: (context) =>
-            authenticationBloc..add(InitialAuthenticationEvent()),
+        // authenticationBloc..add(SendOtpV1AuthEvent(contact: widget.mobile, otpType: "login")),
+        authenticationBloc..add(InitialAuthenticationEvent()),
         child: BlocListener(
           cubit: authenticationBloc,
           listener: (context, state) {
@@ -151,6 +131,11 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
                   state.res.msg != null &&
                   state.res.msg.toString().isNotEmpty) {
                 showSnakbar(_scaffoldKey, state.res.msg);
+              }
+              if(state.res != null && state.res.data!=null){
+                setState(() {
+                  mIsAlreadyRegisted = state.res.data.is_registered;
+                });
               }
             } else if (state is GoogleFbLoginResAuthenticationState) {
               debugPrint("GOT_STATE-- " + state.res.loginStatus);
@@ -170,6 +155,20 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
                 }
               }
             } else if (state is RegisterResAuthenticationState) {
+              showSnakbar(_scaffoldKey, state.res.message);
+              debugPrint("MSG_GOT_REGISTER ${state.res.message}");
+              Fluttertoast.showToast(
+                  msg: state.res.message,
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                  fontSize: space_14);
+              if (state.res.status) {
+                storeResInPrefs(context, state.res);
+              }
+            } else if (state is LoginResAuthenticationState) {
               showSnakbar(_scaffoldKey, state.res.message);
               debugPrint("MSG_GOT_REGISTER ${state.res.message}");
               Fluttertoast.showToast(
@@ -207,373 +206,171 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
       body: SafeArea(
         child: Container(
             child: Stack(
-          children: [
-            AuthPageHeaderWidget(app_name, skip_for_now, skipFun),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: space_15),
-              child: Form(
-                key: formKey,
-                child: Container(
-                  margin: EdgeInsets.only(
-                      top: getProportionateScreenHeight(context, space_100)),
-                  height: double.infinity,
-                  child: ListView(
-                    shrinkWrap: true,
-                    physics: BouncingScrollPhysics(),
-                    children: [
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          "Please provide details to create an account",
-                          style: CommonStyles.getRalewayStyle(
-                              space_15, FontWeight.w500, CommonStyles.blue),
-                        ),
-                      ),
-                      SizedBox(
-                        height: getProportionateScreenHeight(context, space_20),
-                      ),
-//                          TextInputWidget(mobileController, "Mobile No.", false, (String value) {
-//                            if (value.isEmpty) {
-//                              return "Please enter valid mobile no.";
-//                            }
-//                          }, TextInputType.number),
-//                          SizedBox(height: getProportionateScreenHeight(context, space_20),),
-                      BtnTextInputWidget(mobileController, "Mobile No.",
-                          "Send OTP", false, onVerifyClick, (String value) {
-                        if (value.isEmpty) {
-                          return "Please enter valid mobile no.";
-                        }
-                      }, TextInputType.number,
-                          isVerified: mOTP != null && mOTP?.isNotEmpty),
-                      SizedBox(
-                        height: getProportionateScreenHeight(context, space_20),
-                      ),
-                      TextInputWidget(otpController, "OTP", false,
-                          (String value) {
-                        if (value.isEmpty) {
-                          return "Please enter valid otp";
-                        }
-                      }, TextInputType.number),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                AuthPageHeaderWidget(app_name, skip_for_now, skipFun),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: space_15),
+                  child: Form(
+                    key: formKey,
+                    child: Container(
+                      margin: EdgeInsets.only(
+                          top: getProportionateScreenHeight(context, space_100)),
+                      height: double.infinity,
+                      child: ListView(
+                        shrinkWrap: true,
+                        physics: BouncingScrollPhysics(),
                         children: [
-                          Text(
-                            "Didn\'t recieved OTP??",
-                            style: CommonStyles.getRalewayStyle(space_15,
-                                FontWeight.w500, CommonStyles.primaryColor),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              authenticationBloc
-                                ..add(SendOtpAuthEvent(
-                                    contact:
-                                        mobileController.text.toString().trim(),
-                                    otpType: "login"));
-                            },
-                            child: Container(
-                              padding: EdgeInsets.only(
-                                  top: space_8, bottom: space_8, left: space_8),
-                              child: Text(
-                                "RESEND",
-                                style: CommonStyles.getRalewayStyle(space_15,
-                                    FontWeight.w500, CommonStyles.blue),
-                              ),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              !mIsAlreadyRegisted? "Please provide details to create an account": "Please verify with OTP to login",
+                              style: CommonStyles.getRalewayStyle(
+                                  space_15, FontWeight.w500, CommonStyles.blue),
                             ),
-                          )
+                          ),
+                          SizedBox(
+                            height: getProportionateScreenHeight(context, space_20),
+                          ),
+                          TextInputWidget(otpController, "OTP", false,
+                                  (String value) {
+                                if (value.isEmpty) {
+                                  return "Please enter valid otp";
+                                }
+                              }, TextInputType.number),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Didn\'t recieved OTP??",
+                                style: CommonStyles.getRalewayStyle(space_15,
+                                    FontWeight.w500, CommonStyles.primaryColor),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  authenticationBloc
+                                    ..add(SendOtpV1AuthEvent(contact: widget.mobile, otpType: "login"));
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.only(
+                                      top: space_8, bottom: space_8, left: space_8),
+                                  child: Text(
+                                    "RESEND",
+                                    style: CommonStyles.getRalewayStyle(space_15,
+                                        FontWeight.w500, CommonStyles.blue),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(height: space_10,),
+                          mIsAlreadyRegisted? Container(height: 0, width: 0,):ListView(
+                            shrinkWrap: true,
+                            primary: false,
+                            children: [
+                              TextInputWidget(fullnameController, "Full name", false, (
+                                  String value) {
+                                if (value.isEmpty) {
+                                  return "Please enter valid name";
+                                }
+                              }, TextInputType.text),
+                              SizedBox(height: getProportionateScreenHeight(
+                                  context, space_20),),
+                              TextInputWidget(
+                                  emailController, "Email ID", false, (String value) {
+                                if (value.isEmpty) {
+                                  return "Please enter valid email ID";
+                                }
+                              }, TextInputType.emailAddress),
+                              SizedBox(height: getProportionateScreenHeight(
+                                  context, space_20),),
+                              Padding(
+                                padding: EdgeInsets.only(right: space_15),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    Checkbox(
+                                      value: mHavReferalCode,
+                                      activeColor: CommonStyles.primaryColor,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          mHavReferalCode = value;
+                                        });
+                                      },
+                                    ),
+                                    Expanded(child: Text(
+                                      "I have a referral code",
+                                      style: CommonStyles.getMontserratStyle(
+                                          space_14, FontWeight.w400, Colors.black),
+                                    ))
+                                  ],
+                                ),
+                              ),
+                              mHavReferalCode
+                                  ? TextInputWidget(
+                                  referralCodeController,
+                                  "Referral code",
+                                  false, (String value) {
+                                if (value.isEmpty) {
+                                  return "Please enter valid referral code";
+                                }
+                              }, TextInputType.text)
+                                  : Container(height: 0, width: 0,),
+                            ],
+                          ),
+                          SizedBox(
+                            height: getProportionateScreenHeight(context, space_25),
+                          ),
+                          InkWell(
+                            onTap: (){
+                              if(mIsAlreadyRegisted){
+                                onLogin();
+                              }else{
+                                onSignup();
+                              }
+                            },
+                            child: Center(child: Container(
+                                padding: EdgeInsets.symmetric(vertical: space_10, horizontal: space_25),
+                                decoration: BoxDecoration(
+                                    color: CommonStyles.primaryColor
+                                ),
+                                child: Text(!mIsAlreadyRegisted?"Sign Up":"Login", style: CommonStyles.getMontserratStyle(space_14, FontWeight.w600, Colors.white),))),
+                          ),
+                          SizedBox(
+                            height: getProportionateScreenHeight(context, space_20),
+                          ),
+                          SizedBox(
+                            height: getProportionateScreenHeight(context, space_50),
+                          ),
                         ],
                       ),
-                      SizedBox(
-                        height: getProportionateScreenHeight(context, space_10),
-                      ),
-                      Container(
-                        height: getProportionateScreenHeight(context, space_40),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Flexible(
-                              child: TextFormField(
-                                validator: (String value) {
-                                  if (value.isEmpty) {
-                                    return "Please enter valid password";
-                                  }
-                                },
-                                obscureText: _obscureText,
-                                controller: passwordController,
-                                keyboardType: TextInputType.text,
-                                decoration: InputDecoration(
-                                  floatingLabelBehavior:
-                                  FloatingLabelBehavior.always,
-                                  labelText: "Password",
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _obscureText
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                    ),
-                                    onPressed: _togglePasswordStatus,
-                                    color: CommonStyles.primaryColor,
-                                  ),
-                                  contentPadding: EdgeInsets.all(space_8),
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.grey,
-                                      ),
-                                      borderRadius: BorderRadius.circular(0.0)),
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: getProportionateScreenHeight(context, space_20),
-                      ),
-                      Container(
-                        height: getProportionateScreenHeight(context, space_40),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Flexible(
-                              child: TextFormField(
-                                validator: (String value) {
-                                  if (value.isEmpty) {
-                                    return "Please enter valid password";
-                                  }
-                                },
-                                obscureText: _obscureText2,
-                                controller: confPasswordController,
-                                keyboardType: TextInputType.text,
-                                decoration: InputDecoration(
-                                  floatingLabelBehavior:
-                                  FloatingLabelBehavior.always,
-                                  labelText: "Confirm Password",
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _obscureText2
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                    ),
-                                    onPressed: _togglePasswordStatus2,
-                                    color: CommonStyles.primaryColor,
-                                  ),
-                                  contentPadding: EdgeInsets.all(space_8),
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.grey,
-                                      ),
-                                      borderRadius: BorderRadius.circular(0.0)),
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // SizedBox(
-                      //   height: getProportionateScreenHeight(context, space_20),
-                      // ),
-                      SizedBox(height: space_10,),
-                      Padding(
-                        padding: EdgeInsets.only(right: space_15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            Checkbox(
-                              value: mHavReferalCode,
-                              activeColor: CommonStyles.primaryColor,
-                              onChanged: (value) {
-                                setState(() {
-                                  mHavReferalCode = value;
-                                });
-                              },
-                            ),
-                            Expanded(child: Text(
-                              "I have a referral code",
-                              style: CommonStyles.getMontserratStyle(
-                                  space_14, FontWeight.w400, Colors.black),
-                            ))
-                          ],
-                        ),
-                      ),
-                      // CheckboxListTile(
-                      //   contentPadding: EdgeInsets.only(left: 0, top: space_15, bottom: 0, right: 0),
-                      //   controlAffinity: ListTileControlAffinity.leading,
-                      //   title: Text(
-                      //     "I have a referral code",
-                      //     style: CommonStyles.getMontserratStyle(
-                      //         space_14, FontWeight.w400, Colors.black),
-                      //   ),
-                      //   activeColor: CommonStyles.primaryColor,
-                      //   value: mHavReferalCode,
-                      //   onChanged: (bool value) {
-                      //     setState(() {
-                      //       mHavReferalCode = value;
-                      //     });
-                      //   },
-                      // ),
-                      mHavReferalCode
-                          ? TextInputWidget(
-                              referralCodeController,
-                              "Referral code",
-                              false, (String value) {
-                              if (value.isEmpty) {
-                                return "Please enter valid referral code";
-                              }
-                            }, TextInputType.text)
-                          : Container(height: 0, width: 0,),
-                      SizedBox(
-                        height: getProportionateScreenHeight(context, space_25),
-                      ),
-                      InkWell(
-                        onTap: (){
-                          onSignup();
-                        },
-                        child: Center(child: Container(
-                            padding: EdgeInsets.symmetric(vertical: space_10, horizontal: space_25),
-                            decoration: BoxDecoration(
-                                color: CommonStyles.primaryColor
-                            ),
-                            child: Text("Sign Up", style: CommonStyles.getMontserratStyle(space_14, FontWeight.w600, Colors.white),))),
-                      ),
-                     /* BtnTextInputWidget(
-                          confPasswordController,
-                          "Confirm Password",
-                          "Sign Up",
-                          true,
-                          onSignup, (String value) {
-                        if (value.isEmpty) {
-                          return "Please enter valid confirm password";
-                        }
-                      }, TextInputType.emailAddress),*/
-                      SizedBox(
-                        height: getProportionateScreenHeight(context, space_20),
-                      ),
-                      Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            "OR",
-                            style: CommonStyles.getRalewayStyle(space_18,
-                                FontWeight.w600, CommonStyles.primaryColor),
-                          )),
-                      SizedBox(
-                        height: getProportionateScreenHeight(context, space_20),
-                      ),
-                      GestureDetector(
-                        onTap: redirectToLogin,
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: RichText(
-                            text: new TextSpan(
-                              text: 'Already have an account? ',
-                              style: TextStyle(
-                                  fontSize: space_12,
-                                  fontFamily: CommonStyles.FONT_RALEWAY,
-                                  fontWeight: FontWeight.w400,
-                                  color: CommonStyles.primaryColor),
-                              children: <TextSpan>[
-                                new TextSpan(
-                                  text: ' Login',
-                                  style: TextStyle(
-                                      fontSize: space_15,
-                                      fontFamily: CommonStyles.FONT_RALEWAY,
-                                      fontWeight: FontWeight.w600,
-                                      color: CommonStyles.primaryColor),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: getProportionateScreenHeight(context, space_50),
-                      ),
-                      // Align(
-                      //   alignment: Alignment.center,
-                      //   child: Text(
-                      //     rent_pe_tagline,
-                      //     style: TextStyle(
-                      //         fontSize: space_15,
-                      //         fontFamily: CommonStyles.FONT_RALEWAY,
-                      //         fontWeight: FontWeight.w400,
-                      //         color: CommonStyles.primaryColor,
-                      //         decoration: TextDecoration.none),
-                      //   ),
-                      // ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-            showProgress
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Container(
-                    height: space_0,
-                    width: space_0,
-                  )
-//            Column(
-//              crossAxisAlignment: CrossAxisAlignment.center,
-//              mainAxisAlignment: MainAxisAlignment.end,
-//              children: [
-//                Container(
-//                  margin: EdgeInsets.only(bottom: space_70),
-//                  child: Center(
-//                    child:
-//                  ),
-//                )
-//              ],
-//            )
-          ],
-        )),
+                showProgress
+                    ? Center(
+                  child: CircularProgressIndicator(),
+                )
+                    : Container(
+                  height: space_0,
+                  width: space_0,
+                )
+              ],
+            )),
       ),
     );
   }
 
-  onVerifyClick() async {
-    if (mobileController.text.trim().isEmpty) {
-      showSnakbar(_scaffoldKey, empty_mobile);
-    } else {
-      //push to verify
-      authenticationBloc
-        ..add(SendOtpAuthEvent(
-            contact: mobileController.text.toString().trim(),
-            otpType: "login"));
-      /*var res = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                OtpVerificationScreen(mobileController.text.trim(), "login")),
-      );
-      setState(() {
-        if (res != null && res is OtpObj) {
-          mOTP = res.otp;
-          mVerifiedMobile = res.mobile;
-          debugPrint("VERIFIED ${res.otp}, ${res.mobile}");
-        }
-      });*/
-    }
-  }
-
   void onSignup() {
-    if (widget.name.trim().isEmpty) {
+    if (fullnameController.text.trim().isEmpty) {
       showSnakbar(_scaffoldKey, empty_full_name);
-    } else if (widget.email.trim().isEmpty) {
+    } else if (emailController.text.trim().isEmpty) {
       showSnakbar(_scaffoldKey, empty_email);
-    } else if (mobileController.text.trim().isEmpty) {
+    } else if (!emailController.text.trim().contains("@")) {
+      showSnakbar(_scaffoldKey, empty_email);
+    } else if (widget.mobile.isEmpty) {
       showSnakbar(_scaffoldKey, empty_mobile);
     } else if (otpController.text.trim().isEmpty) {
       showSnakbar(_scaffoldKey, verify_mobile);
-    } else if (passwordController.text.trim().isEmpty) {
-      showSnakbar(_scaffoldKey, empty_password);
-    } else if (confPasswordController.text.trim().isEmpty) {
-      showSnakbar(_scaffoldKey, empty_conf_password);
-    } else if (passwordController.text.trim() !=
-        confPasswordController.text.trim()) {
-      showSnakbar(_scaffoldKey, pwd_no_match);
     } else if (referralCodeController.text.trim().isEmpty && mHavReferalCode) {
       showSnakbar(_scaffoldKey, empty_refer_code);
     } else if (mFcmToken == null || mFcmToken.isEmpty) {
@@ -583,48 +380,50 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
       //API hit
       debugPrint("OTP -- > ${mOTP}");
       authenticationBloc
-        ..add(RegisterReqAuthenticationEvent(
-            name: widget.name,
-            email: widget.email,
-            mobile: mobileController.text.trim(),
-            password: passwordController.text.trim(),
+        ..add(RegisterReqV1AuthenticationEvent(
+            name: fullnameController.text.trim(),
+            socialId: widget.socialId,
+            email: emailController.text.trim(),
+            mobile: widget.mobile,
             loginType: mLoginType,
             otp: otpController.text.trim(),
             deviceToken: mFcmToken,
             reffCode: referralCodeController.text.toString() != null &&
-                    referralCodeController.text.toString()?.isNotEmpty
+                referralCodeController.text.toString()?.isNotEmpty
                 ? referralCodeController.text.toString().trim()
                 : ""));
     }
   }
 
-  void redirectToLogin() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
-    );
+  void onLogin() {
+    if (widget.mobile.isEmpty) {
+      showSnakbar(_scaffoldKey, empty_mobile);
+    } else if (otpController.text.trim().isEmpty) {
+      showSnakbar(_scaffoldKey, verify_mobile);
+    } else if (mFcmToken == null || mFcmToken.isEmpty) {
+      _register();
+      showSnakbar(_scaffoldKey, fcm_token_missing);
+    } else {
+      //API hit - Login
+      debugPrint("OTP -- > ${mOTP}");
+      authenticationBloc
+        ..add(LoginV1ReqAuthenticationEvent(
+            emailOrMobile: widget.mobile,
+            otp: otpController.text.trim(),
+            deviceToken: mFcmToken));
+    }
   }
 
-  void onSocialLogin() {
-    authenticationBloc..add(LoginInViaFacebookEvent());
-  }
-
-  void onSocialGoogleLogin() {
-    logininViaGoogle();
-  }
 
   void skipFun() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => HomeScreen()),
-    );
+
   }
 
   void storeResInPrefs(BuildContext context, LoginResponse res) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       Position position =
-          await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       LocationPermission permission = await checkPermission();
       if (permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse) {
@@ -635,9 +434,9 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
             "LOCATION_FOUND ${position.latitude}, ${position.longitude}");
         //access address from lat lng
         final coordinates =
-            new Coordinates(position.latitude, position.longitude);
+        new Coordinates(position.latitude, position.longitude);
         var addresses =
-            await Geocoder.local.findAddressesFromCoordinates(coordinates);
+        await Geocoder.local.findAddressesFromCoordinates(coordinates);
         var first = addresses.first;
         UserLocationSelected userLocationSelected = new UserLocationSelected(
             address: first.addressLine,

@@ -477,11 +477,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } else {
       //API hit
       debugPrint("OTP -- > ${mOTP}");
-      Navigator.push(
+     /* Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => PostRegisterScreen(
-            fullnameController.text.trim(), emailController.text.trim())),
-      );
+            fullnameController.text.trim(), emailController.text.trim(), "", false)),
+      );*/
 //      authenticationBloc..add(RegisterReqAuthenticationEvent(name: fullnameController.text.trim(),
 //      email: emailController.text.trim(), mobile: mobileController.text.trim(), password: passwordController.text.trim(), loginType: mLoginType, otp: mOTP
 //      ,deviceToken: mFcmToken));

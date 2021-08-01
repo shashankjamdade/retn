@@ -7,6 +7,7 @@ class RegisterReq{
   String otp;
   String deviceToken;
   String reffCode;
+  String socialId;
 
-  RegisterReq(this.name, this.mobile, this.email, this.password, this.login_type, this.otp, this.deviceToken, this.reffCode);
+  RegisterReq(this.name, this.mobile, this.email, this.password, this.login_type, this.otp, this.deviceToken, this.reffCode, this.socialId);
 }

@@ -1,15 +1,18 @@
 class LoginResponse {
   bool status;
   String message;
+  bool is_registered;
   Data data;
 
   LoginResponse({
     this.status,
+    this.is_registered,
     this.message,
     this.data});
 
   LoginResponse.fromJson(dynamic json) {
     status = json["status"];
+    is_registered = json["is_registered"];
     message = json["message"];
     data = json["data"] != null ? Data.fromJson(json["data"]) : null;
   }
@@ -18,6 +21,7 @@ class LoginResponse {
     var map = <String, dynamic>{};
     map["status"] = status;
     map["message"] = message;
+    map["is_registered"] = is_registered;
     if (data != null) {
       map["data"] = data.toJson();
     }
@@ -28,6 +32,7 @@ class LoginResponse {
 
 class Data {
   String id;
+  String is_registered;
   String username;
   String firstname;
   String lastname;
@@ -54,6 +59,7 @@ class Data {
 
   Data({
     this.id,
+    this.is_registered,
     this.username,
     this.firstname,
     this.lastname,
@@ -80,6 +86,7 @@ class Data {
 
   Data.fromJson(dynamic json) {
     id = json["id"];
+    is_registered = json["is_registered"];
     username = json["username"];
     firstname = json["firstname"];
     lastname = json["lastname"];
@@ -108,6 +115,7 @@ class Data {
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
     map["id"] = id;
+    map["is_registered"] = is_registered;
     map["username"] = username;
     map["firstname"] = firstname;
     map["lastname"] = lastname;

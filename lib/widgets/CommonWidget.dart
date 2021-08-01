@@ -425,25 +425,20 @@ class IconButtonWidget extends StatelessWidget {
           Container(
             child: Center(
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Expanded(
-                    flex:2,
-                    child: Image.asset(
-                      icon,
-                      height: getProportionateScreenHeight(context, space_25),
-                    ),
+                  Image.asset(
+                    icon,
+                    height: getProportionateScreenHeight(context, space_25),
                   ),
-                  Expanded(
-                    flex:7,
-                    child: Text(
-                      btnText,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: CommonStyles.getRalewayStyle(
-                          space_12, FontWeight.w500, textColor),
-                    ),
+                  SizedBox(width: space_10,),
+                  Text(
+                    btnText,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: CommonStyles.getRalewayStyle(
+                        space_12, FontWeight.w500, textColor),
                   )
                 ],
               ),

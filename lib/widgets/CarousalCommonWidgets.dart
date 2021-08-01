@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rentry_new/model/coupon_res.dart';
 import 'package:flutter_rentry_new/model/home_response.dart';
+import 'package:flutter_rentry_new/screens/LoginScreen.dart';
 import 'package:flutter_rentry_new/screens/SplashScreen.dart';
 import 'package:flutter_rentry_new/screens/SubCategoryScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
@@ -322,7 +323,7 @@ class _IntroImgCorousalWidgetState extends State<IntroImgCarousalWidget>
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => SplashScreen()),
+                              builder: (context) => LoginScreen()),
                         );
                       },
                       child: Card(

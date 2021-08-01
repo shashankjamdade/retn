@@ -32,6 +32,7 @@ import 'package:flutter_rentry_new/model/register_response.dart';
 import 'package:flutter_rentry_new/model/save_favourite_res.dart';
 import 'package:flutter_rentry_new/model/search_sub_category_response.dart';
 import 'package:flutter_rentry_new/model/seller_info_res.dart';
+import 'package:flutter_rentry_new/model/send_otp_v1_res.dart';
 import 'package:flutter_rentry_new/model/sub_category_list_response.dart';
 import 'package:flutter_rentry_new/model/user_profile_response.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
@@ -1028,6 +1029,24 @@ class HomeRepository extends BaseRepository {
       print("-----------${data}");
     } else {
       response = new CommonResponse();
+    }
+    return response;
+  }
+
+  Future<SendOtpV1Res> callSendOtpV1(String contact, String otpType) async {
+    SendOtpV1Res response;
+    print("UNDER callSendOtp v1 ${contact} , ${BASE_URL + SEND_OTP}");
+    var res = await http.post(BASE_URL + SEND_OTP_V1,
+        body: {"contact": contact, "otp_type": otpType});
+    print("PRINTING ${res.body}");
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      var status = data["status"];
+      print("PRINTING_STATUS ${status}");
+      response = SendOtpV1Res.fromJson(data);
+      print("-----------${data}");
+    } else {
+      response = new SendOtpV1Res();
     }
     return response;
   }

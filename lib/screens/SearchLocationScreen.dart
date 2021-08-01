@@ -10,6 +10,7 @@ import 'package:flutter_rentry_new/model/UserLocationSelected.dart';
 import 'package:flutter_rentry_new/model/google_places_res.dart';
 import 'package:flutter_rentry_new/model/location_search_response.dart';
 import 'package:flutter_rentry_new/model/search_sub_category_response.dart';
+import 'package:flutter_rentry_new/screens/HomeScreen.dart';
 import 'package:flutter_rentry_new/screens/NearByChildSubCategoryScreen.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
@@ -281,6 +282,12 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                                   .mUserLocationSelected
                                   ?.city;
                             });
+                            if(categoryController!=null && categoryController?.text?.isEmpty){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => HomeScreen()),
+                              );
+                            }
                           },
                           icon: ImageIcon(
                             AssetImage("assets/images/bottom_nav_nearby.png"),
@@ -677,6 +684,12 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
       mSelectedLongitude = lng;
       mLocationSelected = name;
     });
+    if(categoryController!=null && categoryController?.text?.isEmpty){
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    }
   }
 
   onLocationSelectedFromGoogle(Predictions prediction) {
@@ -761,6 +774,12 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
       StateContainer.of(context)
           .updateUserSelectedLocation(mUserLocNameSelected);
       print("SELECTED--> ${lat}, ${lng}");
+      if(categoryController!=null && categoryController?.text?.isEmpty){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      }
     }
   }
 }

@@ -473,7 +473,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             SizedBox(
                               height: space_50,
                             ),
-                            GestureDetector(
+                            /*GestureDetector(
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -501,7 +501,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       )),
                                 ),
                               ),
-                            ),
+                            ),*/
                             SizedBox(
                               height: space_20,
                             ),

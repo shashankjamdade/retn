@@ -23,7 +23,7 @@ class AuthenticationRepository extends BaseRepository {
   AuthenticationRepository({http.Client httpClient})
       : _httpClient = httpClient ?? http.Client();
 
-  Future<LoginResponse> callLogin(String mobileOrEmail, String password, String token) async {
+  Future<LoginResponse> callLogin(String mobileOrEmail, String passwordOtp, String token) async {
     bool status = false;
     LoginResponse response;
     int code = 0;
@@ -32,8 +32,8 @@ class AuthenticationRepository extends BaseRepository {
     ioc.badCertificateCallback =
         (X509Certificate cert, String host, int port) => true;
     final http = new IOClient(ioc);
-    var res = await http.post(BASE_URL + LOGIN_API,
-        body: {"email": mobileOrEmail, "password": password, "device_token": token});
+    var res = await http.post(BASE_URL + LOGIN_V1,
+        body: {"mobile": mobileOrEmail, "otp": passwordOtp, "device_token": token});
     print(res.body);
     code = res.statusCode;
     if (res.statusCode == 200) {
@@ -53,7 +53,7 @@ class AuthenticationRepository extends BaseRepository {
     return response;
   }
 
-  Future<LoginResponse> callSocialLogin(String email, String deviceToken) async {
+  Future<LoginResponse> callSocialLogin(String id,String email, String deviceToken) async {
     debugPrint("FB_EMAIL3-->> ${email}");
     bool status = false;
     LoginResponse response;
@@ -64,7 +64,7 @@ class AuthenticationRepository extends BaseRepository {
         (X509Certificate cert, String host, int port) => true;
     final http = new IOClient(ioc);
     var res = await http.post(BASE_URL + SOCIAL_LOGIN_API,
-        body: {"email": email,  "device_token": deviceToken});
+        body: {"social_id": id,"email": email,  "device_token": deviceToken});
     print(res.body);
     code = res.statusCode;
     if (res.statusCode == 200) {
@@ -90,23 +90,24 @@ class AuthenticationRepository extends BaseRepository {
       "username": registerReq.name,
       "email": registerReq.email,
       "contact": registerReq.mobile,
-      "password": registerReq.password,
+      // "password": registerReq.password,
       "login_type":registerReq.login_type,
       "otp":registerReq.otp,
       "device_token": registerReq.deviceToken,
+      "social_id": registerReq.socialId,
       "referralcode": registerReq.reffCode
     }}");
     final ioc = new HttpClient();
     ioc.badCertificateCallback =
         (X509Certificate cert, String host, int port) => true;
     final http = new IOClient(ioc);
-    var res = await http.post(BASE_URL + REGISTRATION_API, body: {
+    var res = await http.post(BASE_URL + REGISTRATION_V1, body: {
       "username": registerReq.name,
       "email": registerReq.email,
       "contact": registerReq.mobile,
-      "password": registerReq.password,
       "login_type": registerReq.login_type,
       "otp": registerReq.otp,
+      "social_id": registerReq.socialId!=null? registerReq.socialId : "",
       "device_token": registerReq.deviceToken,
       "referralcode": registerReq.reffCode
     });

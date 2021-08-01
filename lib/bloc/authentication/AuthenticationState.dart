@@ -5,6 +5,7 @@ import 'package:flutter_rentry_new/model/UserStatusObj.dart';
 import 'package:flutter_rentry_new/model/common_response.dart';
 import 'package:flutter_rentry_new/model/login_response.dart';
 import 'package:flutter_rentry_new/model/register_response.dart';
+import 'package:flutter_rentry_new/model/send_otp_v1_res.dart';
 
 abstract class AuthenticationState extends Equatable{
   @override
@@ -64,5 +65,5 @@ class SendOtpAuthState extends AuthenticationState {
   SendOtpAuthState({@required this.res});
 
   @override
-  List<CommonResponse> get props => [res];
+  List<SendOtpV1Res> get props => [res];
 }

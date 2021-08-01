@@ -376,7 +376,7 @@ class _ScreenOneState extends State<ScreenOne> {
         child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
             builder: (context, state) {
           if (state is LogoutAuthentucateState) {
-            return SplashScreen();
+            return LoginScreen();
           } else if (state is CheckLoggedInState) {
             if (state.obj != null && state.obj is UserStatusObj) {
               if (state.obj.isStartupIntroViewed) {
@@ -385,7 +385,7 @@ class _ScreenOneState extends State<ScreenOne> {
                     shouldShowShowcase: state.obj.isShowCaseViewed,
                   );
                 } else {
-                  return SplashScreen();
+                  return LoginScreen();
                 }
               } else {
                 //Startup intro
@@ -394,7 +394,7 @@ class _ScreenOneState extends State<ScreenOne> {
                 );
               }
             } else {
-              return SplashScreen();
+              return LoginScreen();
             }
           } else {
             return SafeArea(
@@ -434,7 +434,7 @@ class _ScreenOneState extends State<ScreenOne> {
     } else {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => SplashScreen()),
+        MaterialPageRoute(builder: (context) => LoginScreen()),
       );
     }
   }

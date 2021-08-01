@@ -240,6 +240,9 @@ const String RATING = "/rating";
 const String COUPON = "/coupon";
 const String CHAT_DELETE = "/chatdelete";
 const String READ_CHAT = "/readchat";
+const String LOGIN_V1 = "/login_v1";
+const String SEND_OTP_V1 = "/send_otp_v1";
+const String REGISTRATION_V1 = "/registration_v1";
 const String GOOGLE_AUTOCOMPLETE1 = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=";
 const String GOOGLE_AUTOCOMPLETE2 = "&types=geocode&language=fr&sensor=true&key=";
 

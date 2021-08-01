@@ -38,9 +38,12 @@ class AuthenticationBloc
     } else if (event is LoginReqAuthenticationEvent) {
       yield ProgressAuthenticationState();
       yield* makeLogin(event.emailOrMobile, event.password, event.deviceToken);
+    }  else if (event is LoginV1ReqAuthenticationEvent) {
+      yield ProgressAuthenticationState();
+      yield* makeLogin(event.emailOrMobile, event.otp, event.deviceToken);
     } else if (event is SocialLoginReqAuthenticationEvent) {
       yield ProgressAuthenticationState();
-      yield* makeSocialLogin(event.emailOrMobile, event.deviceToken);
+      yield* makeSocialLogin(event.social_id, event.emailOrMobile, event.deviceToken);
     } else if (event is RegisterReqAuthenticationEvent) {
       yield ProgressAuthenticationState();
       yield* makeRegister(RegisterReq(
@@ -51,11 +54,25 @@ class AuthenticationBloc
           event.loginType,
           event.otp,
           event.deviceToken,
-          event.reffCode));
+          event.reffCode, ""));
+    } else if (event is RegisterReqV1AuthenticationEvent) {
+      yield ProgressAuthenticationState();
+      yield* makeRegister(RegisterReq(
+          event.name,
+          event.mobile,
+          event.email,
+          event.password,
+          event.loginType,
+          event.otp,
+          event.deviceToken,
+          event.reffCode, event.socialId));
     } else if (event is LoginInViaFacebookEvent) {
       yield ProgressAuthenticationState();
       yield* makeFbLogin();
     } else if (event is SendOtpAuthEvent) {
+      yield ProgressAuthenticationState();
+      yield* callSendOtp(event.contact, event.otpType);
+    }else if (event is SendOtpV1AuthEvent) {
       yield ProgressAuthenticationState();
       yield* callSendOtp(event.contact, event.otpType);
     }
@@ -111,10 +128,10 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> makeLogin(
-      String emailOrMobile, String password, String token) async* {
+      String emailOrMobile, String passwordOtp, String token) async* {
     try {
       final loginResponse = await _authenticationService.callLogin(
-          emailOrMobile, password, token);
+          emailOrMobile, passwordOtp, token);
       yield LoginResAuthenticationState(res: loginResponse);
     } catch (e, stacktrace) {
       debugPrint("Exception while nativeLogin ${e.toString()}\n ${stacktrace}");
@@ -122,11 +139,11 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> makeSocialLogin(
-      String email, String deviceToken) async* {
+      String id, String email, String deviceToken) async* {
     try {
       debugPrint("FB_EMAIL2-->> ${email}");
       final loginResponse =
-          await _authenticationService.callSocialLogin(email, deviceToken);
+          await _authenticationService.callSocialLogin(id, email, deviceToken);
       yield LoginResAuthenticationState(res: loginResponse);
     } catch (e, stacktrace) {
       debugPrint(
@@ -163,7 +180,7 @@ class AuthenticationBloc
           homeRepository != null ? homeRepository : HomeRepository();
       debugPrint(
           "callSendOtp ${contact} ${homeRepository == null ? "NULL" : "NOTNULL"}");
-      final commonResponse = await homeRepository.callSendOtp(contact, otpType);
+      final commonResponse = await homeRepository.callSendOtpV1(contact, otpType);
       debugPrint("callSendOtp ${jsonEncode(commonResponse)}");
       yield SendOtpAuthState(res: commonResponse);
     } catch (e) {
