@@ -637,6 +637,24 @@ class _StartupIntroScreenState extends State<StartupIntroScreen>  with SingleTic
                   ),
                 ],
               ),
+                Align(
+                alignment: Alignment.bottomRight,
+                  child: FlatButton(
+                    onPressed: (){
+                      if(widget.prefs!=null){
+                        widget.prefs.setString(IS_INTRO_VIEWED, "true");
+                      }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LoginScreen()),
+                      );
+                    },
+                    child: Text(
+                      "SKIP", style: CommonStyles.getMontserratStyle(space_15, FontWeight.w500, Colors.white),
+                    )
+                  ),
+                ),
               Align(
                 alignment: Alignment.bottomCenter,
                 child: _current == 3

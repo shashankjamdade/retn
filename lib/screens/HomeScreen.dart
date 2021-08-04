@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (state == AppLifecycleState.resumed) {}
   }
 
-  @override
+  /*@override
   void didUpdateWidget(covariant HomeScreen oldWidget) {
     debugPrint("LISTENING_HOME_CHANGE UPDATE");
     if (mHomeResponse != null) {
@@ -123,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
     super.didUpdateWidget(oldWidget);
-  }
+  }*/
 
   @override
   void didChangeDependencies() {

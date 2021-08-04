@@ -462,9 +462,9 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
                               showPlacePicker();
                             },
                             child: Container(
-                              height: space_50,
                               width: double.infinity,
                               margin: EdgeInsets.symmetric(vertical: space_15),
+                              padding: EdgeInsets.symmetric(horizontal: space_15, vertical: space_15),
                               decoration: BoxDecoration(
                                   color: CommonStyles.primaryColor
                                       .withOpacity(0.2),
@@ -475,7 +475,7 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
                                   mSelctedLocation.isNotEmpty
                                       ? mSelctedLocation
                                       : "Select Location",
-                                  style: CommonStyles.getRalewayStyle(
+                                  style: CommonStyles.getMontserratStyle(
                                       space_15, FontWeight.w500, Colors.black),
                                 ),
                               ),
@@ -556,11 +556,11 @@ class _RentalPriceScreenState extends State<RentalPriceScreen> {
         MaterialPageRoute(builder: (context) => PlacePicker(GOOGLE_API_KEY)));
     // Handle the result in your way
     print("LOCATION_SEELCTED ${result.latLng.latitude}");
-    widget.adPostReqModel.address = result.name;
+    widget.adPostReqModel.address = result.formattedAddress?.contains("Unnamed")? "${result?.locality}, ${result?.administrativeAreaLevel1?.name}" :result.formattedAddress+", "+"${result?.locality}";
     widget.adPostReqModel.addresslat = result.latLng.latitude.toString();
     widget.adPostReqModel.addresslng = result.latLng.longitude.toString();
     setState(() {
-      mSelctedLocation = result.name;
+      mSelctedLocation = result.formattedAddress?.contains("Unnamed")? "${result?.locality}, ${result?.administrativeAreaLevel1?.name}" :result.formattedAddress+", "+"${result?.locality}";
     });
   }
 }

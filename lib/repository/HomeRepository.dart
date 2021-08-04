@@ -570,7 +570,7 @@ class HomeRepository extends BaseRepository {
   Future<SellerInfoRes> callSellerInfoApi(String token, String sellerId) async {
     bool status = false;
     SellerInfoRes response;
-    print("UNDER callSellerInfoApi ${token}, ${sellerId}");
+    print("UNDER callSellerInfoApi ${sellerId}, ${token}");
     Map<String, String> mainheader = {"token": token};
     var res = await http.post(BASE_URL + GET_SELLER_INFO,
         headers: mainheader, body: {"seller_id": sellerId});

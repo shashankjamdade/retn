@@ -356,8 +356,7 @@ class _EditRentalPriceScreenState extends State<EditRentalPriceScreen> {
                               height: space_50,
                               width: double.infinity,
                               margin: EdgeInsets.symmetric(vertical: space_15),
-                              padding:
-                                  EdgeInsets.symmetric(horizontal: space_15),
+                              padding: EdgeInsets.symmetric(horizontal: space_15, vertical: space_15),
                               decoration: BoxDecoration(
                                   color: CommonStyles.primaryColor
                                       .withOpacity(0.2),
@@ -370,7 +369,7 @@ class _EditRentalPriceScreenState extends State<EditRentalPriceScreen> {
                                       : "Select Location",
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: CommonStyles.getRalewayStyle(
+                                  style: CommonStyles.getMontserratStyle(
                                       space_15, FontWeight.w500, Colors.black),
                                 ),
                               ),
@@ -456,11 +455,11 @@ class _EditRentalPriceScreenState extends State<EditRentalPriceScreen> {
         await Geocoder.local.findAddressesFromCoordinates(coordinates);
     var first = addresses.first;
     widget.adPostReqModel.address =
-        "${first.addressLine}, ${first.locality}, ${first.adminArea}, ${first.countryName}";
+    result.formattedAddress?.contains("Unnamed")? "${result?.locality}, ${result?.administrativeAreaLevel1?.name}" :result.formattedAddress+", "+"${result?.locality}";
     widget.adPostReqModel.addresslat = result.latLng.latitude.toString();
     widget.adPostReqModel.addresslng = result.latLng.longitude.toString();
     setState(() {
-      mSelctedLocation = result.name;
+      mSelctedLocation = result.formattedAddress?.contains("Unnamed")? "${result?.locality}, ${result?.administrativeAreaLevel1?.name}" :result.formattedAddress+", "+"${result?.locality}";
     });
   }
 }

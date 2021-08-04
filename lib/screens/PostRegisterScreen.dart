@@ -77,14 +77,14 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
   String _message = '';
 
   _register() {
-    _firebaseMessaging.getToken().then((token){
-      if(token!=null && token?.isNotEmpty) {
+    _firebaseMessaging.getToken().then((token) {
+      if (token != null && token?.isNotEmpty) {
         mFcmToken = token;
         debugPrint("FCM_TOKEN GETTOKEN -> ${mFcmToken}");
       }
     });
     _firebaseMessaging.onTokenRefresh.listen((token) {
-      if(token!=null && token?.isNotEmpty) {
+      if (token != null && token?.isNotEmpty) {
         mFcmToken = token;
         debugPrint("FCM_TOKEN REFRESH -> ${mFcmToken}");
       }
@@ -121,8 +121,8 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
     _context = context;
     return BlocProvider(
         create: (context) =>
-        // authenticationBloc..add(SendOtpV1AuthEvent(contact: widget.mobile, otpType: "login")),
-        authenticationBloc..add(InitialAuthenticationEvent()),
+            // authenticationBloc..add(SendOtpV1AuthEvent(contact: widget.mobile, otpType: "login")),
+            authenticationBloc..add(InitialAuthenticationEvent()),
         child: BlocListener(
           cubit: authenticationBloc,
           listener: (context, state) {
@@ -132,7 +132,7 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
                   state.res.msg.toString().isNotEmpty) {
                 showSnakbar(_scaffoldKey, state.res.msg);
               }
-              if(state.res != null && state.res.data!=null){
+              if (state.res != null && state.res.data != null) {
                 setState(() {
                   mIsAlreadyRegisted = state.res.data.is_registered;
                 });
@@ -206,156 +206,199 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
       body: SafeArea(
         child: Container(
             child: Stack(
-              children: [
-                AuthPageHeaderWidget(app_name, skip_for_now, skipFun),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: space_15),
-                  child: Form(
-                    key: formKey,
-                    child: Container(
-                      margin: EdgeInsets.only(
-                          top: getProportionateScreenHeight(context, space_100)),
-                      height: double.infinity,
-                      child: ListView(
-                        shrinkWrap: true,
-                        physics: BouncingScrollPhysics(),
+          children: [
+            AuthPageHeaderWidget(app_name, skip_for_now, skipFun),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: space_15),
+              child: Form(
+                key: formKey,
+                child: Container(
+                  margin: EdgeInsets.only(
+                      top: getProportionateScreenHeight(context, space_100)),
+                  height: double.infinity,
+                  child: ListView(
+                    shrinkWrap: true,
+                    physics: BouncingScrollPhysics(),
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          !mIsAlreadyRegisted
+                              ? "Please provide details to create an account"
+                              : "Please verify with OTP to login",
+                          style: CommonStyles.getRalewayStyle(
+                              space_15, FontWeight.w500, CommonStyles.blue),
+                        ),
+                      ),
+                      SizedBox(
+                        height: getProportionateScreenHeight(context, space_20),
+                      ),
+                      TextInputWidget(otpController, "OTP", false,
+                          (String value) {
+                        if (value.isEmpty) {
+                          return "Please enter valid otp";
+                        }
+                      }, TextInputType.number),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              !mIsAlreadyRegisted? "Please provide details to create an account": "Please verify with OTP to login",
-                              style: CommonStyles.getRalewayStyle(
-                                  space_15, FontWeight.w500, CommonStyles.blue),
-                            ),
+                          Text(
+                            "Didn\'t recieved OTP??",
+                            style: CommonStyles.getRalewayStyle(space_15,
+                                FontWeight.w500, CommonStyles.primaryColor),
                           ),
-                          SizedBox(
-                            height: getProportionateScreenHeight(context, space_20),
-                          ),
-                          TextInputWidget(otpController, "OTP", false,
-                                  (String value) {
-                                if (value.isEmpty) {
-                                  return "Please enter valid otp";
-                                }
-                              }, TextInputType.number),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Didn\'t recieved OTP??",
-                                style: CommonStyles.getRalewayStyle(space_15,
-                                    FontWeight.w500, CommonStyles.primaryColor),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  authenticationBloc
-                                    ..add(SendOtpV1AuthEvent(contact: widget.mobile, otpType: "login"));
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.only(
-                                      top: space_8, bottom: space_8, left: space_8),
-                                  child: Text(
-                                    "RESEND",
-                                    style: CommonStyles.getRalewayStyle(space_15,
-                                        FontWeight.w500, CommonStyles.blue),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          SizedBox(height: space_10,),
-                          mIsAlreadyRegisted? Container(height: 0, width: 0,):ListView(
-                            shrinkWrap: true,
-                            primary: false,
-                            children: [
-                              TextInputWidget(fullnameController, "Full name", false, (
-                                  String value) {
-                                if (value.isEmpty) {
-                                  return "Please enter valid name";
-                                }
-                              }, TextInputType.text),
-                              SizedBox(height: getProportionateScreenHeight(
-                                  context, space_20),),
-                              TextInputWidget(
-                                  emailController, "Email ID", false, (String value) {
-                                if (value.isEmpty) {
-                                  return "Please enter valid email ID";
-                                }
-                              }, TextInputType.emailAddress),
-                              SizedBox(height: getProportionateScreenHeight(
-                                  context, space_20),),
-                              Padding(
-                                padding: EdgeInsets.only(right: space_15),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: <Widget>[
-                                    Checkbox(
-                                      value: mHavReferalCode,
-                                      activeColor: CommonStyles.primaryColor,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          mHavReferalCode = value;
-                                        });
-                                      },
-                                    ),
-                                    Expanded(child: Text(
-                                      "I have a referral code",
-                                      style: CommonStyles.getMontserratStyle(
-                                          space_14, FontWeight.w400, Colors.black),
-                                    ))
-                                  ],
-                                ),
-                              ),
-                              mHavReferalCode
-                                  ? TextInputWidget(
-                                  referralCodeController,
-                                  "Referral code",
-                                  false, (String value) {
-                                if (value.isEmpty) {
-                                  return "Please enter valid referral code";
-                                }
-                              }, TextInputType.text)
-                                  : Container(height: 0, width: 0,),
-                            ],
-                          ),
-                          SizedBox(
-                            height: getProportionateScreenHeight(context, space_25),
-                          ),
-                          InkWell(
-                            onTap: (){
-                              if(mIsAlreadyRegisted){
-                                onLogin();
-                              }else{
-                                onSignup();
-                              }
+                          GestureDetector(
+                            onTap: () {
+                              authenticationBloc
+                                ..add(SendOtpV1AuthEvent(
+                                    contact: widget.mobile, otpType: "login"));
                             },
-                            child: Center(child: Container(
-                                padding: EdgeInsets.symmetric(vertical: space_10, horizontal: space_25),
-                                decoration: BoxDecoration(
-                                    color: CommonStyles.primaryColor
-                                ),
-                                child: Text(!mIsAlreadyRegisted?"Sign Up":"Login", style: CommonStyles.getMontserratStyle(space_14, FontWeight.w600, Colors.white),))),
-                          ),
-                          SizedBox(
-                            height: getProportionateScreenHeight(context, space_20),
-                          ),
-                          SizedBox(
-                            height: getProportionateScreenHeight(context, space_50),
-                          ),
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                  top: space_8, bottom: space_8, left: space_8),
+                              child: Text(
+                                "RESEND",
+                                style: CommonStyles.getRalewayStyle(space_15,
+                                    FontWeight.w500, CommonStyles.blue),
+                              ),
+                            ),
+                          )
                         ],
                       ),
-                    ),
+                      SizedBox(
+                        height: space_10,
+                      ),
+                      mIsAlreadyRegisted
+                          ? Container(
+                              height: 0,
+                              width: 0,
+                            )
+                          : ListView(
+                              shrinkWrap: true,
+                              primary: false,
+                              children: [
+                                (widget?.socialId != null &&
+                                        widget?.socialId != null)
+                                    ? Container(
+                                        height: 0,
+                                        width: 0,
+                                      )
+                                    : TextInputWidget(
+                                        fullnameController, "Full name", false,
+                                        (String value) {
+                                        if (value.isEmpty) {
+                                          return "Please enter valid name";
+                                        }
+                                      }, TextInputType.text),
+                                (widget?.socialId != null &&
+                                        widget?.socialId != null)
+                                    ? Container(
+                                        height: 0,
+                                        width: 0,
+                                      )
+                                    : SizedBox(
+                                        height: getProportionateScreenHeight(
+                                            context, space_20),
+                                      ),
+                                (widget?.socialId != null &&
+                                        widget?.socialId != null)
+                                    ? Container(
+                                        height: 0,
+                                        width: 0,
+                                      )
+                                    : TextInputWidget(
+                                        emailController, "Email ID", false,
+                                        (String value) {
+                                        if (value.isEmpty) {
+                                          return "Please enter valid email ID";
+                                        }
+                                      }, TextInputType.emailAddress),
+                                SizedBox(
+                                  height: getProportionateScreenHeight(
+                                      context, space_20),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(right: space_15),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: <Widget>[
+                                      Checkbox(
+                                        value: mHavReferalCode,
+                                        activeColor: CommonStyles.primaryColor,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            mHavReferalCode = value;
+                                          });
+                                        },
+                                      ),
+                                      Expanded(
+                                          child: Text(
+                                        "I have a referral code",
+                                        style: CommonStyles.getMontserratStyle(
+                                            space_14,
+                                            FontWeight.w400,
+                                            Colors.black),
+                                      ))
+                                    ],
+                                  ),
+                                ),
+                                mHavReferalCode
+                                    ? TextInputWidget(referralCodeController,
+                                        "Referral code", false, (String value) {
+                                        if (value.isEmpty) {
+                                          return "Please enter valid referral code";
+                                        }
+                                      }, TextInputType.text)
+                                    : Container(
+                                        height: 0,
+                                        width: 0,
+                                      ),
+                              ],
+                            ),
+                      SizedBox(
+                        height: getProportionateScreenHeight(context, space_25),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          if (mIsAlreadyRegisted) {
+                            onLogin();
+                          } else {
+                            onSignup();
+                          }
+                        },
+                        child: Center(
+                            child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: space_10, horizontal: space_25),
+                                decoration: BoxDecoration(
+                                    color: CommonStyles.primaryColor),
+                                child: Text(
+                                  !mIsAlreadyRegisted ? "Sign Up" : "Login",
+                                  style: CommonStyles.getMontserratStyle(
+                                      space_14, FontWeight.w600, Colors.white),
+                                ))),
+                      ),
+                      SizedBox(
+                        height: getProportionateScreenHeight(context, space_20),
+                      ),
+                      SizedBox(
+                        height: getProportionateScreenHeight(context, space_50),
+                      ),
+                    ],
                   ),
                 ),
-                showProgress
-                    ? Center(
-                  child: CircularProgressIndicator(),
-                )
-                    : Container(
-                  height: space_0,
-                  width: space_0,
-                )
-              ],
-            )),
+              ),
+            ),
+            showProgress
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Container(
+                    height: space_0,
+                    width: space_0,
+                  )
+          ],
+        )),
       ),
     );
   }
@@ -389,7 +432,7 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
             otp: otpController.text.trim(),
             deviceToken: mFcmToken,
             reffCode: referralCodeController.text.toString() != null &&
-                referralCodeController.text.toString()?.isNotEmpty
+                    referralCodeController.text.toString()?.isNotEmpty
                 ? referralCodeController.text.toString().trim()
                 : ""));
     }
@@ -414,16 +457,13 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
     }
   }
 
-
-  void skipFun() {
-
-  }
+  void skipFun() {}
 
   void storeResInPrefs(BuildContext context, LoginResponse res) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       Position position =
-      await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+          await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       LocationPermission permission = await checkPermission();
       if (permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse) {
@@ -434,9 +474,9 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
             "LOCATION_FOUND ${position.latitude}, ${position.longitude}");
         //access address from lat lng
         final coordinates =
-        new Coordinates(position.latitude, position.longitude);
+            new Coordinates(position.latitude, position.longitude);
         var addresses =
-        await Geocoder.local.findAddressesFromCoordinates(coordinates);
+            await Geocoder.local.findAddressesFromCoordinates(coordinates);
         var first = addresses.first;
         UserLocationSelected userLocationSelected = new UserLocationSelected(
             address: first.addressLine,
