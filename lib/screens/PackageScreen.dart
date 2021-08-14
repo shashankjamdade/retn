@@ -259,7 +259,7 @@ class _PackageScreenState extends State<PackageScreen> {
                                   space_14, FontWeight.w600, CommonStyles.blue),
                             ),
                             RichTextTitleWidget(
-                                "STATER", "${currentPackage.title}"),
+                                "", "${currentPackage.title}"),
                           ],
                         ),
                       ),
@@ -297,13 +297,13 @@ class _PackageScreenState extends State<PackageScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              "STATER",
-                                              style: CommonStyles.getRalewayStyle(
-                                                  space_15,
-                                                  FontWeight.w600,
-                                                  Colors.white),
-                                            ),
+                                            // Text(
+                                            //   "STATER",
+                                            //   style: CommonStyles.getRalewayStyle(
+                                            //       space_15,
+                                            //       FontWeight.w600,
+                                            //       Colors.white),
+                                            // ),
                                             Text(
                                               "${currentPackage.title}",
                                               style:

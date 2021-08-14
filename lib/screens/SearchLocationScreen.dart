@@ -551,6 +551,18 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                               onPressed: () {
                                 debugPrint(
                                     "Locl --> ${StateContainer.of(context).mUserLocationSelected?.mlng}");
+                                var mUserLocNameSelected = new UserLocNameSelected(
+                                    address: StateContainer.of(context)
+                                        .mUserLocationSelected
+                                        ?.city,
+                                    mlat: StateContainer.of(context)
+                                        .mUserLocationSelected
+                                        ?.mlat,
+                                    mlng: StateContainer.of(context)
+                                        .mUserLocationSelected
+                                        ?.mlng);
+                                StateContainer.of(context)
+                                    .updateUserSelectedLocation(mUserLocNameSelected);
                                 onLocationSelected(StateContainer.of(context)
                                     .mUserLocationSelected
                                     ?.mlat, StateContainer.of(context)

@@ -54,6 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String mFcmToken = "";
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   var mCheckedTnC = true;
+  var isLoginbtnPressed = false;
 
   logininViaGoogle() async {
     try {
@@ -102,12 +103,18 @@ class _LoginScreenState extends State<LoginScreen> {
       if (token != null && token?.isNotEmpty) {
         mFcmToken = token;
         debugPrint("FCM_TOKEN GETTOKEN -> ${mFcmToken}");
+        if(isLoginbtnPressed){
+          onLogin();
+        }
       }
     });
     _firebaseMessaging.onTokenRefresh.listen((token) {
       if (token != null && token?.isNotEmpty) {
         mFcmToken = token;
         debugPrint("FCM_TOKEN REFRESH -> ${mFcmToken}");
+        if(isLoginbtnPressed){
+          onLogin();
+        }
       }
     });
   }
@@ -441,11 +448,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                               if (user != null &&
                                                   user?.email != null &&
                                                   authenticationBloc != null) {
+                                                mName = user?.displayName;
+                                                mEmail = user?.email;
+                                                mSocialId = user?.uid;
                                                 authenticationBloc
                                                   ..add(
                                                       SocialLoginReqAuthenticationEvent(
                                                           social_id: user
-                                                              ?.tenantId,
+                                                              ?.uid,
                                                           emailOrMobile: user
                                                               ?.email,
                                                           deviceToken: mFcmToken));
@@ -510,8 +520,9 @@ class _LoginScreenState extends State<LoginScreen> {
     } else if (mFcmToken == null || mFcmToken
         .trim()
         .isEmpty) {
+      isLoginbtnPressed = true;
       _register();
-      showSnakbar(_scaffoldKey, fcm_token_missing);
+      // showSnakbar(_scaffoldKey, fcm_token_missing);
     } else {
       //API hit
       debugPrint("CHECK_TOKEN --> ${mFcmToken}");
@@ -524,6 +535,7 @@ class _LoginScreenState extends State<LoginScreen> {
     mName = "";
     mEmail = "";
     mSocialId = "";
+    _register();
     if (type == "fb") {
       authenticationBloc..add(LoginInViaFacebookEvent());
     } else if (type == "google") {

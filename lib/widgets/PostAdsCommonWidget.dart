@@ -52,6 +52,50 @@ class PostAdsCommonAppbar extends StatelessWidget {
     );
   }
 }
+class PostAdsCommonAppbar2 extends StatelessWidget {
+  String title;
+
+  PostAdsCommonAppbar2({this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: space_60,
+      color: CommonStyles.primaryColor,
+      child: Row(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Container(
+              color: Colors.white.withOpacity(0.2),
+              child: Center(
+                child: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop("true");
+                      // Navigator.of(context).pop();
+                    }),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 6,
+            child: Container(
+                padding: EdgeInsets.only(left: space_25),
+                child: Text(
+                  title,
+                  style: CommonStyles.getMontserratStyle(
+                      space_15, FontWeight.w500, Colors.white),
+                )),
+          )
+        ],
+      ),
+    );
+  }
+}
 
 class PostAdCategoryGridWidget extends StatelessWidget {
   GetCategoryResponse mGetCategoryResponse;

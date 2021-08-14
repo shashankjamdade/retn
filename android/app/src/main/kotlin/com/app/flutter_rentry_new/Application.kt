@@ -10,6 +10,10 @@ class Application : FlutterApplication(), PluginRegistrantCallback {
     override fun onCreate() {
         super.onCreate()
         FlutterFirebaseMessagingService.setPluginRegistrant(this)
+
+        /*Following will generate the hash code*/
+        var appSignature = AppSignatureHelper(this)
+        appSignature.appSignatures
     }
 
     override fun registerWith(registry: PluginRegistry) {

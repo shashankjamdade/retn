@@ -182,6 +182,7 @@ class AuthenticationRepository extends BaseRepository {
       // updateUserData(user);
       debugPrint("Firebase_APPLE_LOGIN ${user?.email}");
       debugPrint("Firebase_APPLE_LOGIN_name ${user?.displayName}");
+      debugPrint("Firebase_APPLE_LOGIN_id ${user?.uid}");
       return user;
     } catch (error) {
       print(error);

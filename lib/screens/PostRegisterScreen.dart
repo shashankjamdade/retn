@@ -27,6 +27,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:gson/gson.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sms_autofill/sms_autofill.dart';
+import 'package:sms_receiver/sms_receiver.dart';
 
 import 'DashboardScreen.dart';
 import 'LoginScreen.dart';
@@ -51,7 +53,7 @@ class PostRegisterScreen extends StatefulWidget {
   _PostRegisterScreenState createState() => _PostRegisterScreenState();
 }
 
-class _PostRegisterScreenState extends State<PostRegisterScreen> {
+class _PostRegisterScreenState extends State<PostRegisterScreen> with CodeAutoFill{
   final formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   FocusNode _focusNode = new FocusNode();
@@ -72,6 +74,7 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
   bool _obscureText2 = true;
   bool mHavReferalCode = false;
   bool mIsAlreadyRegisted = true;
+  String appSignature;
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String _message = '';
@@ -97,17 +100,33 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
     //Add Listener to know when is updated focus
     _focusNode.addListener(_onLoginUserNameFocusChange);
     referralCodeController = TextEditingController();
-    otpController = TextEditingController();
+    otpController = TextEditingController(text: mOTP);
     fullnameController = TextEditingController(text: widget.name);
     emailController = TextEditingController(text: widget.email);
     mIsAlreadyRegisted = widget.isRegistered;
     _register();
+    SmsAutoFill().getAppSignature.then((signature) {
+      debugPrint("SMS_HSHHHH -->> ${signature}");
+      setState(() {
+        appSignature = signature;
+      });
+      // Fluttertoast.showToast(
+      //     msg: "${signature}",
+      //     toastLength: Toast.LENGTH_SHORT,
+      //     gravity: ToastGravity.BOTTOM,
+      //     timeInSecForIosWeb: 1,
+      //     backgroundColor: Colors.black,
+      //     textColor: Colors.white,
+      //     fontSize: space_14);
+    });
   }
+
 
   @override
   void dispose() {
     //Dispose Listener to know when is updated focus
     _focusNode.addListener(_onLoginUserNameFocusChange);
+    cancel();
     super.dispose();
   }
 
@@ -127,6 +146,8 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
           cubit: authenticationBloc,
           listener: (context, state) {
             if (state is SendOtpAuthState) {
+              // listenOtp();
+              listenForCode();
               if (state.res != null &&
                   state.res.msg != null &&
                   state.res.msg.toString().isNotEmpty) {
@@ -182,6 +203,9 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
               if (state.res.status) {
                 storeResInPrefs(context, state.res);
               }
+            }else if(state is InitialAuthenticationState){
+              // listenOtp();
+              listenForCode();
             }
           },
           child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
@@ -199,6 +223,12 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
           ),
         ));
   }
+
+  // listenOtp() async{
+  //   await SmsAutoFill().listenForCode;
+  //   var signature = await SmsAutoFill().getAppSignature;
+  //   debugPrint("SMS_HASH_FLUTTER----> ${signature}");
+  // }
 
   Widget getSignupForm({bool showProgress = false}) {
     return Scaffold(
@@ -278,7 +308,7 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
                               primary: false,
                               children: [
                                 (widget?.socialId != null &&
-                                        widget?.socialId != null)
+                                        widget?.socialId != null && fullnameController.text!=null && fullnameController.text.trim().isNotEmpty)
                                     ? Container(
                                         height: 0,
                                         width: 0,
@@ -509,5 +539,14 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> {
     } catch (e) {
       debugPrint("EXCEPTION in Loginscreen in storeResInPrefs ${e.toString()}");
     }
+  }
+
+  @override
+  void codeUpdated() {
+    debugPrint("OTP detected ${code}");
+    setState(() {
+      mOTP = code;
+      otpController = TextEditingController(text: mOTP);
+    });
   }
 }

@@ -527,9 +527,23 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
       if (pickedFile != null && pickedFile.path != null) {
         File rotatedImage = await FlutterExifRotation.rotateImage(path: pickedFile.path);
         if (pickedFile != null) {
-          rotatedImage.length().then((value) => debugPrint("FILESIZE--> ${value}"));
-          setState(() {
-            _image = rotatedImage;
+          rotatedImage.length().then((value){
+            debugPrint("FILESIZE--> ${value}");
+            var filesize = value/1000;
+            if(filesize<4000){
+              setState(() {
+                _image = rotatedImage;
+              });
+            }else{
+              Fluttertoast.showToast(
+                  msg: "Please select image less than 4mb size",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                  fontSize: space_14);
+            }
           });
         }
       }
@@ -584,6 +598,7 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
         }
       });
     }catch(e, stacktrace){
+      debugPrint("INSIDE_EXCEPTION--> ${e?.toString()} , ${stacktrace?.toString()}");
       Fluttertoast.showToast(
           msg: "EXception ${e.toString()}",
           toastLength: Toast.LENGTH_SHORT,

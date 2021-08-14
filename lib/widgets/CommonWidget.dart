@@ -3090,11 +3090,11 @@ class PackageCardWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "STATER",
-            style: CommonStyles.getRalewayStyle(
-                space_13, FontWeight.w600, Colors.white),
-          ),
+          // Text(
+          //   "STATER",
+          //   style: CommonStyles.getRalewayStyle(
+          //       space_13, FontWeight.w600, Colors.white),
+          // ),
           Text(
             "${getAllPackageData.title}",
             maxLines: 2,

@@ -121,7 +121,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               // CommonAppbarWidget(app_name, skip_for_now, () {
               //   onSearchLocation(context);
               // }),
-              PostAdsCommonAppbar(title: "Edit Profile"),
+              PostAdsCommonAppbar2(title: "Edit Profile"),
               (state is ProgressState)
                   ? Expanded(
                       child: Container(
