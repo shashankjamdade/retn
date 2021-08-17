@@ -208,6 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
         // }
       } else {
         //Show dialog for location permission
+        openLocationSettings();
       }
     } catch (e) {
       debugPrint("EXCEPTION in Loginscreen in storeResInPrefs ${e.toString()}");

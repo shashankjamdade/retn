@@ -28,7 +28,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:gson/gson.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sms_autofill/sms_autofill.dart';
-import 'package:sms_receiver/sms_receiver.dart';
 
 import 'DashboardScreen.dart';
 import 'LoginScreen.dart';
@@ -104,6 +103,7 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> with CodeAutoFi
     fullnameController = TextEditingController(text: widget.name);
     emailController = TextEditingController(text: widget.email);
     mIsAlreadyRegisted = widget.isRegistered;
+    fetchLocation();
     _register();
     SmsAutoFill().getAppSignature.then((signature) {
       debugPrint("SMS_HSHHHH -->> ${signature}");
@@ -492,7 +492,19 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> with CodeAutoFi
   void storeResInPrefs(BuildContext context, LoginResponse res) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      Position position =
+      prefs.setString(USER_LOGIN_RES, jsonEncode(res));
+      prefs.setString(USER_NAME, res.data.username);
+      prefs.setString(USER_MOBILE, res.data.contact);
+      prefs.setString(USER_EMAIL, res.data.email);
+      prefs.setBool(IS_LOGGEDIN, true);
+      debugPrint(
+          "PREFS_STORED_LOGIN-----> ${prefs.getString(USER_LOCATION_ADDRESS)}");
+      StateContainer.of(context).updateUserInfo(res);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+     /* Position position =
           await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       LocationPermission permission = await checkPermission();
       if (permission == LocationPermission.always ||
@@ -535,9 +547,52 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> with CodeAutoFi
         );
       } else {
         //Show dialog for location permission
-      }
+      }*/
     } catch (e) {
       debugPrint("EXCEPTION in Loginscreen in storeResInPrefs ${e.toString()}");
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    }
+  }
+
+  fetchLocation() async{
+    try{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      Position position =
+      await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      LocationPermission permission = await checkPermission();
+      if (permission == LocationPermission.always ||
+          permission == LocationPermission.whileInUse) {
+        prefs.setString(USER_LOCATION_LAT, "${position.latitude}");
+        prefs.setString(USER_LOCATION_LONG, "${position.longitude}");
+        debugPrint(
+            "LOCATION_FOUND ${position.latitude}, ${position.longitude}");
+        //access address from lat lng
+        final coordinates =
+        new Coordinates(position.latitude, position.longitude);
+        var addresses =
+        await Geocoder.local.findAddressesFromCoordinates(coordinates);
+        var first = addresses.first;
+        UserLocationSelected userLocationSelected = new UserLocationSelected(
+            address: first.addressLine,
+            city: first.locality,
+            state: first.adminArea,
+            coutry: first.countryName,
+            mlat: position.latitude.toString(),
+            mlng: position.longitude.toString());
+        StateContainer.of(context).updateUserLocation(userLocationSelected);
+        prefs.setString(USER_LOCATION_ADDRESS, "${first.addressLine}");
+        prefs.setString(USER_LOCATION_CITY, "${first.locality}");
+        prefs.setString(USER_LOCATION_STATE, "${first.adminArea}");
+        prefs.setString(USER_LOCATION_PINCODE, "${first.postalCode}");
+        print("@@@@-------${first} ${first.addressLine} : ${first.adminArea}");
+      } else {
+        //Show dialog for location permission
+      }
+    } catch (e) {
+
     }
   }
 

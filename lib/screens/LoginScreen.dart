@@ -46,8 +46,8 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController mobileEmailController;
   TextEditingController passwordController;
   AuthenticationBloc authenticationBloc = new AuthenticationBloc();
-  final GoogleSignIn googleSignIn = new GoogleSignIn(
-      scopes: ['profile', 'email']);
+  final GoogleSignIn googleSignIn =
+      new GoogleSignIn(scopes: ['profile', 'email']);
   String mName = "";
   String mEmail = "";
   String mSocialId = "";
@@ -67,8 +67,10 @@ class _LoginScreenState extends State<LoginScreen> {
       mEmail = googleUsr.email;
       mSocialId = googleUsr.id;
       authenticationBloc
-        ..add(SocialLoginReqAuthenticationEvent(social_id: googleUsr.id,
-            emailOrMobile: googleUsr.email, deviceToken: mFcmToken));
+        ..add(SocialLoginReqAuthenticationEvent(
+            social_id: googleUsr.id,
+            emailOrMobile: googleUsr.email,
+            deviceToken: mFcmToken));
     } catch (err) {
       print("EXCEPTION ${err}");
     }
@@ -84,17 +86,16 @@ class _LoginScreenState extends State<LoginScreen> {
               style: CommonStyles.getRalewayStyle(
                   space_12, FontWeight.w400, Colors.black),
               children: <TextSpan>[
-                TextSpan(
-                    text: 'Rentozo Terms and Conditions',
-                    style: CommonStyles.getMontserratDecorationStyle(space_12,
-                        FontWeight.w400, Colors.black,
-                        TextDecoration.underline),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        launchURL(
-                            "https://rentozo.com/home/page/terms-and-conditions");
-                      })
-              ]))),
+            TextSpan(
+                text: 'Rentozo Terms and Conditions',
+                style: CommonStyles.getMontserratDecorationStyle(space_12,
+                    FontWeight.w400, Colors.black, TextDecoration.underline),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    launchURL(
+                        "https://rentozo.com/home/page/terms-and-conditions");
+                  })
+          ]))),
     );
   }
 
@@ -103,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (token != null && token?.isNotEmpty) {
         mFcmToken = token;
         debugPrint("FCM_TOKEN GETTOKEN -> ${mFcmToken}");
-        if(isLoginbtnPressed){
+        if (isLoginbtnPressed) {
           onLogin();
         }
       }
@@ -112,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (token != null && token?.isNotEmpty) {
         mFcmToken = token;
         debugPrint("FCM_TOKEN REFRESH -> ${mFcmToken}");
-        if(isLoginbtnPressed){
+        if (isLoginbtnPressed) {
           onLogin();
         }
       }
@@ -129,6 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
     passwordController = TextEditingController();
     storeResInPrefs(context, null, false);
     _register();
+    fetchLocation();
   }
 
   @override
@@ -147,26 +149,33 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-      authenticationBloc..add(InitialAuthenticationEvent()),
+          authenticationBloc..add(InitialAuthenticationEvent()),
       child: BlocListener(
         cubit: authenticationBloc,
         listener: (context, state) {
           if (state is SendOtpAuthState) {
             if (state.res != null &&
                 state.res.msg != null &&
-                state.res.msg
-                    .toString()
-                    .isNotEmpty) {
-              showSnakbar(_scaffoldKey, state.res.msg);
+                state.res.msg.toString().isNotEmpty) {
+              Fluttertoast.showToast(
+                  msg: state.res.msg,
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                  fontSize: space_14);
+              // showSnakbar(_scaffoldKey, state.res.msg);
             }
             if (state.res != null && state.res.data != null) {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) =>
-                    PostRegisterScreen(
-                      mobile: mobileEmailController.text.trim(),
-                      fcmToken: mFcmToken,
-                      isRegistered: state.res.data.is_registered,)),
+                MaterialPageRoute(
+                    builder: (context) => PostRegisterScreen(
+                          mobile: mobileEmailController.text.trim(),
+                          fcmToken: mFcmToken,
+                          isRegistered: state.res.data.is_registered,
+                        )),
               );
             }
           } else if (state is LoginResAuthenticationState) {
@@ -178,7 +187,12 @@ class _LoginScreenState extends State<LoginScreen> {
                */
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => PostSocialLoginScreen(name: mName, email: mEmail, socialId: mSocialId,)),
+                MaterialPageRoute(
+                    builder: (context) => PostSocialLoginScreen(
+                          name: mName,
+                          email: mEmail,
+                          socialId: mSocialId,
+                        )),
               );
             }
             showSnakbar(_scaffoldKey, state.res.message);
@@ -213,65 +227,67 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void storeResInPrefs(BuildContext context, LoginResponse res,
-      bool isPostLogin) async {
+  void storeResInPrefs(
+      BuildContext context, LoginResponse res, bool isPostLogin) async {
     try {
+      if (StateContainer.of(context).mUserLocationSelected != null) {}
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      Position position =
-      await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      LocationPermission permission = await checkPermission();
-      if (permission == LocationPermission.always ||
-          permission == LocationPermission.whileInUse) {
-        prefs.setString(USER_LOCATION_LAT, "${position.latitude}");
-        prefs.setString(USER_LOCATION_LONG, "${position.longitude}");
-        debugPrint(
-            "LOCATION_FOUND ${position.latitude}, ${position.longitude}");
-        //access address from lat lng
-        final coordinates =
-        new Coordinates(position.latitude, position.longitude);
-        var addresses =
-        await Geocoder.local.findAddressesFromCoordinates(coordinates);
-        var first = addresses.first;
-        UserLocationSelected userLocationSelected = new UserLocationSelected(
-            address: first.addressLine,
-            city: first.locality,
-            state: first.adminArea,
-            coutry: first.countryName,
-            mlat: position.latitude.toString(),
-            mlng: position.longitude.toString());
-        StateContainer.of(context).updateUserLocation(userLocationSelected);
-        prefs.setString(USER_LOCATION_ADDRESS, "${first.addressLine}");
-        prefs.setString(USER_LOCATION_CITY, "${first.locality}");
-        prefs.setString(USER_LOCATION_STATE, "${first.adminArea}");
-        prefs.setString(USER_LOCATION_PINCODE, "${first.postalCode}");
-        print("@@@@-------${first} ${first.addressLine} : ${first.adminArea}");
-
-        if (isPostLogin) {
-          prefs.setString(USER_NAME, res.data.username);
-          prefs.setString(USER_MOBILE, res.data.contact);
-          prefs.setString(USER_EMAIL, res.data.email);
-          prefs.setBool(IS_LOGGEDIN, true);
+      if (!isPostLogin) {
+        Position position =
+        await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+        LocationPermission permission = await checkPermission();
+        if (permission == LocationPermission.always ||
+            permission == LocationPermission.whileInUse) {
+          prefs.setString(USER_LOCATION_LAT, "${position.latitude}");
+          prefs.setString(USER_LOCATION_LONG, "${position.longitude}");
           debugPrint(
-              "PREFS_STORED_LOGIN-----> ${prefs.getString(
-                  USER_LOCATION_ADDRESS)}");
-          prefs.setString(USER_LOGIN_RES, jsonEncode(res));
-          StateContainer.of(context).updateUserInfo(res);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
-          );
+              "LOCATION_FOUND ${position.latitude}, ${position.longitude}");
+          //access address from lat lng
+          final coordinates =
+          new Coordinates(position.latitude, position.longitude);
+          var addresses =
+          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+          var first = addresses.first;
+          UserLocationSelected userLocationSelected = new UserLocationSelected(
+              address: first.addressLine,
+              city: first.locality,
+              state: first.adminArea,
+              coutry: first.countryName,
+              mlat: position.latitude.toString(),
+              mlng: position.longitude.toString());
+          StateContainer.of(context).updateUserLocation(userLocationSelected);
+          prefs.setString(USER_LOCATION_ADDRESS, "${first.addressLine}");
+          prefs.setString(USER_LOCATION_CITY, "${first.locality}");
+          prefs.setString(USER_LOCATION_STATE, "${first.adminArea}");
+          prefs.setString(USER_LOCATION_PINCODE, "${first.postalCode}");
+          print("@@@@-------${first} ${first.addressLine} : ${first.adminArea}");
+        } else {
+          //Show dialog for location permission
+          Fluttertoast.showToast(
+              msg: "Please enable location permission to continue...",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+              fontSize: space_14);
+          openAppSettings();
         }
-      } else {
-        //Show dialog for location permission
-        Fluttertoast.showToast(
-            msg: "Please enable location permission to continue...",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black,
-            textColor: Colors.white,
-            fontSize: space_14);
-        openAppSettings();
+      }
+
+      if (isPostLogin) {
+        prefs.setString(USER_NAME, res.data.username);
+        prefs.setString(USER_MOBILE, res.data.contact);
+        prefs.setString(USER_EMAIL, res.data.email);
+        prefs.setBool(IS_LOGGEDIN, true);
+        debugPrint(
+            "PREFS_STORED_LOGIN-----> ${prefs.getString(USER_LOCATION_ADDRESS)}");
+        prefs.setString(USER_LOGIN_RES, jsonEncode(res));
+        StateContainer.of(context).updateUserInfo(res);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
       }
     } catch (e) {
       debugPrint("EXCEPTION in Loginscreen in storeResInPrefs ${e.toString()}");
@@ -301,7 +317,7 @@ class _LoginScreenState extends State<LoginScreen> {
             _scaffoldKey, "Something went wrong, please try again later");
         return getLoginForm(context, showProgress: false);
       }
-    }else{
+    } else {
       return getLoginForm(context, showProgress: false);
     }
   }
@@ -312,187 +328,195 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: Container(
             child: Stack(
+          children: [
+            Column(
               children: [
-                Column(
-                  children: [
-                    AuthPageHeaderWidget(app_name, skip_for_now, skipFun),
-                    Expanded(
-                      child: Stack(
+                AuthPageHeaderWidget(app_name, skip_for_now, skipFun),
+                Expanded(
+                  child: Stack(
+                    children: [
+                      ListView(
                         children: [
-                          ListView(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(
-                                    left: space_15,
-                                    right: space_15,
-                                    top: space_70),
-                                child: Form(
-                                  key: formKey,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment
-                                        .center,
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Text(
-                                          "Login and Start renting to save and earn",
-                                          style: CommonStyles.getRalewayStyle(
-                                              space_15,
-                                              FontWeight.w500,
-                                              CommonStyles.blue),
+                          Container(
+                            margin: EdgeInsets.only(
+                                left: space_15, right: space_15, top: space_70),
+                            child: Form(
+                              key: formKey,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Text(
+                                      "Login and Start renting to save and earn",
+                                      style: CommonStyles.getRalewayStyle(
+                                          space_15,
+                                          FontWeight.w500,
+                                          CommonStyles.blue),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: space_20,
+                                  ),
+                                  TextInputWidget(
+                                      mobileEmailController, "Mobile no", false,
+                                      (String value) {
+                                    if (value.isEmpty) {
+                                      return "Please enter valid email/mobile";
+                                    }
+                                  }, TextInputType.number),
+                                  SizedBox(
+                                    height: getProportionateScreenHeight(
+                                        context, space_20),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(right: space_1),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: <Widget>[
+                                        Checkbox(
+                                          value: mCheckedTnC,
+                                          activeColor:
+                                              CommonStyles.primaryColor,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              mCheckedTnC = value;
+                                            });
+                                          },
                                         ),
-                                      ),
-                                      SizedBox(
-                                        height: space_20,
-                                      ),
-                                      TextInputWidget(
-                                          mobileEmailController,
-                                          "Mobile no",
-                                          false, (String value) {
-                                        if (value.isEmpty) {
-                                          return "Please enter valid email/mobile";
-                                        }
-                                      }, TextInputType.number),
-                                      SizedBox(
-                                        height: getProportionateScreenHeight(
-                                            context, space_20),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            right: space_1),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment
-                                              .start,
-                                          children: <Widget>[
-                                            Checkbox(
-                                              value: mCheckedTnC,
-                                              activeColor: CommonStyles
-                                                  .primaryColor,
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  mCheckedTnC = value;
-                                                });
-                                              },
-                                            ),
-                                            Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: privacyPolicyLinkAndTermsOfService(),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: getProportionateScreenHeight(
-                                            context, space_20),),
-                                      InkWell(
-                                        onTap: () {
-                                          onLogin();
-                                        },
-                                        child: Center(child: Container(
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child:
+                                              privacyPolicyLinkAndTermsOfService(),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: getProportionateScreenHeight(
+                                        context, space_20),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      onLogin();
+                                    },
+                                    child: Center(
+                                        child: Container(
                                             padding: EdgeInsets.symmetric(
                                                 vertical: space_10,
                                                 horizontal: space_15),
                                             decoration: BoxDecoration(
-                                                color: CommonStyles.primaryColor
-                                            ),
+                                                color:
+                                                    CommonStyles.primaryColor),
                                             child: Text(
-                                              "Continue", style: CommonStyles
-                                                .getMontserratStyle(
-                                                space_14, FontWeight.w600,
-                                                Colors.white),))),
-                                      ),
-                                      SizedBox(
-                                        height: getProportionateScreenHeight(
-                                            context, space_20),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
+                                              "Continue",
+                                              style: CommonStyles
+                                                  .getMontserratStyle(
+                                                      space_14,
+                                                      FontWeight.w600,
+                                                      Colors.white),
+                                            ))),
+                                  ),
+                                  SizedBox(
+                                    height: getProportionateScreenHeight(
+                                        context, space_20),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Expanded(
-                                              child: IconButtonWidget(
-                                                  "Login with fb",
-                                                  "assets/images/facebook.png",
-                                                  CommonStyles.blue, () {
-                                                onSocialLogin("fb", context);
-                                              })),
-                                          Expanded(
-                                              child: IconButtonWidget(
-                                                  "Login with Google",
-                                                  "assets/images/google.png",
-                                                  CommonStyles.darkAmber, () {
-                                                onSocialLogin(
-                                                    "google", context);
-                                              })),
-                                        ],
-                                      ),
-                                      Platform.isIOS ? SizedBox(
-                                        height: getProportionateScreenHeight(
-                                            context, space_25),
-                                      ) : Container(height: 0, width: 0,),
-                                      Platform.isIOS ? AppleSignInButton(
-                                          onPressed: () async {
-                                            bool isAvailable = true;
-                                            var flag = AuthenticationRepository()
-                                                .appleSignInAvailable
-                                                .then((value) {
-                                              debugPrint(
-                                                  "NOT CAPABLE ${value}");
-                                            });
-
-                                            if (isAvailable) {
-                                              User user =
-                                              await AuthenticationRepository()
-                                                  .appleSignIn();
-                                              if (user != null &&
-                                                  user?.email != null &&
-                                                  authenticationBloc != null) {
-                                                mName = user?.displayName;
-                                                mEmail = user?.email;
-                                                mSocialId = user?.uid;
-                                                authenticationBloc
-                                                  ..add(
-                                                      SocialLoginReqAuthenticationEvent(
-                                                          social_id: user
-                                                              ?.uid,
-                                                          emailOrMobile: user
-                                                              ?.email,
-                                                          deviceToken: mFcmToken));
-                                              } else {
-                                                showSnakbar(_scaffoldKey,
-                                                    "Email ID missing");
-                                              }
-                                            } else {
-                                              showSnakbar(_scaffoldKey,
-                                                  "Something went wrong, please try again!");
-                                            }
-                                          }) : Container(height: 0, width: 0,),
-                                      SizedBox(
-                                        height: getProportionateScreenHeight(
-                                            context, space_25),
-                                      ),
+                                    children: [
+                                      Expanded(
+                                          child: IconButtonWidget(
+                                              "Login with fb",
+                                              "assets/images/facebook.png",
+                                              CommonStyles.blue, () {
+                                        onSocialLogin("fb", context);
+                                      })),
+                                      Expanded(
+                                          child: IconButtonWidget(
+                                              "Login with Google",
+                                              "assets/images/google.png",
+                                              CommonStyles.darkAmber, () {
+                                        onSocialLogin("google", context);
+                                      })),
                                     ],
                                   ),
-                                ),
+                                  Platform.isIOS
+                                      ? SizedBox(
+                                          height: getProportionateScreenHeight(
+                                              context, space_25),
+                                        )
+                                      : Container(
+                                          height: 0,
+                                          width: 0,
+                                        ),
+                                  Platform.isIOS
+                                      ? AppleSignInButton(onPressed: () async {
+                                          bool isAvailable = true;
+                                          var flag = AuthenticationRepository()
+                                              .appleSignInAvailable
+                                              .then((value) {
+                                            debugPrint("NOT CAPABLE ${value}");
+                                          });
+
+                                          if (isAvailable) {
+                                            User user =
+                                                await AuthenticationRepository()
+                                                    .appleSignIn();
+                                            if (user != null &&
+                                                user?.email != null &&
+                                                authenticationBloc != null) {
+                                              mName = user?.displayName;
+                                              mEmail = user?.email;
+                                              mSocialId = user?.uid;
+                                              authenticationBloc
+                                                ..add(
+                                                    SocialLoginReqAuthenticationEvent(
+                                                        social_id: user?.uid,
+                                                        emailOrMobile:
+                                                            user?.email,
+                                                        deviceToken:
+                                                            mFcmToken));
+                                            } else {
+                                              showSnakbar(_scaffoldKey,
+                                                  "Email ID missing");
+                                            }
+                                          } else {
+                                            showSnakbar(_scaffoldKey,
+                                                "Something went wrong, please try again!");
+                                          }
+                                        })
+                                      : Container(
+                                          height: 0,
+                                          width: 0,
+                                        ),
+                                  SizedBox(
+                                    height: getProportionateScreenHeight(
+                                        context, space_25),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                showProgress
-                    ? Center(
-                  child: CircularProgressIndicator(),
-                )
-                    : Container(
-                  height: space_0,
-                  width: space_0,
-                )
               ],
-            )),
+            ),
+            showProgress
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Container(
+                    height: space_0,
+                    width: space_0,
+                  )
+          ],
+        )),
       ),
     );
   }
@@ -513,21 +537,18 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void onLogin() {
-    if (mobileEmailController.text
-        .trim()
-        .isEmpty) {
+    if (mobileEmailController.text.trim().isEmpty) {
       showSnakbar(_scaffoldKey, empty_username);
-    } else if (mFcmToken == null || mFcmToken
-        .trim()
-        .isEmpty) {
+    } else if (mFcmToken == null || mFcmToken.trim().isEmpty) {
       isLoginbtnPressed = true;
       _register();
       // showSnakbar(_scaffoldKey, fcm_token_missing);
     } else {
       //API hit
       debugPrint("CHECK_TOKEN --> ${mFcmToken}");
-      authenticationBloc..add(SendOtpV1AuthEvent(
-          contact: mobileEmailController.text.trim(), otpType: "login"));
+      authenticationBloc
+        ..add(SendOtpV1AuthEvent(
+            contact: mobileEmailController.text.trim(), otpType: "login"));
     }
   }
 
@@ -549,5 +570,42 @@ class _LoginScreenState extends State<LoginScreen> {
       context,
       MaterialPageRoute(builder: (context) => HomeScreen()),
     );
+  }
+
+  fetchLocation() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      Position position =
+          await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      LocationPermission permission = await checkPermission();
+      if (permission == LocationPermission.always ||
+          permission == LocationPermission.whileInUse) {
+        prefs.setString(USER_LOCATION_LAT, "${position.latitude}");
+        prefs.setString(USER_LOCATION_LONG, "${position.longitude}");
+        debugPrint(
+            "LOCATION_FOUND ${position.latitude}, ${position.longitude}");
+        //access address from lat lng
+        final coordinates =
+            new Coordinates(position.latitude, position.longitude);
+        var addresses =
+            await Geocoder.local.findAddressesFromCoordinates(coordinates);
+        var first = addresses.first;
+        UserLocationSelected userLocationSelected = new UserLocationSelected(
+            address: first.addressLine,
+            city: first.locality,
+            state: first.adminArea,
+            coutry: first.countryName,
+            mlat: position.latitude.toString(),
+            mlng: position.longitude.toString());
+        StateContainer.of(context).updateUserLocation(userLocationSelected);
+        prefs.setString(USER_LOCATION_ADDRESS, "${first.addressLine}");
+        prefs.setString(USER_LOCATION_CITY, "${first.locality}");
+        prefs.setString(USER_LOCATION_STATE, "${first.adminArea}");
+        prefs.setString(USER_LOCATION_PINCODE, "${first.postalCode}");
+        print("@@@@-------${first} ${first.addressLine} : ${first.adminArea}");
+      } else {
+        //Show dialog for location permission
+      }
+    } catch (e) {}
   }
 }

@@ -8,6 +8,7 @@ import 'package:flutter_rentry_new/model/get_category_response.dart';
 import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ChooseCategoryScreen extends StatefulWidget {
   @override
@@ -60,35 +61,75 @@ class _ChooseCategoryScreenState extends State<ChooseCategoryScreen> {
   }
 
   getScreenUI(GetCategoryResponse mGetCategoryResponse) {
-    return SafeArea(
-      child: Scaffold(
-        body: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              PostAdsCommonAppbar(title: "What are you offering?"),
-              Padding(
-                padding: EdgeInsets.only(
-                    left: space_15, top: space_20, bottom: space_20),
-                child: Text(
-                  "CHOOSE YOUR CATEGORY",
-                  style: CommonStyles.getMontserratStyle(
-                      space_14, FontWeight.w800, CommonStyles.blue),
+    if(mGetCategoryResponse?.status){
+      return SafeArea(
+        child: Scaffold(
+          body: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                PostAdsCommonAppbar(title: "What are you offering?"),
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: space_15, top: space_20, bottom: space_20),
+                  child: Text(
+                    "CHOOSE YOUR CATEGORY",
+                    style: CommonStyles.getMontserratStyle(
+                        space_14, FontWeight.w800, CommonStyles.blue),
+                  ),
                 ),
-              ),
-              Expanded(
-                child: ListView(
-                  shrinkWrap: true,
-                  primary: true,
-                  children: [
-                    PostAdCategoryGridWidget(mGetCategoryResponse),
-                  ],
-                ),
-              )
-            ],
+                Expanded(
+                  child: ListView(
+                    shrinkWrap: true,
+                    primary: true,
+                    children: [
+                      PostAdCategoryGridWidget(mGetCategoryResponse),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    }else{
+      Fluttertoast.showToast(
+          msg: mGetCategoryResponse?.message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: space_14);
+      return SafeArea(
+        child: Scaffold(
+          body: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                PostAdsCommonAppbar(title: "What are you offering?"),
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: space_15, top: space_20, bottom: space_20),
+                  child: Text(
+                    "CHOOSE YOUR CATEGORY",
+                    style: CommonStyles.getMontserratStyle(
+                        space_14, FontWeight.w800, CommonStyles.blue),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    color: Colors.white,
+                    child: Center(
+                      child: Text(mGetCategoryResponse?.message, style: CommonStyles.getMontserratStyle(space_14, FontWeight.w500, Colors.black),),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 import 'package:flutter_rentry_new/model/AdPostReqModel.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_rentry_new/utils/CommonStyles.dart';
 import 'package:flutter_rentry_new/utils/Constants.dart';
 import 'package:flutter_rentry_new/utils/size_config.dart';
 import 'package:flutter_rentry_new/widgets/PostAdsCommonWidget.dart';
+import 'package:flutter_rentry_new/widgets/take_picture_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -519,20 +521,36 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
     });*/
   }
 
+  Future<File> getFileFromPath(String filepath) async {
+    final path = await filepath;
+    return File('$path');
+  }
+
   Future getImageCamera(String imgType) async {
     File _image;
     try{
-      final pickedFile = await picker.getImage(source: ImageSource.camera, imageQuality: 70,
-      maxHeight: 400, maxWidth: 400);
+      // final pickedFile = await picker.getImage(source: ImageSource.camera, imageQuality: 70,
+      // maxHeight: 400, maxWidth: 400);
+      final cameras = await availableCameras();
+      final camera = cameras.first;
+      var pickedFilePath = await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => TakePicturePage(camera: camera)));
+      debugPrint("IMG_PATH1-->> ${pickedFilePath}");
+      var pickedFile = pickedFilePath!=null?File(pickedFilePath):null;
+      debugPrint("IMG_PATH-->> ${pickedFile}");
       if (pickedFile != null && pickedFile.path != null) {
         File rotatedImage = await FlutterExifRotation.rotateImage(path: pickedFile.path);
         if (pickedFile != null) {
           rotatedImage.length().then((value){
             debugPrint("FILESIZE--> ${value}");
             var filesize = value/1000;
+            debugPrint("FILESIZE_CHECK--> ${filesize}, ${filesize<4000}, ${rotatedImage}");
             if(filesize<4000){
               setState(() {
                 _image = rotatedImage;
+                populateImg(_image, imgType);
               });
             }else{
               Fluttertoast.showToast(
@@ -547,56 +565,6 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
           });
         }
       }
-      setState(() {
-        if (_image != null) {
-          if (imgType == "img1") {
-            _image1 = File(_image.path);
-            debugPrint("FILE_SELECTED ${_image1.path}");
-//            Fluttertoast.showToast(
-//                msg: "Success ${_image1.path}",
-//                toastLength: Toast.LENGTH_SHORT,
-//                gravity: ToastGravity.BOTTOM,
-//                timeInSecForIosWeb: 1,
-//                backgroundColor: Colors.black,
-//                textColor: Colors.white,
-//                fontSize: space_14);
-          } else if (imgType == "img2") {
-            _image2 = File(_image.path);
-            debugPrint("FILE_SELECTED ${_image2.path}");
-//            Fluttertoast.showToast(
-//                msg: "Success ${_image2.path}",
-//                toastLength: Toast.LENGTH_SHORT,
-//                gravity: ToastGravity.BOTTOM,
-//                timeInSecForIosWeb: 1,
-//                backgroundColor: Colors.black,
-//                textColor: Colors.white,
-//                fontSize: space_14);
-          } else if (imgType == "img3") {
-            _image3 = File(_image.path);
-            debugPrint("FILE_SELECTED ${_image3.path}");
-//            Fluttertoast.showToast(
-//                msg: "Success ${_image3.path}",
-//                toastLength: Toast.LENGTH_SHORT,
-//                gravity: ToastGravity.BOTTOM,
-//                timeInSecForIosWeb: 1,
-//                backgroundColor: Colors.black,
-//                textColor: Colors.white,
-//                fontSize: space_14);
-          }
-          mSelectedImg = "";
-        } else {
-          mSelectedImg = "";
-          print('No image selected.');
-          Fluttertoast.showToast(
-              msg: "Cancelled",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.black,
-              textColor: Colors.white,
-              fontSize: space_14);
-        }
-      });
     }catch(e, stacktrace){
       debugPrint("INSIDE_EXCEPTION--> ${e?.toString()} , ${stacktrace?.toString()}");
       Fluttertoast.showToast(
@@ -608,6 +576,59 @@ class _UploadProductImgScreenState extends State<UploadProductImgScreen> {
           textColor: Colors.white,
           fontSize: space_14);
     }
+  }
+
+  populateImg(File _image, String imgType){
+    setState(() {
+      if (_image != null) {
+        if (imgType == "img1") {
+          _image1 = File(_image.path);
+          debugPrint("FILE_SELECTED ${_image1.path}");
+//            Fluttertoast.showToast(
+//                msg: "Success ${_image1.path}",
+//                toastLength: Toast.LENGTH_SHORT,
+//                gravity: ToastGravity.BOTTOM,
+//                timeInSecForIosWeb: 1,
+//                backgroundColor: Colors.black,
+//                textColor: Colors.white,
+//                fontSize: space_14);
+        } else if (imgType == "img2") {
+          _image2 = File(_image.path);
+          debugPrint("FILE_SELECTED ${_image2.path}");
+//            Fluttertoast.showToast(
+//                msg: "Success ${_image2.path}",
+//                toastLength: Toast.LENGTH_SHORT,
+//                gravity: ToastGravity.BOTTOM,
+//                timeInSecForIosWeb: 1,
+//                backgroundColor: Colors.black,
+//                textColor: Colors.white,
+//                fontSize: space_14);
+        } else if (imgType == "img3") {
+          _image3 = File(_image.path);
+          debugPrint("FILE_SELECTED ${_image3.path}");
+//            Fluttertoast.showToast(
+//                msg: "Success ${_image3.path}",
+//                toastLength: Toast.LENGTH_SHORT,
+//                gravity: ToastGravity.BOTTOM,
+//                timeInSecForIosWeb: 1,
+//                backgroundColor: Colors.black,
+//                textColor: Colors.white,
+//                fontSize: space_14);
+        }
+        mSelectedImg = "";
+      } else {
+        mSelectedImg = "";
+        print('No image selected.');
+        Fluttertoast.showToast(
+            msg: "Cancelled",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: space_14);
+      }
+    });
   }
 
   _getImageList(String imgType) async {

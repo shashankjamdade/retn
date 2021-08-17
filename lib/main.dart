@@ -24,6 +24,7 @@ import 'package:flutter_rentry_new/screens/ChatHomeScreen.dart';
 import 'package:flutter_rentry_new/screens/CouponListScreen.dart';
 import 'package:flutter_rentry_new/screens/EditProfileScreen.dart';
 import 'package:flutter_rentry_new/screens/HomeScreen.dart';
+import 'package:flutter_rentry_new/screens/LaunchScreen.dart';
 import 'package:flutter_rentry_new/screens/LoginScreen.dart';
 import 'package:flutter_rentry_new/screens/MyFavScreen.dart';
 import 'package:flutter_rentry_new/screens/NotificationListScreen.dart';
@@ -107,7 +108,28 @@ void setFirebase() {
   var initializationSettingsAndroid =
       new AndroidInitializationSettings('@drawable/ic_appicon');
 
-  var initializationSettingsIOS = new IOSInitializationSettings();
+  var initializationSettingsIOS = new IOSInitializationSettings(
+      /*onDidReceiveLocalNotification: (int id, String title, String body, String payload){
+        return showDialog(
+          context: context,
+          builder: (BuildContext context) => new CupertinoAlertDialog(
+            title: new Text(title),
+            content: new Text(body),
+            actions: [
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                child: new Text('Ok'),
+                onPressed: () async {
+                  Navigator.of(context, rootNavigator: true).pop();
+                  redirectToChatScreen();
+                },
+              ),
+            ],
+          ),
+        );
+      }*/
+      );
+  // var initializationSettingsIOS = new IOSInitializationSettings();
 
   var initializationSettings = new InitializationSettings(
       android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
@@ -134,6 +156,10 @@ void setFirebase() {
     print("Push Messaging token: $token");
     // Push messaging to this token later
   });
+}
+
+void redirectToChatScreen() {
+
 }
 
 Future<String> onSelect(String data) async {
@@ -190,6 +216,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Rentozo',
       debugShowCheckedModeBanner: false,
       home: ScreenOne(false),
+      // home: TakePictureScreen(),
     );
   }
 }

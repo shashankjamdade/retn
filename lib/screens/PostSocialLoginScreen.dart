@@ -88,12 +88,12 @@ class _PostSocialLoginScreenState extends State<PostSocialLoginScreen> {
       padding: EdgeInsets.all(10),
       child: Center(
           child: Text.rich(TextSpan(
-              text: 'If you continue, you are accepting \n',
+              text: 'If you continue, you are accepting our \n',
               style: CommonStyles.getRalewayStyle(
                   space_12, FontWeight.w400, Colors.black),
               children: <TextSpan>[
                 TextSpan(
-                    text: 'Rentozo Terms and Conditions',
+                    text: 'Terms and Conditions',
                     style: CommonStyles.getMontserratDecorationStyle(space_12,
                         FontWeight.w400, Colors.black,
                         TextDecoration.underline),
@@ -303,6 +303,8 @@ class _PostSocialLoginScreenState extends State<PostSocialLoginScreen> {
             _scaffoldKey, "Something went wrong, please try again later");
         return getLoginForm(context, showProgress: false);
       }
+    }else{
+      return getLoginForm(context, showProgress: false);
     }
   }
 
@@ -377,8 +379,7 @@ class _PostSocialLoginScreenState extends State<PostSocialLoginScreen> {
                                             ),
                                             Align(
                                               alignment: Alignment.centerLeft,
-                                              child: Expanded(
-                                                  child: privacyPolicyLinkAndTermsOfService()),
+                                              child: privacyPolicyLinkAndTermsOfService(),
                                             )
                                           ],
                                         ),
