@@ -142,13 +142,13 @@ void setFirebase() {
   _firebaseMessaging.configure(
     onBackgroundMessage: Platform.isIOS ? null : myBackgroundMessageHandler,
     onMessage: (message) async {
-      print("onMessage: $message");
+      debugPrint("FCM_PUSH_onmsg: $message");
     },
     onLaunch: (message) async {
-      print("onLaunch: $message");
+      debugPrint("FCM_PUSH_onLaunch: $message");
     },
     onResume: (message) async {
-      print("onResume: $message");
+      debugPrint("FCM_PUSH_onResume: $message");
     },
   );
 
@@ -270,14 +270,14 @@ class _ScreenOneState extends State<ScreenOne> {
   void getMessage() {
     _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
-      print('FCM_PUSH_onmsg $message');
+          debugPrint('FCM_PUSH_onmsg $message');
       if(Platform.isIOS){
         message = modifyNotificationJson(message);
       }
       displayNotification(message);
       return;
     }, onResume: (Map<String, dynamic> message) async {
-      print('FCM_PUSH_onresume $message');
+      debugPrint('FCM_PUSH_onresume $message');
       if(Platform.isIOS){
         message = modifyNotificationJson(message);
       }
@@ -323,8 +323,15 @@ class _ScreenOneState extends State<ScreenOne> {
     var initializationSettingsAndroid =
         new AndroidInitializationSettings('@drawable/ic_appicon');
 
-    var initializationSettingsIOS = new IOSInitializationSettings(
-        onDidReceiveLocalNotification: onDidRecieveLocalNotification);
+    var initializationSettingsIOS =
+    IOSInitializationSettings(
+      requestSoundPermission: false,
+      requestBadgePermission: false,
+      requestAlertPermission: false,
+      onDidReceiveLocalNotification: onDidRecieveLocalNotification,
+    );
+    // var initializationSettingsIOS = new IOSInitializationSettings(
+    //     onDidReceiveLocalNotification: onDidRecieveLocalNotification);
 
     var initializationSettings = new InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOS);

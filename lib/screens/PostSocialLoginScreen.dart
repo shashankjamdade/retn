@@ -360,33 +360,6 @@ class _PostSocialLoginScreenState extends State<PostSocialLoginScreen> {
                                         height: getProportionateScreenHeight(
                                             context, space_20),
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            right: space_1),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment
-                                              .start,
-                                          children: <Widget>[
-                                            Checkbox(
-                                              value: mCheckedTnC,
-                                              activeColor: CommonStyles
-                                                  .primaryColor,
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  mCheckedTnC = value;
-                                                });
-                                              },
-                                            ),
-                                            Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: privacyPolicyLinkAndTermsOfService(),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: getProportionateScreenHeight(
-                                            context, space_20),),
                                       InkWell(
                                         onTap: () {
                                           onLogin();

@@ -58,19 +58,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
   logininViaGoogle() async {
     try {
-      googleSignIn.signOut();
-      GoogleSignInAccount googleUsr = await googleSignIn.signIn();
-      debugPrint("GOOGLE_SIGNIN_INFO ${googleUsr.email}");
-      debugPrint("GOOGLE_SIGNIN_INFO ${googleUsr.displayName}");
-      debugPrint("GOOGLE_SIGNIN_INFO_ID ${googleUsr.id}");
-      mName = googleUsr.displayName;
-      mEmail = googleUsr.email;
-      mSocialId = googleUsr.id;
-      authenticationBloc
-        ..add(SocialLoginReqAuthenticationEvent(
-            social_id: googleUsr.id,
-            emailOrMobile: googleUsr.email,
-            deviceToken: mFcmToken));
+      if (mCheckedTnC) {
+        googleSignIn.signOut();
+        GoogleSignInAccount googleUsr = await googleSignIn.signIn();
+        debugPrint("GOOGLE_SIGNIN_INFO ${googleUsr.email}");
+        debugPrint("GOOGLE_SIGNIN_INFO ${googleUsr.displayName}");
+        debugPrint("GOOGLE_SIGNIN_INFO_ID ${googleUsr.id}");
+        mName = googleUsr.displayName;
+        mEmail = googleUsr.email;
+        mSocialId = googleUsr.id;
+        authenticationBloc
+          ..add(SocialLoginReqAuthenticationEvent(
+              social_id: googleUsr.id,
+              emailOrMobile: googleUsr.email,
+              deviceToken: mFcmToken));
+      } else {
+        showSnakbar(_scaffoldKey, accept_tnc);
+      }
     } catch (err) {
       print("EXCEPTION ${err}");
     }
@@ -234,7 +238,7 @@ class _LoginScreenState extends State<LoginScreen> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       if (!isPostLogin) {
         Position position =
-        await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+            await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
         LocationPermission permission = await checkPermission();
         if (permission == LocationPermission.always ||
             permission == LocationPermission.whileInUse) {
@@ -244,9 +248,9 @@ class _LoginScreenState extends State<LoginScreen> {
               "LOCATION_FOUND ${position.latitude}, ${position.longitude}");
           //access address from lat lng
           final coordinates =
-          new Coordinates(position.latitude, position.longitude);
+              new Coordinates(position.latitude, position.longitude);
           var addresses =
-          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+              await Geocoder.local.findAddressesFromCoordinates(coordinates);
           var first = addresses.first;
           UserLocationSelected userLocationSelected = new UserLocationSelected(
               address: first.addressLine,
@@ -260,7 +264,8 @@ class _LoginScreenState extends State<LoginScreen> {
           prefs.setString(USER_LOCATION_CITY, "${first.locality}");
           prefs.setString(USER_LOCATION_STATE, "${first.adminArea}");
           prefs.setString(USER_LOCATION_PINCODE, "${first.postalCode}");
-          print("@@@@-------${first} ${first.addressLine} : ${first.adminArea}");
+          print(
+              "@@@@-------${first} ${first.addressLine} : ${first.adminArea}");
         } else {
           //Show dialog for location permission
           Fluttertoast.showToast(
@@ -454,38 +459,45 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                   Platform.isIOS
                                       ? AppleSignInButton(onPressed: () async {
-                                          bool isAvailable = true;
-                                          var flag = AuthenticationRepository()
-                                              .appleSignInAvailable
-                                              .then((value) {
-                                            debugPrint("NOT CAPABLE ${value}");
-                                          });
+                                          if (mCheckedTnC) {
+                                            bool isAvailable = true;
+                                            var flag =
+                                                AuthenticationRepository()
+                                                    .appleSignInAvailable
+                                                    .then((value) {
+                                              debugPrint(
+                                                  "NOT CAPABLE ${value}");
+                                            });
 
-                                          if (isAvailable) {
-                                            User user =
-                                                await AuthenticationRepository()
-                                                    .appleSignIn();
-                                            if (user != null &&
-                                                user?.email != null &&
-                                                authenticationBloc != null) {
-                                              mName = user?.displayName;
-                                              mEmail = user?.email;
-                                              mSocialId = user?.uid;
-                                              authenticationBloc
-                                                ..add(
-                                                    SocialLoginReqAuthenticationEvent(
-                                                        social_id: user?.uid,
-                                                        emailOrMobile:
-                                                            user?.email,
-                                                        deviceToken:
-                                                            mFcmToken));
+                                            if (isAvailable) {
+                                              User user =
+                                                  await AuthenticationRepository()
+                                                      .appleSignIn();
+                                              if (user != null &&
+                                                  user?.email != null &&
+                                                  authenticationBloc != null) {
+                                                mName = user?.displayName;
+                                                mEmail = user?.email;
+                                                mSocialId = user?.uid;
+                                                authenticationBloc
+                                                  ..add(
+                                                      SocialLoginReqAuthenticationEvent(
+                                                          social_id: user?.uid,
+                                                          emailOrMobile:
+                                                              user?.email,
+                                                          deviceToken:
+                                                              mFcmToken));
+                                              } else {
+                                                showSnakbar(_scaffoldKey,
+                                                    "Email ID missing");
+                                              }
                                             } else {
                                               showSnakbar(_scaffoldKey,
-                                                  "Email ID missing");
+                                                  "Something went wrong, please try again!");
                                             }
                                           } else {
-                                            showSnakbar(_scaffoldKey,
-                                                "Something went wrong, please try again!");
+                                            showSnakbar(
+                                                _scaffoldKey, accept_tnc);
                                           }
                                         })
                                       : Container(
@@ -543,6 +555,8 @@ class _LoginScreenState extends State<LoginScreen> {
       isLoginbtnPressed = true;
       _register();
       // showSnakbar(_scaffoldKey, fcm_token_missing);
+    }else if(!mCheckedTnC){
+      showSnakbar(_scaffoldKey, accept_tnc);
     } else {
       //API hit
       debugPrint("CHECK_TOKEN --> ${mFcmToken}");
@@ -557,10 +571,14 @@ class _LoginScreenState extends State<LoginScreen> {
     mEmail = "";
     mSocialId = "";
     _register();
-    if (type == "fb") {
-      authenticationBloc..add(LoginInViaFacebookEvent());
-    } else if (type == "google") {
-      logininViaGoogle();
+    if (mCheckedTnC) {
+      if (type == "fb") {
+        authenticationBloc..add(LoginInViaFacebookEvent());
+      } else if (type == "google") {
+        logininViaGoogle();
+      }
+    } else {
+      showSnakbar(_scaffoldKey, accept_tnc);
     }
   }
 

@@ -157,6 +157,17 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> with CodeAutoFi
                 setState(() {
                   mIsAlreadyRegisted = state.res.data.is_registered;
                 });
+                /*if(state.res.data.is_registered && widget.socialId!=null && widget.socialId.isNotEmpty && widget.email!=null){
+                  Fluttertoast.showToast(
+                      msg: "The mobile number you entered is already exists, Please enter different mobile number and proceed !",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.black,
+                      textColor: Colors.white,
+                      fontSize: space_14);
+                  Navigator.pop(context);
+                }*/
               }
             } else if (state is GoogleFbLoginResAuthenticationState) {
               debugPrint("GOT_STATE-- " + state.res.loginStatus);

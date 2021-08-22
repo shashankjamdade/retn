@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_rentry_new/bloc/authentication/AuthenticationState.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeState.dart';
@@ -28,6 +29,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geocoder/model.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:showcaseview/showcaseview.dart';
 
@@ -127,92 +129,108 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void didChangeDependencies() {
-    var selectedCurrentLoc = StateContainer.of(context).mUserLocationSelected;
-    loginResponse = StateContainer.of(context).mLoginResponse;
-    if (loginResponse != null) {
-      token = loginResponse.data.token;
-      debugPrint("ACCESSING_INHERITED_HOME ${token}");
-    }
-    var selectedLoc = StateContainer.of(context).mUserLocNameSelected;
-    if (selectedLoc != null) {
-      setState(() {
-        mLat = selectedLoc.mlat;
-        mLng = selectedLoc.mlng;
-      });
-      debugPrint("ACCESSING_INHERITED_LOCATION1 ${mLat}, ${mLng} ------");
-      if (homeBloc != null) {
-        homeBloc
-          ..add(HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+    try{
+      var selectedCurrentLoc = StateContainer.of(context).mUserLocationSelected;
+      loginResponse = StateContainer.of(context).mLoginResponse;
+      if (loginResponse != null) {
+        token = loginResponse.data.token;
+        debugPrint("ACCESSING_INHERITED_HOME ${token}");
       }
-    } else if (selectedCurrentLoc != null) {
-      mLat = selectedCurrentLoc.mlat;
-      mLng = selectedCurrentLoc.mlng;
-      debugPrint("ACCESSING_INHERITED_LOCATION2 ${mLat}, ${mLng} ------");
+      var selectedLoc = StateContainer.of(context).mUserLocNameSelected;
+      if (selectedLoc != null) {
+        setState(() {
+          mLat = selectedLoc.mlat;
+          mLng = selectedLoc.mlng;
+        });
+        debugPrint("ACCESSING_INHERITED_LOCATION1 ${mLat}, ${mLng} ------");
+        if (homeBloc != null) {
+          homeBloc
+            ..add(HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+        }
+      } else if (selectedCurrentLoc != null) {
+        mLat = selectedCurrentLoc.mlat;
+        mLng = selectedCurrentLoc.mlng;
+        debugPrint("ACCESSING_INHERITED_LOCATION2 ${mLat}, ${mLng} ------");
 //      if (mHomeResponse == null) {
 //        homeBloc
 //          ..add(
 //              HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
 //      }
-    } else {
-      storeResInPrefs(context);
+      } else {
+        storeResInPrefs(context);
+      }
+    } catch (e, stacktrace) {
+      debugPrint("EXCEPTION_WHILE_HOME1 ${stacktrace?.toString()}");
     }
-    /* if (mLat != null && mLat.isNotEmpty) {
-      new HomeRepository()
-          .callCouponRes(mLat, mLng)
-          .then((value) => resetUiAgain(value));
-    }*/
     super.didChangeDependencies();
   }
 
   void storeResInPrefs(BuildContext context) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      Position position =
-          await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      LocationPermission permission = await checkPermission();
-      if (permission == LocationPermission.always ||
-          permission == LocationPermission.whileInUse) {
-        prefs.setString(USER_LOCATION_LAT, "${position.latitude}");
-        prefs.setString(USER_LOCATION_LONG, "${position.longitude}");
+      Location location = new Location();
+
+      bool _serviceEnabled;
+      PermissionStatus _permissionGranted;
+      LocationData _locationData;
+      _serviceEnabled = await location.serviceEnabled();
+      if (!_serviceEnabled) {
+        _serviceEnabled = await location.requestService();
+        if (!_serviceEnabled) {
+          return;
+        }
+      }
+
+      _permissionGranted = await location.hasPermission();
+      if (_permissionGranted == PermissionStatus.DENIED) {
+        _permissionGranted = await location.requestPermission();
+        if (_permissionGranted != PermissionStatus.GRANTED) {
+          return;
+        }
+      }
+      _locationData = await location.getLocation().then((locationData){
+        prefs.setString(USER_LOCATION_LAT, "${locationData.latitude}");
+        prefs.setString(USER_LOCATION_LONG, "${locationData.longitude}");
         debugPrint(
-            "LOCATION_FOUND ${position.latitude}, ${position.longitude}");
+            "LOCATION_FOUND--from Home--> ${locationData.latitude}, ${locationData.longitude}");
+        mLat = locationData.latitude.toString();
+        mLng = locationData.longitude.toString();
         //access address from lat lng
+        homeBloc
+          ..add(HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
+        mapAddressFromLatlng(locationData.latitude, locationData.longitude);
+      });
+    } catch (e, stacktrace) {
+      debugPrint("EXCEPTION_WHILE_HOME2 ${stacktrace?.toString()}");
+    }
+  }
+
+  mapAddressFromLatlng(double lat, double lng) async{
+      try{
         final coordinates =
-            new Coordinates(position.latitude, position.longitude);
+        new Coordinates(lat, lng);
         var addresses =
-            await Geocoder.local.findAddressesFromCoordinates(coordinates);
+        await Geocoder.local.findAddressesFromCoordinates(coordinates);
         var first = addresses.first;
         UserLocationSelected userLocationSelected = new UserLocationSelected(
             address: first.addressLine,
             city: first.locality,
             state: first.adminArea,
             coutry: first.countryName,
-            mlat: position.latitude.toString(),
-            mlng: position.longitude.toString());
+            mlat: lat.toString(),
+            mlng: lng.toString());
         StateContainer.of(context).updateUserLocation(userLocationSelected);
         prefs.setString(USER_LOCATION_ADDRESS, "${first.addressLine}");
         prefs.setString(USER_LOCATION_CITY, "${first.locality}");
         prefs.setString(USER_LOCATION_STATE, "${first.adminArea}");
         prefs.setString(USER_LOCATION_PINCODE, "${first.postalCode}");
         print("@@@@-------${first} ${first.addressLine} : ${first.adminArea}");
-
         prefs.setBool(IS_LOGGEDIN, true);
         debugPrint(
             "PREFS_STORED_LOGIN-----> ${prefs.getString(USER_LOCATION_ADDRESS)}");
-        mLat = position.latitude.toString();
-        mLng = position.longitude.toString();
-        // if (mHomeResponse == null && isNeedToShowRetry) {
-        //   homeBloc
-        //     ..add(
-        //         HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng));
-        // }
-      } else {
-        //Show dialog for location permission
-        openLocationSettings();
+      } catch (e, stacktrace) {
+        debugPrint("EXCEPTION in Loginscreen in storeResInPrefs ${e.toString()}\n${stacktrace.toString()}");
       }
-    } catch (e) {
-      debugPrint("EXCEPTION in Loginscreen in storeResInPrefs ${e.toString()}");
-    }
   }
 
   resetUiAgain(CouponRes couponRes) {
@@ -244,94 +262,152 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
-        if (Platform.isAndroid) {
-          SystemNavigator.pop();
-        } else if (Platform.isIOS) {
-          exit(0);
-        }
-      },
-      child: BlocProvider(
-        create: (context) => homeBloc
-          ..add(HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng)),
-        child: BlocListener(
-            cubit: homeBloc,
-            listener: (context, state) {
-              if (state is HomeResState) {
-//              var screenHeight = MediaQuery.of(context).size.height;
-//              debugPrint("SCREEN_HEIGHT--> ${screenHeight}");
-//              Fluttertoast.showToast(
-//                  msg: "${screenHeight}",
-//                  toastLength: Toast.LENGTH_SHORT,
-//                  gravity: ToastGravity.BOTTOM,
-//                  timeInSecForIosWeb: 1,
-//                  backgroundColor: Colors.black,
-//                  textColor: Colors.white,
-//                  fontSize: space_14);
-                if (state.res.status) {
-                  //Set true for homepage loaded
-                  SingletonClass().setIsHomeLoaded("true");
-                  // StateContainer.of(context).updateHomePageLoaded("true");
-                  isNeedToShowRetry = false;
-                  mHomeResponse = state.res;
-                  if (widget.isRedirectToMyAds != null &&
-                      widget.isRedirectToMyAds) {
-                    widget.isRedirectToMyAds = false;
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => MyAdsListScreen()),
-                    );
-                  } else if (isRedirectToChatLocal != null &&
-                      isRedirectToChatLocal) {
-                    debugPrint("REDIRECTING...to chat");
-                    isRedirectToChatLocal = false;
-                    isRedirectToChatLocal = null;
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ChatHomeScreen()),
-                    );
-                  }
-                } else {
-                  if (state.res.message != null &&
-                      state.res.message != API_ERROR_MSG_RETRY) {
+    try{
+      return WillPopScope(
+        onWillPop: () {
+          if (Platform.isAndroid) {
+            SystemNavigator.pop();
+          } else if (Platform.isIOS) {
+            exit(0);
+          }
+        },
+        child: BlocProvider(
+          create: (context) => homeBloc
+            ..add(HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng)),
+          child: BlocListener(
+              cubit: homeBloc,
+              listener: (context, state) {
+                if (state is HomeResState) {
+                  if (state.res.status) {
+                    //Set true for homepage loaded
+                    SingletonClass().setIsHomeLoaded("true");
+                    // StateContainer.of(context).updateHomePageLoaded("true");
                     isNeedToShowRetry = false;
-                    homeBloc
-                      ..add(HomeReqAuthenticationEvent(
-                          token: token, lat: mLat, lng: mLng));
+                    mHomeResponse = state.res;
+                    if (widget.isRedirectToMyAds != null &&
+                        widget.isRedirectToMyAds) {
+                      widget.isRedirectToMyAds = false;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MyAdsListScreen()),
+                      );
+                    } else if (isRedirectToChatLocal != null &&
+                        isRedirectToChatLocal) {
+                      debugPrint("REDIRECTING...to chat");
+                      isRedirectToChatLocal = false;
+                      isRedirectToChatLocal = null;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ChatHomeScreen()),
+                      );
+                    }
                   } else {
-                    isNeedToShowRetry = true;
+                    if (state.res.message != null /*&&
+                      state.res.message != API_ERROR_MSG_RETRY*/) {
+                      isNeedToShowRetry = false;
+                      // homeBloc
+                      //   ..add(HomeReqAuthenticationEvent(
+                      //       token: token, lat: mLat, lng: mLng));
+                    } else {
+                      isNeedToShowRetry = true;
+                    }
                   }
                 }
-              }
-            },
-            child: BlocBuilder<HomeBloc, HomeState>(
-              builder: (context, state) {
-                if (state is HomeResState && state.res is HomeResponse) {
-                  if (state.res.status) {
-                    return ((shouldShowShowcase == false)
-                        ? ShowCaseWidget(
-                            onStart: (index, key) {
-                              debugPrint('onStart: $index, $key');
-                            },
-                            onComplete: (index, key) {
-                              debugPrint('onComplete1: $index, $key');
-                              if (prefs != null) {
-                                debugPrint('onComplete1: SAVED');
-                                prefs.setString(IS_SHOWCASE_VIEWED, "true");
-                                shouldShowShowcase = true;
-                              }
-                            },
-                            builder: Builder(
-                                builder: (context) =>
-                                    getHomeShowcaseUI(state.res, context)),
-                            autoPlay: false,
-                            autoPlayDelay: Duration(seconds: 3),
-                            autoPlayLockEnable: false,
-                          )
-                        : getHomeUI(state.res, context));
-                  } else {
+              },
+              child: BlocBuilder<HomeBloc, HomeState>(
+                builder: (context, state) {
+                  debugPrint("HOMESCREEN_state ${state} ${mLat}");
+                  /*Fluttertoast.showToast(
+                    msg: "state is ${state!=null?state.toString()+" "+mLat:"NULL"}",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.black,
+                    textColor: Colors.white,
+                    fontSize: space_14);*/
+                  if (state is HomeResState && state.res is HomeResponse) {
+                    if (state.res.status) {
+                      return ((shouldShowShowcase == false)
+                          ? ShowCaseWidget(
+                        onStart: (index, key) {
+                          debugPrint('onStart: $index, $key');
+                        },
+                        onComplete: (index, key) {
+                          debugPrint('onComplete1: $index, $key');
+                          if (prefs != null) {
+                            debugPrint('onComplete1: SAVED');
+                            prefs.setString(IS_SHOWCASE_VIEWED, "true");
+                            shouldShowShowcase = true;
+                          }
+                        },
+                        builder: Builder(
+                            builder: (context) =>
+                                getHomeShowcaseUI(state.res, context)),
+                        autoPlay: false,
+                        autoPlayDelay: Duration(seconds: 3),
+                        autoPlayLockEnable: false,
+                      )
+                          : getHomeUI(state.res, context));
+                    } else {
+                      debugPrint("HOMESCREEN_state loading is ${state}");
+                      return Container(
+                        color: Colors.white,
+                        child: Column(
+                          children: [
+                            CommonAppbarWidget(app_name, skip_for_now, () {
+                              onSearchLocation(context);
+                            }),
+                            Expanded(
+                              child: Center(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Something went wrong!!',
+                                      style: CommonStyles.getRalewayStyle(
+                                          space_16,
+                                          FontWeight.w500,
+                                          Colors.black),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        homeBloc
+                                          ..add(HomeReqAuthenticationEvent(
+                                              token: token,
+                                              lat: mLat,
+                                              lng: mLng));
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(space_15),
+                                        child: Text(
+                                          'RETRY',
+                                          style: TextStyle(
+                                            fontSize: space_18,
+                                            fontFamily: "Montserrat",
+                                            fontWeight: FontWeight.w700,
+                                            color: CommonStyles.primaryColor,
+                                            decoration: TextDecoration.underline,
+                                            decorationStyle:
+                                            TextDecorationStyle.solid,
+                                            decorationColor:
+                                            CommonStyles.primaryColor,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  }
+                  else if (state is SendOtpAuthState) {
+                    debugPrint("WHY_SENDOTP_IN_HOME");
                     return Container(
                       color: Colors.white,
                       child: Column(
@@ -371,9 +447,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                           color: CommonStyles.primaryColor,
                                           decoration: TextDecoration.underline,
                                           decorationStyle:
-                                              TextDecorationStyle.solid,
+                                          TextDecorationStyle.solid,
                                           decorationColor:
-                                              CommonStyles.primaryColor,
+                                          CommonStyles.primaryColor,
                                         ),
                                       ),
                                     ),
@@ -385,21 +461,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                     );
-                  }
-                } else {
-                  return Container(
-                    color: Colors.white,
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        backgroundColor: Colors.white,
+                  } else {
+                    return Container(
+                      color: Colors.white,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.white,
+                        ),
                       ),
-                    ),
-                  );
-                }
-              },
-            )),
-      ),
-    );
+                    );
+                  }
+                },
+              )),
+        ),
+      );
+    } catch (e, stacktrace) {
+      debugPrint("EXCEPTION_WHILE_HOME4 ${stacktrace?.toString()}");
+    }
   }
 
   Widget getHomeUI(HomeResponse homeResponse, BuildContext context) {
@@ -682,46 +760,46 @@ class _HomeScreenState extends State<HomeScreen> {
   void onSearchClick() {}
 }
 
-class MyClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    var path = Path();
-    path.lineTo(0, size.height - 60.0);
-    path.quadraticBezierTo(size.width, size.height - 60, size.width / 2, 0);
+// class MyClipper extends CustomClipper<Path> {
+//   @override
+//   Path getClip(Size size) {
+//     var path = Path();
+//     path.lineTo(0, size.height - 60.0);
+//     path.quadraticBezierTo(size.width, size.height - 60, size.width / 2, 0);
+//
+// //    path.lineTo(size.height, size.height);
+// //    path.lineTo(0, size.height);
+//     return path;
+//   }
+//
+//   @override
+//   bool shouldReclip(CustomClipper<Path> oldClipper) {
+//     return true;
+//   }
+// }
 
-//    path.lineTo(size.height, size.height);
-//    path.lineTo(0, size.height);
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return true;
-  }
-}
-
-class CurvePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    var paint = Paint();
-    paint.color = Colors.green[800];
-    paint.style = PaintingStyle.fill;
-
-    var path = Path();
-
-    path.moveTo(0, size.height * 0.9167);
-    path.quadraticBezierTo(size.width * 0.25, size.height * 0.875,
-        size.width * 0.5, size.height * 0.9167);
-    path.quadraticBezierTo(size.width * 0.75, size.height * 0.9584,
-        size.width * 1.0, size.height * 0.9167);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
-  }
-}
+// class CurvePainter extends CustomPainter {
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     var paint = Paint();
+//     paint.color = Colors.green[800];
+//     paint.style = PaintingStyle.fill;
+//
+//     var path = Path();
+//
+//     path.moveTo(0, size.height * 0.9167);
+//     path.quadraticBezierTo(size.width * 0.25, size.height * 0.875,
+//         size.width * 0.5, size.height * 0.9167);
+//     path.quadraticBezierTo(size.width * 0.75, size.height * 0.9584,
+//         size.width * 1.0, size.height * 0.9167);
+//     path.lineTo(size.width, size.height);
+//     path.lineTo(0, size.height);
+//
+//     canvas.drawPath(path, paint);
+//   }
+//
+//   @override
+//   bool shouldRepaint(CustomPainter oldDelegate) {
+//     return true;
+//   }
+// }

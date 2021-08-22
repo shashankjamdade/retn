@@ -52,6 +52,8 @@
 	<string>422644849121300</string>
 	<key>FacebookDisplayName</key>
 	<string>Rentrozo</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<string>false</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
@@ -66,7 +68,7 @@
 	<key>NSCalendarsUsageDescription</key>
 	<string>no usage</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Need to access your camera to capture a photo add and update user&apos;s ads.</string>
+	<string>Need to access your camera to capture a photo add and update user's ads.</string>
 	<key>NSContactsUsageDescription</key>
 	<string>no usage</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
@@ -107,7 +109,5 @@
 	<false/>
 	<key>io.flutter.embedded_views_preview</key>
 	<string>YES</string>
-	<key>FirebaseAppDelegateProxyEnabled</key>
-	<string>false</string>
 </dict>
 </plist>
