@@ -142,7 +142,7 @@ void setFirebase() {
   _firebaseMessaging.configure(
     onBackgroundMessage: Platform.isIOS ? null : myBackgroundMessageHandler,
     onMessage: (message) async {
-      debugPrint("FCM_PUSH_onmsg: $message");
+      debugPrint("FCM_PUSH_onmsg1: $message");
     },
     onLaunch: (message) async {
       debugPrint("FCM_PUSH_onLaunch: $message");
@@ -168,9 +168,9 @@ Future<String> onSelect(String data) async {
 
 //updated myBackgroundMessageHandler
 Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
-  print("myBackgroundMessageHandler message: $message");
+  debugPrint("myBackgroundMessageHandler message: $message");
   int msgId = int.tryParse(message["data"]["msgId"].toString()) ?? 1;
-  print("msgId ${message['data']['title']}, ${message['data']['message']}, PAYLOAD-> ${message["data"]["notification_type"]}");
+  print("msgId ${Platform.isIOS? message['title'] : message['data']['title']}, ${ Platform.isIOS? message['message'] : message['data']['message']}, PAYLOAD-> ${Platform.isIOS? message['notification_type'] : message["data"]["notification_type"]}");
   var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
       'channelid', 'flutterfcm', 'your channel description',ticker: 'ticker', icon: "ic_notification_icon",
       playSound: true, enableLights: true, enableVibration: true,
@@ -179,9 +179,9 @@ Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
   var platformChannelSpecifics = new NotificationDetails(
       android: androidPlatformChannelSpecifics,
       iOS: iOSPlatformChannelSpecifics);
-  flutterLocalNotificationsPlugin.show(msgId, message['data']['title'],
-      message['data']['message'], platformChannelSpecifics,
-      payload: message["data"]["notification_type"]);
+  flutterLocalNotificationsPlugin.show(msgId,  Platform.isIOS? message['title'] : message['data']['title'],
+      Platform.isIOS? message['message'] : message['data']['message'], platformChannelSpecifics,
+      payload:  Platform.isIOS? message['notification_type'] : message["data"]["notification_type"]);
   return Future<void>.value();
 }
 
@@ -268,18 +268,19 @@ class _ScreenOneState extends State<ScreenOne> {
   }
 
   void getMessage() {
+    debugPrint('Setting_FCM_NOTIF_main');
     _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
           debugPrint('FCM_PUSH_onmsg $message');
-      if(Platform.isIOS){
+      /*if(Platform.isIOS){
         message = modifyNotificationJson(message);
-      }
+      }*/
       displayNotification(message);
       return;
     }, onResume: (Map<String, dynamic> message) async {
       debugPrint('FCM_PUSH_onresume $message');
       if(Platform.isIOS){
-        message = modifyNotificationJson(message);
+        displayNotification(message);
       }
       setState(() => _message = message["notification"]["title"] );
     }, onLaunch: (Map<String, dynamic> message) async {
@@ -288,9 +289,10 @@ class _ScreenOneState extends State<ScreenOne> {
     });
     if(Platform.isIOS){
       _firebaseMessaging.requestNotificationPermissions(IosNotificationSettings(
-        sound: true,
-        badge: true,
         alert: true,
+        provisional: true,
+        badge: true,
+        sound: true,
       ));
       _firebaseMessaging.onIosSettingsRegistered
           .listen((IosNotificationSettings settings) {
@@ -474,6 +476,7 @@ class _ScreenOneState extends State<ScreenOne> {
   }
 
   Future displayNotification(Map<String, dynamic> message) async {
+    debugPrint("Inside_NOTIF_DISPLAY ${message}");
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
         'channelid', 'flutterfcm', 'your channel description',ticker: 'ticker',
         playSound: true,enableLights: true, enableVibration: true, icon: "ic_notification_icon",
@@ -484,10 +487,10 @@ class _ScreenOneState extends State<ScreenOne> {
         iOS: iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
       1,
-      message['data']['title'],
-      message['data']['message'],
+      Platform.isIOS? message['title'] : message['data']['title'],
+      Platform.isIOS? message['message'] :message['data']['message'],
       platformChannelSpecifics,
-      payload: message['data']['notification_type'],
+      payload: Platform.isIOS? message['notification_type'] :message['data']['notification_type'],
     );
   }
 
