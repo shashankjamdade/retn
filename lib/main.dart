@@ -61,6 +61,7 @@ import 'bloc/authentication/AuthenticationBloc.dart';
 import 'bloc/authentication/AuthenticationBloc.dart';
 import 'bloc/authentication/AuthenticationBloc.dart';
 import 'bloc/authentication/AuthenticationBloc.dart';
+import 'fcm/fcm-service.dart';
 import 'inherited/StateContainer.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:http/http.dart' as http;
@@ -140,7 +141,7 @@ void setFirebase() {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   _firebaseMessaging.configure(
-    onBackgroundMessage: Platform.isIOS ? null : myBackgroundMessageHandler,
+    onBackgroundMessage: myBackgroundMessageHandler,
     onMessage: (message) async {
       debugPrint("FCM_PUSH_onmsg1: $message");
     },
@@ -156,6 +157,7 @@ void setFirebase() {
     print("Push Messaging token: $token");
     // Push messaging to this token later
   });
+  FcmService().init();
 }
 
 void redirectToChatScreen() {
@@ -168,7 +170,7 @@ Future<String> onSelect(String data) async {
 
 //updated myBackgroundMessageHandler
 Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
-  debugPrint("myBackgroundMessageHandler message: $message");
+  debugPrint("BackgroundMsg..................********@@@@@@@@@ message: $message");
   int msgId = int.tryParse(message["data"]["msgId"].toString()) ?? 1;
   print("msgId ${Platform.isIOS? message['title'] : message['data']['title']}, ${ Platform.isIOS? message['message'] : message['data']['message']}, PAYLOAD-> ${Platform.isIOS? message['notification_type'] : message["data"]["notification_type"]}");
   var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
@@ -201,13 +203,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  PushNotificationsManager Notification = PushNotificationsManager();
+  // PushNotificationsManager Notification = PushNotificationsManager();
 
   @override
   void initState() {
     super.initState();
-    FirebaseMessaging().deleteInstanceID();
-    Notification.init();
+    // FirebaseMessaging().deleteInstanceID();
+    // Notification.init();
+    FcmService().init();
   }
 
   @override
@@ -225,10 +228,6 @@ class ScreenOne extends StatefulWidget {
   bool isClrData = false;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   var mFcmToken = "";
-
-  _registerToken() {
-    _firebaseMessaging.getToken().then((token) => mFcmToken = token);
-  }
 
   ScreenOne(this.isClrData);
 
@@ -267,14 +266,14 @@ class _ScreenOneState extends State<ScreenOne> {
     return msg;
   }
 
-  void getMessage() {
-    debugPrint('Setting_FCM_NOTIF_main');
+  /*void getMessage() {
+    debugPrint('Setting_FCM_NOTIF_main#################################');
     _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
           debugPrint('FCM_PUSH_onmsg $message');
-      /*if(Platform.isIOS){
+      *//*if(Platform.isIOS){
         message = modifyNotificationJson(message);
-      }*/
+      }*//*
       displayNotification(message);
       return;
     }, onResume: (Map<String, dynamic> message) async {
@@ -296,10 +295,10 @@ class _ScreenOneState extends State<ScreenOne> {
       ));
       _firebaseMessaging.onIosSettingsRegistered
           .listen((IosNotificationSettings settings) {
-        print('Hello');
+        print('Hello_REGISTERED....************************************');
       });
     }
-  }
+  }*/
 
   _showLocationPermissionDialog(BuildContext context) {
     VoidCallback continueCallBack = () => {
@@ -321,8 +320,7 @@ class _ScreenOneState extends State<ScreenOne> {
   void initState() {
     super.initState();
 //    checkUserLoggedInOrNot(context);
-    getMyCurrentLocation();
-    var initializationSettingsAndroid =
+    /*var initializationSettingsAndroid =
         new AndroidInitializationSettings('@drawable/ic_appicon');
 
     var initializationSettingsIOS =
@@ -332,16 +330,14 @@ class _ScreenOneState extends State<ScreenOne> {
       requestAlertPermission: false,
       onDidReceiveLocalNotification: onDidRecieveLocalNotification,
     );
-    // var initializationSettingsIOS = new IOSInitializationSettings(
-    //     onDidReceiveLocalNotification: onDidRecieveLocalNotification);
-
     var initializationSettings = new InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: onSelectNotification);
-    getMessage();
+    getMessage();*/
     _register();
+    getMyCurrentLocation();
   }
 
   getMyCurrentLocation() async {

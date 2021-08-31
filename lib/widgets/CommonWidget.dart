@@ -157,7 +157,7 @@ class CommonAppbarWidget extends StatelessWidget {
                                               .mUserLocationSelected !=
                                           null
                                       ? "${StateContainer.of(context).mUserLocationSelected.city}, ${StateContainer.of(context).mUserLocationSelected.state}"
-                                      : "",
+                                      : "Fetching location...",
                               style: CommonStyles.getRalewayStyle(
                                   space_12, FontWeight.w500, Colors.white),
                               maxLines: 1,
@@ -2161,8 +2161,9 @@ class BottomBarItemWidget extends StatelessWidget {
 class CommonBottomNavBarHomeWidget extends StatelessWidget {
   GlobalKey postKey;
   bool shouldShowShowcase;
+  Function onHomeClick;
 
-  CommonBottomNavBarHomeWidget({this.postKey, this.shouldShowShowcase});
+  CommonBottomNavBarHomeWidget({this.postKey, this.shouldShowShowcase, this.onHomeClick});
 
   @override
   Widget build(BuildContext context) {
@@ -2196,12 +2197,13 @@ class CommonBottomNavBarHomeWidget extends StatelessWidget {
                               Expanded(
                                   child: GestureDetector(
                                       onTap: () {
-                                        Navigator.push(
+                                       /* Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   HomeScreen()),
-                                        );
+                                        );*/
+                                        onHomeClick();
                                       },
                                       child: BottomBarItemWidget(
                                         "HOME",

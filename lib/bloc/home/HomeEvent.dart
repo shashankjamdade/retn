@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_rentry_new/model/AdPostReqModel.dart';
+import 'package:flutter_rentry_new/model/home_response.dart';
 
 abstract class HomeEvent extends Equatable {
   @override
@@ -25,6 +26,15 @@ class HomeReqAuthenticationEvent extends HomeEvent {
 
   @override
   List<Object> get props => [token, lat, lng];
+}
+
+class HomeResDummyEvent extends HomeEvent {
+  final HomeResponse homeResponse;
+
+  HomeResDummyEvent({@required this.homeResponse});
+
+  @override
+  List<Object> get props => [homeResponse];
 }
 
 class HomeReqAuthenticationNoProgressEvent extends HomeEvent {

@@ -247,6 +247,8 @@ const String GOOGLE_AUTOCOMPLETE1 = "https://maps.googleapis.com/maps/api/place/
 const String GOOGLE_AUTOCOMPLETE2 = "&types=geocode&language=fr&sensor=true&key=";
 
 const String LOGGEDIN_SUCCESS = "LOGGEDIN_SUCCESS";
+const String LOCATION_INFO_LAT = "LOCATION_INFO_LAT";
+const String LOCATION_INFO_LNG = "LOCATION_INFO_LNG";
 
 const String CUSTOMFIELD_TEXT = "text";
 const String CUSTOMFIELD_TEXTAREA = "textarea";

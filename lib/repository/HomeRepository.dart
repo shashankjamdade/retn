@@ -92,7 +92,7 @@ class HomeRepository extends BaseRepository {
     print("UNDER callHomeApi ${BASE_URL + HOMEPAGE_API}, body--> ${lat} ${lng}");
     try{
       var res = await http.post(BASE_URL + HOMEPAGE_API,
-          headers: {"Token": token}, body: {"lat": lat, "lng": lng}).timeout(const Duration(seconds: 5));;
+          headers: {"Token": token}, body: {"lat": lat, "lng": lng}).timeout(const Duration(seconds: 10));;
       print("PRINTING ${res.body}");
       code = res.statusCode;
       if (res.statusCode == 200) {

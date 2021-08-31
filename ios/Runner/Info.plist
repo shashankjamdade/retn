@@ -53,7 +53,7 @@
 	<key>FacebookDisplayName</key>
 	<string>Rentrozo</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
-	<string>false</string>
+	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>

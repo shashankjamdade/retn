@@ -27,6 +27,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Stream<HomeState> mapEventToState(HomeEvent event) async* {
     if (event is InitialEvent) {
       yield InitialHomeState();
+    } else if (event is ProgressEvent) {
+      yield ProgressState();
     } else if (event is HomeReqAuthenticationEvent) {
       yield ProgressState();
       yield* callHomeApi(event.token, event.lat, event.lng);
@@ -185,6 +187,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is CouponEvent) {
       yield ProgressState();
       yield* callCoupon(event.lat, event.lng);
+    } else if (event is HomeResDummyEvent) {
+      yield HomeResState(res: event.homeResponse);
     }
   }
 

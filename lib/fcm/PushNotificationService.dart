@@ -20,7 +20,7 @@ class PushNotificationService {
     String token = await _fcm.getToken();
     print("FirebaseMessaging token: $token");
 
-    _fcm.configure(
+    /*_fcm.configure(
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: $message");
       },
@@ -30,6 +30,6 @@ class PushNotificationService {
       onResume: (Map<String, dynamic> message) async {
         print("onResume: $message");
       },
-    );
+    );*/
   }
 }
