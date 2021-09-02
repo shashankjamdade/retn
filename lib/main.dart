@@ -157,7 +157,7 @@ void setFirebase() {
     print("Push Messaging token: $token");
     // Push messaging to this token later
   });
-  FcmService().init();
+  // FcmService().init();
 }
 
 void redirectToChatScreen() {
@@ -210,7 +210,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     // FirebaseMessaging().deleteInstanceID();
     // Notification.init();
-    FcmService().init();
+    // FcmService().init();
   }
 
   @override
@@ -266,14 +266,14 @@ class _ScreenOneState extends State<ScreenOne> {
     return msg;
   }
 
-  /*void getMessage() {
+  void getMessage() {
     debugPrint('Setting_FCM_NOTIF_main#################################');
     _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
           debugPrint('FCM_PUSH_onmsg $message');
-      *//*if(Platform.isIOS){
+      if(Platform.isIOS){
         message = modifyNotificationJson(message);
-      }*//*
+      }
       displayNotification(message);
       return;
     }, onResume: (Map<String, dynamic> message) async {
@@ -298,7 +298,7 @@ class _ScreenOneState extends State<ScreenOne> {
         print('Hello_REGISTERED....************************************');
       });
     }
-  }*/
+  }
 
   _showLocationPermissionDialog(BuildContext context) {
     VoidCallback continueCallBack = () => {
@@ -320,7 +320,7 @@ class _ScreenOneState extends State<ScreenOne> {
   void initState() {
     super.initState();
 //    checkUserLoggedInOrNot(context);
-    /*var initializationSettingsAndroid =
+    var initializationSettingsAndroid =
         new AndroidInitializationSettings('@drawable/ic_appicon');
 
     var initializationSettingsIOS =
@@ -335,7 +335,7 @@ class _ScreenOneState extends State<ScreenOne> {
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: onSelectNotification);
-    getMessage();*/
+    getMessage();
     _register();
     getMyCurrentLocation();
   }
