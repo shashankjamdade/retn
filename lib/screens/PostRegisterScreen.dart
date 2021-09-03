@@ -374,7 +374,7 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> with CodeAutoFi
                                       ),
                                       Expanded(
                                           child: Text(
-                                        "I have a referral code",
+                                        "I have a referral code (Optional)",
                                         style: CommonStyles.getMontserratStyle(
                                             space_14,
                                             FontWeight.w400,
