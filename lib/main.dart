@@ -27,6 +27,7 @@ import 'package:flutter_rentry_new/screens/HomeScreen.dart';
 import 'package:flutter_rentry_new/screens/LaunchScreen.dart';
 import 'package:flutter_rentry_new/screens/LoginScreen.dart';
 import 'package:flutter_rentry_new/screens/MyFavScreen.dart';
+import 'package:flutter_rentry_new/screens/NotificationFile.dart';
 import 'package:flutter_rentry_new/screens/NotificationListScreen.dart';
 import 'package:flutter_rentry_new/screens/OtpVerificationScreen.dart';
 import 'package:flutter_rentry_new/screens/PackageScreen.dart';
@@ -87,90 +88,22 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
   importance: Importance.high,
 );
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+  print('Handling a background message ${message}');
+  myBackgroundMessageHandlerNew(message);
+}
+
 /// Initialize the [FlutterLocalNotificationsPlugin] package.
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
-void main() async {
-  HttpOverrides.global = new MyHttpOverrides();
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  // final appleSignInAvailable = await AppleSignInAvailable.check();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]).then((_) {
-    runApp(StateContainer(child: MyApp()));
-  });
-  setFirebase();
-}
-
-void setFirebase() {
-  var initializationSettingsAndroid =
-      new AndroidInitializationSettings('@drawable/ic_appicon');
-
-  var initializationSettingsIOS = new IOSInitializationSettings(
-      /*onDidReceiveLocalNotification: (int id, String title, String body, String payload){
-        return showDialog(
-          context: context,
-          builder: (BuildContext context) => new CupertinoAlertDialog(
-            title: new Text(title),
-            content: new Text(body),
-            actions: [
-              CupertinoDialogAction(
-                isDefaultAction: true,
-                child: new Text('Ok'),
-                onPressed: () async {
-                  Navigator.of(context, rootNavigator: true).pop();
-                  redirectToChatScreen();
-                },
-              ),
-            ],
-          ),
-        );
-      }*/
-      );
-  // var initializationSettingsIOS = new IOSInitializationSettings();
-
-  var initializationSettings = new InitializationSettings(
-      android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-
-  flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onSelectNotification: onSelect);
-
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-
-  _firebaseMessaging.configure(
-    onBackgroundMessage: Platform.isIOS ? null : myBackgroundMessageHandler,
-    onMessage: (message) async {
-      debugPrint("FCM_PUSH_onmsg1: $message");
-    },
-    onLaunch: (message) async {
-      debugPrint("FCM_PUSH_onLaunch: $message");
-    },
-    onResume: (message) async {
-      debugPrint("FCM_PUSH_onResume: $message");
-    },
-  );
-
-  _firebaseMessaging.getToken().then((String token) {
-    print("Push Messaging token: $token");
-    // Push messaging to this token later
-  });
-}
-
-void redirectToChatScreen() {
-
-}
-
-Future<String> onSelect(String data) async {
-  print("onSelectNotification $data");
-}
-
-//updated myBackgroundMessageHandler
-Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
-  debugPrint("myBackgroundMessageHandler message: $message");
-  int msgId = int.tryParse(message["data"]["msgId"].toString()) ?? 1;
-  print("msgId ${Platform.isIOS? message['title'] : message['data']['title']}, ${ Platform.isIOS? message['message'] : message['data']['message']}, PAYLOAD-> ${Platform.isIOS? message['notification_type'] : message["data"]["notification_type"]}");
+Future<dynamic> myBackgroundMessageHandlerNew(RemoteMessage message) async {
+  debugPrint("myBackgroundMessageHandler_message: ${message.data.toString()}");
+  int msgId = int.tryParse(message?.messageId) ?? 1;
+  print("msgId ${Platform.isIOS? message.data['title'] : message.data['title']}, ${ Platform.isIOS? message.data['message'] : message.data['message']}, PAYLOAD-> ${Platform.isIOS? message.data['notification_type'] : message.data['notification_type']}");
   var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
       'channelid', 'flutterfcm', 'your channel description',ticker: 'ticker', icon: "ic_notification_icon",
       playSound: true, enableLights: true, enableVibration: true,
@@ -179,10 +112,98 @@ Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
   var platformChannelSpecifics = new NotificationDetails(
       android: androidPlatformChannelSpecifics,
       iOS: iOSPlatformChannelSpecifics);
-  flutterLocalNotificationsPlugin.show(msgId,  Platform.isIOS? message['title'] : message['data']['title'],
-      Platform.isIOS? message['message'] : message['data']['message'], platformChannelSpecifics,
-      payload:  Platform.isIOS? message['notification_type'] : message["data"]["notification_type"]);
+  flutterLocalNotificationsPlugin.show(msgId,  Platform.isIOS? message.data['title'] : message.data['title'],
+      Platform.isIOS? message.data['message'] : message.data['message'], platformChannelSpecifics,
+      payload:  Platform.isIOS? message.data['notification_type'] : message.data['notification_type']);
   return Future<void>.value();
+}
+
+void main() async {
+  HttpOverrides.global = new MyHttpOverrides();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+      AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+
+  IOSInitializationSettings initializationSettingsIOS =IOSInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+      onDidReceiveLocalNotification: (
+          int id,
+          String title,
+          String body,
+          String payload,
+          ) async {
+        print("NOTIFICATION***************: $title");
+      });
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+      IOSFlutterLocalNotificationsPlugin>()?.initialize(initializationSettingsIOS);
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+  // final appleSignInAvailable = await AppleSignInAvailable.check();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]).then((_) {
+    runApp(StateContainer(child: MyNotificatinApp()));
+    // runApp(StateContainer(child: MyApp()));
+  });
+  /*setFirebase();*/
+}
+
+void setFirebase() {
+  var initializationSettingsAndroid =
+      new AndroidInitializationSettings('@drawable/ic_appicon');
+
+  final IOSInitializationSettings initializationSettingsIOS =
+  IOSInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+      onDidReceiveLocalNotification: (
+          int id,
+          String title,
+          String body,
+          String payload,
+          ) async {
+        print("NOTIFICATION***************: $title");
+      });  // var initializationSettingsIOS = new IOSInitializationSettings();
+
+  var initializationSettings = new InitializationSettings(
+      android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+
+  flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: onSelect);
+
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  if(Platform.isIOS){
+    _firebaseMessaging.requestPermission(
+      alert: true,
+      criticalAlert: true,
+      provisional: true,
+      sound: true
+    );
+    IOSNotificationDetails iOSPlatformChannelSpecifics =
+    IOSNotificationDetails(
+      presentAlert: true,
+      presentSound: true,
+      presentBadge: true
+    );
+    var notificationDetails =
+        NotificationDetails(iOS: iOSPlatformChannelSpecifics);
+  }
+}
+
+
+Future<String> onSelect(String data) async {
+  print("onSelectNotification $data");
 }
 
 class MyHttpOverrides extends HttpOverrides {
@@ -206,7 +227,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    FirebaseMessaging().deleteInstanceID();
     Notification.init();
   }
 
@@ -216,6 +236,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Rentozo',
       debugShowCheckedModeBanner: false,
       home: ScreenOne(false),
+      // home: Application(),
       // home: TakePictureScreen(),
     );
   }
@@ -223,12 +244,9 @@ class _MyAppState extends State<MyApp> {
 
 class ScreenOne extends StatefulWidget {
   bool isClrData = false;
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   var mFcmToken = "";
 
-  _registerToken() {
-    _firebaseMessaging.getToken().then((token) => mFcmToken = token);
-  }
 
   ScreenOne(this.isClrData);
 
@@ -240,7 +258,7 @@ class _ScreenOneState extends State<ScreenOne> {
   bool isLogin = false;
   bool isLocationAccess = false;
   AuthenticationBloc authenticationBloc = new AuthenticationBloc();
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       new FlutterLocalNotificationsPlugin();
   SharedPreferences prefs;
@@ -267,40 +285,6 @@ class _ScreenOneState extends State<ScreenOne> {
     return msg;
   }
 
-  void getMessage() {
-    debugPrint('Setting_FCM_NOTIF_main');
-    _firebaseMessaging.configure(
-        onMessage: (Map<String, dynamic> message) async {
-          debugPrint('FCM_PUSH_onmsg $message');
-      /*if(Platform.isIOS){
-        message = modifyNotificationJson(message);
-      }*/
-      displayNotification(message);
-      return;
-    }, onResume: (Map<String, dynamic> message) async {
-      debugPrint('FCM_PUSH_onresume $message');
-      if(Platform.isIOS){
-        displayNotification(message);
-      }
-      setState(() => _message = message["notification"]["title"] );
-    }, onLaunch: (Map<String, dynamic> message) async {
-      print('FCM_PUSH_onLaunch $message');
-      setState(() => _message = message["notification"]["title"]);
-    });
-    if(Platform.isIOS){
-      _firebaseMessaging.requestNotificationPermissions(IosNotificationSettings(
-        alert: true,
-        provisional: true,
-        badge: true,
-        sound: true,
-      ));
-      _firebaseMessaging.onIosSettingsRegistered
-          .listen((IosNotificationSettings settings) {
-        print('Hello');
-      });
-    }
-  }
-
   _showLocationPermissionDialog(BuildContext context) {
     VoidCallback continueCallBack = () => {
       Navigator.of(context).pop(),
@@ -320,28 +304,101 @@ class _ScreenOneState extends State<ScreenOne> {
   @override
   void initState() {
     super.initState();
-//    checkUserLoggedInOrNot(context);
-    getMyCurrentLocation();
     var initializationSettingsAndroid =
         new AndroidInitializationSettings('@drawable/ic_appicon');
 
-    var initializationSettingsIOS =
+    final IOSInitializationSettings initializationSettingsIOS =
     IOSInitializationSettings(
-      requestSoundPermission: false,
-      requestBadgePermission: false,
-      requestAlertPermission: false,
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+        onDidReceiveLocalNotification: (
+            int id,
+            String title,
+            String body,
+            String payload,
+            ) async {
+
+        });
+    /*var initializationSettingsIOS =
+    IOSInitializationSettings(
+      requestSoundPermission: true,
+      requestBadgePermission: true,
+      requestAlertPermission: true,
       onDidReceiveLocalNotification: onDidRecieveLocalNotification,
-    );
-    // var initializationSettingsIOS = new IOSInitializationSettings(
-    //     onDidReceiveLocalNotification: onDidRecieveLocalNotification);
+    );*/
 
     var initializationSettings = new InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: onSelectNotification);
-    getMessage();
     _register();
+    registerNotification();
+    checkForInitialMessage();
+    getMyCurrentLocation();
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      if(message!=null){
+        onSelectNotification(message.data['notification_type']);
+      }
+    });
+  }
+
+  void registerNotification() async {
+    await Firebase.initializeApp();
+    _firebaseMessaging = FirebaseMessaging.instance;
+    if(Platform.isIOS){
+      _firebaseMessaging.getNotificationSettings();
+    }
+    NotificationSettings settings = await _firebaseMessaging.requestPermission(
+      alert: true,
+      badge: true,
+      provisional: false,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        debugPrint("IN_foreground_mode ${message.data}");
+        print(
+            'Message title: ${message.notification?.title}, body: ${message.notification?.body}, data: ${message.data}');
+        //SHOWNOTIFICATION
+        showNotification(message);
+      });
+    } else {
+      print('User declined or has not accepted permission');
+    }
+  }
+
+  Future<dynamic> showNotification(RemoteMessage message) async {
+    debugPrint("myBackgroundMessageHandler_message: ${message.data}");
+    int msgId = int.tryParse(message?.messageId) ?? 1;
+    print("msgId ${Platform.isIOS? message.data['title'] : message.data['title']}, ${ Platform.isIOS? message.data['message'] : message.data['message']}, PAYLOAD-> ${Platform.isIOS? message.data['notification_type'] : message.data['notification_type']}");
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'channelid', 'flutterfcm', 'your channel description',ticker: 'ticker', icon: "ic_notification_icon",
+        playSound: true, enableLights: true, enableVibration: true,
+        importance: Importance.max, priority: Priority.high);
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails(presentSound: true, presentAlert: true);
+    var platformChannelSpecifics = new NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iOSPlatformChannelSpecifics);
+    flutterLocalNotificationsPlugin.show(msgId,  Platform.isIOS? message.data['title'] : message.data['title'],
+        Platform.isIOS? message.data['message'] : message.data['message'], platformChannelSpecifics,
+        payload:  Platform.isIOS? message.data['notification_type'] : message.data['notification_type']);
+    return Future<void>.value();
+  }
+
+  // For handling notification when the app is in terminated state
+  checkForInitialMessage() async {
+    await Firebase.initializeApp();
+    RemoteMessage initialMessage =
+    await FirebaseMessaging.instance.getInitialMessage();
+
+    if (initialMessage != null) {
+     //SHOWNOTIFICATION
+      showNotification(initialMessage);
+    }
   }
 
   getMyCurrentLocation() async {
@@ -363,7 +420,7 @@ class _ScreenOneState extends State<ScreenOne> {
         // Either the permission was already granted before or the user just granted it.
       }
       Position position =
-      await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       prefs.setString(USER_LOCATION_LAT, "${position.latitude}");
       prefs.setString(USER_LOCATION_LONG, "${position.longitude}");
       debugPrint("LOCATION_FOUND ${position.latitude}, ${position.longitude}");

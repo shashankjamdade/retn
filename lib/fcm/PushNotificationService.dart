@@ -11,7 +11,7 @@ class PushNotificationService {
 
   Future initialise() async {
     if (Platform.isIOS) {
-      _fcm.requestNotificationPermissions(IosNotificationSettings());
+      // _fcm.requestNotificationPermissions(IosNotificationSettings());
     }
 
     // If you want to test the push notification locally,
@@ -20,7 +20,7 @@ class PushNotificationService {
     String token = await _fcm.getToken();
     print("FirebaseMessaging token: $token");
 
-    _fcm.configure(
+   /* _fcm.configure(
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: $message");
       },
@@ -30,6 +30,6 @@ class PushNotificationService {
       onResume: (Map<String, dynamic> message) async {
         print("onResume: $message");
       },
-    );
+    );*/
   }
 }

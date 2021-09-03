@@ -41,7 +41,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   var token = "";
   var myUserId = "";
   var _timer;
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   @override
   void initState() {
@@ -432,14 +432,14 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   }
 
   void getMessage() {
-    _firebaseMessaging.configure(
-        onMessage: (Map<String, dynamic> message) async {
-          homeBloc..add(GetAllChatMsgNoProgressEvent(token: token, indexId: widget.indexId, adId: widget.adId));
-        }, onResume: (Map<String, dynamic> message) async {
-
-    }, onLaunch: (Map<String, dynamic> message) async {
-
-    });
+    // _firebaseMessaging.configure(
+    //     onMessage: (Map<String, dynamic> message) async {
+    //       homeBloc..add(GetAllChatMsgNoProgressEvent(token: token, indexId: widget.indexId, adId: widget.adId));
+    //     }, onResume: (Map<String, dynamic> message) async {
+    //
+    // }, onLaunch: (Map<String, dynamic> message) async {
+    //
+    // });
   }
 
 }

@@ -61,7 +61,7 @@ class _PostSocialLoginScreenState extends State<PostSocialLoginScreen> {
   String mEmail = "";
   String mSocialId = "";
   String mFcmToken = "";
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   var mCheckedTnC = true;
 
   logininViaGoogle() async {
@@ -222,8 +222,8 @@ class _PostSocialLoginScreenState extends State<PostSocialLoginScreen> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       Position position =
-      await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      LocationPermission permission = await checkPermission();
+      await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse) {
         prefs.setString(USER_LOCATION_LAT, "${position.latitude}");
@@ -275,7 +275,7 @@ class _PostSocialLoginScreenState extends State<PostSocialLoginScreen> {
             backgroundColor: Colors.black,
             textColor: Colors.white,
             fontSize: space_14);
-        openAppSettings();
+        Geolocator.openAppSettings();
       }
     } catch (e) {
       debugPrint("EXCEPTION in Loginscreen in storeResInPrefs ${e.toString()}");

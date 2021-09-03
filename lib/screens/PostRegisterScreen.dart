@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -75,22 +76,31 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> with CodeAutoFi
   bool mIsAlreadyRegisted = true;
   String appSignature;
 
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   String _message = '';
 
   _register() {
-    _firebaseMessaging.getToken().then((token) {
-      if (token != null && token?.isNotEmpty) {
-        mFcmToken = token;
-        debugPrint("FCM_TOKEN GETTOKEN -> ${mFcmToken}");
-      }
-    });
-    _firebaseMessaging.onTokenRefresh.listen((token) {
-      if (token != null && token?.isNotEmpty) {
-        mFcmToken = token;
-        debugPrint("FCM_TOKEN REFRESH -> ${mFcmToken}");
-      }
-    });
+    /*if(Platform.isIOS){
+      FirebaseMessaging.instance.getAPNSToken().then((token){
+        if (token != null && token?.isNotEmpty) {
+          mFcmToken = token;
+          debugPrint("FCM_TOKEN_APN_IOS GETTOKEN -> ${mFcmToken}");
+        }
+      });
+    }else{*/
+      _firebaseMessaging.getToken().then((token) {
+        if (token != null && token?.isNotEmpty) {
+          mFcmToken = token;
+          debugPrint("FCM_TOKEN GETTOKEN -> ${mFcmToken}");
+        }
+      });
+      _firebaseMessaging.onTokenRefresh.listen((token) {
+        if (token != null && token?.isNotEmpty) {
+          mFcmToken = token;
+          debugPrint("FCM_TOKEN REFRESH -> ${mFcmToken}");
+        }
+      });
+    // }
   }
 
   @override
@@ -374,7 +384,7 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> with CodeAutoFi
                                       ),
                                       Expanded(
                                           child: Text(
-                                        "I have a referral code",
+                                        "I have a referral code (Optional)",
                                         style: CommonStyles.getMontserratStyle(
                                             space_14,
                                             FontWeight.w400,
@@ -572,8 +582,8 @@ class _PostRegisterScreenState extends State<PostRegisterScreen> with CodeAutoFi
     try{
       SharedPreferences prefs = await SharedPreferences.getInstance();
       Position position =
-      await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      LocationPermission permission = await checkPermission();
+      await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse) {
         prefs.setString(USER_LOCATION_LAT, "${position.latitude}");

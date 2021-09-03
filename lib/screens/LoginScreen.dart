@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String mEmail = "";
   String mSocialId = "";
   String mFcmToken = "";
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  var _firebaseMessaging;
   var mCheckedTnC = true;
   var isLoginbtnPressed = false;
 
@@ -104,24 +104,36 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   _register() {
-    _firebaseMessaging.getToken().then((token) {
-      if (token != null && token?.isNotEmpty) {
-        mFcmToken = token;
-        debugPrint("FCM_TOKEN GETTOKEN -> ${mFcmToken}");
-        if (isLoginbtnPressed) {
-          onLogin();
+    if(Platform.isIOS){
+      FirebaseMessaging.instance.getAPNSToken().then((token){
+        if (token != null && token?.isNotEmpty) {
+          mFcmToken = token;
+          debugPrint("FCM_TOKEN_APN_IOS GETTOKEN -> ${mFcmToken}");
+          if (isLoginbtnPressed) {
+            onLogin();
+          }
         }
-      }
-    });
-    _firebaseMessaging.onTokenRefresh.listen((token) {
-      if (token != null && token?.isNotEmpty) {
-        mFcmToken = token;
-        debugPrint("FCM_TOKEN REFRESH -> ${mFcmToken}");
-        if (isLoginbtnPressed) {
-          onLogin();
+      });
+    }else{
+      _firebaseMessaging.getToken().then((token) {
+        if (token != null && token?.isNotEmpty) {
+          mFcmToken = token;
+          debugPrint("FCM_TOKEN GETTOKEN -> ${mFcmToken}");
+          if (isLoginbtnPressed) {
+            onLogin();
+          }
         }
-      }
-    });
+      });
+      _firebaseMessaging.onTokenRefresh.listen((token) {
+        if (token != null && token?.isNotEmpty) {
+          mFcmToken = token;
+          debugPrint("FCM_TOKEN REFRESH -> ${mFcmToken}");
+          if (isLoginbtnPressed) {
+            onLogin();
+          }
+        }
+      });
+    }
   }
 
   @override
@@ -129,6 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     //Add Listener to know when is updated focus
     debugPrint("LOGIN_SCREEN_STARTED ");
+    _firebaseMessaging = FirebaseMessaging.instance;
     _focusNode.addListener(_onLoginUserNameFocusChange);
     mobileEmailController = TextEditingController();
     passwordController = TextEditingController();
@@ -238,8 +251,8 @@ class _LoginScreenState extends State<LoginScreen> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       if (!isPostLogin) {
         Position position =
-            await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-        LocationPermission permission = await checkPermission();
+            await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+        LocationPermission permission = await Geolocator.checkPermission();
         if (permission == LocationPermission.always ||
             permission == LocationPermission.whileInUse) {
           prefs.setString(USER_LOCATION_LAT, "${position.latitude}");
@@ -276,7 +289,7 @@ class _LoginScreenState extends State<LoginScreen> {
               backgroundColor: Colors.black,
               textColor: Colors.white,
               fontSize: space_14);
-          openAppSettings();
+          Geolocator.openAppSettings();
         }
       }
 
@@ -594,8 +607,8 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       Position position =
-          await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      LocationPermission permission = await checkPermission();
+          await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse) {
         prefs.setString(USER_LOCATION_LAT, "${position.latitude}");

@@ -52,8 +52,6 @@
 	<string>422644849121300</string>
 	<key>FacebookDisplayName</key>
 	<string>Rentrozo</string>
-	<key>FirebaseAppDelegateProxyEnabled</key>
-	<string>false</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
@@ -63,6 +61,8 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+    <string>NO</string>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>no usage</string>
 	<key>NSCalendarsUsageDescription</key>

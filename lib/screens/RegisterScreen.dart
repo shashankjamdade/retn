@@ -59,7 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _obscureText = true;
   bool _obscureText2 = true;
 
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   String _message = '';
 
   _register() {
@@ -514,8 +514,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       Position position =
-      await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      LocationPermission permission = await checkPermission();
+      await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse) {
         prefs.setString(USER_LOGIN_RES, jsonEncode(res));

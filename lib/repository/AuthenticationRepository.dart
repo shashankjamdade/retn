@@ -32,7 +32,7 @@ class AuthenticationRepository extends BaseRepository {
     ioc.badCertificateCallback =
         (X509Certificate cert, String host, int port) => true;
     final http = new IOClient(ioc);
-    var res = await http.post(BASE_URL + LOGIN_V1,
+    var res = await http.post(Uri.parse(BASE_URL + LOGIN_V1),
         body: {"mobile": mobileOrEmail, "otp": passwordOtp, "device_token": token});
     print(res.body);
     code = res.statusCode;
@@ -63,7 +63,7 @@ class AuthenticationRepository extends BaseRepository {
     ioc.badCertificateCallback =
         (X509Certificate cert, String host, int port) => true;
     final http = new IOClient(ioc);
-    var res = await http.post(BASE_URL + SOCIAL_LOGIN_API,
+    var res = await http.post(Uri.parse(BASE_URL + SOCIAL_LOGIN_API),
         body: {"social_id": id,"email": email,  "device_token": deviceToken});
     print(res.body);
     code = res.statusCode;
@@ -101,7 +101,7 @@ class AuthenticationRepository extends BaseRepository {
     ioc.badCertificateCallback =
         (X509Certificate cert, String host, int port) => true;
     final http = new IOClient(ioc);
-    var res = await http.post(BASE_URL + REGISTRATION_V1, body: {
+    var res = await http.post(Uri.parse(BASE_URL + REGISTRATION_V1), body: {
       "username": registerReq.name,
       "email": registerReq.email,
       "contact": registerReq.mobile,
@@ -134,7 +134,7 @@ class AuthenticationRepository extends BaseRepository {
       case FacebookLoginStatus.loggedIn:
         final token = result.accessToken.token;
         final graphResponse = await http.get(
-            'https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=${token}');
+            Uri.parse('https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=${token}'));
         final profile = jsonDecode(graphResponse.body);
         debugPrint("FB_RES " + jsonEncode(graphResponse.body));
         userProfile = profile;
@@ -170,7 +170,7 @@ class AuthenticationRepository extends BaseRepository {
         debugPrint("Firebase_APPLE_LOGIN_ERROR ${appleResult.error}");
       }
 
-      final AuthCredential credential = OAuthProvider('apple.com').getCredential(
+      final AuthCredential credential = OAuthProvider('apple.com').credential(
         accessToken: String.fromCharCodes(appleResult.credential.authorizationCode),
         idToken: String.fromCharCodes(appleResult.credential.identityToken),
       );

@@ -182,12 +182,12 @@ class _HomeScreenState extends State<HomeScreen> {
       }
 
       _permissionGranted = await location.hasPermission();
-      if (_permissionGranted == PermissionStatus.DENIED) {
+      /*if (_permissionGranted == PermissionStatus.DENIED) {
         _permissionGranted = await location.requestPermission();
         if (_permissionGranted != PermissionStatus.GRANTED) {
           return;
         }
-      }
+      }*/
       _locationData = await location.getLocation().then((locationData){
         prefs.setString(USER_LOCATION_LAT, "${locationData.latitude}");
         prefs.setString(USER_LOCATION_LONG, "${locationData.longitude}");

@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>994818634451-mvi5732iotm9if7cm3knh2abpanv2ip8.apps.googleusercontent.com</string>
+	<string>994818634451-9use9uoaopknug766ioardfh63m8lde6.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.994818634451-mvi5732iotm9if7cm3knh2abpanv2ip8</string>
+	<string>com.googleusercontent.apps.994818634451-9use9uoaopknug766ioardfh63m8lde6</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>994818634451-2lerer6bns2vlqglco86eu2cbeq1kqd3.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.app.flutterRentryNew</string>
+	<string>com.app.rentozo</string>
 	<key>PROJECT_ID</key>
 	<string>rentrozo-d6419</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,7 +31,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:994818634451:ios:ebb198114350f60f86da26</string>
+	<string>1:994818634451:ios:97c802425c68151686da26</string>
 	<key>DATABASE_URL</key>
 	<string>https://rentrozo-d6419.firebaseio.com</string>
 </dict>

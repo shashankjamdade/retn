@@ -68,7 +68,7 @@ class HomeRepository extends BaseRepository {
     //http secure connection
     var http = makeHttpSecure();
     print("UNDER callGeneralSetting ");
-    var res = await http.get(BASE_URL + GENERAL_SETTINGS);
+    var res = await http.get(Uri.parse(BASE_URL + GENERAL_SETTINGS));
     print("PRINTING ${res.body}");
     code = res.statusCode;
     if (res.statusCode == 200) {
@@ -91,7 +91,7 @@ class HomeRepository extends BaseRepository {
     var http = makeHttpSecure();
     print("UNDER callHomeApi ${BASE_URL + HOMEPAGE_API}, body--> ${lat} ${lng}");
     try{
-      var res = await http.post(BASE_URL + HOMEPAGE_API,
+      var res = await http.post(Uri.parse(BASE_URL + HOMEPAGE_API),
           headers: {"Token": token}, body: {"lat": lat, "lng": lng}).timeout(const Duration(seconds: 5));;
       print("PRINTING ${res.body}");
       code = res.statusCode;
@@ -126,7 +126,7 @@ class HomeRepository extends BaseRepository {
     print(
         "UNDER callItemDetailApi ${BASE_URL}${ITEMDETAIL_API}?title=${categoryName}");
     var res = await http.get(
-      BASE_URL + ITEMDETAIL_API + "?title=${categoryName}",
+        Uri.parse(BASE_URL + ITEMDETAIL_API + "?title=${categoryName}"),
       headers: {"Token": token},
     );
     print("PRINTING ${res.body}");
@@ -148,7 +148,7 @@ class HomeRepository extends BaseRepository {
     //http secure connection
     var http = makeHttpSecure();
     print("UNDER callLocaitonSearchApi -- ${searchKey}");
-    var res = await http.post(BASE_URL + LOCATION_SEARCH_API,
+    var res = await http.post(Uri.parse(BASE_URL + LOCATION_SEARCH_API),
         headers: {"Token": token}, body: {"search": searchKey});
     print("PRINTING ${res.body}");
     code = res.statusCode;
@@ -174,7 +174,7 @@ class HomeRepository extends BaseRepository {
     var http = makeHttpSecure();
     print(
         "UNDER SearchSubCategoryResponse -- ${searchKey} ${BASE_URL + SEARCH_SUBCATEGORY_LIST_API}");
-    var res = await http.post(BASE_URL + SEARCH_SUBCATEGORY_LIST_API,
+    var res = await http.post(Uri.parse(BASE_URL + SEARCH_SUBCATEGORY_LIST_API),
         headers: {"Token": token}, body: {"search": searchKey});
     print("PRINTING ${res.body}");
     code = res.statusCode;
@@ -199,7 +199,7 @@ class HomeRepository extends BaseRepository {
     //http secure connection
     var http = makeHttpSecure();
     print("UNDER SubCategoryListResponse ${category_id}");
-    var res = await http.post(BASE_URL + SUBCATEGORY_LIST_API,
+    var res = await http.post(Uri.parse(BASE_URL + SUBCATEGORY_LIST_API),
         headers: {"Token": token}, body: {"category_id": category_id});
     print("PRINTING ${res.body}");
     code = res.statusCode;
@@ -243,7 +243,7 @@ class HomeRepository extends BaseRepository {
         "filter_min ${filter_min}, filter_max ${filter_max}"}");
     print("-------");
     try{
-      var res = await http.post(BASE_URL + ADS_SEARCH_API, headers: {
+      var res = await http.post(Uri.parse(BASE_URL + ADS_SEARCH_API), headers: {
         "Token": token
       }, body: {
         "category_id": categoryId,
@@ -293,7 +293,7 @@ class HomeRepository extends BaseRepository {
     print("UNDER callGetCategoryListApi ${token}, ${BASE_URL + CATEGORY_API}");
     try{
       var res =
-      await http.get(BASE_URL + CATEGORY_API, headers: {'Token': token}).timeout(const Duration(seconds: 5));
+      await http.get(Uri.parse(BASE_URL + CATEGORY_API), headers: {'Token': token}).timeout(const Duration(seconds: 5));
       print("PRINTING ${res.body}");
 //    code = res.statusCode;
       if (res.statusCode == 200) {
@@ -324,7 +324,7 @@ class HomeRepository extends BaseRepository {
     var http = makeHttpSecure();
     print("UNDER callGetAllPackageListApi ${token}");
     var res = await http
-        .get(BASE_URL + GET_ALL_PACKAGELIST_API, headers: {"Token": token});
+        .get(Uri.parse(BASE_URL + GET_ALL_PACKAGELIST_API), headers: {"Token": token});
     print("PRINTING ${res.body}");
     code = res.statusCode;
     if (res.statusCode == 200) {
@@ -353,7 +353,7 @@ class HomeRepository extends BaseRepository {
       "Token": token
     };
     var res = await http.get(
-      BASE_URL + GET_NOTIFICATION_LIST_API,
+        Uri.parse(BASE_URL + GET_NOTIFICATION_LIST_API),
       headers: mainheader,
     );
     print("PRINTING ${res.body}");
@@ -380,7 +380,7 @@ class HomeRepository extends BaseRepository {
     Map<String, String> mainheader = {"token": token};
     try{
       var res = await http.get(
-        BASE_URL + GET_USER_DATA,
+          Uri.parse(BASE_URL + GET_USER_DATA),
         headers: mainheader,
       ).timeout(const Duration(seconds: 5));
       print("PRINTING ${res.body}");
@@ -418,7 +418,7 @@ class HomeRepository extends BaseRepository {
 //      "Content-type": "application/json",
       "token": token
     };
-    var res = await http.post(BASE_URL + UPDATE_PASSWORD,
+    var res = await http.post(Uri.parse(BASE_URL + UPDATE_PASSWORD),
         headers: mainheader,
         body: {
           "current_password": pwd,
@@ -479,7 +479,7 @@ class HomeRepository extends BaseRepository {
       debugPrint("ACCESSING-WITHOUT-IMG");
       var http = makeHttpSecure();
       Map<String, String> mainheader = {"token": token};
-      var res = await http.post(BASE_URL + GET_USER_DATA,
+      var res = await http.post(Uri.parse(BASE_URL + GET_USER_DATA),
           headers: mainheader,
           body: {
             "username": username,
@@ -508,7 +508,7 @@ class HomeRepository extends BaseRepository {
     print("UNDER callRentTypeApi ${token}");
     Map<String, String> mainheader = {"token": token};
     var res = await http.get(
-      BASE_URL + GET_ALL_RENT_TYPE,
+        Uri.parse(BASE_URL + GET_ALL_RENT_TYPE),
       headers: mainheader,
     );
     print("PRINTING ${res.body}");
@@ -531,7 +531,7 @@ class HomeRepository extends BaseRepository {
     SaveFavouriteRes response;
     print("UNDER callSavefavouriteApi ${token}, ${ad_id}");
     Map<String, String> mainheader = {"token": token};
-    var res = await http.post(BASE_URL + SAVE_FAVOURITE,
+    var res = await http.post(Uri.parse(BASE_URL + SAVE_FAVOURITE),
         headers: mainheader, body: {"ad_id": ad_id});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
@@ -552,7 +552,7 @@ class HomeRepository extends BaseRepository {
     GetMyFavouriteRes response;
     print("UNDER callMyFavouriteListApi ${token}");
     Map<String, String> mainheader = {"token": token};
-    var res = await http.get(BASE_URL + MY_FAVOURITE, headers: mainheader);
+    var res = await http.get(Uri.parse(BASE_URL + MY_FAVOURITE), headers: mainheader);
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -572,7 +572,7 @@ class HomeRepository extends BaseRepository {
     SellerInfoRes response;
     print("UNDER callSellerInfoApi ${sellerId}, ${token}");
     Map<String, String> mainheader = {"token": token};
-    var res = await http.post(BASE_URL + GET_SELLER_INFO,
+    var res = await http.post(Uri.parse(BASE_URL + GET_SELLER_INFO),
         headers: mainheader, body: {"seller_id": sellerId});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
@@ -594,7 +594,7 @@ class HomeRepository extends BaseRepository {
     Map<String, String> mainheader = {"token": token};
     try{
       var res = await http.get(
-        BASE_URL + GET_NEW_CHAT_LIST /*+ GET_CHAT_LIST*/,
+          Uri.parse(BASE_URL + GET_NEW_CHAT_LIST) /*+ GET_CHAT_LIST*/,
         headers: mainheader,
       ).timeout(const Duration(seconds: 5));
       print("PRINTING ${res.body}");
@@ -625,7 +625,7 @@ class HomeRepository extends BaseRepository {
         "UNDER callGetAllChatMsgApi ${BASE_URL + NEW_INBOX_CHAT + "/${adId}/${indexId}"} ${token}");
     Map<String, String> mainheader = {"token": token};
     var res = await http.get(
-      BASE_URL + NEW_INBOX_CHAT + "/${adId}/${indexId}",
+        Uri.parse(BASE_URL + NEW_INBOX_CHAT + "/${adId}/${indexId}"),
       headers: mainheader,
     );
     print("PRINTING ${res.body}");
@@ -648,7 +648,7 @@ class HomeRepository extends BaseRepository {
         "UNDER callGetSlugChatMsgApi ${BASE_URL + GET_CHAT_LIST + "/${slug}"},  ${token} , ");
     Map<String, String> mainheader = {"token": token};
     var res = await http.get(
-      BASE_URL + GET_CHAT_LIST + "/${slug}",
+        Uri.parse(BASE_URL + GET_CHAT_LIST + "/${slug}"),
       headers: mainheader,
     );
     print("PRINTING ${res.body}");
@@ -671,7 +671,7 @@ class HomeRepository extends BaseRepository {
     print(
         "UNDER callSendMsgApi ${adId}, ${recieverId}, ${inboxId}, ${msg}, ${token} , ${BASE_URL + SEND_MESSAGE}");
     Map<String, String> mainheader = {"token": token};
-    var res = await http.post(BASE_URL + SEND_MESSAGE,
+    var res = await http.post(Uri.parse(BASE_URL + SEND_MESSAGE),
         headers: mainheader,
         body: {
           "ad_id": adId,
@@ -698,7 +698,7 @@ class HomeRepository extends BaseRepository {
         "UNDER callGetMyPackageList ${token} , ${BASE_URL + MY_PACKAGE_LIST}");
     Map<String, String> mainheader = {"token": token};
     var res = await http.get(
-      BASE_URL + MY_PACKAGE_LIST,
+        Uri.parse(BASE_URL + MY_PACKAGE_LIST),
       headers: mainheader,
     );
     print("PRINTING ${res.body}");
@@ -719,7 +719,7 @@ class HomeRepository extends BaseRepository {
     print("UNDER callAdUnderPackage ${token} , ${BASE_URL + AD_UNDER_PACKAGE}");
     Map<String, String> mainheader = {"token": token};
     var res = await http.get(
-      BASE_URL + AD_UNDER_PACKAGE,
+        Uri.parse(BASE_URL + AD_UNDER_PACKAGE),
       headers: mainheader,
     );
     print("PRINTING ${res.body}");
@@ -741,7 +741,7 @@ class HomeRepository extends BaseRepository {
     print(
         "UNDER callCustomFields  ${BASE_URL + SUBCATEGORY_CUSTOM_FIELDS}, ${subcategory_id}");
     Map<String, String> mainheader = {"token": token};
-    var res = await http.post(BASE_URL + SUBCATEGORY_CUSTOM_FIELDS,
+    var res = await http.post(Uri.parse(BASE_URL + SUBCATEGORY_CUSTOM_FIELDS),
         headers: mainheader, body: {"subcategory_id": subcategory_id});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
@@ -850,7 +850,7 @@ class HomeRepository extends BaseRepository {
     print("UNDER callPackagePayment ${BASE_URL + PACKAGE_PAYMENT}, ${packageId}, ${amt}");
     Map<String, String> mainheader = {"token": token};
     var res =
-        await http.post(BASE_URL + PACKAGE_PAYMENT, headers: mainheader, body: {
+        await http.post(Uri.parse(BASE_URL + PACKAGE_PAYMENT), headers: mainheader, body: {
       "package_id": packageId,
       "amount": amt,
       "payment_status": "1",
@@ -875,7 +875,7 @@ class HomeRepository extends BaseRepository {
     MyAdsListRes response;
     print("UNDER callGetMyAdsList ${token} , ${BASE_URL + GET_MY_ADS}");
     Map<String, String> mainheader = {"token": token};
-    var res = await http.get(BASE_URL + GET_MY_ADS, headers: mainheader);
+    var res = await http.get(Uri.parse(BASE_URL + GET_MY_ADS), headers: mainheader);
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -894,7 +894,7 @@ class HomeRepository extends BaseRepository {
     print(
         "UNDER callGetMyAdEdit , ${BASE_URL + GET_AD_EDIT}, ${adId} ");
     Map<String, String> mainheader = {"token": token};
-    var res = await http.post(BASE_URL + GET_AD_EDIT,
+    var res = await http.post(Uri.parse(BASE_URL + GET_AD_EDIT),
         headers: mainheader, body: {"ad_id": adId});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
@@ -914,7 +914,7 @@ class HomeRepository extends BaseRepository {
     print("UNDER callDeleteAd ${token} , ${BASE_URL + AD_DELETE}, ${adId} ");
     Map<String, String> mainheader = {"token": token};
     var res = await http
-        .post(BASE_URL + AD_DELETE, headers: mainheader, body: {"ad_id": adId});
+        .post(Uri.parse(BASE_URL + AD_DELETE), headers: mainheader, body: {"ad_id": adId});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -1018,7 +1018,7 @@ class HomeRepository extends BaseRepository {
   Future<CommonResponse> callSendOtp(String contact, String otpType) async {
     CommonResponse response;
     print("UNDER callSendOtp ${contact} , ${BASE_URL + SEND_OTP}");
-    var res = await http.post(BASE_URL + SEND_OTP,
+    var res = await http.post(Uri.parse(BASE_URL + SEND_OTP),
         body: {"contact": contact, "otp_type": otpType});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
@@ -1036,7 +1036,7 @@ class HomeRepository extends BaseRepository {
   Future<SendOtpV1Res> callSendOtpV1(String contact, String otpType) async {
     SendOtpV1Res response;
     print("UNDER callSendOtp v1 ${contact} , ${BASE_URL + SEND_OTP}");
-    var res = await http.post(BASE_URL + SEND_OTP_V1,
+    var res = await http.post(Uri.parse(BASE_URL + SEND_OTP_V1),
         body: {"contact": contact, "otp_type": otpType});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
@@ -1055,7 +1055,7 @@ class HomeRepository extends BaseRepository {
     CommonResponse response;
     print("UNDER callVerifyOtp ${contact} , ${BASE_URL + VERIFY_OTP}");
     var res = await http
-        .post(BASE_URL + VERIFY_OTP, body: {"contact": contact, "otp": otp});
+        .post(Uri.parse(BASE_URL + VERIFY_OTP), body: {"contact": contact, "otp": otp});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -1073,7 +1073,7 @@ class HomeRepository extends BaseRepository {
       String contact, String otp, String confirm_password) async {
     CommonResponse response;
     print("UNDER callSendOtp ${contact} , ${BASE_URL + SEND_OTP}");
-    var res = await http.post(BASE_URL + FORGOT_PWD, body: {
+    var res = await http.post(Uri.parse(BASE_URL + FORGOT_PWD), body: {
       "contact": contact,
       "otp": otp,
       "confirm_password": confirm_password
@@ -1096,7 +1096,7 @@ class HomeRepository extends BaseRepository {
     CommonResponse response;
     print("UNDER callRating ${seller_id} , ${BASE_URL + RATING}");
     Map<String, String> mainheader = {"token": token};
-    var res = await http.post(BASE_URL + RATING,
+    var res = await http.post(Uri.parse(BASE_URL + RATING),
         headers: mainheader,
         body: {"seller_id": seller_id, "user_id": user_id, "rating": rating});
     print("PRINTING ${res.body}");
@@ -1118,7 +1118,7 @@ class HomeRepository extends BaseRepository {
         "UNDER callGooglePlaces ${query} , ${GOOGLE_AUTOCOMPLETE1}${query}${GOOGLE_AUTOCOMPLETE2}${GOOGLE_API_KEY}");
 //    Map<String, String> mainheader = {"token": token};
     var res = await http.get(
-        "${GOOGLE_AUTOCOMPLETE1}${query}${GOOGLE_AUTOCOMPLETE2}${GOOGLE_API_KEY}");
+        Uri.parse("${GOOGLE_AUTOCOMPLETE1}${query}${GOOGLE_AUTOCOMPLETE2}${GOOGLE_API_KEY}"));
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -1136,7 +1136,7 @@ class HomeRepository extends BaseRepository {
     CouponRes response;
     print("UNDER callCouponRes lat ${lat}, lng ${lng} , ${BASE_URL + COUPON}");
     var res =
-        await http.post(BASE_URL + COUPON, body: {"lat": lat, "lng": lng});
+        await http.post(Uri.parse(BASE_URL + COUPON), body: {"lat": lat, "lng": lng});
     print("PRINTING ${res.body}");
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
@@ -1155,7 +1155,7 @@ class HomeRepository extends BaseRepository {
     print("UNDER callChatDelete inbox_id ${inbox_id} , ${BASE_URL + CHAT_DELETE}");
     Map<String, String> mainheader = {"token": token};
     var res =
-        await http.post(BASE_URL + CHAT_DELETE,
+        await http.post(Uri.parse(BASE_URL + CHAT_DELETE),
             headers: mainheader,
             body: {"inbox_id": inbox_id});
     print("PRINTING ${res.body}");
@@ -1176,7 +1176,7 @@ class HomeRepository extends BaseRepository {
     print("UNDER callReadChat inbox_id ${inbox_id} , ${BASE_URL + READ_CHAT}");
     Map<String, String> mainheader = {"token": token};
     var res =
-        await http.post(BASE_URL + READ_CHAT,
+        await http.post(Uri.parse(BASE_URL + READ_CHAT),
             headers: mainheader,
             body: {"inbox_id": inbox_id});
     print("PRINTING ${res.body}");

@@ -17,10 +17,11 @@ class PushNotificationsManager {
   static final PushNotificationsManager _instance =
   PushNotificationsManager._();
 
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+   FirebaseMessaging _firebaseMessaging;
   bool _initialized = false;
 
   Future<void> init() async {
+    _firebaseMessaging = FirebaseMessaging.instance;
     if (_initialized == true) {
       // For iOS request permission first.
 
@@ -35,8 +36,8 @@ class PushNotificationsManager {
       flutterLocalNotificationsPlugin.initialize(initializationSettings,
           onSelectNotification: onSelectNotification);
 
-      _firebaseMessaging.requestNotificationPermissions();
-      _firebaseMessaging.configure(onMessage: (Map<String, dynamic> message) {
+      _firebaseMessaging.requestPermission(alert: true, criticalAlert: true);
+     /* _firebaseMessaging.c(onMessage: (Map<String, dynamic> message) {
         print('onMessage: $message');
         var result = message['data'];
         // Platform.isAndroid ? _showNotification(message['data']));
@@ -50,7 +51,7 @@ class PushNotificationsManager {
         print('onLaunch: $message');
         var result = message['data'];
         return;
-      });
+      });*/
 
       _showNotification(
           1234,
@@ -116,7 +117,7 @@ class NotificationS {
   String token;
   BuildContext _context;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-  FirebaseMessaging _messaging = FirebaseMessaging();
+  FirebaseMessaging _messaging = FirebaseMessaging.instance;
   static const _channel = MethodChannel('custom notification channel');
 
   //static final _log = Logger('Notification');
@@ -128,11 +129,11 @@ class NotificationS {
 
   Future<void> configureFirebase() async {
     final _permissionGranted =
-    await _messaging.requestNotificationPermissions();
+    await _messaging.requestPermission(alert: true,criticalAlert: true);
 
     if (_permissionGranted == null || _permissionGranted == true) {
       token = await _messaging.getToken();
-      _messaging.configure(
+      /*_messaging.configure(
         onMessage: (message) async {
           await _displayNotification(message);
         },
@@ -143,7 +144,7 @@ class NotificationS {
           await _displayNotification(message);
         },
          onBackgroundMessage: _backgroundMessageHandler,
-      );
+      );*/
     }
   }
 

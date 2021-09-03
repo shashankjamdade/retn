@@ -157,7 +157,7 @@ class CommonAppbarWidget extends StatelessWidget {
                                               .mUserLocationSelected !=
                                           null
                                       ? "${StateContainer.of(context).mUserLocationSelected.city}, ${StateContainer.of(context).mUserLocationSelected.state}"
-                                      : "",
+                                      : "Fetching location...",
                               style: CommonStyles.getRalewayStyle(
                                   space_12, FontWeight.w500, Colors.white),
                               maxLines: 1,

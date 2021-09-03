@@ -2,8 +2,7 @@ import UIKit
 import Flutter
 import GoogleMaps
 import Firebase
-import FirebaseInstanceID
-import FirebaseMessaging
+import firebase_messaging
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -22,10 +21,10 @@ import FirebaseMessaging
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
     
-//     override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-//
-//        Messaging.messaging().apnsToken = deviceToken
-//        super.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
-//      }
+    /* override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+
+       Messaging.messaging().apnsToken = deviceToken
+       super.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
+     } */
     
 }
