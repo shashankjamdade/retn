@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_rentry_new/bloc/authentication/AuthenticationState.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeBloc.dart';
 import 'package:flutter_rentry_new/bloc/home/HomeEvent.dart';
@@ -76,14 +78,20 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       prefs = await SharedPreferences.getInstance();
       bool isShowCaseViewed = (prefs.getString(IS_SHOWCASE_VIEWED) != null &&
-              prefs.getString(IS_SHOWCASE_VIEWED).isNotEmpty)
+          prefs
+              .getString(IS_SHOWCASE_VIEWED)
+              .isNotEmpty)
           ? true
           : false;
       debugPrint("CHECKINGFORSHOWCASE --> ${isShowCaseViewed}");
       if (prefs.getString(LOCATION_INFO_LAT) != null &&
-          prefs.getString(LOCATION_INFO_LAT).isNotEmpty &&
+          prefs
+              .getString(LOCATION_INFO_LAT)
+              .isNotEmpty &&
           prefs.getString(LOCATION_INFO_LNG) != null &&
-          prefs.getString(LOCATION_INFO_LNG).isNotEmpty) {
+          prefs
+              .getString(LOCATION_INFO_LNG)
+              .isNotEmpty) {
         mLat = prefs.getString(LOCATION_INFO_LAT);
         mLng = prefs.getString(LOCATION_INFO_LNG);
       }
@@ -140,13 +148,19 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void didChangeDependencies() {
     try {
-      var selectedCurrentLoc = StateContainer.of(context).mUserLocationSelected;
-      loginResponse = StateContainer.of(context).mLoginResponse;
+      var selectedCurrentLoc = StateContainer
+          .of(context)
+          .mUserLocationSelected;
+      loginResponse = StateContainer
+          .of(context)
+          .mLoginResponse;
       if (loginResponse != null) {
         token = loginResponse.data.token;
         debugPrint("ACCESSING_INHERITED_HOME ${token}");
       }
-      var selectedLoc = StateContainer.of(context).mUserLocNameSelected;
+      var selectedLoc = StateContainer
+          .of(context)
+          .mUserLocNameSelected;
       if (selectedLoc != null) {
         setState(() {
           mLat = selectedLoc.mlat;
@@ -182,51 +196,67 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       var isAlreadyApiHit = false;
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      if(prefs?.getString(USER_LOCATION_LAT)!=null && prefs?.getString(USER_LOCATION_LAT)?.isNotEmpty){
+      if (prefs?.getString(USER_LOCATION_LAT) != null && prefs
+          ?.getString(USER_LOCATION_LAT)
+          ?.isNotEmpty) {
         setState(() {
           mLat = prefs?.getString(USER_LOCATION_LAT);
           mLng = prefs?.getString(USER_LOCATION_LONG);
         });
         isAlreadyApiHit = true;
         homeBloc
-          ..add(HomeReqAuthenticationEvent(token: token, lat: prefs?.getString(USER_LOCATION_LAT), lng: prefs?.getString(USER_LOCATION_LONG)));
+          ..add(HomeReqAuthenticationEvent(token: token,
+              lat: prefs?.getString(USER_LOCATION_LAT),
+              lng: prefs?.getString(USER_LOCATION_LONG)));
       }
-      Location location = new Location();
+      LocationPermission permission = await checkPermission();
+      if (permission == LocationPermission.always ||
+          permission == LocationPermission.whileInUse) {
+        Location location = new Location();
 
-      bool _serviceEnabled;
-      PermissionStatus _permissionGranted;
-      LocationData _locationData;
-      _serviceEnabled = await location.serviceEnabled();
-      if (!_serviceEnabled) {
-        _serviceEnabled = await location.requestService();
+        bool _serviceEnabled;
+        PermissionStatus _permissionGranted;
+        LocationData _locationData;
+        _serviceEnabled = await location.serviceEnabled();
         if (!_serviceEnabled) {
-          return;
+          _serviceEnabled = await location.requestService();
+          if (!_serviceEnabled) {
+            return;
+          }
         }
-      }
 
-      _permissionGranted = await location.hasPermission();
-      if (_permissionGranted == PermissionStatus.DENIED) {
-        _permissionGranted = await location.requestPermission();
-        if (_permissionGranted != PermissionStatus.GRANTED) {
-          return;
+        _permissionGranted = await location.hasPermission();
+        if (_permissionGranted == PermissionStatus.DENIED) {
+          _permissionGranted = await location.requestPermission();
+          if (_permissionGranted != PermissionStatus.GRANTED) {
+            return;
+          }
         }
-      }
-      _locationData = await location.getLocation().then((locationData) {
-        prefs.setString(USER_LOCATION_LAT, "${locationData.latitude}");
-        prefs.setString(USER_LOCATION_LONG, "${locationData.longitude}");
-        debugPrint(
-            "LOCATION_FOUND--from Home--> ${locationData.latitude}, ${locationData.longitude}");
-        // setState(() {
+        _locationData = await location.getLocation().then((locationData) {
+          prefs.setString(USER_LOCATION_LAT, "${locationData.latitude}");
+          prefs.setString(USER_LOCATION_LONG, "${locationData.longitude}");
+          debugPrint(
+              "LOCATION_FOUND--from Home--> ${locationData
+                  .latitude}, ${locationData.longitude}");
+          // setState(() {
           mLat = locationData.latitude.toString();
           mLng = locationData.longitude.toString();
-        // });
-        //access address from lat lng
-        if(!isAlreadyApiHit){
-          homeBloc
-            ..add(HomeReqAuthenticationEvent(token: token, lat: locationData.latitude.toString(), lng: locationData.longitude.toString()));
-        }
-        mapAddressFromLatlng(locationData.latitude, locationData.longitude);
-      });
+          // });
+          //access address from lat lng
+          if (!isAlreadyApiHit) {
+            homeBloc
+              ..add(HomeReqAuthenticationEvent(token: token,
+                  lat: locationData.latitude.toString(),
+                  lng: locationData.longitude.toString()));
+          }
+          mapAddressFromLatlng(locationData.latitude, locationData.longitude);
+        });
+      } else {
+        homeBloc
+          ..add(LocationReqEvent());
+        _showDialog(context);
+        //show notification
+      }
     } catch (e, stacktrace) {
       debugPrint("EXCEPTION_WHILE_HOME2 ${stacktrace?.toString()}");
     }
@@ -236,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final coordinates = new Coordinates(lat, lng);
       var addresses =
-          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      await Geocoder.local.findAddressesFromCoordinates(coordinates);
       var first = addresses.first;
       UserLocationSelected userLocationSelected = new UserLocationSelected(
           address: first.addressLine,
@@ -258,7 +288,8 @@ class _HomeScreenState extends State<HomeScreen> {
           "PREFS_STORED_LOGIN-----> ${prefs.getString(USER_LOCATION_ADDRESS)}");
     } catch (e, stacktrace) {
       debugPrint(
-          "EXCEPTION in Loginscreen in storeResInPrefs ${e.toString()}\n${stacktrace.toString()}");
+          "EXCEPTION in Loginscreen in storeResInPrefs ${e
+              .toString()}\n${stacktrace.toString()}");
     }
   }
 
@@ -267,24 +298,24 @@ class _HomeScreenState extends State<HomeScreen> {
     if (mHomeResponse != null) {
       return ((shouldShowShowcase == false)
           ? ShowCaseWidget(
-              onStart: (index, key) {
-                debugPrint('onStart: $index, $key');
-              },
-              onComplete: (index, key) {
-                debugPrint('onComplete1: $index, $key');
-                if (prefs != null) {
-                  debugPrint('onComplete1: SAVED');
-                  prefs.setString(IS_SHOWCASE_VIEWED, "true");
-                  shouldShowShowcase = true;
-                }
-              },
-              builder: Builder(
-                  builder: (context) =>
-                      getHomeShowcaseUI(mHomeResponse, context)),
-              autoPlay: false,
-              autoPlayDelay: Duration(seconds: 3),
-              autoPlayLockEnable: false,
-            )
+        onStart: (index, key) {
+          debugPrint('onStart: $index, $key');
+        },
+        onComplete: (index, key) {
+          debugPrint('onComplete1: $index, $key');
+          if (prefs != null) {
+            debugPrint('onComplete1: SAVED');
+            prefs.setString(IS_SHOWCASE_VIEWED, "true");
+            shouldShowShowcase = true;
+          }
+        },
+        builder: Builder(
+            builder: (context) =>
+                getHomeShowcaseUI(mHomeResponse, context)),
+        autoPlay: false,
+        autoPlayDelay: Duration(seconds: 3),
+        autoPlayLockEnable: false,
+      )
           : getHomeUI(mHomeResponse, context));
     }
   }
@@ -301,7 +332,8 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
         child: BlocProvider(
-          create: (context) => homeBloc
+          create: (context) =>
+          homeBloc
             ..add(
                 HomeReqAuthenticationEvent(token: token, lat: mLat, lng: mLng)),
           child: BlocListener(
@@ -334,10 +366,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     }
                   } else {
+                    storeResInPrefs(context);
                     if (state.res.message !=
-                            null /*&&
+                        null /*&&
                       state.res.message != API_ERROR_MSG_RETRY*/
-                        ) {
+                    ) {
                       isNeedToShowRetry = false;
                       // homeBloc
                       //   ..add(HomeReqAuthenticationEvent(
@@ -355,28 +388,88 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (state.res.status) {
                       return ((shouldShowShowcase == false)
                           ? ShowCaseWidget(
-                              onStart: (index, key) {
-                                debugPrint('onStart: $index, $key');
-                              },
-                              onComplete: (index, key) {
-                                debugPrint('onComplete1: $index, $key');
-                                if (prefs != null) {
-                                  debugPrint('onComplete1: SAVED');
-                                  prefs.setString(IS_SHOWCASE_VIEWED, "true");
-                                  shouldShowShowcase = true;
-                                }
-                              },
-                              builder: Builder(
-                                  builder: (context) =>
-                                      getHomeShowcaseUI(state.res, context)),
-                              autoPlay: false,
-                              autoPlayDelay: Duration(seconds: 3),
-                              autoPlayLockEnable: false,
-                            )
+                        onStart: (index, key) {
+                          debugPrint('onStart: $index, $key');
+                        },
+                        onComplete: (index, key) {
+                          debugPrint('onComplete1: $index, $key');
+                          if (prefs != null) {
+                            debugPrint('onComplete1: SAVED');
+                            prefs.setString(IS_SHOWCASE_VIEWED, "true");
+                            shouldShowShowcase = true;
+                          }
+                        },
+                        builder: Builder(
+                            builder: (context) =>
+                                getHomeShowcaseUI(state.res, context)),
+                        autoPlay: false,
+                        autoPlayDelay: Duration(seconds: 3),
+                        autoPlayLockEnable: false,
+                      )
                           : getHomeUI(state.res, context));
                     } else {
                       debugPrint("HOMESCREEN_state loading is ${state}");
-                      return Container(
+                      return SafeArea(
+                        child: Container(
+                          color: Colors.white,
+                          child: Column(
+                            children: [
+                              CommonAppbarWidget(app_name, skip_for_now, () {
+                                onSearchLocation(context);
+                              }),
+                              Expanded(
+                                child: Center(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Something went wrong!!',
+                                        style: CommonStyles.getRalewayStyle(
+                                            space_16,
+                                            FontWeight.w500,
+                                            Colors.black),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          homeBloc
+                                            ..add(HomeReqAuthenticationEvent(
+                                                token: token,
+                                                lat: mLat,
+                                                lng: mLng));
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(space_15),
+                                          child: Text(
+                                            'RETRY',
+                                            style: TextStyle(
+                                              fontSize: space_18,
+                                              fontFamily: "Montserrat",
+                                              fontWeight: FontWeight.w700,
+                                              color: CommonStyles.primaryColor,
+                                              decoration:
+                                              TextDecoration.underline,
+                                              decorationStyle:
+                                              TextDecorationStyle.solid,
+                                              decorationColor:
+                                              CommonStyles.primaryColor,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  } else if (state is LocationReqState) {
+                    debugPrint("LocationReqState");
+                    return SafeArea(
+                      child: Container(
                         color: Colors.white,
                         child: Column(
                           children: [
@@ -389,36 +482,54 @@ class _HomeScreenState extends State<HomeScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(
-                                      'Something went wrong!!',
-                                      style: CommonStyles.getRalewayStyle(
-                                          space_16,
-                                          FontWeight.w500,
-                                          Colors.black),
+                                    Container(
+                                      padding: EdgeInsets.all(space_15),
+                                      child: Text(
+                                        'We need to show ads based on your current location. So please allow us to access your current location to serve you better way.',
+                                        textAlign: TextAlign.center,
+                                        style: CommonStyles.getRalewayStyle(
+                                            space_16,
+                                            FontWeight.w500,
+                                            Colors.black),
+                                      ),
+                                    ),
+                                     Container(
+                                      padding: EdgeInsets.all(space_15),
+                                      child: Text(
+                                        'Click on permission request notification to redirect application settings to provide location access & then refresh page.',
+                                        textAlign: TextAlign.center,
+                                        style: CommonStyles.getRalewayStyle(
+                                            space_12,
+                                            FontWeight.w400,
+                                            Colors.black),
+                                      ),
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        homeBloc
-                                          ..add(HomeReqAuthenticationEvent(
-                                              token: token,
-                                              lat: mLat,
-                                              lng: mLng));
+                                        if(mLat!=null && mLat.isNotEmpty && mLng!=null && mLng.isNotEmpty){
+                                          homeBloc
+                                            ..add(HomeReqAuthenticationEvent(
+                                                token: token,
+                                                lat: mLat,
+                                                lng: mLng));
+                                        }else{
+                                          storeResInPrefs(context);
+                                        }
                                       },
                                       child: Padding(
                                         padding: const EdgeInsets.all(space_15),
                                         child: Text(
-                                          'RETRY',
+                                          'REFRESH',
                                           style: TextStyle(
                                             fontSize: space_18,
                                             fontFamily: "Montserrat",
                                             fontWeight: FontWeight.w700,
                                             color: CommonStyles.primaryColor,
-                                            decoration:
-                                                TextDecoration.underline,
+                                            decoration: TextDecoration.underline,
                                             decorationStyle:
-                                                TextDecorationStyle.solid,
+                                            TextDecorationStyle.solid,
                                             decorationColor:
-                                                CommonStyles.primaryColor,
+                                            CommonStyles.primaryColor,
                                           ),
                                         ),
                                       ),
@@ -429,9 +540,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ],
                         ),
-                      );
-                    }
-                  } else if (state is SendOtpAuthState) {
+                      ),
+                    );
+                  }  else if (state is SendOtpAuthState) {
                     debugPrint("WHY_SENDOTP_IN_HOME");
                     return Container(
                       color: Colors.white,
@@ -472,9 +583,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                           color: CommonStyles.primaryColor,
                                           decoration: TextDecoration.underline,
                                           decorationStyle:
-                                              TextDecorationStyle.solid,
+                                          TextDecorationStyle.solid,
                                           decorationColor:
-                                              CommonStyles.primaryColor,
+                                          CommonStyles.primaryColor,
                                         ),
                                       ),
                                     ),
@@ -512,109 +623,114 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Container(
                 child: Column(
-              children: [
-                CommonAppbarWidget(app_name, skip_for_now, () {
-                  onSearchLocation(context);
-                }),
-                Expanded(
-                  child: Container(
-                      child: RefreshIndicator(
-                    onRefresh: () {
-                      homeBloc
-                        ..add(HomeReqAuthenticationEvent(
-                            token: token, lat: mLat, lng: mLng));
-                    },
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        BannerImgCarousalWidget(homeResponse),
-                        Container(
-                            child:
-                                RichTextTitleBtnWidget("TOP", "CATEGORIES", () {
-                          redirectToCategoryList(context);
-                        })),
-                        SizedBox(
-                          height: space_15,
-                        ),
-                        CategoryGridWidget(homeResponse),
-                        SizedBox(
-                          height: space_25,
-                        ),
-                        ListView.builder(
-                            shrinkWrap: true,
-                            primary: false,
-                            itemCount: homeResponse.data.category_ads != null
-                                ? homeResponse.data.category_ads.length
-                                : 0,
-                            itemBuilder: (context, parentPos) {
-                              return Column(
-                                children: [
-                                  Container(
-                                    height: space_370,
-                                    color: CommonStyles.blue.withOpacity(0.1),
-                                    child: Column(
-                                      children: [
-                                        RichTextTitleBtnWidget(
-                                            "TOP",
-                                            homeResponse
-                                                .data
-                                                .category_ads[parentPos]
-                                                .category_name, () {
-                                          onViewAllClick(
-                                              context,
-                                              TYPE_FURNITURE,
-                                              homeResponse
-                                                  .data
-                                                  .category_ads[parentPos]
-                                                  .category_adslist[0]
-                                                  .category,
-                                              homeResponse
-                                                  .data
-                                                  .category_ads[parentPos]
-                                                  .category_name);
-                                        }),
-                                        Container(
-                                          height: space_280,
-                                          child: ListView.builder(
-                                              scrollDirection: Axis.horizontal,
-                                              itemCount: homeResponse
-                                                  .data
-                                                  .category_ads[parentPos]
-                                                  .category_adslist
-                                                  .length,
-                                              itemBuilder: (context, childPos) {
-                                                return Container(
-                                                    height: space_300,
-                                                    child: ItemCardWidget(
-                                                        category_adslist: homeResponse
-                                                                .data
-                                                                .category_ads[
-                                                                    parentPos]
-                                                                .category_adslist[
-                                                            childPos]));
-                                              }),
-                                        ),
-                                        SizedBox(
-                                          height: space_20,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: space_20,
-                                  ),
-                                ],
-                              );
-                            }),
-                        SizedBox(
-                          height: space_90,
-                        ),
-                      ],
-                    ),
-                  )),
-                )
-              ],
-            )),
+                  children: [
+                    CommonAppbarWidget(app_name, skip_for_now, () {
+                      onSearchLocation(context);
+                    }),
+                    Expanded(
+                      child: Container(
+                          child: RefreshIndicator(
+                            onRefresh: () {
+                              homeBloc
+                                ..add(HomeReqAuthenticationEvent(
+                                    token: token, lat: mLat, lng: mLng));
+                            },
+                            child: ListView(
+                              shrinkWrap: true,
+                              children: [
+                                BannerImgCarousalWidget(homeResponse),
+                                Container(
+                                    child:
+                                    RichTextTitleBtnWidget(
+                                        "TOP", "CATEGORIES", () {
+                                      redirectToCategoryList(context);
+                                    })),
+                                SizedBox(
+                                  height: space_15,
+                                ),
+                                CategoryGridWidget(homeResponse),
+                                SizedBox(
+                                  height: space_25,
+                                ),
+                                ListView.builder(
+                                    shrinkWrap: true,
+                                    primary: false,
+                                    itemCount: homeResponse.data.category_ads !=
+                                        null
+                                        ? homeResponse.data.category_ads.length
+                                        : 0,
+                                    itemBuilder: (context, parentPos) {
+                                      return Column(
+                                        children: [
+                                          Container(
+                                            height: space_370,
+                                            color: CommonStyles.blue
+                                                .withOpacity(0.1),
+                                            child: Column(
+                                              children: [
+                                                RichTextTitleBtnWidget(
+                                                    "TOP",
+                                                    homeResponse
+                                                        .data
+                                                        .category_ads[parentPos]
+                                                        .category_name, () {
+                                                  onViewAllClick(
+                                                      context,
+                                                      TYPE_FURNITURE,
+                                                      homeResponse
+                                                          .data
+                                                          .category_ads[parentPos]
+                                                          .category_adslist[0]
+                                                          .category,
+                                                      homeResponse
+                                                          .data
+                                                          .category_ads[parentPos]
+                                                          .category_name);
+                                                }),
+                                                Container(
+                                                  height: space_280,
+                                                  child: ListView.builder(
+                                                      scrollDirection: Axis
+                                                          .horizontal,
+                                                      itemCount: homeResponse
+                                                          .data
+                                                          .category_ads[parentPos]
+                                                          .category_adslist
+                                                          .length,
+                                                      itemBuilder: (context,
+                                                          childPos) {
+                                                        return Container(
+                                                            height: space_300,
+                                                            child: ItemCardWidget(
+                                                                category_adslist: homeResponse
+                                                                    .data
+                                                                    .category_ads[
+                                                                parentPos]
+                                                                    .category_adslist[
+                                                                childPos]));
+                                                      }),
+                                                ),
+                                                SizedBox(
+                                                  height: space_20,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: space_20,
+                                          ),
+                                        ],
+                                      );
+                                    }),
+                                SizedBox(
+                                  height: space_90,
+                                ),
+                              ],
+                            ),
+                          )),
+                    )
+                  ],
+                )),
             CommonBottomNavBarHomeWidget(
               postKey: postAdKey,
               shouldShowShowcase: shouldShowShowcase,
@@ -622,17 +738,17 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             mIsShowDummyProgress
                 ? Container(
-                    color: Colors.white,
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        backgroundColor: Colors.white,
-                      ),
-                    ),
-                  )
+              color: Colors.white,
+              child: Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.white,
+                ),
+              ),
+            )
                 : Container(
-                    height: 0,
-                    width: 0,
-                  )
+              height: 0,
+              width: 0,
+            )
           ],
         ),
       ),
@@ -680,7 +796,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!shouldShowShowcase) {
       debugPrint("ENTRY_HOME_SCREEN--------- ${shouldShowShowcase}");
       WidgetsBinding.instance.addPostFrameCallback(
-          (_) => ShowCaseWidget.of(context).startShowCase([postAdKey]));
+              (_) => ShowCaseWidget.of(context).startShowCase([postAdKey]));
     }
     return Scaffold(
       body: SafeArea(
@@ -688,34 +804,35 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Container(
                 child: Column(
-              children: [
-                CommonAppbarWidget(app_name, skip_for_now, () {
-                  onSearchLocation(context);
-                }),
-                Expanded(
-                  child: Container(
-                      child: RefreshIndicator(
-                    onRefresh: () {
-                      homeBloc
-                        ..add(HomeReqAuthenticationEvent(
-                            token: token, lat: mLat, lng: mLng));
-                    },
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        BannerImgCarousalWidget(homeResponse),
-                        Container(
-                            child:
-                                RichTextTitleBtnWidget("TOP", "CATEGORIES", () {
-                          redirectToCategoryList(context);
-                        })),
-                        SizedBox(
-                          height: space_15,
-                        ),
-                        CategoryGridWidget(homeResponse),
-                        SizedBox(
-                          height: space_25,
-                        ),
+                  children: [
+                    CommonAppbarWidget(app_name, skip_for_now, () {
+                      onSearchLocation(context);
+                    }),
+                    Expanded(
+                      child: Container(
+                          child: RefreshIndicator(
+                            onRefresh: () {
+                              homeBloc
+                                ..add(HomeReqAuthenticationEvent(
+                                    token: token, lat: mLat, lng: mLng));
+                            },
+                            child: ListView(
+                              shrinkWrap: true,
+                              children: [
+                                BannerImgCarousalWidget(homeResponse),
+                                Container(
+                                    child:
+                                    RichTextTitleBtnWidget(
+                                        "TOP", "CATEGORIES", () {
+                                      redirectToCategoryList(context);
+                                    })),
+                                SizedBox(
+                                  height: space_15,
+                                ),
+                                CategoryGridWidget(homeResponse),
+                                SizedBox(
+                                  height: space_25,
+                                ),
 //                        Container(
 //                            child: RichTextTitleBtnWidget("TOP", "OFFERS", () {
 //                          redirectToOfferList(context);
@@ -734,81 +851,85 @@ class _HomeScreenState extends State<HomeScreen> {
 //                        SizedBox(
 //                          height: mCouponRes != null ? space_15 : 0,
 //                        ),
-                        ListView.builder(
-                            shrinkWrap: true,
-                            primary: false,
-                            itemCount: homeResponse.data.category_ads != null
-                                ? homeResponse.data.category_ads.length
-                                : 0,
-                            itemBuilder: (context, parentPos) {
-                              return Column(
-                                children: [
-                                  Container(
-                                    height: space_370,
-                                    color: CommonStyles.blue.withOpacity(0.1),
-                                    child: Column(
-                                      children: [
-                                        RichTextTitleBtnWidget(
-                                            "TOP",
-                                            homeResponse
-                                                .data
-                                                .category_ads[parentPos]
-                                                .category_name, () {
-                                          onViewAllClick(
-                                              context,
-                                              TYPE_FURNITURE,
-                                              homeResponse
-                                                  .data
-                                                  .category_ads[parentPos]
-                                                  .category_adslist[0]
-                                                  .category,
-                                              homeResponse
-                                                  .data
-                                                  .category_ads[parentPos]
-                                                  .category_name);
-                                        }),
-                                        Container(
-                                          height: space_280,
-                                          child: ListView.builder(
-                                              scrollDirection: Axis.horizontal,
-                                              itemCount: homeResponse
-                                                  .data
-                                                  .category_ads[parentPos]
-                                                  .category_adslist
-                                                  .length,
-                                              itemBuilder: (context, childPos) {
-                                                return Container(
-                                                    height: space_300,
-                                                    child: ItemCardWidget(
-                                                        category_adslist: homeResponse
-                                                                .data
-                                                                .category_ads[
-                                                                    parentPos]
-                                                                .category_adslist[
-                                                            childPos]));
-                                              }),
-                                        ),
-                                        SizedBox(
-                                          height: space_20,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: space_20,
-                                  ),
-                                ],
-                              );
-                            }),
-                        SizedBox(
-                          height: space_90,
-                        ),
-                      ],
-                    ),
-                  )),
-                )
-              ],
-            )),
+                                ListView.builder(
+                                    shrinkWrap: true,
+                                    primary: false,
+                                    itemCount: homeResponse.data.category_ads !=
+                                        null
+                                        ? homeResponse.data.category_ads.length
+                                        : 0,
+                                    itemBuilder: (context, parentPos) {
+                                      return Column(
+                                        children: [
+                                          Container(
+                                            height: space_370,
+                                            color: CommonStyles.blue
+                                                .withOpacity(0.1),
+                                            child: Column(
+                                              children: [
+                                                RichTextTitleBtnWidget(
+                                                    "TOP",
+                                                    homeResponse
+                                                        .data
+                                                        .category_ads[parentPos]
+                                                        .category_name, () {
+                                                  onViewAllClick(
+                                                      context,
+                                                      TYPE_FURNITURE,
+                                                      homeResponse
+                                                          .data
+                                                          .category_ads[parentPos]
+                                                          .category_adslist[0]
+                                                          .category,
+                                                      homeResponse
+                                                          .data
+                                                          .category_ads[parentPos]
+                                                          .category_name);
+                                                }),
+                                                Container(
+                                                  height: space_280,
+                                                  child: ListView.builder(
+                                                      scrollDirection: Axis
+                                                          .horizontal,
+                                                      itemCount: homeResponse
+                                                          .data
+                                                          .category_ads[parentPos]
+                                                          .category_adslist
+                                                          .length,
+                                                      itemBuilder: (context,
+                                                          childPos) {
+                                                        return Container(
+                                                            height: space_300,
+                                                            child: ItemCardWidget(
+                                                                category_adslist: homeResponse
+                                                                    .data
+                                                                    .category_ads[
+                                                                parentPos]
+                                                                    .category_adslist[
+                                                                childPos]));
+                                                      }),
+                                                ),
+                                                SizedBox(
+                                                  height: space_20,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: space_20,
+                                          ),
+                                        ],
+                                      );
+                                    }),
+                                SizedBox(
+                                  height: space_90,
+                                ),
+                              ],
+                            ),
+                          )),
+                    )
+                  ],
+                )),
             CommonBottomNavBarHomeShowCaseWidget(
                 postKey: postAdKey, shouldShowShowcase: shouldShowShowcase)
           ],
@@ -818,7 +939,107 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void onSearchClick() {}
+
+  _showDialog(BuildContext context) {
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+    var initializationSettingsAndroid =
+    new AndroidInitializationSettings('@drawable/ic_appicon');
+    var initializationSettingsIOS =
+    IOSInitializationSettings(
+      requestSoundPermission: false,
+      requestBadgePermission: false,
+      requestAlertPermission: false,
+    );
+    var initializationSettings = new InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: onSelectNotification);
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'channelid', 'flutterfcm', 'your channel description',ticker: 'ticker', icon: "ic_notification_icon",
+        playSound: true, enableLights: true, enableVibration: true,
+        importance: Importance.max, priority: Priority.high);
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails(presentSound: true, presentAlert: true);
+    var platformChannelSpecifics = new NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iOSPlatformChannelSpecifics);
+    flutterLocalNotificationsPlugin.show(1,  "Request for location permission",
+        "We need to show ads based on your current location. So please allow us to access your current location to serve you better way.", platformChannelSpecifics,
+        payload:  "permission");
+    /*VoidCallback continueCallBack = () => {
+    Navigator.of(context).pop(),
+    // Fluttertoast.showToast(
+    // msg: "Redirecting to settings, please provide location permission...",
+    // toastLength: Toast.LENGTH_SHORT,
+    // gravity: ToastGravity.BOTTOM,
+    // timeInSecForIosWeb: 1,
+    // backgroundColor: Colors.black,
+    // textColor: Colors.white,
+    // fontSize: space_14);
+  };
+    PermissionBlurryDialog alert = PermissionBlurryDialog(
+    "Allow Access", "Are you sure you want to delete ad?", continueCallBack);
+    showDialog(
+    context: context,
+    builder: (BuildContext context) {
+    return alert;
+    },
+    );*/
+  }
+
+  Future onSelectNotification(String payload) async {
+    debugPrint("......INSIDE NOTIFICATION_SELECT method....... ${payload}");
+    if (payload != null) {
+      debugPrint('notification payload: ${ payload == "permission"} ' + payload);
+      if (payload == "permission") {
+        openLocationSettings();
+      }
+    }
+  }
+
 }
+
+class PermissionBlurryDialog extends StatelessWidget {
+  String title;
+  String content;
+  VoidCallback continueCallBack;
+
+  PermissionBlurryDialog(this.title, this.content, this.continueCallBack);
+
+  TextStyle textStyle = TextStyle(color: Colors.black);
+
+  @override
+  Widget build(BuildContext context) {
+    return BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+        child: AlertDialog(
+          title: new Text(
+            "Need location permission",
+            style: textStyle,
+          ),
+          content: new Text(
+            "We need location permission to access your current location.",
+            style: textStyle,
+          ),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Allow Permission"),
+              onPressed: () {
+                continueCallBack();
+              },
+            ),
+            // new FlatButton(
+            //   child: Text("Cancel"),
+            //   onPressed: () {
+            //     Navigator.of(context).pop();
+            //   },
+            // ),
+          ],
+        ));
+  }
+}
+
 
 // class MyClipper extends CustomClipper<Path> {
 //   @override

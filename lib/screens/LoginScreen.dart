@@ -458,48 +458,52 @@ class _LoginScreenState extends State<LoginScreen> {
                                           width: 0,
                                         ),
                                   Platform.isIOS
-                                      ? AppleSignInButton(onPressed: () async {
-                                          if (mCheckedTnC) {
-                                            bool isAvailable = true;
-                                            var flag =
-                                                AuthenticationRepository()
-                                                    .appleSignInAvailable
-                                                    .then((value) {
-                                              debugPrint(
-                                                  "NOT CAPABLE ${value}");
-                                            });
+                                      ? Card(
+                                    color: Colors.white,
+                                    elevation: space_3,
+                                        child: AppleSignInButton(onPressed: () async {
+                                            if (mCheckedTnC) {
+                                              bool isAvailable = true;
+                                              var flag =
+                                                  AuthenticationRepository()
+                                                      .appleSignInAvailable
+                                                      .then((value) {
+                                                debugPrint(
+                                                    "NOT CAPABLE ${value}");
+                                              });
 
-                                            if (isAvailable) {
-                                              User user =
-                                                  await AuthenticationRepository()
-                                                      .appleSignIn();
-                                              if (user != null &&
-                                                  user?.email != null &&
-                                                  authenticationBloc != null) {
-                                                mName = user?.displayName;
-                                                mEmail = user?.email;
-                                                mSocialId = user?.uid;
-                                                authenticationBloc
-                                                  ..add(
-                                                      SocialLoginReqAuthenticationEvent(
-                                                          social_id: user?.uid,
-                                                          emailOrMobile:
-                                                              user?.email,
-                                                          deviceToken:
-                                                              mFcmToken));
+                                              if (isAvailable) {
+                                                User user =
+                                                    await AuthenticationRepository()
+                                                        .appleSignIn();
+                                                if (user != null &&
+                                                    user?.email != null &&
+                                                    authenticationBloc != null) {
+                                                  mName = user?.displayName;
+                                                  mEmail = user?.email;
+                                                  mSocialId = user?.uid;
+                                                  authenticationBloc
+                                                    ..add(
+                                                        SocialLoginReqAuthenticationEvent(
+                                                            social_id: user?.uid,
+                                                            emailOrMobile:
+                                                                user?.email,
+                                                            deviceToken:
+                                                                mFcmToken));
+                                                } else {
+                                                  showSnakbar(_scaffoldKey,
+                                                      "Email ID missing");
+                                                }
                                               } else {
                                                 showSnakbar(_scaffoldKey,
-                                                    "Email ID missing");
+                                                    "Something went wrong, please try again!");
                                               }
                                             } else {
-                                              showSnakbar(_scaffoldKey,
-                                                  "Something went wrong, please try again!");
+                                              showSnakbar(
+                                                  _scaffoldKey, accept_tnc);
                                             }
-                                          } else {
-                                            showSnakbar(
-                                                _scaffoldKey, accept_tnc);
-                                          }
-                                        })
+                                          }),
+                                      )
                                       : Container(
                                           height: 0,
                                           width: 0,

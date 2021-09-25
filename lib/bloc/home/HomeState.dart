@@ -42,6 +42,7 @@ class InitialHomeState extends HomeState {}
 class ProgressState extends HomeState {}
 
 class NonProgressState extends HomeState {}
+class LocationReqState extends HomeState {}
 
 class SuccessState extends HomeState {
   final obj;

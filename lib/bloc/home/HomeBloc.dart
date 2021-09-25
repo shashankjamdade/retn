@@ -189,6 +189,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       yield* callCoupon(event.lat, event.lng);
     } else if (event is HomeResDummyEvent) {
       yield HomeResState(res: event.homeResponse);
+    } else if (event is LocationReqEvent) {
+      yield LocationReqState();
     }
   }
 
